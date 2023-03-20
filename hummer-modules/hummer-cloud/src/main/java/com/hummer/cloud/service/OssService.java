@@ -353,7 +353,9 @@ public class OssService {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs oss = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = (OssProvider) OssManager.getOssProviders().get(oss.getPluginId());
-        return ossProvider.getBucketObjects(bucket, oss, prefix);
+        List<BucketObjectDTO> bucketObjects = ossProvider.getBucketObjects(bucket, oss, prefix);
+        ossBucketMapper.updateByPrimaryKeySelective(bucket);
+        return bucketObjects;
     }
 
     private OssBucket getBucketByPrimaryKey(String bucketId) throws Exception {

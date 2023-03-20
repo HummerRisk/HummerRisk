@@ -45,7 +45,7 @@ export default {
     {
       path: "ruleGroup",
       name: "CloudRuleGroup",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleGroup"),
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/RuleGroup"),
     },
   ]
 }

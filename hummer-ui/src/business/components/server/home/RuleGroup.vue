@@ -26,7 +26,7 @@
                   </el-col>
                   <el-col :span="21">
                     <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">
-                      <span class="plugin-name">{{ data.pluginName }}</span>
+                      <span class="plugin-name">{{ data.name }}</span>
                       <span class="plugin-type">
                         <el-tag type="success" size="mini">{{ data.type }}</el-tag>
                       </span>
@@ -39,7 +39,7 @@
               <div style="padding: 0 14px 14px 14px;">
                 <el-row>
                   <el-col :span="19">
-                    <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.name }}</span>
+                    <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.pluginName }}</span>
                   </el-col>
                   <el-col :span="5" v-if="checkedColumnNames.includes('flag')">
                     <el-button size="medium" type="danger" class="round" round v-if="data.flag === true">
@@ -53,10 +53,9 @@
                 <span class="button time pa-na">
               </span>
                 <div class="bottom clearfix">
-                  <time class="time">
-                    <span class="pa-time">{{ data.level }}&nbsp;</span>
-                    <span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span>
-                  </time>
+                  <div class="time time2">
+                    <span class="pa-time">{{ data.level }}&nbsp;<span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span></span>
+                  </div>
                   <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
                     <span class="el-dropdown-link">
                       {{ $t('package.operate') }}
@@ -127,6 +126,17 @@
       <el-drawer class="rtl" :title="$t('rule.create_group')" :visible.sync="createVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
+          <el-form-item :label="$t('rule.group_type')" :rules="{required: true, message: $t('rule.group_type'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="createForm.type" :placeholder="$t('rule.group_type')">
+              <el-option
+                v-for="item in groupTypes"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('rule.rule_set')"/>
           </el-form-item>
@@ -135,18 +145,6 @@
           </el-form-item>
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="createForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
           </el-form-item>
         </el-form>
         <dialog-footer
@@ -159,6 +157,9 @@
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.group_type')" prop="type">
+            <el-input v-model="infoForm.type" :disabled="true" autocomplete="off" :placeholder="$t('rule.group_type')"/>
+          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
@@ -167,18 +168,6 @@
           </el-form-item>
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.pluginId" :disabled="infoForm.flag" :placeholder="$t('account.please_choose_plugin')">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
           </el-form-item>
         </el-form>
         <dialog-footer
@@ -191,6 +180,9 @@
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.group_type')" prop="type">
+            {{ infoForm.type }}
+          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             {{ infoForm.name }}
           </el-form-item>
@@ -200,7 +192,7 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             {{ infoForm.level }}
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')">
+          <el-form-item :label="$t('dashboard.scan_types')">
          &nbsp;&nbsp; {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
@@ -208,10 +200,10 @@
       <!--Info group-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_set_list')"
+                      :title="$t('rule.rule_list')"
                       :items="items2" :columnNames="columnNames2"
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
@@ -223,34 +215,28 @@
           @select="select"
         >
           <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
+          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('package.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column min-width="70" v-if="checkedColumnNames2.includes('severity')" :label="$t('package.severity')" column-key="severity">
             <template v-slot:default="{row}">
-              <severity-type :row="row"></severity-type>
+              <rule-type :row="row"/>
             </template>
           </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
+          <el-table-column prop="description" v-if="checkedColumnNames2.includes('description')" :label="$t('package.description')" min-width="250" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="type" v-if="checkedColumnNames2.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-if="scope.row.type === 'linux'">Linux</span>
+              <span v-if="scope.row.type === 'windows'">Windows</span>
+              <span v-if="!scope.row.type">N/A</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('package.status')" v-if="checkedColumnNames2.includes('status')" min-width="70" show-overflow-tooltip>
             <template v-slot:default="scope">
               <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
             </template>
           </el-table-column>
-          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
+          <el-table-column prop="lastModified" v-if="checkedColumnNames2.includes('lastModified')" min-width="160" :label="$t('package.last_modified')" sortable>
             <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+              <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
           </el-table-column>
         </hide-table>
@@ -279,15 +265,15 @@
       <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
-          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('account.please_choose_account')">
+          <el-form-item :label="$t('server.server_setting')" :rules="{required: true, message: $t('server.server_setting') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('server.server_setting')">
               <el-option
                 v-for="item in accounts"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
                 <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
+                &nbsp;&nbsp; {{ item.name + ' (' + item.ip + ':' + item.port + ')' }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -307,7 +293,7 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import GroupTableHeader from "../head/GroupTableHeader";
+import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import FTablePagination from "../../common/pagination/FTablePagination";
@@ -315,10 +301,12 @@ import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
-import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
+import {
+  SERVER_RULE_CONFIGS,
+  SERVER_RULE_GROUP_CONFIGS
+} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {scanByGroupUrl} from "@/api/cloud/rule/rule";
-import {cloudListByGroupUrl} from "@/api/cloud/account/account";
+import RuleType from "./RuleType";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -351,32 +339,32 @@ const columnOptions = [
 
 const columnOptions2 = [
   {
-    label: 'rule.rule_name',
+    label: 'package.rule_name',
     props: 'name',
     disabled: false
   },
   {
-    label: 'rule.resource_type',
-    props: 'resourceType',
-    disabled: false
-  },
-  {
-    label: 'account.cloud_platform',
-    props: 'pluginName',
-    disabled: false
-  },
-  {
-    label: 'rule.severity',
+    label: 'package.severity',
     props: 'severity',
     disabled: false
   },
   {
-    label: 'commons.description',
+    label: 'package.description',
     props: 'description',
     disabled: false
   },
   {
-    label: 'rule.last_modified',
+    label: 'commons.type',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'package.status',
+    props: 'status',
+    disabled: false
+  },
+  {
+    label: 'package.last_modified',
     props: 'lastModified',
     disabled: false
   },
@@ -396,17 +384,17 @@ const columnOptions2 = [
       SeverityType,
       TableHeader,
       HideTable,
+      RuleType,
     },
     data() {
       return {
         result: {},
         condition: {
-          components: RULE_GROUP_CONFIGS
+          components: SERVER_RULE_GROUP_CONFIGS
         },
         ruleCondition: {
-          components: RULE_CONFIGS
+          components: SERVER_RULE_CONFIGS
         },
-        plugins: [],
         tableData: [],
         ftableData: [],
         createForm: {},
@@ -531,6 +519,11 @@ const columnOptions2 = [
         ],
         checkAll2: true,
         isIndeterminate2: false,
+        groupTypes: [
+          {id: 'cloud', name: 'Cloud'},
+          {id: 'k8s', name: 'K8s'},
+          {id: 'server', name: 'Server'},
+        ],
       }
     },
 
@@ -581,7 +574,7 @@ const columnOptions2 = [
       },
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-        let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = "/server/ruleList/" + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
@@ -610,7 +603,7 @@ const columnOptions2 = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(ruleGroupDeleteUrl + item.id, () => {
+              this.result = this.$get("/rule/group/delete/" + item.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -624,22 +617,18 @@ const columnOptions2 = [
           this.selectIds.add(s.id)
         })
       },
-      getPlugins () {
-        this.result = this.$get(cloudPluginUrl, response => {
-          this.plugins = response.data;
-        });
-      },
       //查询列表
       search() {
+        this.condition.type = "server";
         if (this.listStatus === 1) {
-          let url = ruleGroupListUrl + this.currentPage + "/" + this.pageSize;
+          let url = "/rule/ruleGroup/list/" + this.currentPage + "/" + this.pageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.total = data.itemCount;
             this.tableData = data.listObject;
           });
         } else {
-          let url = ruleGroupListUrl + this.fcurrentPage + "/" + this.fpageSize;
+          let url = "/rule/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.ftotal = data.itemCount;
@@ -649,7 +638,6 @@ const columnOptions2 = [
       },
       init() {
         this.search();
-        this.getPlugins();
       },
       sort(column) {
         _sort(column, this.condition);
@@ -664,7 +652,11 @@ const columnOptions2 = [
             if (valid) {
               let params = item;
               params.flag = item.flag ? item.flag : false;
-              let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
+              params.type = "server";
+              params.pluginId = "hummer-server-plugin";
+              params.pluginName = "主机检测";
+              params.pluginIcon = "server.png";
+              let url = type == "createForm" ? "/rule/group/save" : "/rule/group/update";
               this.result = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;
@@ -708,7 +700,7 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        this.$get(ruleUnBindListUrl + item.id,response => {
+        this.$get("/server/unBindList/" + item.id,response => {
           this.cloudData = [];
           for(let data of response.data) {
             this.cloudData.push({
@@ -718,7 +710,7 @@ const columnOptions2 = [
           }
           this.bindVisible = true;
         });
-        this.$get(ruleAllBindListUrl + item.id,response => {
+        this.$get("/server/allBindList/" + item.id,response => {
           this.cloudValue = [];
           for(let data of response.data) {
             this.cloudValue.push(data.id);
@@ -730,7 +722,7 @@ const columnOptions2 = [
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post(bindRuleUrl, params,response => {
+        this.$post("/server/bindRule", params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -740,7 +732,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        let url = cloudListByGroupUrl + item.pluginId;
+        let url = "/server/allServerList";
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
@@ -750,12 +742,12 @@ const columnOptions2 = [
         });
       },
       saveScan() {
-        let url = scanByGroupUrl + this.groupId + "/" + this.scanForm.id;
+        let url = "/server/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
           this.$router.push({
-            path: '/account/result',
+            path: '/server/result',
           }).catch(error => error);
         });
       },
@@ -777,6 +769,13 @@ const columnOptions2 = [
   .time {
     font-size: 13px;
     color: #999;
+  }
+  .time2 {
+    width: 70%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    float: left;
   }
   .round {
     font-size: 13px;
@@ -811,23 +810,17 @@ const columnOptions2 = [
     overflow:hidden;
   }
   .pa-time {
-    display:inline-block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     color: #1e6427;
-    float: left;
   }
   .pa-time2 {
-    display:inline-block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     color: red;
-    float: left;
   }
   .button-drop {
     float: right;
+    width: 28%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .el-dropdown-link {
     cursor: pointer;
@@ -881,9 +874,17 @@ const columnOptions2 = [
   }
   .plugin-name {
     float: left;
+    width: 75%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .plugin-type {
     float: right;
+    width: 25%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .desc {
     color: #888888;

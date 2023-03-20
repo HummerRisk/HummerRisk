@@ -1328,6 +1328,9 @@ public class PlatformUtils {
                 if("hbfsg".equals(region)){
                     return false;
                 }
+                if("sin".equals(region)){
+                    return false;
+                }
                 break;
             case qiniu:
                 break;

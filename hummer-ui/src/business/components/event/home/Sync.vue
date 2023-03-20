@@ -362,7 +362,7 @@ export default {
     showEvents(row) {
       this.$router.push(
         {
-          path: "/log/event",
+          path: "/event/event",
           query: {
             accountId: row.accountId,
             region: row.region,
@@ -418,6 +418,9 @@ export default {
       })
       if (account.length > 0) {
         this.regionList = JSON.parse(account[0].regions)
+        this.regionList = this.regionList.filter(item =>{
+          return item.regionId !== 'default'
+        })
       }
     },
     changeDateTime(value) {

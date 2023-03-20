@@ -1186,6 +1186,8 @@ public class K8sService {
             K8sRequest k8sRequest = new K8sRequest();
             k8sRequest.setCredential(cloudNative.getCredential());
 
+            k8sRequest.deleteChartRepo();
+            k8sRequest.createChartRepo();
             k8sRequest.deleteOperatorChart();
             k8sRequest.createOperatorChart();
 

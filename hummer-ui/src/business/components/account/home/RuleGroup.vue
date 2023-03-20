@@ -53,10 +53,9 @@
                 <span class="button time pa-na">
               </span>
                 <div class="bottom clearfix">
-                  <time class="time">
-                    <span class="pa-time">{{ data.level }}&nbsp;</span>
-                    <span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span>
-                  </time>
+                  <div class="time time2">
+                    <span class="pa-time">{{ data.level }}&nbsp;<span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span></span>
+                  </div>
                   <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
                     <span class="el-dropdown-link">
                       {{ $t('package.operate') }}
@@ -208,10 +207,10 @@
       <!--Info group-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_set_list')"
+                      :title="$t('rule.rule_list')"
                       :items="items2" :columnNames="columnNames2"
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
@@ -307,7 +306,7 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import GroupTableHeader from "../head/GroupTableHeader";
+import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import FTablePagination from "../../common/pagination/FTablePagination";
@@ -317,8 +316,6 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {scanByGroupUrl} from "@/api/cloud/rule/rule";
-import {cloudListByGroupUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -581,7 +578,7 @@ const columnOptions2 = [
       },
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-        let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
@@ -610,7 +607,7 @@ const columnOptions2 = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(ruleGroupDeleteUrl + item.id, () => {
+              this.result = this.$get("/rule/group/delete/" + item.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -625,21 +622,22 @@ const columnOptions2 = [
         })
       },
       getPlugins () {
-        this.result = this.$get(cloudPluginUrl, response => {
+        this.result = this.$get("/plugin/cloud", response => {
           this.plugins = response.data;
         });
       },
       //查询列表
       search() {
+        this.condition.type = "cloud";
         if (this.listStatus === 1) {
-          let url = ruleGroupListUrl + this.currentPage + "/" + this.pageSize;
+          let url = "/rule/ruleGroup/list/" + this.currentPage + "/" + this.pageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.total = data.itemCount;
             this.tableData = data.listObject;
           });
         } else {
-          let url = ruleGroupListUrl + this.fcurrentPage + "/" + this.fpageSize;
+          let url = "/rule/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.ftotal = data.itemCount;
@@ -664,7 +662,8 @@ const columnOptions2 = [
             if (valid) {
               let params = item;
               params.flag = item.flag ? item.flag : false;
-              let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
+              params.type = "cloud";
+              let url = type == "createForm" ? "/rule/group/save" : "/rule/group/update";
               this.result = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;
@@ -708,7 +707,7 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        this.$get(ruleUnBindListUrl + item.id,response => {
+        this.$get("/rule/unBindList/" + item.id,response => {
           this.cloudData = [];
           for(let data of response.data) {
             this.cloudData.push({
@@ -718,7 +717,7 @@ const columnOptions2 = [
           }
           this.bindVisible = true;
         });
-        this.$get(ruleAllBindListUrl + item.id,response => {
+        this.$get("/rule/allBindList/" + item.id,response => {
           this.cloudValue = [];
           for(let data of response.data) {
             this.cloudValue.push(data.id);
@@ -730,7 +729,7 @@ const columnOptions2 = [
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post(bindRuleUrl, params,response => {
+        this.$post("/rule/bindRule", params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -740,7 +739,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        let url = cloudListByGroupUrl + item.pluginId;
+        let url = "/account/listByGroup/" + item.pluginId;
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
@@ -750,7 +749,7 @@ const columnOptions2 = [
         });
       },
       saveScan() {
-        let url = scanByGroupUrl + this.groupId + "/" + this.scanForm.id;
+        let url = "/rule/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
@@ -777,6 +776,13 @@ const columnOptions2 = [
   .time {
     font-size: 13px;
     color: #999;
+  }
+  .time2 {
+    width: 70%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    float: left;
   }
   .round {
     font-size: 13px;
@@ -811,23 +817,17 @@ const columnOptions2 = [
     overflow:hidden;
   }
   .pa-time {
-    display:inline-block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     color: #1e6427;
-    float: left;
   }
   .pa-time2 {
-    display:inline-block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     color: red;
-    float: left;
   }
   .button-drop {
     float: right;
+    width: 28%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .el-dropdown-link {
     cursor: pointer;
@@ -881,9 +881,17 @@ const columnOptions2 = [
   }
   .plugin-name {
     float: left;
+    width: 75%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .plugin-type {
     float: right;
+    width: 25%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .desc {
     color: #888888;

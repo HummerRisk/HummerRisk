@@ -16,6 +16,10 @@
             {{ $t("server.servers_setting") }}
           </el-menu-item>
 
+          <el-menu-item :index="'/server/ruleGroup'">
+            {{ $t("server.server_rule_group") }}
+          </el-menu-item>
+
           <el-menu-item :index="'/server/rule'">
             {{ $t("server.server_rule") }}
           </el-menu-item>

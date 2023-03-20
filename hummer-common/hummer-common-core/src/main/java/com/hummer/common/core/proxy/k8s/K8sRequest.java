@@ -2,7 +2,6 @@ package com.hummer.common.core.proxy.k8s;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.hummer.common.core.constant.CloudNativeConstants;
@@ -35,6 +34,14 @@ import java.util.Objects;
 public class K8sRequest extends Request {
 
     private K8sCredential k8sCredential;
+
+    private  final String repoName = "hummer";
+    private  final String name = "trivy-operator";
+    private  final String namespace = "trivy-system";
+    private  final String chart = "hummer/trivy-operator";
+    private  final String version = "0.12.1";
+
+    private  final String url = "http://registry.hummercloud.com/repository/charts";
 
     public K8sRequest() {
         super("", "");
@@ -89,56 +96,15 @@ public class K8sRequest extends Request {
         return null;
     }
 
-    public void createOperatorChart() throws Exception {
+    public void deleteChartRepo() {
         try {
-            String name = "trivy-operator";
-            String namespace = "trivy-system";
-            String chart = "hummer/trivy-operator";
-            String version = "0.9.1";
-
-            ClassPathResource classPathResource = new ClassPathResource("file/values.yaml");
-            File file = classPathResource.getFile();
-
-            String values = (String) Yaml.load(file);
-
-            JsonObject jsonObjectBuilder = new JsonObjectBuilder()
-                    .set("apiVersion", "app.alauda.io/v1alpha1")
-                    .set("kind", "HelmRequest")
-                    .set("trivy.mode", "ClientServer")
-                    .set("trivy.serverURL", k8sCredential.getIp() + ":" + k8sCredential.getPort())
-                    .set("image.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator")
-                    .set("trivy.ignoreUnfixed", true)
-                    .set("trivy.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy")
-                    .set("metadata", new JsonObjectBuilder().set("name", name).build())
-                    .set("spec", new JsonObjectBuilder()
-                            .set("chart", chart)
-                            .set("namespace", namespace)
-                            .set("releaseName", name)
-                            .set("values", values)
-                            .set("version", version)
-                    ).build();
-
-            ApiClient apiClient = getK8sClient(null);
-            CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
-            Object result = customObjectsApi.createNamespacedCustomObject("aquasecurity.github.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
-
-        } catch (Exception e) {
-            LogUtil.error(e.getMessage());
-            throw e;
-        }
-    }
-
-    public void deleteOperatorChart() throws Exception {
-        try {
-            String namespace = "trivy-system";
-
             CustomObjectsApi customObjectsApi = new CustomObjectsApi(getK8sClient(null));
             customObjectsApi.deleteNamespacedCustomObject(
-                    "aquasecurity.github.io",
+                    "app.alauda.io",
                     "v1alpha1",
-                    namespace,
-                    "helmrequests",
-                    "true",
+                    "captain-system",
+                    "chartrepos",
+                    repoName,
                     0,
                     null,
                     null,
@@ -147,21 +113,31 @@ public class K8sRequest extends Request {
 
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
+        }
+    }
+
+    public void createChartRepo() throws Exception {
+        try {
+            JsonObject jsonObjectBuilder = new JsonObjectBuilder()
+                    .set("apiVersion", "app.alauda.io/v1alpha1")
+                    .set("kind", "ChartRepo")
+                    .set("metadata", new JsonObjectBuilder().set("name", repoName).set("namespace", "captain-system").build())
+                    .set("spec", new JsonObjectBuilder()
+                            .set("url", url)
+                    ).build();
+            ApiClient apiClient = getK8sClient(null);
+            CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
+            customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", "captain-system", "chartrepos", jsonObjectBuilder, "true", null, null);
+        } catch (ApiException e) {
+            LogUtil.error(e.getMessage());
             throw e;
         }
     }
 
-    public boolean listNamespacedCustomObject() throws ApiException, JsonProcessingException {
+
+
+    public void createOperatorChart() throws Exception {
         try {
-            String name = "trivy-operator";
-            String namespace = "trivy-system";
-            String chart = "hummer/trivy-operator";
-            String version = "0.9.1";
-
-            JsonObjectBuilder build = new JsonObjectBuilder().set("rootUser", "admin");
-            JsonObjectBuilder type = new JsonObjectBuilder().set("type", "NodePort");
-
-            JsonObjectBuilder values = new JsonObjectBuilder().set("service", type).set("auth", build);
 
             JsonObject jsonObjectBuilder = new JsonObjectBuilder()
                     .set("apiVersion", "app.alauda.io/v1alpha1")
@@ -171,24 +147,44 @@ public class K8sRequest extends Request {
                     .set("image.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator")
                     .set("trivy.ignoreUnfixed", true)
                     .set("trivy.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy")
+                    .set("nodeCollector.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/node-collector")
                     .set("metadata", new JsonObjectBuilder().set("name", name).build())
                     .set("spec", new JsonObjectBuilder()
                             .set("chart", chart)
                             .set("namespace", namespace)
                             .set("releaseName", name)
-                            .set("values", values)
                             .set("version", version)
                     ).build();
 
             ApiClient apiClient = getK8sClient(null);
             CustomObjectsApi customObjectsApi = new CustomObjectsApi(apiClient);
-            Object result = customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
+            customObjectsApi.createNamespacedCustomObject("app.alauda.io", "v1alpha1", namespace, "helmrequests", jsonObjectBuilder, "true", null, null);
 
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
+    }
+
+    public void deleteOperatorChart() {
+        try {
+            CustomObjectsApi customObjectsApi = new CustomObjectsApi(getK8sClient(null));
+            customObjectsApi.deleteNamespacedCustomObject(
+                    "app.alauda.io",
+                    "v1alpha1",
+                    namespace,
+                    "helmrequests",
+                    name
+                    ,
+                    0,
+                    null,
+                    null,
+                    null,
+                    new V1DeleteOptions().gracePeriodSeconds(0L).propagationPolicy("Foreground"));
+
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
     }
 
     public void deleteKubenchJob() throws ApiException, IOException {
