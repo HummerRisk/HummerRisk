@@ -6,12 +6,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hummer.cloud.oss.constants.ObjectTypeConstants;
-import com.hummer.cloud.oss.dto.*;
+import com.hummer.cloud.oss.dto.BucketMetric;
+import com.hummer.cloud.oss.dto.BucketObjectDTO;
+import com.hummer.cloud.oss.dto.Monitor;
+import com.hummer.cloud.oss.dto.QcloudApiModuleCenter;
 import com.hummer.common.core.domain.OssBucket;
 import com.hummer.common.core.domain.OssRegion;
 import com.hummer.common.core.domain.OssWithBLOBs;
-import com.hummer.common.core.utils.ReadFileUtils;
 import com.hummer.common.core.proxy.tencent.QCloudCredential;
+import com.hummer.common.core.utils.ReadFileUtils;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
@@ -265,7 +268,7 @@ public class QcloudProvider implements OssProvider {
         return bucketMetric;
     }
 
-    private QcloudApiModuleCenter getModule(String credential, Base module) {
+    private QcloudApiModuleCenter getModule(String credential, Monitor module) {
         Credential object = JSON.parseObject(credential, Credential.class);
         TreeMap<String, Object> config = new TreeMap<String, Object>();
         config.put("SecretId", object.getSecretId());
@@ -302,6 +305,16 @@ public class QcloudProvider implements OssProvider {
                 bucketObjectDTOS.add(object);
             }
         }
+
+        if (bucketObjectDTOS.size() > 0) {
+            bucket.setStorageClass(bucketObjectDTOS.get(0).getStorageClass());
+        bucket.setObjectNumber((long) bucketObjectDTOS.size());
+        }else{
+        bucket.setSize("0");
+        bucket.setObjectNumber(0L);
+    }
+
+
         return bucketObjectDTOS;
     }
 
@@ -358,9 +371,8 @@ public class QcloudProvider implements OssProvider {
                 objects.add(bucketObject);
             }
         }
-
+        Double size = 0D;
         for (COSObjectSummary cosObjectSummary : cosObjectSummaries) {
-
             if (!cosObjectSummary.getKey().endsWith("/")) {
                 BucketObjectDTO bucketObject = new BucketObjectDTO();
                 bucketObject.setBucketId(bucket.getId());
@@ -375,9 +387,11 @@ public class QcloudProvider implements OssProvider {
                 bucketObject.setLastModified(cosObjectSummary.getLastModified().getTime());
                 bucketObject.setObjectType(ObjectTypeConstants.FILE.name());
                 objects.add(bucketObject);
+                size+= cosObjectSummary.getSize();
             }
 
         }
+        bucket.setSize(SysListener.changeFlowFormat(size.longValue()));
         return objects;
     }
 

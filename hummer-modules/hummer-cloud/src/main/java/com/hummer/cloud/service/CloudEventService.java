@@ -288,7 +288,7 @@ public class CloudEventService {
             LogUtil.error("saveCloudEvent{}:" + e.getMessage());
             cloudEventSyncLog.setStatus(2);
             String exceptionStr = e.getMessage();
-            if (exceptionStr.length() > 512) {
+            if (exceptionStr != null && exceptionStr.length() > 512) {
                 exceptionStr = exceptionStr.substring(0, 511);
             }
             cloudEventSyncLog.setException(exceptionStr);
@@ -442,19 +442,57 @@ public class CloudEventService {
     }
 
     private List<CloudEventWithBLOBs> getBaiduEvents(Map<String, String> accountMap, String startTime, String endTime, int pageNum, int maxResult) throws Exception {
+        startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
+        endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
         BaiduCredential baiduCredential = new BaiduCredential();
-        baiduCredential.setAccessKeyId(accountMap.get("ak"));
-        baiduCredential.setSecretAccessKey(accountMap.get("sk"));
+        baiduCredential.setAccessKeyId(accountMap.get("AccessKeyId"));
+        baiduCredential.setSecretAccessKey(accountMap.get("SecretAccessKey"));
         BaiduRequest req = new BaiduRequest();
         req.setBaiduCredential(baiduCredential);
         Map<String,String> params = new HashMap<>();
         Map<String,String> headers = new HashMap<>();
         BaiduRequest.QueryEventRequest queryEventRequest = req.createQueryEventRequest();
+        queryEventRequest.setStartTime(startTime);
+        queryEventRequest.setEndTime(endTime);
+        queryEventRequest.setPageNo(pageNum);
+        queryEventRequest.setPageSize(maxResult);
         InternalRequest internalRequest = req.createRequest(HttpMethodName.POST,"/v1/events/query"
                 ,params,headers,queryEventRequest,"http://iam.bj.baidubce.com","Iam");
-        req.execute(internalRequest, QueryEventResponse.class,"Iam");
-
-        return null;
+        QueryEventResponse response = req.execute(internalRequest, QueryEventResponse.class, "Iam");
+        return response.getData().stream().map(item -> {
+            CloudEventWithBLOBs cloudEvent = new CloudEventWithBLOBs();
+            cloudEvent.setEventId(UUIDUtil.newUUID());
+            cloudEvent.setEventType(item.getString("eventType"));
+            cloudEvent.setEventSource(item.getString("eventSource"));
+            cloudEvent.setEventName(item.getString("eventName"));
+            cloudEvent.setEventTime(item.getLong("eventTimeInMilliseconds"));
+            cloudEvent.setSourceIpAddress(item.getString("userIpAddress"));
+            cloudEvent.setUserAgent(item.getString("userAgent"));
+            String region = item.getString("regionId");
+            if(StringUtils.isBlank(region)){
+                region = "bj";
+            }
+            cloudEvent.setSyncRegion(region);
+            cloudEvent.setAcsRegion(region);
+            cloudEvent.setRegionName(accountMap.get("regionName"));
+            cloudEvent.setRequestId(item.getString("requestId"));
+            cloudEvent.setEventMessage(item.getString("errorMessage"));
+            cloudEvent.setApiVersion(item.getString("apiVersion"));
+            cloudEvent.setUserIdentity(item.getString("userIdentity"));
+            JSONObject userIdentity = item.getJSONObject("userIdentity");
+            if(userIdentity != null){
+                cloudEvent.setUserName(userIdentity.getString("userDisplayName"));
+            }
+            cloudEvent.setReferencedResources(item.getString("resources"));
+            JSONArray resources = item.getJSONArray("resources");
+            if(resources != null && resources.size() > 0){
+                cloudEvent.setResourceType(resources.getJSONObject(0).getString("resourceType"));
+                cloudEvent.setResourceName(resources.getJSONObject(0).getString("resourceName"));
+            }
+            cloudEvent.setEventRating(0);
+            cloudEvent.setCloudAuditEvent(item.toJSONString());
+            return cloudEvent;
+        }).collect(Collectors.toList());
     }
 
     private List<CloudEventWithBLOBs> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime

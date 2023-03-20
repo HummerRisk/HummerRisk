@@ -7,15 +7,15 @@ import com.baidubce.services.bos.model.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hummer.cloud.oss.constants.ObjectTypeConstants;
+import com.hummer.cloud.oss.dto.BucketObjectDTO;
 import com.hummer.common.core.domain.OssBucket;
+import com.hummer.common.core.domain.OssRegion;
 import com.hummer.common.core.domain.OssWithBLOBs;
 import com.hummer.common.core.exception.PluginException;
-import com.hummer.common.core.utils.LogUtil;
-import com.hummer.common.core.utils.ReadFileUtils;
-import com.hummer.cloud.oss.dto.BucketObjectDTO;
-import com.hummer.common.core.domain.OssRegion;
 import com.hummer.common.core.proxy.baidu.BaiduCredential;
 import com.hummer.common.core.proxy.baidu.BaiduRequest;
+import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.core.utils.ReadFileUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +48,7 @@ public class BaiduProvider implements OssProvider {
             ListBucketsResponse list = bosClient.listBuckets();
             if (!CollectionUtils.isEmpty(list.getBuckets())) {
                 for (BucketSummary bucketSummary : list.getBuckets()) {
-                    resultList.add(setBucket(bosClient, ossAccount, bucketSummary, null));
+                    resultList.add(setBucket(ossAccount, bucketSummary, null));
                 }
             }
             bosClient.shutdown();
@@ -61,9 +61,11 @@ public class BaiduProvider implements OssProvider {
         return resultList;
     }
 
-    private static OssBucket setBucket(BosClient bosClient, OssWithBLOBs account, BucketSummary bucketSummary, OssBucket bucket) throws Exception {
+    private static OssBucket setBucket(OssWithBLOBs account, BucketSummary bucketSummary, OssBucket bucket) throws Exception {
         OssBucket bucketDTO = new OssBucket();
         String bucketName = bucketSummary.getName();
+        String region = bucketSummary.getLocation();
+        BosClient bosClient = getBosClient(account,region);
         ListObjectsResponse listObjectsResponse = bosClient.listObjects(bucketName);
         List<BosObjectSummary> contents = listObjectsResponse.getContents();
         try {
@@ -97,6 +99,8 @@ public class BaiduProvider implements OssProvider {
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
         return bucketDTO;
     }
@@ -133,10 +137,17 @@ public class BaiduProvider implements OssProvider {
         return req.getClient();
     }
 
+    private static BosClient getBosClient(OssWithBLOBs account,String region) throws Exception {
+        BaiduCredential baiduCredential = JSON.parseObject(account.getCredential(), BaiduCredential.class);
+        BaiduRequest req = new BaiduRequest();
+        req.setBaiduCredential(baiduCredential);
+        return req.getClient(region);
+    }
+
     @Override
     public List<BucketObjectDTO> getBucketObjects(OssBucket bucket, OssWithBLOBs account, String prefix) throws Exception {
+        BosClient bosClient = getBosClient(account,bucket.getLocation());
         try {
-            BosClient bosClient = getBosClient(account);
             if (bosClient.doesBucketExist(bucket.getBucketName())) {
                 ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucket.getBucketName());
                 listObjectsRequest.setBucketName(bucket.getBucketName());
@@ -156,7 +167,6 @@ public class BaiduProvider implements OssProvider {
                     objects.addAll(convertToBucketObject(bosClient, bucket, objectListing.getContents(), prefix));
                     objects.addAll(convertToBucketFolder(bucket, objectListing.getCommonPrefixes(), prefix));
                 }
-                bosClient.shutdown();
                 List<BucketObjectDTO> bucketObjectDTOS = new ArrayList<>();
                 for (BucketObjectDTO object : objects) {
                     if (object.getObjectType().equals(ObjectTypeConstants.BACK.name())) {
@@ -172,6 +182,8 @@ public class BaiduProvider implements OssProvider {
         } catch (Exception e) {
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
     }
 
@@ -242,8 +254,8 @@ public class BaiduProvider implements OssProvider {
     @Override
     public FilterInputStream downloadObject(OssBucket bucket, OssWithBLOBs account, final String objectId) throws Exception {
         FilterInputStream input = null;
+        BosClient bosClient = getBosClient(account,bucket.getLocation());
         try {
-            BosClient bosClient = getBosClient(account);
             BosObject obj = bosClient.getObject(bucket.getBucketName(), objectId);
             input = new BufferedInputStream(obj.getObjectContent());
             return input;
@@ -256,24 +268,25 @@ public class BaiduProvider implements OssProvider {
     @Override
     public boolean doesBucketExist(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
         boolean exists = true;
+        BosClient bosClient = getBosClient(ossAccount,bucket.getLocation());
         try {
-            BosClient bosClient = getBosClient(ossAccount);
             exists = bosClient.doesBucketExist(bucket.getBucketName());
-            bosClient.shutdown();
         } catch (BceServiceException be) {
             LogUtil.warn(be.getMessage(), be);
             throw new BceServiceException(be.getMessage());
         } catch (Exception e) {
             LogUtil.warn(e.getMessage(), e);
             throw new PluginException(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
         return exists;
     }
 
     @Override
     public OssBucket createBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        BosClient bosClient = getBosClient(ossAccount,bucket.getLocation());
         try {
-            BosClient bosClient = getBosClient(ossAccount);
             if (bosClient.doesBucketExist(bucket.getBucketName())) {
                 throw new Exception("Bucket already exists");
             } else {
@@ -283,8 +296,7 @@ public class BaiduProvider implements OssProvider {
                 bucketSummary.setCreationDate(new Date());
                 bucketSummary.setLocation(bucket.getLocation());
                 bucketSummary.setName(bucket.getBucketName());
-                OssBucket bucket1 = setBucket(bosClient, ossAccount, bucketSummary, bucket);
-                bosClient.shutdown();
+                OssBucket bucket1 = setBucket(ossAccount, bucketSummary, bucket);
                 if (response != null) {
                     return bucket1;
                 } else {
@@ -294,6 +306,8 @@ public class BaiduProvider implements OssProvider {
         } catch (Exception e) {
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
     }
 
@@ -324,8 +338,8 @@ public class BaiduProvider implements OssProvider {
 
     @Override
     public void deleteBucket(OssWithBLOBs ossAccount, OssBucket bucket) throws Exception {
+        BosClient bosClient = getBosClient(ossAccount,bucket.getLocation());
         try {
-            BosClient bosClient = getBosClient(ossAccount);
             if (bosClient.doesBucketExist(bucket.getBucketName())) {
                 ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucket.getBucketName());
                 ListObjectsResponse objectListing = bosClient.listObjects(listObjectsRequest);
@@ -339,6 +353,8 @@ public class BaiduProvider implements OssProvider {
         } catch (Exception e) {
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
     }
 
@@ -351,8 +367,8 @@ public class BaiduProvider implements OssProvider {
 
     @Override
     public void deletetObjects(OssBucket bucket, OssWithBLOBs account, List<String> objectIds) throws Exception {
+        BosClient bosClient = getBosClient(account,bucket.getLocation());
         try {
-            BosClient bosClient = getBosClient(account);
             //删除Object
             if (CollectionUtils.isNotEmpty(objectIds)) {
                 for (String str : objectIds) {
@@ -363,10 +379,11 @@ public class BaiduProvider implements OssProvider {
                     }
                 }
             }
-            bosClient.shutdown();
         } catch (Exception e) {
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
     }
 
@@ -402,29 +419,36 @@ public class BaiduProvider implements OssProvider {
 
     @Override
     public void createDir(OssBucket bucket, OssWithBLOBs account, String dir) throws Exception {
+        BosClient bosClient = getBosClient(account,bucket.getLocation());
         try {
             dir = dir.endsWith("/") ? dir : dir + "/";
-            BosClient bosClient = getBosClient(account);
             String[] split = dir.split("/");
             String data = "";
             for (String d : split) {
                 data += d + "/";
+                if("/".equals(data)){
+                    continue;
+                }
                 bosClient.putObject(bucket.getBucketName(), data, new ByteArrayInputStream("".getBytes()));
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
     }
 
     @Override
     public void uploadFile(OssBucket bucket, OssWithBLOBs account, String objectid, InputStream file, long size) throws Exception {
+        BosClient bosClient = getBosClient(account,bucket.getLocation());
         try {
-            BosClient bosClient = getBosClient(account);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(size);
             bosClient.putObject(bucket.getBucketName(), objectid, file, metadata);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
+        }finally {
+            bosClient.shutdown();
         }
     }
 

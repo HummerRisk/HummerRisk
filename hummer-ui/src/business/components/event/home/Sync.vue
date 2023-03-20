@@ -217,7 +217,7 @@ export default {
         accountId: "",
         region: ""
       },
-      supportCloud: ["hummer-aliyun-plugin", "hummer-huawei-plugin", "hummer-qcloud-plugin", "hummer-aws-plugin", "hummer-huoshan-plugin", "hummer-ksyun-plugin"],
+      supportCloud:["hummer-aliyun-plugin","hummer-huawei-plugin","hummer-qcloud-plugin","hummer-aws-plugin","hummer-baidu-plugin","hummer-huoshan-plugin","hummer-ksyun-plugin"],
       checkAll: false,
       showSync: false,
       syncLog: '',

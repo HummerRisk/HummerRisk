@@ -19,8 +19,8 @@ import com.baidubce.util.DateUtils;
 import com.baidubce.util.HttpUtils;
 import com.baidubce.util.JsonUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hummer.common.core.domain.OssRegion;
 import com.hummer.common.core.exception.PluginException;
 import com.hummer.common.core.proxy.Request;
@@ -73,6 +73,10 @@ public class BaiduRequest extends Request {
     }
 
     public <T> BosClient getClient() throws Exception {
+        return getClient(getRegionId());
+    }
+
+    public <T> BosClient getClient(String region) throws Exception {
         BosClient client = null;
         if (getAccessKey() != null && getSecretKey() != null) {
 
@@ -85,7 +89,7 @@ public class BaiduRequest extends Request {
             // 设置Socket传输数据超时的时间为2000毫秒
             config.setSocketTimeoutInMillis(20000);
 
-            config.setEndpoint(getEndpoint(getRegionId()));
+            config.setEndpoint(getEndpoint(region));
             config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(), baiduCredential.getSecretAccessKey()));
             try {
                 client = new BosClient(config);
@@ -96,7 +100,6 @@ public class BaiduRequest extends Request {
         }
         return client;
     }
-
     public <T> T getClient(Class<T> client) throws Exception {
         if (getAccessKey() != null && getSecretKey() != null) {
 
@@ -125,6 +128,7 @@ public class BaiduRequest extends Request {
         }
         return null;
     }
+
 
     public BceHttpClient getHttpClient() throws Exception {
         if (getAccessKey() != null && getSecretKey() != null) {
@@ -156,7 +160,7 @@ public class BaiduRequest extends Request {
         // 目前支持“华北-北京”、“华南-广州”和“华东-苏州”三个区域。北京区域：http://bj.bcebos.com，广州区域：http://gz.bcebos.com，苏州区域：http://su.bcebos.com
         List<OssRegion> regionList = this.getOssRegions();
         for(OssRegion ossRegion : regionList){
-            if(StringUtils.equalsIgnoreCase(ossRegion.getRegionId(), getRegionId())){
+            if(StringUtils.equalsIgnoreCase(ossRegion.getRegionId(), region)){
                 endpoint = ossRegion.getExtranetEndpoint();
                 break;
             }
@@ -173,7 +177,7 @@ public class BaiduRequest extends Request {
         return new Gson().fromJson(result, new TypeToken<ArrayList<OssRegion>>() {}.getType());
     }
 
-    public InternalRequest createRequest(HttpMethodName httpMethod, String path, Map<String, String> queries, Map<String, String> headers, BaseBceRequest bceRequest, String endpoint, String serviceId) throws Exception {
+    public InternalRequest createRequest(HttpMethodName httpMethod, String path, Map<String, String> queries, Map<String, String> headers, BaseBceRequest bceRequest,String endpoint,String serviceId) throws Exception {
         URI uri = HttpUtils.appendUri(new URI(endpoint), new String[]{path});
         InternalRequest internalRequest = new InternalRequest(httpMethod, uri);
         SignOptions signOptions = new SignOptions();
@@ -219,7 +223,7 @@ public class BaiduRequest extends Request {
         return new QueryEventRequest();
     }
 
-    public  <T extends AbstractBceResponse> T execute(InternalRequest request, Class<T> responseClass, String serviceId) throws Exception {
+    public  <T extends AbstractBceResponse> T execute(InternalRequest request, Class<T> responseClass,String serviceId) throws Exception {
         if (!request.getHeaders().containsKey("Content-Type")) {
             request.addHeader("Content-Type", "application/json; charset=utf-8");
         }
@@ -237,8 +241,8 @@ public class BaiduRequest extends Request {
         private String filters;
         private String startTime;
         private String endTime;
-        private String pageNo;
-        private String pageSize;
+        private int pageNo;
+        private int pageSize;
 
         public QueryEventRequest() {
         }
@@ -267,19 +271,19 @@ public class BaiduRequest extends Request {
             this.endTime = endTime;
         }
 
-        public String getPageNo() {
+        public int getPageNo() {
             return pageNo;
         }
 
-        public void setPageNo(String pageNo) {
+        public void setPageNo(int pageNo) {
             this.pageNo = pageNo;
         }
 
-        public String getPageSize() {
+        public int getPageSize() {
             return pageSize;
         }
 
-        public void setPageSize(String pageSize) {
+        public void setPageSize(int pageSize) {
             this.pageSize = pageSize;
         }
 
@@ -295,4 +299,6 @@ public class BaiduRequest extends Request {
         }
     }
 
+
 }
+

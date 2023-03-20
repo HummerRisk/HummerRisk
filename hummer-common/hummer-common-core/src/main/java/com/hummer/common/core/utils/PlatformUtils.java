@@ -1182,13 +1182,13 @@ public class PlatformUtils {
                 strCn = strEn;
                 break;
             case baidu:
-                strCn = strEn;
+                strCn = RegionsConstants.BaiduMap.get(strEn);
                 break;
             case qiniu:
                 strCn = strEn;
                 break;
             case qingcloud:
-                strCn = strEn;
+                strCn = RegionsConstants.QingcloudMap.get(strEn);
                 break;
             case ucloud:
                 strCn = strEn;

@@ -365,12 +365,6 @@ public class SystemParameterService {
         CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
     }
 
-    public void updateVulnDbOffline(MultipartFile objectFile) throws Exception {
-        // 容器里的目录地址： /root/.cache/trivy/db/
-        String fileName = uploadVulnDb(objectFile, "/root/.cache/trivy/db/");
-        CommandUtils.extractTarGZ(new File("/tmp/cache/trivy/db/" + fileName), "/root/.cache/trivy/db/");
-    }
-
     /**
      * 以默认配置进行文件上传
      *

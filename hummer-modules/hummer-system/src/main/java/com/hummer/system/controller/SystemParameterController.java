@@ -128,13 +128,6 @@ public class SystemParameterController {
     }
 
     @I18n
-    @ApiOperation(value = "离线更新漏洞库")
-    @PostMapping(value = "updateVulnDbOffline", consumes = {"multipart/form-data"})
-    public void updateVulnDbOffline(@RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
-        systemParameterService.updateVulnDbOffline(objectFile);
-    }
-
-    @I18n
     @ApiOperation(value = "webhook列表")
     @PostMapping("webhookList/{goPage}/{pageSize}")
     public Pager<List<Webhook>> getWebhookList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Webhook webhook) {

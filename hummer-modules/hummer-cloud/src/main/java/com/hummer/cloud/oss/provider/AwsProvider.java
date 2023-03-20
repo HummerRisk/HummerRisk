@@ -5,13 +5,13 @@ import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hummer.cloud.oss.constants.ObjectTypeConstants;
-import com.hummer.common.core.domain.OssBucket;
-import com.hummer.common.core.domain.OssWithBLOBs;
-import com.hummer.common.core.utils.ReadFileUtils;
 import com.hummer.cloud.oss.dto.BucketMetric;
 import com.hummer.cloud.oss.dto.BucketObjectDTO;
+import com.hummer.common.core.domain.OssBucket;
 import com.hummer.common.core.domain.OssRegion;
+import com.hummer.common.core.domain.OssWithBLOBs;
 import com.hummer.common.core.proxy.aws.AWSCredential;
+import com.hummer.common.core.utils.ReadFileUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -275,7 +275,7 @@ public class AwsProvider implements OssProvider {
         return objects;
     }
 
-    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket, List<CommonPrefix> commonPrefixes, String prefix){
+    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket,  List<CommonPrefix> commonPrefixes, String prefix){
         List<BucketObjectDTO> objects = new ArrayList<>();
         for (CommonPrefix commonPrefix : commonPrefixes) {
             BucketObjectDTO bucketObject = new BucketObjectDTO();
