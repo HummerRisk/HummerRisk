@@ -34,6 +34,12 @@ public interface ICloudProviderService {
 
     void deleteRuleTagMappingByExample(RuleTagMappingExample example);
 
+    void deleteRuleGroupMapping(RuleGroupMappingExample record);
+
+    void insertRuleGroupMapping(RuleGroupMapping record);
+
+    List<RuleGroup> ruleGroupList(RuleGroupExample example);
+
 
 
 }

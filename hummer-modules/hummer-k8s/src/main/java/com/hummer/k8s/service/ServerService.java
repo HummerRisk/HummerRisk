@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.rule.BindRuleRequest;
+import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.domain.request.server.ServerCertificateRequest;
 import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
@@ -117,15 +119,12 @@ public class ServerService {
         return valid;
     }
 
-    public Boolean scan(List<String> ids) {
-        ids.forEach(id -> {
-            try {
-                scan(id);
-            } catch (Exception e) {
-                throw new HRException(e.getMessage());
-            }
-        });
-        return true;
+    public void scan(ScanGroupRequest request) throws Exception {
+        Server server = serverMapper.selectByPrimaryKey(request.getAccountId());
+        Integer scanId = systemProviderService.insertScanHistory(server);
+        for (Integer groupId : request.getGroups()) {
+            this.scanGroups(server, scanId, groupId.toString());
+        }
     }
 
     public Boolean scan(String id) throws Exception {
@@ -551,6 +550,7 @@ public class ServerService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
+        saveRuleGroupMapping(request.getId(), request.getGroups());
         return serverRuleMapper.insertSelective(record);
     }
 
@@ -572,6 +572,27 @@ public class ServerService {
             RuleTagMappingExample ruleTagMappingExample = new RuleTagMappingExample();
             ruleTagMappingExample.createCriteria().andRuleIdEqualTo(ruleId);
             cloudProviderService.deleteRuleTagMappingByExample(ruleTagMappingExample);
+        }
+    }
+
+    public void saveRuleGroupMapping(String ruleId, List<String> ruleGroups) {
+        deleteRuleGroupMapping(ruleId);
+        if (ruleGroups.isEmpty()) {
+            return;
+        }
+        for (String ruleGroup : ruleGroups) {
+            RuleGroupMapping ruleGroupMapping = new RuleGroupMapping();
+            ruleGroupMapping.setRuleId(ruleId);
+            ruleGroupMapping.setGroupId(ruleGroup);
+            cloudProviderService.insertRuleGroupMapping(ruleGroupMapping);
+        }
+    }
+
+    public void deleteRuleGroupMapping(String ruleId) {
+        if (StringUtils.isNotBlank(ruleId)) {
+            RuleGroupMappingExample example = new RuleGroupMappingExample();
+            example.createCriteria().andRuleIdEqualTo(ruleId);
+            cloudProviderService.deleteRuleGroupMapping(example);
         }
     }
 
@@ -851,6 +872,104 @@ public class ServerService {
 
     public void deleteHistoryServerResult(String id) throws Exception {
         systemProviderService.deleteHistoryServerResult(id);
+    }
+
+    public List<ServerRule> allBindList(String id) {
+        List<String> ids = new ArrayList<>();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(id);
+        List<RuleGroupMapping> list = cloudProviderService.ruleGroupMappings(example);
+        for (RuleGroupMapping groupMapping : list) {
+            ids.add(groupMapping.getRuleId());
+        }
+        ServerRuleExample ruleExample = new ServerRuleExample();
+        if (ids.size() > 0) {
+            ruleExample.createCriteria().andIdIn(ids);
+            ruleExample.setOrderByClause("name");
+            return serverRuleMapper.selectByExample(ruleExample);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<ServerRule> unBindList(String id) {
+        ServerRuleExample ruleExample = new ServerRuleExample();
+        ruleExample.setOrderByClause("name");
+        return serverRuleMapper.selectByExample(ruleExample);
+    }
+
+    public void bindRule(BindRuleRequest request) throws Exception {
+        String groupId = request.getGroupId();
+        RuleGroupMappingExample example = new RuleGroupMappingExample();
+        example.createCriteria().andGroupIdEqualTo(groupId);
+        cloudProviderService.deleteRuleGroupMapping(example);
+        for (String id : request.getCloudValue()) {
+            RuleGroupMapping record = new RuleGroupMapping();
+            record.setRuleId(id);
+            record.setGroupId(groupId);
+            cloudProviderService.insertRuleGroupMapping(record);
+        }
+    }
+
+    private void scanGroups(Server server, Integer scanId, String groupId) {
+        try {
+            this.messageOrderId = systemProviderService.createServerMessageOrder(server);
+
+            if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.UNLINK.name())) {
+                //检验主机的有效性
+                BeanUtils.copyBean(server, validateAccount(server).getServer());
+                serverMapper.updateByPrimaryKeySelective(server);
+            }
+            if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+                deleteServerResultById(server.getId());
+                ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
+                serverRuleRequest.setStatus(true);
+                serverRuleRequest.setType(server.getType());
+                serverRuleRequest.setRuleGroupId(groupId);
+                List<ServerRuleDTO> ruleList = ruleList(serverRuleRequest);
+                ServerResult result = new ServerResult();
+                String serverGroupName = serverGroupMapper.selectByPrimaryKey(server.getServerGroupId()).getName();
+                for (ServerRuleDTO dto : ruleList) {
+                    BeanUtils.copyBean(result, server);
+                    result.setId(UUIDUtil.newUUID());
+                    result.setServerId(server.getId());
+                    result.setServerGroupId(server.getServerGroupId());
+                    result.setServerGroupName(serverGroupName);
+                    result.setApplyUser(tokenService.getLoginUser().getUserId());
+                    result.setCreateTime(System.currentTimeMillis());
+                    result.setUpdateTime(System.currentTimeMillis());
+                    result.setServerName(server.getName());
+                    result.setRuleId(dto.getId());
+                    result.setRuleName(dto.getName());
+                    result.setRuleDesc(dto.getDescription());
+                    result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                    result.setSeverity(dto.getSeverity());
+                    result.setType(dto.getType());
+                    serverResultMapper.insertSelective(result);
+
+                    saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+
+                    operationLogService.createOperationLog(tokenService.getLoginUser().getUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result", tokenService.getLoginUser().getIpAddr());
+
+                    systemProviderService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
+
+                    systemProviderService.insertHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+    }
+
+    public List<RuleGroup> getRuleGroups() {
+        RuleGroupExample example = new RuleGroupExample();
+        example.createCriteria().andPluginIdEqualTo("hummer-server-plugin").andTypeEqualTo("server");
+        return cloudProviderService.ruleGroupList(example);
+    }
+
+    public void scanByGroup(String groupId, String serverId) throws Exception {
+        Server server = serverMapper.selectByPrimaryKey(serverId);
+        Integer scanId = systemProviderService.insertScanHistory(server);
+        this.scanGroups(server, scanId, groupId);
     }
 
 

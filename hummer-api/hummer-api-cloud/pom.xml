@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.hummerrisk</groupId>
-        <artifactId>hummer-dubbo-api</artifactId>
+        <artifactId>hummer-api</artifactId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hummer-api-k8s</artifactId>
+    <artifactId>hummer-api-cloud</artifactId>
 
     <description>
-        hummer-api-k8s 云原生接口模块
+        hummer-api-cloud 混合云接口模块
     </description>
 
     <dependencies>

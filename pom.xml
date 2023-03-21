@@ -108,7 +108,7 @@
         <module>hummer-gateway</module>
         <module>hummer-visual</module>
         <module>hummer-modules</module>
-        <module>hummer-dubbo-api</module>
+        <module>hummer-api</module>
         <module>hummer-common</module>
     </modules>
 

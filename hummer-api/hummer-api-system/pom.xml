@@ -1,33 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hummerrisk</artifactId>
         <groupId>com.hummerrisk</groupId>
+        <artifactId>hummer-api</artifactId>
         <version>1.0.0</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hummer-dubbo-api</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>hummer-api-system</artifactId>
 
     <description>
-        hummer-dubbo-api 系统接口
+        hummer-api-system 系统接口模块
     </description>
 
-    <modules>
-        <module>hummer-api-system</module>
-        <module>hummer-api-cloud</module>
-        <module>hummer-api-k8s</module>
-    </modules>
-
     <dependencies>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-openfeign-core</artifactId>
-        </dependency>
 
         <!-- Hummer Common Core-->
         <dependency>
@@ -37,5 +25,6 @@
         </dependency>
 
     </dependencies>
+
 
 </project>

@@ -1,7 +1,7 @@
 package com.hummer.k8s.mapper;
 
-import com.hummerrisk.base.domain.ServerRule;
-import com.hummerrisk.base.domain.ServerRuleExample;
+import com.hummer.common.core.domain.ServerRule;
+import com.hummer.common.core.domain.ServerRuleExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

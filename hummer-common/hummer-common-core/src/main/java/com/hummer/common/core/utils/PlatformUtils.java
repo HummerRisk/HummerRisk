@@ -1080,9 +1080,9 @@ public class PlatformUtils {
                     K8sRequest k8sRequest = new K8sRequest();
                     k8sRequest.setCredential(account.getCredential());
                     ApiClient apiClient = k8sRequest.getK8sClient(proxy);
-                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
                     String pretty = "true";
-                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
+                    V1NodeList result = apiInstance.listNode(pretty, true, null,
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {

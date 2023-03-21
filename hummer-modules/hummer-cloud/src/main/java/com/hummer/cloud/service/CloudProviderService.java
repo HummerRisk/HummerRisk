@@ -67,6 +67,8 @@ public class CloudProviderService implements ICloudProviderService {
     private OssService ossService;
     @Autowired
     private OssMapper ossMapper;
+    @Autowired
+    private RuleGroupMapper ruleGroupMapper;
 
     @Override
     public List<CloudTask> selectCloudTaskList(CloudTaskExample example) {
@@ -132,6 +134,22 @@ public class CloudProviderService implements ICloudProviderService {
     public void deleteRuleTagMappingByExample(RuleTagMappingExample example) {
         ruleTagMappingMapper.deleteByExample(example);
     }
+
+    @Override
+    public void deleteRuleGroupMapping(RuleGroupMappingExample example) {
+        ruleGroupMappingMapper.deleteByExample(example);
+    }
+
+    @Override
+    public void insertRuleGroupMapping(RuleGroupMapping record) {
+        ruleGroupMappingMapper.insertSelective(record);
+    }
+
+    @Override
+    public List<RuleGroup> ruleGroupList(RuleGroupExample example) {
+        return ruleGroupMapper.selectByExample(example);
+    }
+
 
 
 

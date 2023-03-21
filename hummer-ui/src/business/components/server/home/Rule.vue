@@ -107,6 +107,16 @@
         <el-form-item :label="$t('rule.rule_description')" prop="description">
           <el-input v-model="createRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
+        <el-form-item :label="$t('rule.rule_set')" :rules="{required: true, message: $t('rule.rule_set'), trigger: 'change'}">
+          <el-select style="width: 100%;" multiple filterable v-model="createRuleForm.groups">
+            <el-option
+              v-for="item in ruleGroups"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item :label="$t('rule.rule_tag')" :rules="{required: true, message: $t('rule.rule_tag'), trigger: 'change'}">
           <el-select style="width: 100%;" v-model="createRuleForm.tagKey" :placeholder="$t('rule.please_choose_tag')">
             <el-option
@@ -392,6 +402,7 @@ export default {
         {id: 'Linux', value: 'linux'},
         {id: 'Windows', value: 'windows'},
       ],
+      ruleGroups: [],
     }
   },
 
@@ -476,6 +487,7 @@ export default {
     init() {
       this.tagLists();
       this.severityOptionsFnc();
+      this.ruleGroupsFnc();
       this.search();
     },
     sort(column) {
@@ -558,6 +570,11 @@ export default {
           this.$success(this.$t('rule.change_status_off'));
         }
         this.search();
+      });
+    },
+    ruleGroupsFnc () {
+      this.$get("/server/ruleGroups", res => {
+        this.ruleGroups = res.data;
       });
     },
   },

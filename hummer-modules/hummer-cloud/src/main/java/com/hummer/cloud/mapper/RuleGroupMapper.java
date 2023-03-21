@@ -1,7 +1,7 @@
 package com.hummer.cloud.mapper;
 
-import com.hummerrisk.base.domain.RuleGroup;
-import com.hummerrisk.base.domain.RuleGroupExample;
+import com.hummer.common.core.domain.RuleGroup;
+import com.hummer.common.core.domain.RuleGroupExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
