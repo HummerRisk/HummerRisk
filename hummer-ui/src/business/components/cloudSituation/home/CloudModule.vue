@@ -113,7 +113,7 @@ import {allListUrl} from "@/api/cloud/account/account";
       list() {
         this.result = this.$get(allListUrl, response => {
           if (response.data != undefined && response.data != null) {
-            this.data = response.data;
+            this.data = response.data.filter(item => item.pluginId !== 'hummer-k8s-plugin');
             let moduleOptions = [];
             this.data.forEach(node => {
               buildNodePath(node, {path: ''}, moduleOptions);

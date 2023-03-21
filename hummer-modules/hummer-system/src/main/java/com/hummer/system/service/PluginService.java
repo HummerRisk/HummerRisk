@@ -40,7 +40,7 @@ public class PluginService {
             if (StringUtils.equalsIgnoreCase(scanType, ScanTypeConstants.prowler.name())) {
                 criteria.andIdEqualTo(PlatformUtils.aws).andTypeNotEqualTo(PlatformUtils.native_);
             } else {
-                criteria.andScanTypeLike(scanType).andTypeNotEqualTo(PlatformUtils.native_);
+                criteria.andScanTypeLike(scanType);
             }
         }
         return pluginMapper.selectByExample(example);

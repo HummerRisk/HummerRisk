@@ -64,6 +64,8 @@ public class K8sProviderService implements IK8sProviderService {
     private FileSystemService fileSystemService;
     @Autowired
     private ServerGroupMapper serverGroupMapper;
+    @Autowired
+    private CloudNativeConfigMapper cloudNativeConfigMapper;
 
 
     @Override

@@ -40,6 +40,10 @@ public interface ICloudProviderService {
 
     List<RuleGroup> ruleGroupList(RuleGroupExample example);
 
+    List<CloudTask> getTopTasksForEmail(MessageOrder messageOrder);
 
+    int getReturnSumForEmail(MessageOrder messageOrder);
+
+    int getResourcesSumForEmail(MessageOrder messageOrder);
 
 }

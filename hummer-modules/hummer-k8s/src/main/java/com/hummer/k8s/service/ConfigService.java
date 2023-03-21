@@ -375,7 +375,7 @@ public class ConfigService {
             }
             CommandUtils.saveAsFile(cloudNativeConfig.getConfigYaml(), TrivyConstants.DEFAULT_BASE_DIR, "trivy.yaml", false);
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
-            String command = _proxy + TrivyConstants.TRIVY_CONFIG + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_YAML + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON + TrivyConstants.TRIVY_SERVER;
+            String command = _proxy + TrivyConstants.TRIVY_CONFIG + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_YAML + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(cloudNativeConfig.getId() + " {k8sConfig}[command]: " + cloudNativeConfig.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
 
@@ -397,7 +397,7 @@ public class ConfigService {
         if(resultJsons != null) {
             for (Object obj : resultJsons) {
                 JSONObject jsonObject = (JSONObject) obj;
-                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
+                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations")!=null?jsonObject.getString("Misconfigurations"):"[]");
                 for (Object o : misconfigurations) {
                     JSONObject resultObject = (JSONObject) o;
                     CloudNativeConfigResultItemWithBLOBs cloudNativeConfigResultItem = new CloudNativeConfigResultItemWithBLOBs();

@@ -180,7 +180,7 @@
             <if test="description != null">
                 AND LOWER(t.description) like CONCAT('%',LOWER(#{description}),'%')
             </if>
-            AND p.type = 'cloud'
+            AND p.type in ('cloud', 'native')
         </where>
         ORDER BY t.plugin_id, t.last_modified desc
     </select>

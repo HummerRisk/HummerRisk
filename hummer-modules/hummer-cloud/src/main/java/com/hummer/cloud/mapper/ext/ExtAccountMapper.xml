@@ -134,7 +134,7 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            AND p1.type = 'cloud' or p1.type = 'native'
+            AND p1.type in ('cloud', 'native')
         </where>
         order by t.update_time desc
     </select>

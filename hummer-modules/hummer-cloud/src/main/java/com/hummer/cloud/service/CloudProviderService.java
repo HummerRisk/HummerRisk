@@ -70,6 +70,7 @@ public class CloudProviderService implements ICloudProviderService {
     @Autowired
     private RuleGroupMapper ruleGroupMapper;
 
+
     @Override
     public List<CloudTask> selectCloudTaskList(CloudTaskExample example) {
         return cloudTaskMapper.selectByExample(example);
@@ -150,7 +151,20 @@ public class CloudProviderService implements ICloudProviderService {
         return ruleGroupMapper.selectByExample(example);
     }
 
+    @Override
+    public List<CloudTask> getTopTasksForEmail(MessageOrder messageOrder) {
+        return extCloudTaskMapper.getTopTasksForEmail(messageOrder);
+    }
 
+    @Override
+    public int getReturnSumForEmail(MessageOrder messageOrder) {
+        return extCloudTaskMapper.getReturnSumForEmail(messageOrder);
+    }
+
+    @Override
+    public int getResourcesSumForEmail(MessageOrder messageOrder) {
+        return extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
+    }
 
 
 }
