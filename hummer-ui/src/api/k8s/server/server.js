@@ -78,3 +78,11 @@ export const allServerListUrl = "/k8s/server/allServerList";
 export const serverTopInfoUrl = "/k8s/server/topInfo";
 
 export const allCertificateListUrl = "/k8s/server/allCertificateList";
+
+export const serverBindRuleUrl = "/k8s/server/bindRule";
+
+export const serverRuleGroupsUrl = "/k8s/server/ruleGroups";
+
+export const serverUnBindListUrl = "/k8s/server/unBindList/";
+
+export const serverAllBindListUrl = "/k8s/server/allBindList/";

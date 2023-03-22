@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {dashboardScoreUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "ScorePieChart",
@@ -20,7 +21,7 @@ export default {
   },
   methods: {
     init () {
-      this.$get("/dashboard/score", response => {
+      this.$get(dashboardScoreUrl, response => {
         let data = response.data;
         let gaugeData = [
           {

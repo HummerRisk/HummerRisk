@@ -46,3 +46,5 @@ export const fsResultItemListUrl = "/k8s/fs/resultItemList/";
 export const fsUnBindListUrl = "/k8s/fs/unBindList";
 
 export const fsAllBindListUrl = "/k8s/fs/allBindList/";
+
+export const addFsUrl = "/k8s/fs/addFs";

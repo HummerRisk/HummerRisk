@@ -316,7 +316,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {scanByGroupUrl} from "@/api/cloud/rule/rule";
+import {ruleListUrl, scanByGroupUrl} from "@/api/cloud/rule/rule";
 import {cloudListByGroupUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏

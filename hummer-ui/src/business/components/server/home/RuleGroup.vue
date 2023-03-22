@@ -307,6 +307,8 @@ import {
 } from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
+import {allServerListUrl, serverAllBindListUrl, serverBindRuleUrl} from "@/api/k8s/server/server";
+import {ruleGroupDeleteUrl, ruleGroupListUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -603,7 +605,7 @@ const columnOptions2 = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/rule/group/delete/" + item.id, () => {
+              this.result = this.$get(ruleGroupDeleteUrl + item.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -621,14 +623,14 @@ const columnOptions2 = [
       search() {
         this.condition.type = "server";
         if (this.listStatus === 1) {
-          let url = "/rule/ruleGroup/list/" + this.currentPage + "/" + this.pageSize;
+          let url = ruleGroupListUrl + this.currentPage + "/" + this.pageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.total = data.itemCount;
             this.tableData = data.listObject;
           });
         } else {
-          let url = "/rule/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize;
+          let url = ruleGroupListUrl + this.fcurrentPage + "/" + this.fpageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
             this.ftotal = data.itemCount;
@@ -700,7 +702,7 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        this.$get("/server/unBindList/" + item.id,response => {
+        this.$get(serverUnBindListUrl + item.id,response => {
           this.cloudData = [];
           for(let data of response.data) {
             this.cloudData.push({
@@ -710,7 +712,7 @@ const columnOptions2 = [
           }
           this.bindVisible = true;
         });
-        this.$get("/server/allBindList/" + item.id,response => {
+        this.$get(serverAllBindListUrl + item.id,response => {
           this.cloudValue = [];
           for(let data of response.data) {
             this.cloudValue.push(data.id);
@@ -722,7 +724,7 @@ const columnOptions2 = [
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post("/server/bindRule", params,response => {
+        this.$post(serverBindRuleUrl, params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -732,8 +734,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        let url = "/server/allServerList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(allServerListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
             this.groupId = item.id;

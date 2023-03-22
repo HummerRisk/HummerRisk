@@ -270,7 +270,7 @@ import {
   serverchangeStatusUrl,
   deleteServerRuleUrl,
   serverRuleListUrl,
-  updateServerRuleUrl
+  updateServerRuleUrl, serverRuleGroupsUrl
 } from "@/api/k8s/server/server";
 
 //列表展示与隐藏
@@ -573,7 +573,7 @@ export default {
       });
     },
     ruleGroupsFnc () {
-      this.$get("/server/ruleGroups", res => {
+      this.$get(serverRuleGroupsUrl, res => {
         this.ruleGroups = res.data;
       });
     },

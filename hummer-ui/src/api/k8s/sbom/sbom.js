@@ -49,3 +49,5 @@ export const sbomCodeMetricChartUrl = "/k8s/sbom/codeMetricChart/";
 export const sbomImageMetricChartUrl = "/k8s/sbom/imageMetricChart/";
 
 export const sbomFsMetricChartUrl = "/k8s/sbom/fsMetricChart/";
+
+export const sbomDownloadUrl = "/k8s/sbom/download";

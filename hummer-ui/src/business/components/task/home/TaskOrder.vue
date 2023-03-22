@@ -323,14 +323,14 @@ import {addTaskUrl, taskDetailRuleUrl} from "@/api/system/task";
         this.curSentenceRowIndex = -1;
       },
       searchTag(item) {
-        this.result = this.$post("/task/detailTag",item, response => {
+        this.result = this.$post(taskDetailTagUrl,item, response => {
           if (response.success) {
             this.tagDetailTable = response.data;
           }
         });
       },
       searchGroup(item) {
-        this.result = this.$post("/task/detailGroup",item, response => {
+        this.result = this.$post(taskDetailGroupUrl,item, response => {
           if (response.success) {
             this.groupDetailTable = response.data;
           }

@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {dashboardDistributionUrl} from "@/api/cloud/dashboard/dashboard";
 
 let opt = {
   index: 0
@@ -47,7 +48,7 @@ export default {
     },
     init () {
       let data=[];
-      this.$post("/dashboard/distribution", {group: "ruleList", limit: 5}, response => {
+      this.$post(dashboardDistributionUrl, {group: "ruleList", limit: 5}, response => {
         for (let obj of response.data) {
           let param = {
             code: obj.groupName,

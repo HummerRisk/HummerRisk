@@ -159,6 +159,7 @@ import Regions from "@/business/components/event/home/Regions";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {cloudEventSyncLogDeleteUrl, cloudEventSyncUrl} from "@/api/cloud/event/event";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -427,7 +428,7 @@ export default {
       this.dateTime = value
     },
     init() {
-      this.$get("/account/allList", response => {
+      this.$get(allListUrl, response => {
         let accountList = response.data
         this.accountList = accountList.filter(item => {
           return this.supportCloud.includes(item.pluginId)

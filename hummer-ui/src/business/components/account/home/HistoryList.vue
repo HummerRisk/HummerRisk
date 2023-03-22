@@ -314,8 +314,7 @@ import {accountHistoryDiffListUrl, accountHistoryListUrl} from "@/api/cloud/acco
       },
       //查询插件
       activePlugin() {
-        let url = cloudPluginUrl;
-        this.result = this.$get(url, response => {
+        this.result = this.$get(cloudPluginUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });

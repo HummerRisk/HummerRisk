@@ -13,6 +13,7 @@
 <script>
 
 import {saveAs} from "@/common/js/FileSaver";
+import {sbomDownloadUrl} from "@/api/k8s/sbom/sbom";
 
 export default {
     name: "Download",
@@ -42,7 +43,7 @@ export default {
         } else {
           return;
         }
-        this.$post("/sbom/download", {
+        this.$post(sbomDownloadUrl, {
           type: this.type,
           sourceId: this.sourceId,
           fileType: this.fileType

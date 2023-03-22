@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {dashboardDistributionUrl} from "@/api/cloud/dashboard/dashboard";
 
 let objData = [];
 /* eslint-disable */
@@ -19,7 +20,7 @@ export default {
       vulns: {
         name: this.$t('dashboard.i18n_overall_compliance'),
         label: {position: 'outside'},
-        url: "/dashboard/distribution",
+        url: dashboardDistributionUrl,
         param: {group: "overall"},
       },
       options: {

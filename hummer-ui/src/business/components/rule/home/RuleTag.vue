@@ -155,8 +155,8 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {cloudTagRuleDeleteUrl} from "@/api/cloud/account/account";
-import {ruleListUrl} from "@/api/cloud/rule/rule";
+import {cloudTagRuleDeleteUrl, cloudTagRuleSaveUrl, cloudTagRuleUpdateUrl} from "@/api/cloud/account/account";
+import {ruleListUrl, ruleTagListUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [

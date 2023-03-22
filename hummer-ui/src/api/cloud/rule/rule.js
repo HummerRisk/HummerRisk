@@ -62,3 +62,8 @@ export const bindRuleUrl = "/cloud/rule/bindRule";
 export const scanByGroupUrl = "/cloud/rule/scanByGroup/";
 
 export const ruleTagListUrl = "/cloud/rule/ruleTag/list/";
+
+export const allCloudRuleGroupsUrl = "/cloud/rule/allCloudRuleGroups";
+
+export const allCloudResourceTypesUrl = "/cloud/rule/all/cloudResourceTypes";
+

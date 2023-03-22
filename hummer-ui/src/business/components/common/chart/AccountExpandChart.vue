@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {dashboardDistributionUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "AccountExpandChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post("/dashboard/distribution", {group: "vulnList"}, response => {
+      this.$post(dashboardDistributionUrl, {group: "vulnList"}, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {

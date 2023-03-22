@@ -2,6 +2,7 @@ import {Message, MessageBox} from "element-ui";
 import axios from "axios";
 import {getToken, removeToken} from './auth';
 import i18n from "../../i18n/i18n";
+import {signoutUrl} from "@/api/auth/auth";
 
 
 export default {
@@ -23,7 +24,7 @@ export default {
     let login = function () {
       MessageBox.alert(i18n.t("commons.tips"), i18n.t("commons.prompt"), {
         callback: () => {
-          axios.get("/auth/signout");
+          axios.get(signoutUrl);
           removeToken();
           localStorage.clear();
           window.location.href = "/login";

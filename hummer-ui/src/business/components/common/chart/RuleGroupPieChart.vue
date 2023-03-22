@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {dashboardDistributionUrl} from "@/api/cloud/dashboard/dashboard";
 
 let ruleGroup = [];
 let groupName = ['rule'];
@@ -46,7 +47,7 @@ export default {
   },
   methods: {
     init () {
-      this.$post("/dashboard/distribution", {group: "ruleGroup", limit: 6}, response => {
+      this.$post(dashboardDistributionUrl, {group: "ruleGroup", limit: 6}, response => {
         let data = '{"rule":"' + this.$t('vuln.rule_group_resource') + '", "key1":value1, "key2":value2, "key3":value3}';
         let i = 1;
         for (let obj of response.data) {

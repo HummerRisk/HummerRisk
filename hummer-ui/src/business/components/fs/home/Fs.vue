@@ -172,7 +172,7 @@ import TarUpload from "../head/TarUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 import {proxyListAllUrl} from "@/api/system/system";
-import {deleteFsUrl, fsListUrl, scanFsUrl, updateFsUrl} from "@/api/k8s/fs/fs";
+import {addFsUrl, deleteFsUrl, fsListUrl, scanFsUrl, updateFsUrl} from "@/api/k8s/fs/fs";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -414,7 +414,7 @@ export default {
           formData.append("request", new Blob([JSON.stringify(this.addAccountForm)], {type: "application/json"}));
           let axiosRequestConfig = {
             method: "POST",
-            url: "/fs/addFs",
+            url: addFsUrl,
             data: formData,
             headers: {
               "Content-Type": 'multipart/form-data'

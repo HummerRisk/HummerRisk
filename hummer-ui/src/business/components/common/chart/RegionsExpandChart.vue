@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {dashboardDistributionUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "RegionsExpandChart",
@@ -25,7 +26,7 @@ export default {
     },
     init() {
       let params = this.accountId != "all"?{group: "regionsList", accountId: this.accountId}:{group: "regionsList"};
-      this.$post("/dashboard/distribution", params, response => {
+      this.$post(dashboardDistributionUrl, params, response => {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {

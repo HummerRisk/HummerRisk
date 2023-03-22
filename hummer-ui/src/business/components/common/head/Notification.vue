@@ -18,6 +18,8 @@
 </template>
 <script>
 
+import {unReadCountUrl} from "@/api/system/system";
+
 export default {
   components: {},
   data() {
@@ -57,7 +59,7 @@ export default {
       }
     },
     queryCount() {
-      this.$post('/webmsg/unReadCount', null, response => {
+      this.$post(unReadCountUrl, null, response => {
         this.count = response.data;
       });
     },

@@ -68,6 +68,7 @@ import {getCurrentAccountID} from "@/common/js/utils";
 import NodeTree from "@/business/components/common/components/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
+import {addAccountUrl} from "@/api/cloud/oss/oss";
 /* eslint-disable */
   export default {
     name: 'ScenarioModule',
@@ -225,7 +226,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         data["pluginId"] = item.pluginId;
 
         if (type === 'add') {
-          this.$post("account/add", data,response => {
+          this.$post(addAccountUrl, data,response => {
             if (response.success) {
               this.$success(this.$t('account.i18n_hr_create_success'));
               this.handleClose();

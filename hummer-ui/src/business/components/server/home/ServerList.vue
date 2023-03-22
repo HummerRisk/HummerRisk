@@ -536,7 +536,13 @@ import {
   serverGroupListUrl,
   serverValidatesUrl,
   serverValidateUrl,
-  deleteServerUrl, addServerUrl, editServerUrl, copyServerUrl, serverExcelInsertExpertsUrl, serverDownloadExcelUrl,
+  deleteServerUrl,
+  addServerUrl,
+  editServerUrl,
+  copyServerUrl,
+  serverExcelInsertExpertsUrl,
+  serverDownloadExcelUrl,
+  serverScanUrl,
 } from "@/api/k8s/server/server";
 
 //列表展示与隐藏
