@@ -29,7 +29,7 @@
           <el-col :span="9">
             <el-form :model="form" :rules="rules" ref="form">
               <div class="title">
-                <img src="../assets/img/logo/logo-dark.png" style="width: 224px" alt="">
+                <img src="../assets/img/logo/logo-dark.png" style="width: 300px" alt="HummerRisk">
               </div>
               <div class="border"></div>
               <div class="welcome">
@@ -270,7 +270,7 @@ body {
   /*background: linear-gradient(-180deg, #df913c 0%, #ffffff 100%);*/
   background-image: url(../assets/background.png);
   background-size: contain;
-  background-color: #334071;
+  background-color: #080e23;
   width: 100%;
   height: 100%; /**宽高100%是为了图片铺满屏幕 */
   min-height: 760px;
