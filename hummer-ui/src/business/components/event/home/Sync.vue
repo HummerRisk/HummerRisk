@@ -158,7 +158,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import Regions from "@/business/components/event/home/Regions";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {cloudEventSyncLogDeleteUrl, cloudEventSyncUrl} from "@/api/cloud/event/event";
+import {cloudEventSyncLogDeleteUrl, cloudEventSyncLogListUrl, cloudEventSyncUrl} from "@/api/cloud/event/event";
 import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
@@ -398,7 +398,7 @@ export default {
       this.showSync = true
     },
     search() {
-      let url = "/cloud/event/sync/log/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudEventSyncLogListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;

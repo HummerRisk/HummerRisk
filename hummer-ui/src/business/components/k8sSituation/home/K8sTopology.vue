@@ -303,7 +303,14 @@ import SearchList from "@/business/components/k8sSituation/home/SearchList";
 import LogForm from "@/business/components/k8s/home/LogForm";
 import * as d3 from 'd3';
 import htmlToPdf from "@/common/js/htmlToPdf";
-import {nodeTopologyUrl, namespaceTopologyUrl, getCloudNativeResultWithBLOBsTopoUrl, getK8sImageUrl, k8sLogTopoUrl} from "@/api/k8s/k8s/k8s";
+import {
+  nodeTopologyUrl,
+  namespaceTopologyUrl,
+  getCloudNativeResultWithBLOBsTopoUrl,
+  getK8sImageUrl,
+  k8sLogTopoUrl,
+  allK8sUrl
+} from "@/api/k8s/k8s/k8s";
 
 /* eslint-disable */
 export default {

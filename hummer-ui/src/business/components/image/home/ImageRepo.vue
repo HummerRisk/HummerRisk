@@ -345,6 +345,7 @@ import {
 } from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
+  addImageRepoUrl,
   deleteImageRepoUrl,
   editImageRepoUrl,
   imageRepoListUrl, imageRepoSettingUrl, repoItemListUrl, repoSyncListUrl,

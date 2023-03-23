@@ -542,7 +542,7 @@ import {
   copyServerUrl,
   serverExcelInsertExpertsUrl,
   serverDownloadExcelUrl,
-  serverScanUrl,
+  serverScanUrl, serverListUrl,
 } from "@/api/k8s/server/server";
 
 //列表展示与隐藏

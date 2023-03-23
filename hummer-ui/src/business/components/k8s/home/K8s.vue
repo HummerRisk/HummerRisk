@@ -306,7 +306,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {nativePluginUrl, pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
 import {
   addK8sUrl,
-  deleteK8sUrl, k8sValidatesUrl,
+  deleteK8sUrl, k8sListUrl, k8sValidatesUrl,
   logK8sUrl,
   reinstallKubenchUrl,
   reinstallOperatorUrl,

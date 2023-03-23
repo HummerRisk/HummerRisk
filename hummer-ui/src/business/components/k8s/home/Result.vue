@@ -160,7 +160,12 @@ import {K8S_RESULT_CONFIGS} from "../../common/components/search/search-componen
 import LogForm from "@/business/components/k8s/home/LogForm";
 import {saveAs} from "@/common/js/FileSaver";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {getCloudNativeResultUrl, getCloudNativeResultWithBLOBsUrl, logK8sUrl} from "@/api/k8s/k8s/k8s";
+import {
+  getCloudNativeResultUrl,
+  getCloudNativeResultWithBLOBsUrl,
+  k8sResultListUrl,
+  logK8sUrl
+} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [

@@ -191,14 +191,14 @@ export default {
       this.initAccount()
     },
     searchByAccount() {
-      let accountId = ""
+      let accountId = "";
       if (!!this.selectNodeIds[0]) {
-       accountId = this.selectNodeIds[0];
+        accountId = this.selectNodeIds[0];
+        this.result = this.$get(resourceSummaryReport + accountId, response => {
+          let data = response.data;
+          this.resourceSummary = data;
+        });
       }
-      this.result = this.$get(resourceSummaryReport + accountId, response => {
-        let data = response.data;
-        this.resourceSummary = data;
-      });
       if(!!accountId){
         this.condition["combine"] = {"accountId":{"value":accountId}}
       }else {

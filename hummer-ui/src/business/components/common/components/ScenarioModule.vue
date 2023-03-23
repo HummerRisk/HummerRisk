@@ -69,6 +69,8 @@ import NodeTree from "@/business/components/common/components/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
 import {addAccountUrl} from "@/api/cloud/oss/oss";
+import {allListUrl} from "@/api/cloud/account/account";
+import {cloudPluginUrl} from "@/api/system/system";
 /* eslint-disable */
   export default {
     name: 'ScenarioModule',
@@ -138,15 +140,13 @@ import {addAccountUrl} from "@/api/cloud/oss/oss";
     methods: {
       //查询插件
       activePlugin() {
-        let url = "/plugin/cloud";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(cloudPluginUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });
       },
       list() {
-        let url = "/account/allList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(allListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
             let moduleOptions = [];

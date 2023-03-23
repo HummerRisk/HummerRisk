@@ -239,7 +239,7 @@ import {
   codeValidateUrl, scanCodeUrl, updateCodeUrl
 } from "@/api/k8s/code/code";
 import {proxyListAllUrl} from "@/api/system/system";
-import {allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
+import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 
 //列表展示与隐藏
 const columnOptions = [

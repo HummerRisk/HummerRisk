@@ -59,6 +59,7 @@
 
 <script>
 import Container from "../.././common/components/Container";
+import {cloudEventTopInfoUrl} from "@/api/cloud/event/event";
 
 /* eslint-disable */
 export default {

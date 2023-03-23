@@ -546,6 +546,7 @@ import {
   resourceRegulationUrl
 } from "@/api/cloud/resource/resource";
 import {ossRuleGroupListUrl} from "@/api/cloud/oss/oss";
+import {accountListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions2 = [

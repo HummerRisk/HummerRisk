@@ -464,6 +464,7 @@ import ImageLogForm from "@/business/components/image/home/LogForm";
 import FsLogForm from "@/business/components/fs/home/LogForm";
 import htmlToPdf from "@/common/js/htmlToPdf";
 import {
+  sbomApplicationsUrl,
   sbomCodeLogUrl, sbomFsLogUrl,
   sbomFsResultUrl,
   sbomGetCodeResultUrl, sbomGetFsResultUrl,

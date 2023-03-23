@@ -22,3 +22,5 @@ export const cloudEventSyncUrl = "/cloud/cloud/event/sync";
 export const cloudEventSyncLogDeleteUrl = "/cloud/cloud/event/sync/log/delete/";
 
 export const cloudEventTopInfoUrl = "/cloud/cloud/event/topInfo";
+
+export const cloudEventSyncLogListUrl = "/cloud/cloud/event/sync/log/list/";

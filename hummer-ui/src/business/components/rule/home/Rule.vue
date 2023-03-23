@@ -421,7 +421,7 @@ import {
   ruleChangeStatusUrl,
   ruleDryRunUrl,
   ruleGroupsUrl,
-  ruleInspectionReport,
+  ruleInspectionReport, ruleListUrl,
   ruleTagsUrl
 } from "@/api/cloud/rule/rule";
 

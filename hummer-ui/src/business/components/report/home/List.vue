@@ -536,9 +536,14 @@ import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {ruleListUrl, ruleReScanUrl, ruleTagsUrl} from "@/api/cloud/rule/rule";
+import {ruleInspectionReport, ruleListUrl, ruleReScanUrl, ruleTagsUrl} from "@/api/cloud/rule/rule";
 import {cloudPluginUrl} from "@/api/system/system";
-import {resourceExportUrl, resourceGroupExportUrl, resourceRegulationUrl} from "@/api/cloud/resource/resource";
+import {
+  resourceExportUrl,
+  resourceGroupExportUrl,
+  resourceRegulationUrl, resourceRuleGroupListUrl,
+  resourceRuleGroupsUrl
+} from "@/api/cloud/resource/resource";
 import {accountListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
