@@ -101,6 +101,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
@@ -118,7 +119,6 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

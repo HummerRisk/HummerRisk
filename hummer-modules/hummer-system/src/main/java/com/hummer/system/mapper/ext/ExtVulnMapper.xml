@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.system.mapper.ext.ExtVulnMapper">
 
-    <resultMap id="TargetMap" type="com.hummer.common.core.utils.DashboardTarget"
+    <resultMap id="TargetMap" type="com.hummer.common.core.domain.request.dashboard.DashboardTarget"
                extends="com.hummer.system.mapper.RuleMapper.BaseResultMap">
         <result column="ratio" jdbcType="VARCHAR" property="ratio"/>
         <result column="reSum" jdbcType="VARCHAR" property="reSum"/>

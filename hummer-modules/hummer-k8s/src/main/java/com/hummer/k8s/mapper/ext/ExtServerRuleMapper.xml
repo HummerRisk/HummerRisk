@@ -86,8 +86,8 @@
         </if>
     </sql>
 
-    <resultMap id="BaseResultMap2" type="com.hummerrisk.dto.ServerRuleDTO"
-               extends="com.hummerrisk.base.mapper.ServerRuleMapper.BaseResultMap">
+    <resultMap id="BaseResultMap2" type="com.hummer.common.core.dto.ServerRuleDTO"
+               extends="com.hummer.k8s.mapper.ServerRuleMapper.BaseResultMap">
         <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
         <result column="tagName" property="tagName" jdbcType="VARCHAR"/>
         <collection property="tags" javaType="list" ofType="string" select="getTags" column="id">
@@ -98,7 +98,7 @@
         </collection>
     </resultMap>
 
-    <select id="ruleList" parameterType="com.hummerrisk.controller.request.server.ServerRuleRequest"
+    <select id="ruleList" parameterType="com.hummer.common.core.domain.request.server.ServerRuleRequest"
             resultMap="BaseResultMap2">
         SELECT
         t.*,
