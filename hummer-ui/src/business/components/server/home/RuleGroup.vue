@@ -308,7 +308,7 @@ import {
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
 import {allServerListUrl, serverAllBindListUrl, serverBindRuleUrl} from "@/api/k8s/server/server";
-import {ruleGroupDeleteUrl, ruleGroupListUrl} from "@/api/cloud/rule/rule";
+import {ruleGroupDeleteUrl, ruleGroupListUrl, ruleGroupSaveUrl, ruleGroupUpdateUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -658,7 +658,7 @@ const columnOptions2 = [
               params.pluginId = "hummer-server-plugin";
               params.pluginName = "主机检测";
               params.pluginIcon = "server.png";
-              let url = type == "createForm" ? "/rule/group/save" : "/rule/group/update";
+              let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
               this.result = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;

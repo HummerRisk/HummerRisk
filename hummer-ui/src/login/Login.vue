@@ -1,5 +1,5 @@
 <template>
-  <div class="login-background">
+  <div class="login-background" v-loading="result.loading">
     <vue-particles
       id="particles-js"
       class=""
@@ -20,7 +20,7 @@
       clickMode="push">
     </vue-particles>
     <div style="width: 100%;height: 100%;">
-      <div class="container" v-loading="result.loading" v-if="ready">
+      <div class="container" v-if="ready">
         <el-row type="flex">
 
           <el-col :span="15" class="image">
@@ -29,17 +29,13 @@
           <el-col :span="9">
             <el-form :model="form" :rules="rules" ref="form">
               <div class="title">
-                <img src="../assets/img/logo/logo-dark.png" style="width: 224px" alt="">
+                <img src="../assets/img/logo/logo-dark.png" style="width: 300px" alt="">
               </div>
               <div class="border"></div>
               <div class="welcome">
                 {{$t('commons.welcome')}}
               </div>
               <div class="form">
-                <el-form-item v-slot:default>
-                  <el-radio-group v-model="form.authenticate">
-                  </el-radio-group>
-                </el-form-item>
                 <el-form-item prop="username">
                   <el-input v-model="form.username" :placeholder="$t('commons.login_username')" autofocus
                             autocomplete="off"/>
@@ -99,8 +95,10 @@ import {setToken} from '@/common/js/auth';
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
+        console.log(response)
         if (response.data.success) {
           let user = response.data.data;
+          console.log(response.data)
           setToken(response.data.token);
           saveLocalStorage(response.data);
           this.getLanguage(user.language);
@@ -149,18 +147,18 @@ import {setToken} from '@/common/js/auth';
           saveLocalStorage(response);
           sessionStorage.setItem('loginSuccess', 'true');
           setToken(response.data.token);
-          this.getLanguage(response.data.language);
+          this.getLanguage(response.data.language, response.data.token);
         });
       },
-      getLanguage(language) {
+      getLanguage(language, token) {
         if (!language) {
           this.$get(languageUrl, response => {
             language = response.data;
             localStorage.setItem(DEFAULT_LANGUAGE, language);
-            window.location.href = "/";
-          })
+            if(!!token) window.location.href = "/";
+          });
         } else {
-          window.location.href = "/";
+          if(!!token) window.location.href = "/";
         }
       },
     }
@@ -270,7 +268,7 @@ body {
   /*background: linear-gradient(-180deg, #df913c 0%, #ffffff 100%);*/
   background-image: url(../assets/background.png);
   background-size: contain;
-  background-color: #334071;
+  background-color: #142e48;
   width: 100%;
   height: 100%; /**宽高100%是为了图片铺满屏幕 */
   min-height: 760px;

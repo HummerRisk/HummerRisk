@@ -67,7 +67,6 @@ export default {
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
         if (response.data.success) {
-          setToken(response.data.token);
           this.$setLang(response.data.data.language);
           saveLocalStorage(response.data);
           this.auth = true;

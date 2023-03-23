@@ -78,20 +78,20 @@
             <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
           </el-menu-item>
         </el-submenu>
-        <el-submenu index="3">
-          <template slot="title">
-            <i class="iconfont icon-menu"></i>
-            <span slot="title">{{ $t('task.task_setting') }}</span>
-          </template>
-          <el-menu-item index="/task" onselectstart="return false">
-            <i class="iconfont icon-history"></i>
-            <span slot="title">{{ $t('task.task_manage') }}</span>
-          </el-menu-item>
-          <el-menu-item index="/taskReport" onselectstart="return false">
-            <i class="iconfont icon-image-text"></i>
-            <span slot="title">{{ $t('task.task_report') }}</span>
-          </el-menu-item>
-        </el-submenu>
+<!--        <el-submenu index="3">-->
+<!--          <template slot="title">-->
+<!--            <i class="iconfont icon-menu"></i>-->
+<!--            <span slot="title">{{ $t('task.task_setting') }}</span>-->
+<!--          </template>-->
+<!--          <el-menu-item index="/task" onselectstart="return false">-->
+<!--            <i class="iconfont icon-history"></i>-->
+<!--            <span slot="title">{{ $t('task.task_manage') }}</span>-->
+<!--          </el-menu-item>-->
+<!--          <el-menu-item index="/taskReport" onselectstart="return false">-->
+<!--            <i class="iconfont icon-image-text"></i>-->
+<!--            <span slot="title">{{ $t('task.task_report') }}</span>-->
+<!--          </el-menu-item>-->
+<!--        </el-submenu>-->
         <el-submenu index="4">
           <template slot="title">
             <i class="iconfont icon-xitongcaidan"></i>

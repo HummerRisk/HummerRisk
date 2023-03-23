@@ -80,7 +80,7 @@ public class LoginController {
         return ResultHolder.success("");
     }
 
-    @GetMapping(value = "/language")
+    @GetMapping(value = "language")
     public String getDefaultLanguage() {
         return userService.getDefaultLanguage();
     }
