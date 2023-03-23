@@ -70,7 +70,7 @@
         </if>
     </sql>
 
-    <select id="getUserList" resultMap="com.hummerrisk.base.mapper.UserMapper.BaseResultMap">
+    <select id="getUserList" resultMap="com.hummer.system.mapper.UserMapper.BaseResultMap">
         select u.*
         from `user` u
         <where>
