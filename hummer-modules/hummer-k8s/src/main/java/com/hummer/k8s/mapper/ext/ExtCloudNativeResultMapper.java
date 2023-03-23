@@ -23,8 +23,6 @@ public interface ExtCloudNativeResultMapper {
 
     KubenchChartDTO kubenchChart(String resultId);
 
-    List<HistoryCloudNativeResultDTO> history(Map<String, Object> params);
-
     CloudNativeResultDTO getCloudNativeResult(String resultId);
 
 }

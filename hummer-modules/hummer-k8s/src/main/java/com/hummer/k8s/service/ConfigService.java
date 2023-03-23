@@ -490,7 +490,7 @@ public class ConfigService {
     }
 
     public List<HistoryCloudNativeConfigResultDTO> history(Map<String, Object> params) {
-        List<HistoryCloudNativeConfigResultDTO> historyList = extCloudNativeConfigResultMapper.history(params);
+        List<HistoryCloudNativeConfigResultDTO> historyList = systemProviderService.configHistory(params);
         return historyList;
     }
 

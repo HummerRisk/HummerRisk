@@ -3,22 +3,22 @@ package com.hummer.system.service;
 import com.hummer.common.core.constant.NoticeConstants;
 import com.hummer.system.message.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Component
 public class NoticeSendService {
-    @Resource
+    @Autowired
     private MailNoticeSender mailNoticeSender;
-    @Resource
+    @Autowired
     private WeComNoticeSender weComNoticeSender;
-    @Resource
+    @Autowired
     private DingNoticeSender dingNoticeSender;
-    @Resource
+    @Autowired
     private WebhookNoticeSender webhookNoticeSender;
-    @Resource
+    @Autowired
     private NoticeService noticeService;
 
     private NoticeSender getNoticeSender(MessageDetail messageDetail) {

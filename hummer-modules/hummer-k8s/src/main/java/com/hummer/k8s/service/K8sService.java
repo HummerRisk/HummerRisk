@@ -1102,7 +1102,7 @@ public class K8sService {
     }
 
     public List<HistoryCloudNativeResultDTO> history(Map<String, Object> params) {
-        List<HistoryCloudNativeResultDTO> historyList = extCloudNativeResultMapper.history(params);
+        List<HistoryCloudNativeResultDTO> historyList = systemProviderService.k8sHistory(params);
         return historyList;
     }
 

@@ -5,7 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudEventService;
 import com.hummer.common.core.domain.CloudEventRegionLog;
 import com.hummer.common.core.domain.CloudEventSyncLog;
-import com.hummer.common.core.domain.CloudEventWithBLOBs;
 import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
 import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
 import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
@@ -20,7 +19,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +26,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("cloud/event")
 public class CloudEventController {
-    @Resource
+
+    @Autowired
     private CloudEventService cloudEventService;
 
     @ApiOperation(value = "同步任务列表")

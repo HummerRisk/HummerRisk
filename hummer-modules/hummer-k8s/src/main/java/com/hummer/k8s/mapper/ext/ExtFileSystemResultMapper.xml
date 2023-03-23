@@ -150,34 +150,5 @@
         </where>
     </select>
 
-    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryFsResultDTO">
-        SELECT
-        t.*,
-        t1.file_name as fileName,
-        t1.size as size,
-        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
-        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
-        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
-        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
-        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
-        FROM history_file_system_result t
-        LEFT JOIN file_system t1 on t.fs_id = t1.id
-
-        <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="fsId != null">
-                AND t.fs_id = #{fsId}
-            </if>
-            <if test="sbomVersionId != null">
-                AND t.sbom_version_id = #{sbomVersionId}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
-            </if>
-        </where>
-        ORDER BY t.update_time desc
-    </select>
 
 </mapper>

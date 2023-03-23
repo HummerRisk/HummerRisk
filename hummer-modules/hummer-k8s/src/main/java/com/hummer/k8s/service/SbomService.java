@@ -247,7 +247,7 @@ public class SbomService {
     public List<HistoryFsResultDTO> historyFsResult(String sbomVersionId) throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("sbomVersionId", sbomVersionId);
-        List<HistoryFsResultDTO> historyList = extFileSystemResultMapper.history(params);
+        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(params);
         return historyList;
     }
 

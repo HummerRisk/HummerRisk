@@ -724,7 +724,7 @@ public class ServerService {
     }
 
     public List<HistoryServerResultDTO> history(Map<String, Object> params) {
-        List<HistoryServerResultDTO> historyList = extServerResultMapper.history(params);
+        List<HistoryServerResultDTO> historyList = systemProviderService.serverHistory(params);
         return historyList;
     }
 

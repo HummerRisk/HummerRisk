@@ -1,8 +1,8 @@
 package com.hummer.system.api;
 
-
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
+import com.hummer.common.core.dto.*;
 import com.hummer.system.api.model.LoginUser;
 
 import java.util.List;
@@ -121,5 +121,19 @@ public interface ISystemProviderService {
     void deleteHistoryServerResult(String id) throws Exception;
 
     LoginUser getLoginUserByName(String id) throws Exception;
+
+    HistoryImageReportDTO getImageResultDto(String resultId);
+
+    List<HistoryImageResultDTO> imageHistory(Map<String, Object> params);
+
+    List<HistoryCodeResultDTO> codeHistory(Map<String, Object> params);
+
+    List<HistoryServerResultDTO> serverHistory(Map<String, Object> params);
+
+    List<HistoryFsResultDTO> fsHistory(Map<String, Object> params);
+
+    List<HistoryCloudNativeResultDTO> k8sHistory(Map<String, Object> params);
+
+    List<HistoryCloudNativeConfigResultDTO> configHistory(Map<String, Object> params);
 
 }

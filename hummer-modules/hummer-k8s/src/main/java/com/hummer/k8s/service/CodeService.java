@@ -525,7 +525,7 @@ public class CodeService {
     }
 
     public List<HistoryCodeResultDTO> history(Map<String, Object> params) {
-        List<HistoryCodeResultDTO> historyList = extCodeResultMapper.history(params);
+        List<HistoryCodeResultDTO> historyList = systemProviderService.codeHistory(params);
         return historyList;
     }
 

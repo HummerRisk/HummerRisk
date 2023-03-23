@@ -24,7 +24,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "server")
 public class ServerController {
-    @Resource
+    @Autowired
     private ServerService serverService;
 
     @ApiOperation(value = "所有主机分组")

@@ -681,7 +681,7 @@ public class ImageService {
     }
 
     public HistoryImageReportDTO getImageResultDto(String resultId) {
-        HistoryImageReportDTO dto = extImageResultMapper.getImageResultDto(resultId);
+        HistoryImageReportDTO dto = systemProviderService.getImageResultDto(resultId);
         return dto;
     }
 
@@ -975,7 +975,7 @@ public class ImageService {
     }
 
     public List<HistoryImageResultDTO> history(Map<String, Object> params) {
-        List<HistoryImageResultDTO> historyList = extImageResultMapper.history(params);
+        List<HistoryImageResultDTO> historyList = systemProviderService.imageHistory(params);
         return historyList;
     }
 

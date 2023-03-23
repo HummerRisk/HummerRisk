@@ -539,7 +539,7 @@ public class FileSystemService {
     }
 
     public List<HistoryFsResultDTO> history(Map<String, Object> params) {
-        List<HistoryFsResultDTO> historyList = extFileSystemResultMapper.history(params);
+        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(params);
         return historyList;
     }
 
