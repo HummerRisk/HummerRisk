@@ -213,15 +213,15 @@ public class PlatformUtils {
         if (StringUtils.isNotEmpty(proxyType)) {
             if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
                 } else {
-                    proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
                 }
             } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
                 } else {
-                    proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
                 }
             }
         } else {
@@ -315,7 +315,7 @@ public class PlatformUtils {
             case gcp:
                 String credential = params.get("credential");
                 try {
-                    CommandUtils.commonExecCmdWithResult("export GOOGLE_APPLICATION_CREDENTIALS=" + credential, dirPath);
+                    CommandUtils.commonExecCmdWithResult("export GOOGLE_APPLICATION_CREDENTIALS='" + credential + "'", dirPath);
                     CommandUtils.saveAsFile(credential, dirPath, "google_application_credentials.json", false);
                 } catch (Exception e) {
                     e.printStackTrace();

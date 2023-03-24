@@ -34,7 +34,7 @@
         dialogVisible: false,
         githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://docs.hummerrisk.com',
-        version: process.env.HR_VERSION,
+        version: process.env.HR_VERSION?process.env.HR_VERSION:"v1.0.0",
         items: [
           {img: require(`@/assets/img/about/docs.png`), url: 'https://docs.hummerrisk.com'},
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},

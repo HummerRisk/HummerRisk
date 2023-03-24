@@ -632,8 +632,8 @@ public class ImageService {
                     repo = repo.substring(0, repo.length() - 1);
                 }
                 dockerLogin =
-                        "export TRIVY_USERNAME=" + imageRepo.getUserName() + ";\n" +
-                                "export TRIVY_PASSWORD=" + imageRepo.getPassword() + ";";
+                        "export TRIVY_USERNAME='" + imageRepo.getUserName() + "';" + "\n" +
+                                "export TRIVY_PASSWORD='" + imageRepo.getPassword() + "';" + "\n";
             }
             String fileName = "";
             if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {

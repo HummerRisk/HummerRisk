@@ -19,15 +19,15 @@ public class ProxyUtil {
         if (StringUtils.isNotEmpty(proxyType)) {
             if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    _proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
                 } else {
-                    _proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    _proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
                 }
             } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    _proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
                 } else {
-                    _proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    _proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
                 }
             }
         } else {

@@ -350,7 +350,7 @@ export default {
       tasks: [],
       selectedTask: null,
       activeNames: ['1','2','3','4','5','6','7','8','9', '10', '11', '12', '13'],
-      version: process.env.HR_VERSION,
+      version: process.env.HR_VERSION?process.env.HR_VERSION:"v1.0.0",
       report: {},
       tagSelect: [],
       resourceTypes: [],
@@ -480,9 +480,6 @@ export default {
       link.click();
       window.URL.revokeObjectURL(url);
     },
-    getVersion() {
-      this.version = process.env.HR_VERSION;
-    },
     filterJsonKeyAndValue(json) {
       //json is json object , not array -- harris
       let list = json;
@@ -524,7 +521,6 @@ export default {
   },
   activated() {
     this.init();
-    this.getVersion();
   },
 }
 </script>
