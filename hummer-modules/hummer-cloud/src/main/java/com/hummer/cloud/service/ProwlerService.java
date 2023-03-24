@@ -172,10 +172,6 @@ public class ProwlerService {
         cloudTask.setApplyUser(Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.prowler.name());
-        if (quartzTaskDTO.getCron() != null){
-            cloudTask.setCron(quartzTaskDTO.getCron());
-            cloudTask.setCronDesc(DescCornUtils.descCorn(quartzTaskDTO.getCron()));
-        }
 
         CloudTaskExample example = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = example.createCriteria();

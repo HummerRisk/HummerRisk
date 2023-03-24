@@ -18,15 +18,12 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.quartz.service.QuartzManageService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -83,14 +80,6 @@ public class ResourceService {
     private ExtHistoryScanMapper extHistoryScanMapper;
     @Autowired @Lazy
     private ProxyMapper proxyMapper;
-    @Autowired @Lazy
-    private CloudAccountQuartzTaskMapper quartzTaskMapper;
-    @Autowired @Lazy
-    private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
-    @Autowired @Lazy
-    private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
-    @Autowired @Lazy
-    private QuartzManageService quartzManageService;
     @Autowired
     private TokenService tokenService;
     @DubboReference
@@ -644,23 +633,6 @@ public class ResourceService {
 
         HistoryScanExample historyScanExample = new HistoryScanExample();
         historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
-
-        CloudAccountQuartzTaskRelationExample quartzTaskRelationExample = new CloudAccountQuartzTaskRelationExample();
-        quartzTaskRelationExample.createCriteria().andSourceIdEqualTo(accountId);
-        List<CloudAccountQuartzTaskRelation> quartzTaskRelationList = quartzTaskRelationMapper.selectByExample(quartzTaskRelationExample);
-        for (CloudAccountQuartzTaskRelation quartzTaskRelation : quartzTaskRelationList) {
-            CloudAccountQuartzTaskRelaLogExample quartzTaskRelaLogExample = new CloudAccountQuartzTaskRelaLogExample();
-            quartzTaskRelaLogExample.createCriteria().andQuartzTaskRelaIdEqualTo(quartzTaskRelation.getId());
-            quartzTaskRelaLogMapper.deleteByExample(quartzTaskRelaLogExample);
-            quartzTaskRelationMapper.deleteByPrimaryKey(quartzTaskRelation.getId());
-
-            CloudAccountQuartzTask quartzTask = quartzTaskMapper.selectByPrimaryKey(quartzTaskRelation.getQuartzTaskId());
-            String triggerId = quartzTask.getTriggerId();
-            Trigger trigger = quartzManageService.getTrigger(new TriggerKey(triggerId));
-            quartzManageService.deleteJob(trigger.getJobKey());
-
-            quartzTaskMapper.deleteByPrimaryKey(quartzTaskRelation.getQuartzTaskId());
-        }
 
         OperationLogService.log(tokenService.getLoginUser().getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
 

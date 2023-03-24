@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
     <!--配置数据库连接的位置-->
-    <properties url="file:///opt/hummerrisk/conf/hummerrisk.properties"/>
+    <properties url="file:///opt/hummerrisk/conf/hummer-risk.properties"/>
     <!-- 此处指定生成针对MyBatis3的DAO -->
     <context id="mysql" targetRuntime="MyBatis3">
         <!-- 字段带`,解决列表跟关键字冲突问题 -->
@@ -80,16 +80,13 @@
 <!--        <table tableName="rule_group_mapping" domainObjectName="RuleGroupMapping"/>-->
 <!--        <table tableName="rule_inspection_report" domainObjectName="RuleInspectionReport"/>-->
 <!--        <table tableName="rule_inspection_report_mapping" domainObjectName="RuleInspectionReportMapping"/>-->
-<!--        <table tableName="cloud_task" domainObjectName="CloudTask"/>-->
+        <table tableName="cloud_task" domainObjectName="CloudTask"/>
 <!--        <table tableName="cloud_task_item" domainObjectName="CloudTaskItem"/>-->
 <!--        <table tableName="cloud_task_item_log" domainObjectName="CloudTaskItemLog"/>-->
 <!--        <table tableName="cloud_task_item_resource" domainObjectName="CloudTaskItemResource"/>-->
 <!--        <table tableName="resource" domainObjectName="Resource"/>-->
 <!--        <table tableName="resource_item" domainObjectName="ResourceItem"/>-->
 <!--        <table tableName="resource_rule" domainObjectName="ResourceRule"/>-->
-<!--        <table tableName="cloud_account_quartz_task" domainObjectName="CloudAccountQuartzTask"/>-->
-<!--        <table tableName="cloud_account_quartz_task_relation" domainObjectName="CloudAccountQuartzTaskRelation"/>-->
-<!--        <table tableName="cloud_account_quartz_task_rela_log" domainObjectName="CloudAccountQuartzTaskRelaLog"/>-->
 <!--        <table tableName="web_msg" domainObjectName="WebMsg"/>-->
 <!--        <table tableName="server_group" domainObjectName="ServerGroup"/>-->
 <!--        <table tableName="server" domainObjectName="Server"/>-->
@@ -108,7 +105,7 @@
 <!--        <table tableName="task_item_resource_log" domainObjectName="TaskItemResourceLog"/>-->
 <!--        <table tableName="history_scan" domainObjectName="HistoryScan"/>-->
 <!--        <table tableName="history_scan_task" domainObjectName="HistoryScanTask"/>-->
-<!--        <table tableName="history_cloud_task" domainObjectName="HistoryCloudTask"/>-->
+        <table tableName="history_cloud_task" domainObjectName="HistoryCloudTask"/>
 <!--        <table tableName="history_cloud_task_item" domainObjectName="HistoryCloudTaskItem"/>-->
 <!--        <table tableName="history_cloud_task_log" domainObjectName="HistoryCloudTaskLog"/>-->
 <!--        <table tableName="history_cloud_task_resource" domainObjectName="HistoryCloudTaskResource"/>-->
@@ -169,6 +166,6 @@
 <!--        <table tableName="image_repo_setting" domainObjectName="ImageRepoSetting"/>-->
 <!--        <table tableName="cloud_native_source_rbac_node" domainObjectName="CloudNativeSourceRbacNode"/>-->
 <!--        <table tableName="cloud_native_source_rbac_link" domainObjectName="CloudNativeSourceRbacLink"/>-->
-        <table tableName="cloud_native_source_rbac_relation" domainObjectName="CloudNativeSourceRbacRelation"/>
+<!--        <table tableName="cloud_native_source_rbac_relation" domainObjectName="CloudNativeSourceRbacRelation"/>-->
     </context>
 </generatorConfiguration>

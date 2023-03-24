@@ -18,13 +18,10 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.quartz.service.QuartzManageService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -64,19 +61,11 @@ public class OrderService {
     @Autowired @Lazy
     private AccountMapper accountMapper;
     @Autowired @Lazy
-    private QuartzManageService quartzManageService;
-    @Autowired @Lazy
     private RuleMapper ruleMapper;
     @Autowired @Lazy
     private ResourceRuleMapper resourceRuleMapper;
     @Autowired @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Autowired @Lazy
-    private CloudAccountQuartzTaskMapper quartzTaskMapper;
-    @Autowired @Lazy
-    private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
-    @Autowired @Lazy
-    private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
     @Autowired
     private TokenService tokenService;
     @DubboReference
@@ -243,10 +232,6 @@ public class OrderService {
         cloudTask.setApplyUser(Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.custodian.name());
-        if (quartzTaskDTO.getCron() != null){
-            cloudTask.setCron(quartzTaskDTO.getCron());
-            cloudTask.setCronDesc(DescCornUtils.descCorn(quartzTaskDTO.getCron()));
-        }
 
         CloudTaskExample example = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = example.createCriteria();
@@ -375,13 +360,6 @@ public class OrderService {
         cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItemWithBLOBs.getId());
         cloudTaskItemLogExample.setOrderByClause("create_time desc");
         return cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample);
-    }
-
-    public List<CloudAccountQuartzTaskRelaLogWithBLOBs> getQuartzLogsById(String qzTaskId) {
-        CloudAccountQuartzTaskRelaLogExample example = new CloudAccountQuartzTaskRelaLogExample();
-        example.createCriteria().andQuartzTaskIdEqualTo(qzTaskId);
-        example.setOrderByClause("create_time desc");
-        return quartzTaskRelaLogMapper.selectByExampleWithBLOBs(example);
     }
 
     public List<CloudTaskItemLogDTO> getTaskItemLogByTaskId(String taskId) {
@@ -518,17 +496,6 @@ public class OrderService {
         }
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void getCronDesc(String taskId) throws Exception {
-        CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
-        if (cloudTask == null) {
-            HRException.throwException(Translator.get("i18n_ex_task_not_found") + taskId);
-        }
-        String cronDesc = DescCornUtils.descCorn(cloudTask.getCron());
-        cloudTask.setCronDesc(cronDesc);
-        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
-    }
-
     public List<ResourceWithBLOBs> getResourceByTaskItemId(String taskItemId) {
         List<ResourceWithBLOBs> list = new LinkedList<>();
         CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
@@ -544,46 +511,4 @@ public class OrderService {
         return list;
     }
 
-    public void createQuartzTask(String quartzTaskId) {
-
-        try {
-            CloudAccountQuartzTask quartzTask = quartzTaskMapper.selectByPrimaryKey(quartzTaskId);
-            if (quartzTask != null) {
-                quartzTask.setStatus(CloudTaskConstants.TASK_STATUS.RUNNING.name());
-                Trigger trigger = quartzManageService.getTrigger(new TriggerKey(quartzTask.getTriggerId()));
-                quartzTask.setLastFireTime(trigger.getNextFireTime().getTime());
-                if (trigger.getPreviousFireTime() != null)
-                    quartzTask.setPrevFireTime(trigger.getPreviousFireTime().getTime());
-                quartzTaskMapper.updateByPrimaryKeySelective(quartzTask);
-
-                CloudAccountQuartzTaskRelationExample example = new CloudAccountQuartzTaskRelationExample();
-                example.createCriteria().andQuartzTaskIdEqualTo(quartzTaskId);
-                List<CloudAccountQuartzTaskRelation> list = quartzTaskRelationMapper.selectByExampleWithBLOBs(example);
-                for (CloudAccountQuartzTaskRelation quartzTaskRelation : list) {
-                    JSONArray jsonArray = JSON.parseArray(quartzTaskRelation.getTaskIds());
-                    for (Object o : jsonArray) {
-                        CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(o.toString());
-                        cloudTask.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
-                        cloudTask.setLastFireTime(quartzTask.getLastFireTime());
-                        cloudTask.setPrevFireTime(quartzTask.getPrevFireTime());
-                        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
-                    }
-                    CloudAccountQuartzTaskRelaLogWithBLOBs quartzTaskRelaLog = new CloudAccountQuartzTaskRelaLogWithBLOBs();
-                    quartzTaskRelaLog.setCreateTime(System.currentTimeMillis());
-                    quartzTaskRelaLog.setQuartzTaskId(quartzTaskId);
-                    quartzTaskRelaLog.setQuartzTaskRelaId(quartzTaskRelation.getId());
-                    quartzTaskRelaLog.setTaskIds(quartzTaskRelation.getTaskIds());
-                    quartzTaskRelaLog.setSourceId(quartzTaskRelation.getSourceId());
-                    quartzTaskRelaLog.setQzType(quartzTaskRelation.getQzType());
-                    quartzTaskRelaLog.setOperator("System");
-                    quartzTaskRelaLog.setOperation("i18n_exec_qrtz_task");
-                    quartzTaskRelaLogMapper.insertSelective(quartzTaskRelaLog);
-                }
-
-            }
-        } catch (Exception e) {
-            LogUtil.error(quartzTaskId + "{createQuartzTask}: " + e.getMessage());
-            HRException.throwException(quartzTaskId + "{createQuartzTask}: " + e);
-        }
-    }
 }

@@ -1,43 +1,17 @@
-CREATE TABLE IF NOT EXISTS `cloud_account_quartz_task` (
-    `id`                            varchar(50)           NOT NULL,
-    `name`                          varchar(50)           DEFAULT NULL COMMENT '名称',
-    `status`                        varchar(20)           DEFAULT NULL COMMENT '状态',
-    `apply_user`                    varchar(50)           DEFAULT NULL COMMENT '申请人',
-    `create_time`                   bigint                DEFAULT NULL COMMENT '创建时间',
-    `cron`                          varchar(128)          DEFAULT NULL COMMENT 'cron 表达式',
-    `cron_desc`                     varchar(128)          DEFAULT NULL COMMENT 'cron 表达式中文描述',
-    `trigger_id`                    varchar(255)          DEFAULT NULL COMMENT '定时任务trigger ID',
-    `prev_fire_time`                bigint                DEFAULT NULL COMMENT '下一次同步时间',
-    `last_fire_time`                bigint                DEFAULT NULL COMMENT '最后一次同步时间',
-    `qz_type`                       varchar(32)           DEFAULT NULL COMMENT '定时任务类型',
-    PRIMARY KEY ( `id` )
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
+INSERT INTO `xxl_job_group` (`id`, `app_name`, `title`, `address_type`, `address_list`, `update_time`) VALUES (2, 'hummer-cloud', '混合云检测', 1, 'http://cloud:9400', '2023-03-25 04:10:17');
+INSERT INTO `xxl_job_group` (`id`, `app_name`, `title`, `address_type`, `address_list`, `update_time`) VALUES (3, 'hummer-k8s', '云原生检测', 1, 'http://k8s:9500', '2023-03-25 04:13:20');
+INSERT INTO `xxl_job_group` (`id`, `app_name`, `title`, `address_type`, `address_list`, `update_time`) VALUES (4, 'hummer-system', '系统管理', 1, 'http://system:9300', '2023-03-25 04:16:43');
 
-CREATE TABLE IF NOT EXISTS `cloud_account_quartz_task_relation` (
-    `id`                            varchar(50)           NOT NULL,
-    `quartz_task_id`                varchar(50)           DEFAULT NULL COMMENT '定时任务ID',
-    `source_id`                     varchar(50)           DEFAULT NULL COMMENT '来源ID(accountId)',
-    `create_time`                   bigint                DEFAULT NULL COMMENT '创建时间',
-    `qz_type`                       varchar(32)           DEFAULT NULL COMMENT '定时任务类型',
-    `task_ids`                      mediumtext            DEFAULT NULL COMMENT 'taskIds',
-    PRIMARY KEY ( `id` )
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `cloud_account_quartz_task_rela_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
-    `quartz_task_id`               varchar(50)         DEFAULT NULL COMMENT '定时任务ID',
-    `quartz_task_rela_id`          varchar(50)         DEFAULT NULL COMMENT '任务项ID',
-    `source_id`                    varchar(50)         DEFAULT NULL COMMENT '来源ID(accountId)',
-    `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
-    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
-    `operation`                    mediumtext          DEFAULT NULL COMMENT '操作内容',
-    `qz_type`                      varchar(32)         DEFAULT NULL COMMENT '定时任务类型',
-    `task_ids`                     mediumtext          DEFAULT NULL COMMENT 'taskIds',
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
-
-
-
-
-
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (2, 2, '云资源检测', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'cloudTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (3, 2, '对象存储', sysdate(), sysdate(), 'system', '', 'CRON', '0/30 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'ossTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (4, 2, '云资源同步', sysdate(), sysdate(), 'system', '', 'CRON', '0/30 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'syncResourceTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (5, 3, '主机检测', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'serverTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (6, 3, 'K8s检测', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'k8sTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (7, 3, '部署检测', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'configTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (8, 3, '源码检测', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'codeTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (9, 3, '文件系统检测', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'fsTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (10, 3, '镜像检测', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'imageTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (11, 4, '发送消息通知', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'noticeTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (12, 4, '历史数据统计', sysdate(), sysdate(), 'system', '', 'CRON', '0 0 0/1 * * ? *', 'DO_NOTHING', 'RANDOM', 'historyTasksJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);
+INSERT INTO `xxl_job_info` (`id`, `job_group`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `schedule_type`, `schedule_conf`, `misfire_strategy`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`, `trigger_status`, `trigger_last_time`) VALUES (13, 4, '任务编排', sysdate(), sysdate(), 'system', '', 'CRON', '0/10 * * * * ? *', 'DO_NOTHING', 'RANDOM', 'taskArrangementJobHandler', '', 'SERIAL_EXECUTION', 300, 5, 'BEAN', '', 'GLUE代码初始化', sysdate(), '', 1, 0);

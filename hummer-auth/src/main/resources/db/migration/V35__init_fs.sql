@@ -158,8 +158,6 @@ ALTER TABLE `cloud_native_result` ADD `return_config_sum` bigint     DEFAULT 0 C
 
 ALTER TABLE `cloud_task_item_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
-ALTER TABLE `cloud_account_quartz_task_rela_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
 ALTER TABLE `server_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `image_result_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
