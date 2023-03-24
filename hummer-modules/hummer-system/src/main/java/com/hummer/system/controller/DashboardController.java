@@ -76,14 +76,6 @@ public class DashboardController {
     }
 
     @I18n
-    @ApiOperation(value = "漏洞检测历史记录")
-    @PostMapping("vuln/history/{goPage}/{pageSize}")
-    public Pager<List<HistoryScanDTO>> vulnHistory(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, dashboardService.vulnHistory(params));
-    }
-
-    @I18n
     @ApiOperation(value = "首页TOP统计")
     @PostMapping("topInfo")
     public TopInfoDTO topInfo(@RequestBody Map<String, Object> params) {

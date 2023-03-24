@@ -309,7 +309,7 @@ import {
   getCloudNativeResultWithBLOBsTopoUrl,
   getK8sImageUrl,
   k8sLogTopoUrl,
-  allK8sUrl
+  allK8sUrl, k8sRiskTopologyUrl
 } from "@/api/k8s/k8s/k8s";
 
 /* eslint-disable */
@@ -647,7 +647,6 @@ export default {
       }
       this.result = this.$post(k8sRiskTopologyUrl, param, response => {
         let data = response.data;
-
         d3.select("#risk-topo").selectAll('*').remove();//清空SVG中的内容
         let width = 932, height = width;
 
@@ -761,6 +760,7 @@ export default {
     initK8s() {
       this.$get(allK8sUrl, response => {
         this.items = response.data;
+        if(this.items.length === 0) return;
         this.accountId = this.items[0].id;
         this.currentAccount = this.items[0].name;
         this.init();
@@ -772,15 +772,17 @@ export default {
       this.init();
     },
     showRisk() {
-      this.result = this.$get(k8sLogTopoUrl + this.accountId, response => {
-        this.logData = response.data;
-      });
-      this.$get(getCloudNativeResultWithBLOBsTopoUrl + this.accountId, response => {
-        this.logForm = response.data;
-        this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
-        this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
-      });
-      this.logVisible = true;
+      if(!!this.accountId) {
+        this.result = this.$get(k8sLogTopoUrl + this.accountId, response => {
+          this.logData = response.data;
+        });
+        this.$get(getCloudNativeResultWithBLOBsTopoUrl + this.accountId, response => {
+          this.logForm = response.data;
+          this.logForm.vulnerabilityReport = JSON.parse(this.logForm.vulnerabilityReport);
+          this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
+        });
+        this.logVisible = true;
+      }
     },
     handleClose() {
       this.logVisible=false;

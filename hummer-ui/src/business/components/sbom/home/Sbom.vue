@@ -465,11 +465,11 @@ import FsLogForm from "@/business/components/fs/home/LogForm";
 import htmlToPdf from "@/common/js/htmlToPdf";
 import {
   sbomApplicationsUrl,
-  sbomCodeLogUrl, sbomFsLogUrl,
+  sbomCodeLogUrl, sbomCodeResultUrl, sbomFsLogUrl,
   sbomFsResultUrl,
   sbomGetCodeResultUrl, sbomGetFsResultUrl,
   sbomGetImageResultUrl,
-  sbomImageLogUrl
+  sbomImageLogUrl, sbomImageResultUrl
 } from "@/api/k8s/sbom/sbom";
 
 /* eslint-disable */
@@ -534,19 +534,15 @@ export default {
         name: this.filterText
       };
       this.result = this.$post(sbomApplicationsUrl, params, response => {
-        if (response.success) {
-          this.applications = response.data;
-          for(let sbom of this.applications) {
-            for(let version of sbom.sbomVersionList) {
-              this.sbomVersion = version;
-              break;
-            }
+        this.applications = response.data;
+        for(let sbom of this.applications) {
+          for(let version of sbom.sbomVersionList) {
+            this.sbomVersion = version;
             break;
           }
-          this.searchScan();
-        } else {
-          this.$error(response.message);
+          break;
         }
+        this.searchScan();
       });
     },
     filterTag (tag) {

@@ -25,7 +25,7 @@ export default {
         let data = response.data;
         let gaugeData = [
           {
-            value: data,
+            value: data?data:0,
             name: this.$t('dashboard.safe_score_all'),
             title: {
               offsetCenter: ['40%', '80%']

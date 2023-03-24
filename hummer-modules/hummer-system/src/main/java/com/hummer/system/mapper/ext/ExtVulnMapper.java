@@ -45,8 +45,6 @@ public interface ExtVulnMapper {
 
     List<HistoryScanDTO> history(Map<String, Object> params);
 
-    List<HistoryScanDTO> vulnHistory(Map<String, Object> params);
-
     List<DashboardTarget> vulnTarget(Map<String, Object> params);
 
     List<Map<String, Object>> groupList(Map<String, Object> params);

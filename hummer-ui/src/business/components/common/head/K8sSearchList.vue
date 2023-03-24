@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {getK8sID, getK8sName, getCurrentUser, getCurrentAccountID} from "@/common/js/utils";
+import {getK8sID, getK8sName, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT, K8S, K8S_ID, K8S_NAME} from "@/common/js/constants";
 import {allCloudNativeListUrl} from "@/api/k8s/k8s/k8s";
 
@@ -45,7 +45,6 @@ export default {
       items: [],
       searchArray: [],
       searchString: '',
-      userId: getCurrentUser().id,
       k8sId: getK8sID(),
       k8sName: getK8sName(),
     }
@@ -59,6 +58,7 @@ export default {
     async init () {
       await this.$get(allCloudNativeListUrl, response => {
         this.items = response.data;
+        if (this.items.length === 0)  return;
         this.searchArray = response.data;
         if(!this.k8sId) {
           this.k8sId = this.items[0].id;

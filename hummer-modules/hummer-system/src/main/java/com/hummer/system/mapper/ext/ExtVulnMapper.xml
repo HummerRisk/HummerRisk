@@ -542,37 +542,6 @@
             t.create_time DESC
     </select>
 
-    <select id="vulnHistory" resultType="com.hummer.common.core.dto.HistoryScanDTO">
-        SELECT
-        t.id,
-        t.account_id as accountId,
-        t.create_time as createTime,
-        t.`operator`,
-        t.resources_sum as resourcesSum,
-        t.return_sum as returnSum,
-        t.scan_score as scanScore,
-        t.output,
-        t1.name as accountName,
-        t1.plugin_id as pluginId,
-        t1.plugin_name as pluginName,
-        t1.plugin_icon as pluginIcon
-        FROM
-        history_scan t
-        LEFT JOIN cloud_account t1 ON t.account_id = t1.id
-        LEFT JOIN plugin p on t1.plugin_id = p.id
-        <where>
-            <if test="accountId != null">
-                AND t.account_id = #{accountId}
-            </if>
-            <if test="pluginId != null">
-                AND t1.plugin_id = #{pluginId}
-            </if>
-            AND p.type = 'vuln'
-        </where>
-        ORDER BY
-        t.create_time DESC
-    </select>
-
     <select id="groupList" resultType="java.util.Map">
         SELECT
         IFNULL( sum( t4.return_sum ), 0 ) AS returnSum,

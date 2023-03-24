@@ -35,7 +35,7 @@
         LIMIT 1
     </update>
 
-    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.core.dto.HistoryImageReportDTO" extends="com.hummer.k8s.mapper.HistoryImageResultMapper.BaseResultMap">
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.core.dto.HistoryImageReportDTO" extends="com.hummer.system.mapper.HistoryImageResultMapper.BaseResultMap">
         <collection property="imageResultItemWithBLOBsList" ofType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
         </collection>
     </resultMap>
