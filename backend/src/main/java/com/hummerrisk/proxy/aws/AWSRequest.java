@@ -2,6 +2,7 @@ package com.hummerrisk.proxy.aws;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.RegionUtils;
 import com.amazonaws.services.ec2.AmazonEC2Client;
@@ -52,7 +53,12 @@ public class AWSRequest extends Request {
 			if(clientConfiguration != null) {
 				client = new AmazonEC2Client(new BasicAWSCredentials(getAccessKey(), getSecretKey()), clientConfiguration);
 			}else {
-				client = new AmazonEC2Client(new BasicAWSCredentials(getAccessKey(), getSecretKey()));
+				if(awsCredential.checkIsSessionCredential()){
+					client = new AmazonEC2Client(new BasicSessionCredentials(getAccessKey(), getSecretKey(), awsCredential.getAwsSessionToken()));
+				}else{
+					client = new AmazonEC2Client(new BasicAWSCredentials(getAccessKey(), getSecretKey()));
+				}
+
 			}
 			if(getRegionId() != null && getRegionId().trim().length() > 0) {
 				Region r = RegionUtils.getRegion(getRegionId());
