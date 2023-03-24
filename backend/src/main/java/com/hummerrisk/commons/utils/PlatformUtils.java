@@ -256,12 +256,17 @@ public class PlatformUtils {
             case aws:
                 String awsAccessKey = params.get("accessKey");
                 String awsSecretKey = params.get("secretKey");
+                String isSessionCredential = params.get("isSessionCredential");
+                String awsSessionToken = params.get("awsSessionToken");
                 if (StringUtils.equalsIgnoreCase(custodian, ScanTypeConstants.prowler.name())) {
                     String defaultConfig = "[default]" + "\n"
                             + "region=" + region + "\n";
                     String defaultCredentials = "[default]" + "\n"
                             + "aws_access_key_id=" + awsAccessKey + "\n"
                             + "aws_secret_access_key=" + awsSecretKey + "\n";
+                    if(isSessionCredential.equals("True")){
+                        defaultCredentials += "aws_session_token=" + awsSessionToken + "\n";
+                    }
                     CommandUtils.saveAsFile(defaultConfig, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "config", false);
                     CommandUtils.saveAsFile(defaultCredentials, CloudTaskConstants.PROWLER_CONFIG_FILE_PATH, "credentials", false);
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
@@ -269,6 +274,9 @@ public class PlatformUtils {
                 pre = "AWS_ACCESS_KEY_ID=" + awsAccessKey + " " +
                         "AWS_SECRET_ACCESS_KEY=" + awsSecretKey + " " +
                         "AWS_DEFAULT_REGION=" + region + " ";
+                if(isSessionCredential.equals("True")){
+                    pre += "AWS_SESSION_TOKEN=" + awsSessionToken + " ";
+                }
                 break;
             case azure:
                 String tenant = params.get("tenant");
@@ -467,11 +475,22 @@ public class PlatformUtils {
         Map<String, String> map = new HashMap<>();
         switch (account.getPluginId()) {
             case aws:
+
                 map.put("type", aws);
                 AWSCredential awsCredential = new Gson().fromJson(account.getCredential(), AWSCredential.class);
-                map.put("accessKey", awsCredential.getAccessKey());
-                map.put("secretKey", awsCredential.getSecretKey());
-                map.put("region", region);
+                if(awsCredential.checkIsSessionCredential()){
+                    map.put("accessKey", awsCredential.getAccessKey());
+                    map.put("secretKey", awsCredential.getSecretKey());
+                    map.put("isSessionCredential", awsCredential.getIsSessionCredential());
+                    map.put("awsSessionToken", awsCredential.getAwsSessionToken());
+                    map.put("region", region);
+                }else {
+                    map.put("accessKey", awsCredential.getAccessKey());
+                    map.put("secretKey", awsCredential.getSecretKey());
+                    map.put("isSessionCredential", awsCredential.getIsSessionCredential());
+                    map.put("region", region);
+                }
+
                 break;
             case azure:
                 map.put("type", azure);
