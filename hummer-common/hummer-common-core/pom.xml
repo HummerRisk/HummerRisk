@@ -255,13 +255,6 @@
 
         <!-- tool -->
 
-        <!-- quartz -->
-        <dependency>
-            <groupId>com.hummer</groupId>
-            <artifactId>quartz-spring-boot-starter</artifactId>
-            <version>${quartz.spring.boot.starter.version}</version>
-        </dependency>
-
         <!-- 执行 js 代码依赖 -->
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
