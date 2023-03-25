@@ -1,8 +1,10 @@
 package com.hummer.cloud;
 
 import com.hummer.common.security.annotation.EnableHrFeignClients;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * 混合云模块
@@ -10,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author harris1943
  */
 @EnableHrFeignClients
+@EnableDubbo
 @SpringBootApplication
 public class CloudApplication {
     public static void main(String[] args) {
