@@ -10,12 +10,14 @@ import com.hummer.common.core.domain.request.rule.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
+import com.hummer.common.core.utils.BeanUtils;
+import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.core.utils.PlatformUtils;
+import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,6 @@ import static com.alibaba.fastjson.JSON.parseArray;
  * @author harris
  */
 @Service
-@DubboService
 @Transactional(rollbackFor = Exception.class)
 public class RuleService {
 
