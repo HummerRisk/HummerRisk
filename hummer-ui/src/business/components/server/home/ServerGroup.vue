@@ -47,6 +47,13 @@
 import ServerGroupTree from "@/business/components/common/components/ServerGroupTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
+import {
+  addServerGroupUrl,
+  deleteServerGroupUrl,
+  dragServerGroupUrl,
+  editServerGroupUrl,
+  serverGroupListUrl
+} from "@/api/k8s/server/server";
 /* eslint-disable */
   export default {
     name: 'ServerGroup',
@@ -103,8 +110,7 @@ import DialogFooter from "../../common/components/DialogFooter";
     },
     methods: {
       list() {
-        let url = "/server/serverGroupList";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(serverGroupListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
             let moduleOptions = [];
@@ -116,7 +122,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         });
       },
       edit(param) {
-        this.$post("/server/editServerGroup", param, () => {
+        this.$post(editServerGroupUrl, param, () => {
           this.$success(this.$t('commons.save_success'));
           this.list();
           this.refresh();
@@ -125,7 +131,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         });
       },
       add(param) {
-        this.$post("/server/addServerGroup", param, () => {
+        this.$post(addServerGroupUrl, param, () => {
           this.$success(this.$t('commons.save_success'));
           this.list();
         }, (error) => {
@@ -133,7 +139,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         });
       },
       remove(data) {
-        this.$post("/server/deleteServerGroup", data, () => {
+        this.$post(deleteServerGroupUrl, data, () => {
           this.list();
           this.refresh();
         }, (error) => {
@@ -141,7 +147,7 @@ import DialogFooter from "../../common/components/DialogFooter";
         });
       },
       drag(param, list) {
-        this.$post("/server/drag", param, () => {
+        this.$post(dragServerGroupUrl, param, () => {
           this.list();
         }, (error) => {
           this.list();
@@ -172,7 +178,7 @@ import DialogFooter from "../../common/components/DialogFooter";
       //保存虚拟机分组
       saveGroup(item, type){
         if (type === 'add') {
-          this.$post("server/addServerGroup", item,response => {
+          this.$post(addServerGroupUrl, item,response => {
             if (response.success) {
               this.$success(this.$t('server.i18n_hr_create_success'));
               this.handleClose();

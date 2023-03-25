@@ -4,9 +4,6 @@ import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.dto.*;
-import com.hummer.common.core.utils.BeanUtils;
-import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.core.domain.request.code.CodeResultRequest;
 import com.hummer.common.core.domain.request.fs.FsResultRequest;
 import com.hummer.common.core.domain.request.image.ImageResultRequest;
@@ -14,6 +11,9 @@ import com.hummer.common.core.domain.request.sbom.DownloadRequest;
 import com.hummer.common.core.domain.request.sbom.SbomRequest;
 import com.hummer.common.core.domain.request.sbom.SbomVersionRequest;
 import com.hummer.common.core.domain.request.sbom.SettingVersionRequest;
+import com.hummer.common.core.dto.*;
+import com.hummer.common.core.utils.BeanUtils;
+import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtCodeResultMapper;
@@ -24,10 +24,10 @@ import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,35 +40,35 @@ import java.util.Map;
 @Transactional(rollbackFor = Exception.class)
 public class SbomService {
 
-    @Resource
+    @Autowired
     private ExtSbomMapper extSbomMapper;
-    @Resource
+    @Autowired
     private SbomMapper sbomMapper;
-    @Resource
+    @Autowired
     private SbomVersionMapper sbomVersionMapper;
-    @Resource
+    @Autowired
     private CodeMapper codeMapper;
-    @Resource
+    @Autowired
     private ImageMapper imageMapper;
-    @Resource
+    @Autowired
     private CodeService codeService;
-    @Resource
+    @Autowired
     private ImageService imageService;
-    @Resource
+    @Autowired
     private ImageResultLogMapper imageResultLogMapper;
-    @Resource
+    @Autowired
     private ExtFileSystemResultMapper extFileSystemResultMapper;
-    @Resource
+    @Autowired
     private CodeResultLogMapper codeResultLogMapper;
-    @Resource
+    @Autowired
     private ExtCodeResultMapper extCodeResultMapper;
-    @Resource
+    @Autowired
     private ExtImageResultMapper extImageResultMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
@@ -247,7 +247,7 @@ public class SbomService {
     public List<HistoryFsResultDTO> historyFsResult(String sbomVersionId) throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("sbomVersionId", sbomVersionId);
-        List<HistoryFsResultDTO> historyList = extFileSystemResultMapper.history(params);
+        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(params);
         return historyList;
     }
 

@@ -9,7 +9,5 @@ public interface ExtRuleTypeMapper {
 
     List<Map<String, String>> cloudResourceTypes();
 
-    List<Map<String, String>> vulnResourceTypes();
-
     String getResourceTypesById(String ruleId);
 }

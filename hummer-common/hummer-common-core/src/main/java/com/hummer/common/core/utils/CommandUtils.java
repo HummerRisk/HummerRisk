@@ -146,9 +146,9 @@ public class CommandUtils {
      * @param command
      * @param workDir 工作路径
      * @throws Exception
-     * @Desc Nuclei 调用命令行工具，Java 调用 Runtime 执行 nuclei 命令会阻塞，所以找了apache-commons-exec异步执行
+     * @Desc 调用命令行工具，Java 调用 Runtime 执行命令会阻塞，所以找了apache-commons-exec异步执行
      */
-    public static String commonExecCmdWithResultByNuclei(String command, String workDir) throws Exception {
+    public static String commonExecCmdWithResultByThread(String command, String workDir) throws Exception {
         FileOutputStream fileOutputStream = null;
         try {
             // 命令行
@@ -170,7 +170,7 @@ public class CommandUtils {
 
             resultHandler.waitFor();
             int exitCode = resultHandler.getExitValue();
-            LogUtil.warn("nuclei command exitCode:" + exitCode);
+            LogUtil.warn("command exitCode:" + exitCode);
             return ReadFileUtils.readToBuffer(workDir + "/exec.log");
         } catch (Exception e) {
             throw e;
@@ -226,6 +226,10 @@ public class CommandUtils {
                 } else {
                     int count;
                     byte [] data = new byte[BUFFER_SIZE];
+                    File f = new File(destDir + "/" + entry.getName());
+                    if(!f.getParentFile().exists()){
+                        f.getParentFile().mkdirs();
+                    }
                     FileOutputStream fos = new FileOutputStream(destDir + "/" + entry.getName(), false);
                     try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER_SIZE)) {
                         while ((count = tarIn.read(data, 0, BUFFER_SIZE)) != -1) {

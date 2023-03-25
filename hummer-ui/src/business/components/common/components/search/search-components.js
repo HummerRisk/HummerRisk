@@ -2,6 +2,9 @@ import TableSearchInput from "./TableSearchInput";
 import TableSearchDateTimePicker from "./TableSearchDateTimePicker";
 import TableSearchDatePicker from "./TableSearchDatePicker";
 import TableSearchSelect from "./TableSearchSelect";
+import {cloudPluginUrl, nativePluginUrl, userAllListUrl} from "@/api/system/system";
+import {allListUrl} from "@/api/cloud/account/account";
+import {allCloudResourceTypesUrl, allCloudRuleGroupsUrl, ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
 export default {
@@ -112,28 +115,7 @@ export const PLUGIN_NAME = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/plugin/cloud",
-    labelKey: "name",
-    valueKey: "id",
-    showLabel: option => {
-      return option.label + " (" + option.value + ") ";
-    }
-  },
-  props: { // 尾部控件的props，一般为element ui控件的props
-    multiple: true
-  }
-}
-
-//漏洞检测插件
-export const VULN_PLUGIN_NAME = {
-  key: "pluginId",
-  name: 'TableSearchSelect',
-  label: 'commons.adv_search.plugin',
-  operator: {
-    options: [OPERATORS.IN, OPERATORS.NOT_IN]
-  },
-  options: { // 异步获取候选项
-    url: "/plugin/vuln",
+    url: cloudPluginUrl,
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -154,7 +136,7 @@ export const K8S_PLUGIN_NAME = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/plugin/native",
+    url: nativePluginUrl,
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -174,7 +156,7 @@ export const EVENT_ACCOUNT = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/account/allList",
+    url: allListUrl,
     labelKey: "name",
     valueKey: "id",
 
@@ -354,7 +336,7 @@ export const CREATOR = {
     }
   },
   options: { // 异步获取候选项
-    url: "/user/list/all",
+    url: userAllListUrl,
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -443,7 +425,7 @@ export const RULE_PLUGIN_NAME = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/plugin/cloud",
+    url: cloudPluginUrl,
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -463,27 +445,7 @@ export const RULE_GROUP = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/rule/allCloudRuleGroups",
-    labelKey: "name",
-    valueKey: "id",
-    showLabel: option => {
-      return option.label;
-    }
-  },
-  props: { // 尾部控件的props，一般为element ui控件的props
-    multiple: false
-  }
-}
-
-export const VULN_RULE_GROUP = {
-  key: "groupId",
-  name: 'TableSearchSelect',
-  label: 'rule.rule_set',
-  operator: {
-    options: [OPERATORS.IN, OPERATORS.NOT_IN]
-  },
-  options: { // 异步获取候选项
-    url: "/rule/allVulnRuleGroups",
+    url: allCloudRuleGroupsUrl,
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -521,27 +483,7 @@ export const RULE_RESOURCE_TYPE = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/rule/all/cloudResourceTypes",
-    labelKey: "name",
-    valueKey: "name",
-    showLabel: option => {
-      return option.label;
-    }
-  },
-  props: { // 尾部控件的props，一般为element ui控件的props
-    multiple: false
-  }
-}
-
-export const VULN_RULE_RESOURCE_TYPE = {
-  key: "resourceType",
-  name: 'TableSearchSelect',
-  label: 'rule.resource_type',
-  operator: {
-    options: [OPERATORS.IN, OPERATORS.NOT_IN]
-  },
-  options: { // 异步获取候选项
-    url: "/rule/all/vulnResourceTypes",
+    url: allCloudResourceTypesUrl,
     labelKey: "name",
     valueKey: "name",
     showLabel: option => {
@@ -561,7 +503,7 @@ export const RULE_TAG = {
     options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
   options: { // 异步获取候选项
-    url: "/rule/ruleTags",
+    url: ruleTagsUrl,
     labelKey: "tagName",
     valueKey: "tagKey",
     showLabel: option => {
@@ -735,7 +677,7 @@ export const RESOURCE_USER_ID = {
     }
   },
   options: { // 异步获取候选项
-    url: "/user/list/all",
+    url: userAllListUrl,
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -822,8 +764,6 @@ export const SCAN_TYPE = {
   options: [
     {label: 'custodian', value: 'custodian'},
     {label: 'native', value: 'native'},
-    {label: 'xray', value: 'xray'},
-    {label: 'nuclei', value: 'nuclei'},
   ],
   props: { // 尾部控件的props，一般为element ui控件的props
     multiple: true
@@ -947,7 +887,7 @@ export const APPLY_USER = {
     }
   },
   options: { // 异步获取候选项
-    url: "/user/list/all",
+    url: userAllListUrl,
     labelKey: "name",
     valueKey: "id",
     showLabel: option => {
@@ -1124,9 +1064,6 @@ export const ACTIVE_CONFIGS = [RESOURCE_USER_NAME, TIME, RESOURCE_USER_ID, ACTIV
 export const ACCOUNT_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
 export const CLOUD_TASK_CONFIGS = [NAME, APPLY_USER, CLOUD_QUARTZ_STATUS, CLOUD_QUARTZ_TYPE, PREV_FIRE_TIME, LAST_FIRE_TIME, CREATE_TIME];
 export const OSS_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, RESULT_STATUS, CREATOR];
-export const OSS_BUCKET_CONFIGS = [NAME, PLUGIN_NAME, UPDATE_TIME, CREATE_TIME];
-export const VULN_CONFIGS = [NAME, VULN_PLUGIN_NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
-export const VULN_RULE_CONFIGS = [RULE_NAME, VULN_PLUGIN_NAME, RULE_SEVERITY, VULN_RULE_RESOURCE_TYPE, VULN_RULE_GROUP];
 export const RULE_TAG_CONFIGS = [TAG_KEY, TAG_NAME, TAG_FLAG, TAG_INDEX];
 export const RULE_GROUP_CONFIGS = [NAME, DESCRIPTION, TAG_FLAG, RULE_PLUGIN_NAME];
 export const RULE_CONFIGS = [RULE_NAME, RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RESOURCE_TYPE, RULE_GROUP];
@@ -1138,6 +1075,7 @@ export const SERVER_CERTIFICATE_CONFIGS = [NAME, DESCRIPTION, CREATOR, LAST_MODI
 export const SERVER_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY, SERVER_TYPE, LAST_MODIFIED];
 export const SERVER_RESULT_CONFIGS = [NAME, IP, SERVER_TYPE, SERVER_RULE_NAME, RULE_SEVERITY, RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const SERVER_RESULT_CONFIGS2 = [NAME, IP, SERVER_TYPE, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
+export const SERVER_RULE_GROUP_CONFIGS = [NAME, DESCRIPTION, TAG_FLAG];
 export const IMAGE_CONFIGS = [NAME, IMAGE_URL, ACCOUNT_STATUS, CREATOR, CREATE_TIME, UPDATE_TIME];
 export const IMAGE_REPO_CONFIGS = [NAME, REPO, ACCOUNT_STATUS, CREATOR, UPDATE_TIME];
 export const IMAGE_REPO_IMAGE_CONFIGS = [REPOSITORY, PATH, SIZE, TAG];
@@ -1163,3 +1101,4 @@ export const FS_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, K8S_RESULT_STA
 export const RULE_INSPECTION_REPORT_CONFIGS = [ITEM_SORT_FIRST_LEVEL, ITEM_SORT_SECOND_LEVEL, PROJECT, IMPROVEMENT];
 export const DETAIL_RESULT_CONFIGS = [PKGNAME, RESOURCE, VULNERABILITYID, SEVERITY];
 export const K8S_KUBENCH_RESULT_CONFIGS = [TITLE, NUMBER, DESCRIPTION, KUBENCH_SEVERITY];
+

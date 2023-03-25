@@ -18,6 +18,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Certificate'),
     },
     {
+      path: "ruleGroup",
+      name: "ServerRuleGroup",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/RuleGroup'),
+    },
+    {
       path: "rule",
       name: "ServerRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),

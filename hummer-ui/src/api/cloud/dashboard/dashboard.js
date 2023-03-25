@@ -19,8 +19,6 @@ export const configChartUrl = "/system/dashboard/configChart";
 
 export const imageChartUrl = "/system/dashboard/imageChart";
 
-export const serverChartUrl = "/system/server/serverChart";
-
 export const queryAnalysisUrl = "/system/dashboard/queryAnalysis";
 
 export const historyScanVoUrl = "/system/dashboard/historyScanVo/";
@@ -32,3 +30,7 @@ export const taskCalendarUrl = "/system/dashboard/taskCalendar";
 export const topInfoUrl = "/system/dashboard/topInfo";
 
 export const topScanInfoUrl = "/system/dashboard/topScanInfo";
+
+export const dashboardScoreUrl = "/system/dashboard/score";
+
+

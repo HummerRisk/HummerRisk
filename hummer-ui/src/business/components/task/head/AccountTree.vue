@@ -80,12 +80,6 @@ export default {
         return this.$t("task.task_cloud");
       }
     },
-    vulnAccount: {
-      type: String,
-      default() {
-        return this.$t("task.task_vuln");
-      }
-    },
     serverAccount: {
       type: String,
       default() {
@@ -149,7 +143,6 @@ export default {
         "level": 0,
         "children": [
           {name: this.cloudAccount, level: 1, type: 'cloudAccount', children: this.treeNodes.cloudAccount},
-          {name: this.vulnAccount, level: 1, type: 'vulnAccount', children: this.treeNodes.vulnAccount},
           {name: this.serverAccount, level: 1, type: 'serverAccount', children: this.treeNodes.serverAccount},
           {name: this.k8sAccount, level: 1, type: 'k8sAccount', children: this.treeNodes.k8sAccount},
           {name: this.configAccount, level: 1, type: 'configAccount', children: this.treeNodes.configAccount},

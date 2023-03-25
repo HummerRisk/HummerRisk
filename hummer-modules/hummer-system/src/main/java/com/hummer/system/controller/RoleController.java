@@ -5,12 +5,12 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.system.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "角色")
@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 public class RoleController {
 
-    @Resource
+    @Autowired
     private RoleService roleService;
 
     @I18n

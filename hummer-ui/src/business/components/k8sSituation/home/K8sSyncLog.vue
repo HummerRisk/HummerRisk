@@ -98,6 +98,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import {K8S_SITUATION_LOG_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {allCloudNativeListUrl, deleteK8sSyncLogUrl, syncK8sListUrl, syncK8sSourceUrl} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -214,12 +215,12 @@ export default {
       this.createVisible = true;
     },
     initK8s() {
-      this.result = this.$get("/k8s/allCloudNativeList",response => {
+      this.result = this.$get(allCloudNativeListUrl,response => {
         this.k8s = response.data;
       });
     },
     saveSync() {
-      this.result = this.$get("/k8s/syncSource/" + this.form.id,response => {
+      this.result = this.$get(syncK8sSourceUrl + this.form.id,response => {
         this.$success(this.$t('k8s.notes'));
         this.search();
         this.handleClose();
@@ -227,7 +228,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/k8s/syncList/" + this.currentPage + "/" + this.pageSize;
+      let url = syncK8sListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -242,7 +243,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/k8s/deleteSyncLog/" + obj.id, () => {
+            this.result = this.$get(deleteK8sSyncLogUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });

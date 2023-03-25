@@ -24,15 +24,15 @@ public class TrivyConstants {
      */
     public static final int DEFAULT_FILE_NAME_LENGTH = 100;
 
-    public final static String TRIVY_IMAGE = "trivy image ";
+    public final static String TRIVY_IMAGE = "trivy image --insecure ";
 
     public final static String TRIVY_CONFIG = "trivy config ";
 
     public final static String TRIVY_REPO = "trivy repo --insecure ";
 
-    public final static String TRIVY_SBOM = "trivy sbom ";
+    public final static String TRIVY_SBOM = "trivy sbom --insecure ";
 
-    public final static String TRIVY_FS = "trivy fs ";
+    public final static String TRIVY_FS = "trivy fs --insecure ";
 
     public final static String TRIVY_TYPE = " --format json -o ";
 

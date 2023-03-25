@@ -5,7 +5,6 @@ import com.hummer.common.core.constant.ScanConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.system.mapper.MessageOrderItemMapper;
 import com.hummer.system.mapper.MessageOrderMapper;
@@ -13,21 +12,21 @@ import com.hummer.system.mapper.MessageTaskMapper;
 import com.hummer.system.message.MessageDetail;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class NoticeService {
-    @Resource
+    @Autowired
     private MessageTaskMapper messageTaskMapper;
-    @Resource
+    @Autowired
     private MessageOrderMapper messageOrderMapper;
-    @Resource
+    @Autowired
     private MessageOrderItemMapper messageOrderItemMapper;
 
     public void saveMessageTask(MessageDetail messageDetail) {
@@ -152,12 +151,7 @@ public class NoticeService {
         messageOrder.setAccountName(account.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
         messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
-
-        if (PlatformUtils.isSupportVuln(account.getPluginId())) {
-            messageOrder.setScanType(ScanConstants.SCAN_TYPE.VULN.name());
-        } else {
-            messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD.name());
-        }
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD.name());
         messageOrderMapper.insertSelective(messageOrder);
         return uuid;
     }

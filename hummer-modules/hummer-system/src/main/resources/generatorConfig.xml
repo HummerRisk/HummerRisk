@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <!--配置数据库连接的位置-->
+    <properties url="file:///opt/hummerrisk/conf/hummer-risk.properties"/>
+    <!-- 此处指定生成针对MyBatis3的DAO -->
+    <context id="mysql" targetRuntime="MyBatis3">
+        <!-- 字段带`,解决列表跟关键字冲突问题 -->
+        <property name="autoDelimitKeywords" value="true" />
+        <property name="beginningDelimiter" value="`" />
+        <property name="endingDelimiter" value="`" />
+
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
+        <!-- Lombok插件 -->
+        <plugin type="com.itfsw.mybatis.generator.plugins.LombokPlugin">
+            <!-- @Data 默认开启,同时插件会对子类自动附加@EqualsAndHashCode(callSuper = true)，@ToString(callSuper = true) -->
+            <property name="@Data" value="false"/>
+            <!-- @Builder 必须在 Lombok 版本 >= 1.18.2 的情况下开启，对存在继承关系的类自动替换成@SuperBuilder -->
+            <property name="@Builder" value="false"/>
+            <!-- @NoArgsConstructor 和 @AllArgsConstructor 使用规则和Lombok一致 -->
+            <property name="@AllArgsConstructor" value="false"/>
+            <property name="@NoArgsConstructor" value="false"/>
+            <!-- @Getter、@Setter、@Accessors 等使用规则参见官方文档 -->
+            <property name="@Accessors(chain = true)" value="false"/>
+            <!-- 临时解决IDEA工具对@SuperBuilder的不支持问题，开启后(默认未开启)插件在遇到@SuperBuilder注解时会调用ModelBuilderPlugin来生成相应的builder代码 -->
+            <property name="supportSuperBuilderForIdea" value="false"/>
+        </plugin>
+        <!-- 用来除去时间信息的，这在配合类似subversion的代码管理工具时使用很有效，因为可以减少没有必要的注释迁入 -->
+        <commentGenerator>
+            <property name="suppressDate" value="false"/>
+            <!--  关闭自动生成的注释  -->
+            <property name="suppressAllComments" value="false"/>
+        </commentGenerator>
+
+        <!-- jdbc连接信息 --> <!-- EduLoanManage EduTestDataBase -->
+        <!--<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.20.180:3306/hummerrisk"-->
+        <!--userId="root" password="hummerrisk2015!" />-->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="${spring.datasource.url}&amp;nullCatalogMeansCurrent=true"
+                        userId="${spring.datasource.username}" password="${spring.datasource.password}"/>
+
+        <!-- javaTypeResolver式类型转换的信息 -->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!-- 模型对象 -->
+        <javaModelGenerator targetPackage="com.hummer.system.domain" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!-- XML映射文件 -->
+        <sqlMapGenerator targetPackage="com.hummer.system.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!-- 接口 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.hummer.system.mapper"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        <!--要生成的数据库表 -->
+<!--        <table tableName="user"/>-->
+<!--        <table tableName="schedule"/>-->
+<!--        <table tableName="plugin"/>-->
+<!--        <table tableName="proxy"/>-->
+<!--        <table tableName="cloud_account" domainObjectName="Account"/>-->
+<!--        <table tableName="operation_log" domainObjectName="OperationLog"/>-->
+<!--        <table tableName="rule" domainObjectName="Rule">-->
+<!--            <columnOverride column="script" javaType="java.lang.String" jdbcType="VARCHAR"/>-->
+<!--        </table>-->
+<!--        <table tableName="message_task" domainObjectName="MessageTask"/>-->
+<!--        <table tableName="message_order" domainObjectName="MessageOrder"/>-->
+<!--        <table tableName="message_order_item" domainObjectName="MessageOrderItem"/>-->
+<!--        <table tableName="rule_tag" domainObjectName="RuleTag"/>-->
+<!--        <table tableName="rule_tag_mapping" domainObjectName="RuleTagMapping"/>-->
+<!--        <table tableName="rule_type" domainObjectName="RuleType"/>-->
+<!--        <table tableName="rule_account_parameter" domainObjectName="RuleAccountParameter"/>-->
+<!--        <table tableName="rule_group" domainObjectName="RuleGroup"/>-->
+<!--        <table tableName="rule_group_mapping" domainObjectName="RuleGroupMapping"/>-->
+<!--        <table tableName="rule_inspection_report" domainObjectName="RuleInspectionReport"/>-->
+<!--        <table tableName="rule_inspection_report_mapping" domainObjectName="RuleInspectionReportMapping"/>-->
+        <table tableName="cloud_task" domainObjectName="CloudTask"/>
+<!--        <table tableName="cloud_task_item" domainObjectName="CloudTaskItem"/>-->
+<!--        <table tableName="cloud_task_item_log" domainObjectName="CloudTaskItemLog"/>-->
+<!--        <table tableName="cloud_task_item_resource" domainObjectName="CloudTaskItemResource"/>-->
+<!--        <table tableName="resource" domainObjectName="Resource"/>-->
+<!--        <table tableName="resource_item" domainObjectName="ResourceItem"/>-->
+<!--        <table tableName="resource_rule" domainObjectName="ResourceRule"/>-->
+<!--        <table tableName="web_msg" domainObjectName="WebMsg"/>-->
+<!--        <table tableName="server_group" domainObjectName="ServerGroup"/>-->
+<!--        <table tableName="server" domainObjectName="Server"/>-->
+<!--        <table tableName="server_rule" domainObjectName="ServerRule"/>-->
+<!--        <table tableName="server_result" domainObjectName="ServerResult"/>-->
+<!--        <table tableName="server_result_log" domainObjectName="ServerResultLog"/>-->
+<!--        <table tableName="image_repo" domainObjectName="ImageRepo"/>-->
+<!--        <table tableName="image" domainObjectName="Image"/>-->
+<!--        <table tableName="image_rule" domainObjectName="ImageRule"/>-->
+<!--        <table tableName="image_result" domainObjectName="ImageResult"/>-->
+<!--        <table tableName="image_result_log" domainObjectName="ImageResultLog"/>-->
+<!--        <table tableName="favorite" domainObjectName="Favorite"/>-->
+<!--        <table tableName="task" domainObjectName="Task"/>-->
+<!--        <table tableName="task_item" domainObjectName="TaskItem"/>-->
+<!--        <table tableName="task_item_resource" domainObjectName="TaskItemResource"/>-->
+<!--        <table tableName="task_item_resource_log" domainObjectName="TaskItemResourceLog"/>-->
+<!--        <table tableName="history_scan" domainObjectName="HistoryScan"/>-->
+<!--        <table tableName="history_scan_task" domainObjectName="HistoryScanTask"/>-->
+        <table tableName="history_cloud_task" domainObjectName="HistoryCloudTask"/>
+<!--        <table tableName="history_cloud_task_item" domainObjectName="HistoryCloudTaskItem"/>-->
+<!--        <table tableName="history_cloud_task_log" domainObjectName="HistoryCloudTaskLog"/>-->
+<!--        <table tableName="history_cloud_task_resource" domainObjectName="HistoryCloudTaskResource"/>-->
+<!--        <table tableName="history_vuln_task" domainObjectName="HistoryVulnTask"/>-->
+<!--        <table tableName="history_vuln_task_item" domainObjectName="HistoryVulnTaskItem"/>-->
+<!--        <table tableName="history_vuln_task_log" domainObjectName="HistoryVulnTaskLog"/>-->
+<!--        <table tableName="history_vuln_task_resource" domainObjectName="HistoryVulnTaskResource"/>-->
+<!--        <table tableName="history_server_result" domainObjectName="HistoryServerResult"/>-->
+<!--        <table tableName="history_image_result" domainObjectName="HistoryImageResult"/>-->
+<!--        <table tableName="cloud_native" domainObjectName="CloudNative"/>-->
+<!--        <table tableName="cloud_native_source" domainObjectName="CloudNativeSource"/>-->
+<!--        <table tableName="cloud_native_result" domainObjectName="CloudNativeResult"/>-->
+<!--        <table tableName="cloud_native_result_log" domainObjectName="CloudNativeResultLog"/>-->
+<!--        <table tableName="cloud_native_result_item" domainObjectName="CloudNativeResultItem"/>-->
+<!--        <table tableName="cloud_native_result_config_item" domainObjectName="CloudNativeResultConfigItem"/>-->
+<!--        <table tableName="history_cloud_native_result" domainObjectName="HistoryCloudNativeResult"/>-->
+<!--        <table tableName="image_result_item" domainObjectName="ImageResultItem"/>-->
+<!--        <table tableName="cloud_native_config" domainObjectName="CloudNativeConfig"/>-->
+<!--        <table tableName="cloud_native_config_result" domainObjectName="CloudNativeConfigResult"/>-->
+<!--        <table tableName="cloud_native_config_result_log" domainObjectName="CloudNativeConfigResultLog"/>-->
+<!--        <table tableName="cloud_native_config_result_item" domainObjectName="CloudNativeConfigResultItem"/>-->
+<!--        <table tableName="history_cloud_native_config_result" domainObjectName="HistoryCloudNativeConfigResult"/>-->
+<!--        <table tableName="code" domainObjectName="Code"/>-->
+<!--        <table tableName="code_rule" domainObjectName="CodeRule"/>-->
+<!--        <table tableName="code_result" domainObjectName="CodeResult"/>-->
+<!--        <table tableName="code_result_item" domainObjectName="CodeResultItem"/>-->
+<!--        <table tableName="code_result_log" domainObjectName="CodeResultLog"/>-->
+<!--        <table tableName="history_code_result" domainObjectName="HistoryCodeResult"/>-->
+<!--        <table tableName="sbom" domainObjectName="Sbom"/>-->
+<!--        <table tableName="sbom_version" domainObjectName="SbomVersion"/>-->
+<!--        <table tableName="image_repo_item" domainObjectName="ImageRepoItem"/>-->
+<!--        <table tableName="image_repo_sync_log" domainObjectName="ImageRepoSyncLog"/>-->
+<!--        <table tableName="cloud_native_source_sync_log" domainObjectName="CloudNativeSourceSyncLog"/>-->
+<!--        <table tableName="cloud_native_rule" domainObjectName="CloudNativeRule"/>-->
+<!--        <table tableName="cloud_native_config_rule" domainObjectName="CloudNativeConfigRule"/>-->
+<!--        <table tableName="cloud_event_sync_log" domainObjectName="CloudEventSyncLog"/>-->
+<!--        <table tableName="cloud_event_region_log" domainObjectName="CloudEventRegionLog"/>-->
+<!--        <table tableName="cloud_event" domainObjectName="CloudEvent"/>-->
+<!--        <table tableName="server_certificate" domainObjectName="ServerCertificate"/>-->
+<!--        <table tableName="cloud_resource_sync" domainObjectName="CloudResourceSync"/>-->
+<!--        <table tableName="cloud_resource_sync_item" domainObjectName="CloudResourceSyncItem"/>-->
+<!--        <table tableName="cloud_resource_sync_item_log" domainObjectName="CloudResourceSyncItemLog"/>-->
+<!--        <table tableName="cloud_resource" domainObjectName="CloudResource"/>-->
+<!--        <table tableName="cloud_resource_item" domainObjectName="CloudResourceItem"/>-->
+<!--        <table tableName="cloud_resource_amount_history" domainObjectName="CloudResourceAmountHistory"/>-->
+<!--        <table tableName="file_system" domainObjectName="FileSystem"/>-->
+<!--        <table tableName="file_system_rule" domainObjectName="FileSystemRule"/>-->
+<!--        <table tableName="file_system_result" domainObjectName="FileSystemResult"/>-->
+<!--        <table tableName="file_system_result_item" domainObjectName="FileSystemResultItem"/>-->
+<!--        <table tableName="file_system_result_log" domainObjectName="FileSystemResultLog"/>-->
+<!--        <table tableName="history_file_system_result" domainObjectName="HistoryFileSystemResult"/>-->
+<!--        <table tableName="oss" domainObjectName="Oss"/>-->
+<!--        <table tableName="oss_log" domainObjectName="OssLog"/>-->
+<!--        <table tableName="oss_bucket" domainObjectName="OssBucket"/>-->
+<!--        <table tableName="cloud_native_source_image" domainObjectName="CloudNativeSourceImage"/>-->
+<!--        <table tableName="webhook" domainObjectName="Webhook"/>-->
+<!--        <table tableName="cloud_native_result_kubench" domainObjectName="CloudNativeResultKubench"/>-->
+<!--        <table tableName="image_repo_setting" domainObjectName="ImageRepoSetting"/>-->
+<!--        <table tableName="cloud_native_source_rbac_node" domainObjectName="CloudNativeSourceRbacNode"/>-->
+<!--        <table tableName="cloud_native_source_rbac_link" domainObjectName="CloudNativeSourceRbacLink"/>-->
+<!--        <table tableName="cloud_native_source_rbac_relation" domainObjectName="CloudNativeSourceRbacRelation"/>-->
+    </context>
+</generatorConfiguration>

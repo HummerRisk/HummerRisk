@@ -71,7 +71,12 @@ public class SysLoginService {
         return userInfo;
     }
 
-    public void logout(String loginName) {
+    public void logout(String userId) throws Exception {
+        // 查询用户信息
+        LoginUser userInfo = userService.getLoginUserByName(userId);
+        User user = userInfo.getUser();
+        userService.createOperationLog(user, Objects.requireNonNull(user).getId(), user.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.LOGOUT, "用户登出", userInfo.getIpAddr());
+
     }
 
     class SystemUserConstants extends User {

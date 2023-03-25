@@ -1,9 +1,10 @@
 package com.hummer.cloud.mapper.ext;
 
-import com.hummer.common.core.dto.CloudEventGroupDTO;
-import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
 import com.hummer.common.core.domain.CloudEventWithBLOBs;
 import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
+import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
+import com.hummer.common.core.dto.CloudEventGroupDTO;
+import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public interface ExtCloudEventMapper {
 
-    List<CloudEventWithBLOBs> getCloudEventList(@Param("request") CloudEventRequest request);
+    List<CloudEventWithBLOBsVo> getCloudEventList(@Param("request") CloudEventRequest request);
 
     List<CloudEventGroupDTO> selectEventGroup(@Param("request") CloudEventRequest request);
     /**

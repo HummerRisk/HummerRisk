@@ -17,10 +17,5 @@ export default {
       name: "sbom",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/sbom/home/Sbom"),
     },
-    {
-      path: "sbomTopology",
-      name: "SbomTopology",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/sbom/home/SbomTopology"),
-    },
   ]
 }

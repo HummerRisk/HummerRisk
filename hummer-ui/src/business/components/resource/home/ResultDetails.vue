@@ -68,6 +68,7 @@ import DialogFooter from "../../common/components/RuleDialogFooter";
 import CenterChart from "../../common/components/CenterChart";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
+import {cloudResourceListUrl, string2PrettyFormatUrl} from "@/api/cloud/resource/resource";
 /* eslint-disable */
   export default {
     name: "ResultDetails",
@@ -129,7 +130,7 @@ import {_filter, _sort} from "@/common/js/utils";
         this.string2Key = title;
         this.string2PrettyFormat = "";
         if (row) {
-          this.$post("/resource/string2PrettyFormat", {json: details}, res => {
+          this.$post(string2PrettyFormatUrl, {json: details}, res => {
             this.string2PrettyFormat = res.data;
           });
         } else {
@@ -142,7 +143,7 @@ import {_filter, _sort} from "@/common/js/utils";
         this.visible =  false;
       },
       search () {
-        let url = "/resource/list/" + this.currentPage + "/" + this.pageSize;
+        let url = cloudResourceListUrl + this.currentPage + "/" + this.pageSize;
         this.condition.taskId = this.taskId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
@@ -171,7 +172,7 @@ import {_filter, _sort} from "@/common/js/utils";
     },
     computed: {
       codemirror() {
-        return this.$refs.cmEditor.codemirror
+        return this.$refs.cmEditor.codemirror;
       }
     },
     created() {

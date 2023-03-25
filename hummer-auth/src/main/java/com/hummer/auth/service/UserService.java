@@ -2,12 +2,12 @@ package com.hummer.auth.service;
 
 import com.hummer.auth.mapper.OperationLogMapper;
 import com.hummer.auth.mapper.UserMapper;
+import com.hummer.auth.mapper.ext.ExtUserMapper;
 import com.hummer.common.core.domain.OperationLog;
 import com.hummer.common.core.domain.UserExample;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +23,15 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-
+    @Autowired
+    private ExtUserMapper extUserMapper;
     @Autowired
     private OperationLogMapper operationLogMapper;
+
+    public User getUserById(String id) throws Exception {
+        User user = userMapper.selectByPrimaryKey(id);
+        return user;
+    }
 
     public LoginUser getLoginUserByName(String userName) throws Exception {
         LoginUser loginUser = new LoginUser();
@@ -55,6 +61,11 @@ public class UserService {
         operationLog.setTime(System.currentTimeMillis());
         operationLogMapper.insertSelective(operationLog);
         return operationLog;
+    }
+
+    public String getDefaultLanguage() {
+        final String key = "default.language";
+        return extUserMapper.getDefaultLanguage(key);
     }
 
 }

@@ -1,15 +1,15 @@
 package com.hummer.system.message;
 
 import com.hummer.common.core.constant.NoticeConstants;
-import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.domain.UserDetail;
+import com.hummer.common.core.utils.LogUtil;
 import com.hummer.system.service.UserService;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractNoticeSender implements NoticeSender {
 
-    @Resource
+    @Autowired
     private UserService userService;
 
     protected String getContext(MessageDetail messageDetail, NoticeModel noticeModel) {

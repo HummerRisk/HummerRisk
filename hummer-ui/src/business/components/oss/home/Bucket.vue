@@ -243,6 +243,14 @@ import {OSS_BUCKET_CONFIGS} from "@/business/components/common/components/search
 import {saveAs} from "@/common/js/FileSaver";
 import Upload from "@/business/components/oss/head/Upload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  bucketAddforOssIdUrl,
+  ossAllListUrl, ossBucketListUrl,
+  ossCreateDirUrl, ossCreateUrl, ossDeleteBucketUrl, ossDeleteByBatchUrl,
+  ossDeleteObjectsUrl,
+  ossDeleteObjectUrl, ossDownloadObjectUrl, ossObjectsUrl, ossSupportRegionsUrl, ossSupportUrl,
+  ossUploadFileUrl
+} from "@/api/cloud/oss/oss";
 
 const columnOptions = [
   {
@@ -423,7 +431,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/oss/bucketList/" + this.currentPage + "/" + this.pageSize;
+      let url = ossBucketListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -451,7 +459,7 @@ export default {
     showObject(bucket) {
       this.path = '/';
       this.bucketOss = bucket;
-      this.result = this.$get("/oss/objects/" + bucket.id, response => {
+      this.result = this.$get(ossObjectsUrl + bucket.id, response => {
         this.objectData = response.data;
         this.bucketVisible = true;
       });
@@ -459,7 +467,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
+        this.result = this.$post(ossObjectsUrl + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
           this.objectData = response.data;
           this.bucketVisible = true;
         });
@@ -484,20 +492,19 @@ export default {
     },
     //查询对象存储账号
     activeAccount() {
-      let url = "/oss/allList";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(ossAllListUrl, response => {
         let data = response.data;
         this.accounts =  data;
       });
     },
     //选择插件查询对象存储账号信息
     changeAccount (ossId){
-      this.$get("/oss/support/bucketAddforOssId/" + ossId,response => {
+      this.$get(bucketAddforOssIdUrl + ossId,response => {
         this.bucketParams = response.data;
       });
     },
     createBucket() {
-      this.result = this.$post("/oss/create", this.form, response => {
+      this.result = this.$post(ossCreateUrl, this.form, response => {
         if (response.success) {
           this.$success(this.$t('commons.create_success'));
           this.search();
@@ -509,19 +516,19 @@ export default {
     },
     getBucketLocation (ossId) {
       this.locationList = [];
-      this.$get('bucket/support/regions/' + ossId, response => {
+      this.$get(ossSupportRegionsUrl + ossId, response => {
         this.locationList = response.data;
       });
     },
     getStorageList (ossId) {
       this.storageList = [];
-      this.$get('bucket/support/regions/' + ossId + '/params/storageClass', response => {
+      this.$get(ossSupportRegionsUrl + ossId + '/params/storageClass', response => {
         this.storageList = response.data;
       });
     },
     getCannedACL (ossId) {
       this.cannedAclList = [];
-      this.$get('bucket/support/' + ossId + '/params/cannedACL', response => {
+      this.$get(ossSupportUrl + ossId + '/params/cannedACL', response => {
         this.cannedAclList = response.data;
       });
     },
@@ -533,12 +540,11 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.ossResult = this.$get("/oss/deleteBucket/" + item.id, response => {
+            this.ossResult = this.$get(ossDeleteBucketUrl + item.id, response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
                 this.refresh();
               } else {
-                //this.$error(response.message);
               }
             });
           }
@@ -554,7 +560,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.ossResult = this.$post("/oss/deleteByBatch", this.selectIds, response => {
+            this.ossResult = this.$post(ossDeleteByBatchUrl, this.selectIds, response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
                 this.refresh();
@@ -571,7 +577,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.ossResult = this.$download("/oss/downloadObject/" + item.bucketId, {
+            this.ossResult = this.$download(ossDownloadObjectUrl + item.bucketId, {
               objectId: item.id
             }, response => {
               let blob = new Blob([response.data], {type: "'application/octet-stream'"});
@@ -588,7 +594,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.ossResult = this.$post("/oss/deleteObject/" + item.bucketId, {objectId: item.id},response => {
+            this.ossResult = this.$post(ossDeleteObjectUrl + item.bucketId, {objectId: item.id},response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
                 this.refresh();
@@ -605,7 +611,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.ossResult = this.$post("/oss/deleteObject/" + item.bucketId, {objectId: item.id},response => {
+            this.ossResult = this.$post(ossDeleteObjectUrl + item.bucketId, {objectId: item.id},response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
                 this.refresh();
@@ -626,7 +632,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.ossResult = this.$post("/oss/deleteObjects/" + this.bucketOss.id, Array.from(this.selectObjectIds), response => {
+            this.ossResult = this.$post(ossDeleteObjectsUrl + this.bucketOss.id, Array.from(this.selectObjectIds), response => {
               if (response.success) {
                 this.$success(this.$t('commons.delete_success'));
                 this.refresh();
@@ -649,7 +655,7 @@ export default {
       formData.append("request", new Blob([JSON.stringify({path: this.path})], {type: "application/json"}));
       let axiosRequestConfig = {
         method: "POST",
-        url: "/oss/uploadFile/" + this.bucketOss.id,
+        url: ossUploadFileUrl + this.bucketOss.id,
         data: formData,
         headers: {
           "Content-Type": 'multipart/form-data'
@@ -669,7 +675,7 @@ export default {
       this.innerDrawer2 = true;
     },
     submitDir() {
-      this.ossResult = this.$post("/oss/createDir/" + this.bucketOss.id, {dir: this.path + this.dirForm.dir}, response => {
+      this.ossResult = this.$post(ossCreateDirUrl + this.bucketOss.id, {dir: this.path + this.dirForm.dir}, response => {
         if (response.success) {
           this.$success(this.$t('commons.save_success'));
           this.dirForm = {};

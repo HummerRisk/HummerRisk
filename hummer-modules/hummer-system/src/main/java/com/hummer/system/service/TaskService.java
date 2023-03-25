@@ -2,6 +2,7 @@ package com.hummer.system.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.task.*;
@@ -9,19 +10,17 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.BeanUtils;
-import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtTaskMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,23 +34,23 @@ import static com.alibaba.fastjson.JSON.parseArray;
 @Transactional(rollbackFor = Exception.class)
 public class TaskService {
 
-    @Resource
+    @Autowired
     private FavoriteMapper favoriteMapper;
-    @Resource
+    @Autowired
     private ExtTaskMapper extTaskMapper;
-    @Resource
+    @Autowired
     private TaskMapper taskMapper;
-    @Resource
+    @Autowired
     private TaskItemMapper taskItemMapper;
-    @Resource
+    @Autowired
     private TaskItemResourceMapper taskItemResourceMapper;
-    @Resource
+    @Autowired
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
-    @Resource
+    @Autowired
     private HistoryService historyService;
-    @Resource
+    @Autowired
     private TokenService tokenService;
-    @Resource
+    @Autowired
     private OperationLogService operationLogService;
     @DubboReference
     private ICloudProviderService cloudProviderService;
@@ -69,16 +68,9 @@ public class TaskService {
         AccountTreeDTO dto = new AccountTreeDTO();
         //云账号
         AccountExample accountExample = new AccountExample();
-        accountExample.createCriteria().andPluginIdNotIn(PlatformUtils.getVulnPlugin());
         accountExample.setOrderByClause("create_time desc");
         List<AccountVo> accounts = extTaskMapper.selectAccountByExample(accountExample);
         dto.setCloudAccount(accounts);
-        //漏洞
-        AccountExample vulnExample = new AccountExample();
-        vulnExample.createCriteria().andPluginIdIn(PlatformUtils.getVulnPlugin());
-        vulnExample.setOrderByClause("create_time desc");
-        List<AccountVo> vluns = extTaskMapper.selectVulnByExample(vulnExample);
-        dto.setVulnAccount(vluns);
         //主机
         ServerExample serverExample = new ServerExample();
         serverExample.setOrderByClause("create_time desc");
@@ -138,8 +130,6 @@ public class TaskService {
         List<RuleVo> allList = new LinkedList<>();
         if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType())) {
             allList = extTaskMapper.cloudRuleList(ruleVo);
-        } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.vulnAccount.getType())) {
-            allList = extTaskMapper.vulnRuleList(ruleVo);
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
             allList = extTaskMapper.serverRuleList(ruleVo);
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.k8sAccount.getType())) {
@@ -162,8 +152,6 @@ public class TaskService {
     public List<RuleVo> ruleList(RuleVo ruleVo) {
         if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType())) {
             return extTaskMapper.cloudRuleList(ruleVo);
-        } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.vulnAccount.getType())) {
-            return extTaskMapper.vulnRuleList(ruleVo);
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
             return extTaskMapper.serverRuleList(ruleVo);
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.imageAccount.getType())) {
@@ -196,8 +184,6 @@ public class TaskService {
         TaskRuleDTO ruleDTO = new TaskRuleDTO();
         if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.cloudAccount.getType())) {
             ruleDTO.setRuleDTO(extTaskMapper.cloudDetailRule(ruleVo));
-        } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.vulnAccount.getType())) {
-            ruleDTO.setRuleDTO(extTaskMapper.vulnDetailRule(ruleVo));
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.serverAccount.getType())) {
             ruleDTO.setServerRuleDTO(extTaskMapper.serverDetailRule(ruleVo));
         } else if (StringUtils.equalsIgnoreCase(ruleVo.getAccountType(), TaskEnum.k8sAccount.getType())) {

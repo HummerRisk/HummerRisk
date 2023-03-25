@@ -1,6 +1,10 @@
 
 export const cloudPluginUrl = "/system/plugin/cloud";
 
+export const nativePluginUrl = "/system/plugin/native";
+
+export const pluginByIdUrl = "/system/plugin/";
+
 export const addProxyUrl = "/system/proxy/add";
 
 export const proxyListUrl = "/system/proxy/list";
@@ -106,3 +110,9 @@ export const userInfoUrl = "/system/user/info/";
 export const logOperationUrl = "/system/log/operation/query/resource/";
 
 export const taskAccountListUrl = "/system/task/account/list";
+
+export const pluginScanUrl = "/system/plugin/scan/";
+
+export const unReadCountUrl = "/system/webmsg/unReadCount";
+
+

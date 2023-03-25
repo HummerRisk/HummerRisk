@@ -196,10 +196,6 @@ function defaultCustomValidate() {
       },
       saveNotice(){
         let param = this.buildParam();
-        /* this.result=this.$post("notice/save",param,()=>{
-
-          })*/
-
       },
       buildParam() {
         let param = {};

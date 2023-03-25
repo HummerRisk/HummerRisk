@@ -11,10 +11,10 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.SystemParameterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/system")
 public class SystemParameterController {
-    @Resource
+    @Autowired
     private SystemParameterService systemParameterService;
 
     @ApiOperation(value = "编辑邮箱设置")
@@ -65,12 +65,6 @@ public class SystemParameterController {
             default:
                 break;
         }
-    }
-
-    @ApiOperation(value = "版本信息")
-    @GetMapping("/version")
-    public String getVersion() {
-        return systemParameterService.getVersion();
     }
 
     @I18n
@@ -131,13 +125,6 @@ public class SystemParameterController {
     @GetMapping("/updateVulnDb")
     public void updateVulnDb() throws Exception {
         systemParameterService.updateVulnDb();
-    }
-
-    @I18n
-    @ApiOperation(value = "离线更新漏洞库")
-    @PostMapping(value = "updateVulnDbOffline", consumes = {"multipart/form-data"})
-    public void updateVulnDbOffline(@RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
-        systemParameterService.updateVulnDbOffline(objectFile);
     }
 
     @I18n

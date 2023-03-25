@@ -7,7 +7,8 @@
       <el-dropdown-menu>
         <el-dropdown-item command="personal"><i class="el-icon-user-solid"/> {{ $t('commons.personal_information') }}</el-dropdown-item>
         <el-dropdown-item command="about"><i class="el-icon-info"/> {{ $t('commons.about_us') }}</el-dropdown-item>
-        <el-dropdown-item command="ApiHelp"><i class="el-icon-question"/> {{ $t('commons.api_help_documentation') }}</el-dropdown-item>
+        <el-dropdown-item command="apiHelp"><i class="el-icon-s-promotion"/> {{ $t('commons.api_help_documentation') }}</el-dropdown-item>
+        <el-dropdown-item command="advisory"><i class="el-icon-question"/> {{ $t('commons.advisory') }}</el-dropdown-item>
         <el-dropdown-item command="logout"><i class="el-icon-warning"/> {{ $t('commons.exit_system') }}</el-dropdown-item>
       </el-dropdown-menu>
     </template>
@@ -21,6 +22,7 @@ import {getCurrentUser} from "../../../../common/js/utils";
 import AboutUs from "./AboutUs";
 import axios from "axios";
 import {removeToken} from "@/common/js/auth";
+import {signoutUrl} from "@/api/auth/auth";
 /* eslint-disable */
   export default {
     name: "User",
@@ -37,14 +39,13 @@ import {removeToken} from "@/common/js/auth";
             this.$router.push('/setting/personsetting').catch(error => error);
             break;
           case "logout":
-            axios.get("/auth/signout").then(response => {
+            axios.get(signoutUrl).then(response => {
               if (response.data.success) {
                 removeToken();
                 localStorage.clear();
                 window.location.href = "/login";
               }
             }).catch(error => {
-              console.log(error);
               localStorage.clear();
               window.location.href = "/login";
             });
@@ -55,8 +56,11 @@ import {removeToken} from "@/common/js/auth";
           case "help":
             window.location.href = "https://docs.hummerrisk.com";
             break;
-          case "ApiHelp":
+          case "apiHelp":
             window.open('/doc.html', "_blank");
+            break;
+          case "advisory":
+            window.location.href = "https://jinshuju.net/f/eBnJ2q";
             break;
           default:
             break;

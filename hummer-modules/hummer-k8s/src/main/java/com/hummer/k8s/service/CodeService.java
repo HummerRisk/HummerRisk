@@ -6,16 +6,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.dto.*;
-import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
 import com.hummer.common.core.domain.request.code.CodeRequest;
 import com.hummer.common.core.domain.request.code.CodeResultItemRequest;
 import com.hummer.common.core.domain.request.code.CodeResultRequest;
 import com.hummer.common.core.domain.request.code.CodeRuleRequest;
+import com.hummer.common.core.dto.*;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.code.CodeCredential;
 import com.hummer.common.core.proxy.code.CodeCredentialRequest;
+import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtCodeMapper;
@@ -27,10 +27,10 @@ import com.hummer.system.api.ISystemProviderService;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -42,27 +42,27 @@ import java.util.Map;
 @Transactional(rollbackFor = Exception.class)
 public class CodeService {
 
-    @Resource
+    @Autowired
     private ExtCodeMapper extCodeMapper;
-    @Resource
+    @Autowired
     private CodeMapper codeMapper;
-    @Resource
+    @Autowired
     private ExtCodeRuleMapper extCodeRuleMapper;
-    @Resource
+    @Autowired
     private CodeRuleMapper codeRuleMapper;
-    @Resource
+    @Autowired
     private ExtCodeResultMapper extCodeResultMapper;
-    @Resource
+    @Autowired
     private CodeResultMapper codeResultMapper;
-    @Resource
+    @Autowired
     private CodeResultLogMapper codeResultLogMapper;
-    @Resource
+    @Autowired
     private CodeResultItemMapper codeResultItemMapper;
-    @Resource
+    @Autowired
     private ExtCodeResultItemMapper extCodeResultItemMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
@@ -407,9 +407,9 @@ public class CodeService {
             String token = "", branch = "";
             if (codeCredential != null && codeCredential.getToken() != null) {
                 if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITHUB_TOKEN)) {
-                    token = "export GITHUB_TOKEN=" + codeCredential.getToken() + "\n";
+                    token = "export GITHUB_TOKEN='" + codeCredential.getToken() + "';" + "\n";
                 } else if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITLAB_TOKEN)) {
-                    token = "export GITLAB_TOKEN=" + codeCredential.getToken() + "\n";
+                    token = "export GITLAB_TOKEN='" + codeCredential.getToken() + "';" + "\n";
                 }
             }
             if (codeCredential != null && codeCredential.getBranch() != null) {
@@ -525,7 +525,7 @@ public class CodeService {
     }
 
     public List<HistoryCodeResultDTO> history(Map<String, Object> params) {
-        List<HistoryCodeResultDTO> historyList = extCodeResultMapper.history(params);
+        List<HistoryCodeResultDTO> historyList = systemProviderService.codeHistory(params);
         return historyList;
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtOssMapper">
-    <resultMap id="BaseResultMap" type="com.hummerrisk.oss.dto.OssDTO"
+    <resultMap id="BaseResultMap" type="com.hummer.cloud.oss.dto.OssDTO"
                extends="com.hummer.cloud.mapper.OssMapper.BaseResultMap">
         <result column="userName" property="userName"/>
         <result column="isProxy" property="isProxy"/>
@@ -91,7 +91,7 @@
         </if>
     </sql>
 
-    <select id="ossList" resultMap="BaseResultMap" parameterType="com.hummerrisk.oss.controller.request.OssRequest">
+    <select id="ossList" resultMap="BaseResultMap" parameterType="com.hummer.cloud.oss.controller.request.OssRequest">
         select
         t.*,
         p.proxy_ip,
@@ -153,7 +153,7 @@
         </if>
     </sql>
 
-    <select id="ossBucketList" resultType="com.hummerrisk.oss.dto.OssBucketDTO">
+    <select id="ossBucketList" resultType="com.hummer.cloud.oss.dto.OssBucketDTO">
         select
         t.*,
         t1.name as name,

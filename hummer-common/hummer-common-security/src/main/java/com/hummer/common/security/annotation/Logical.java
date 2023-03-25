@@ -2,12 +2,10 @@ package com.hummer.common.security.annotation;
 
 /**
  * 权限注解的验证模式
- * 
- * @author hummer
  *
+ * @author hummer
  */
-public enum Logical
-{
+public enum Logical {
     /**
      * 必须具有所有的元素
      */

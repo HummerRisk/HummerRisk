@@ -8,10 +8,10 @@ import cn.ucloud.ufile.bean.BucketDescribeResponse;
 import cn.ucloud.ufile.bean.BucketInfoBean;
 import cn.ucloud.ufile.exception.UfileClientException;
 import cn.ucloud.ufile.exception.UfileServerException;
-import com.hummer.common.core.domain.OssBucket;
-import com.hummer.common.core.domain.OssWithBLOBs;
 import com.hummer.cloud.oss.dto.BucketObjectDTO;
+import com.hummer.common.core.domain.OssBucket;
 import com.hummer.common.core.domain.OssRegion;
+import com.hummer.common.core.domain.OssWithBLOBs;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;

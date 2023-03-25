@@ -1,17 +1,17 @@
 package com.hummer.system.service;
 
 
-import com.hummer.common.core.constant.ParamConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
-import com.hummer.common.core.utils.BeanUtils;
+import com.hummer.common.core.dto.*;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.*;
+import com.hummer.system.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.system.mapper.ext.ExtVulnMapper;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -21,76 +21,45 @@ import java.util.Map;
 @DubboService
 public class SystemProviderService implements ISystemProviderService {
 
-    @Resource
+    @Autowired
     private NoticeService noticeService;
-    @Resource
+    @Autowired
     private HistoryService historyService;
-    @Resource
+    @Autowired
     private ExtVulnMapper extVulnMapper;
-    @Resource
-    private HistoryVulnTaskMapper historyVulnTaskMapper;
-    @Resource
+    @Autowired
     private HistoryCloudTaskMapper historyCloudTaskMapper;
-    @Resource
+    @Autowired
     private HistoryScanMapper historyScanMapper;
-    @Resource
+    @Autowired
     private HistoryScanTaskMapper historyScanTaskMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private HistoryCodeResultMapper historyCodeResultMapper;
-    @Resource
+    @Autowired
     private SystemParameterService systemParameterService;
-    @Resource
+    @Autowired
     private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
-    @Resource
+    @Autowired
     private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
-    @Resource
+    @Autowired
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
-    @Resource
+    @Autowired
     private HistoryImageResultMapper historyImageResultMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private HistoryServerResultMapper historyServerResultMapper;
-    @Resource
+    @Autowired
     private UserService userService;
+    @Autowired
+    private ExtHistoryScanMapper extHistoryScanMapper;
 
 
     @Override
     public Integer insertScanHistory(Object obj) throws Exception {
         return historyService.insertScanHistory(obj);
-    }
-
-    @Override
-    public void insertHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception {
-        historyService.insertHistoryVulnTaskItem(historyVulnTaskItem);
-    }
-
-    @Override
-    public void insertHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskItem) throws Exception {
-        historyService.insertHistoryVulnTaskResource(historyVulnTaskItem);
-    }
-
-
-    @Override
-    public void updateHistoryVulnTaskItem(HistoryVulnTaskItemWithBLOBs historyVulnTaskItem) throws Exception {
-        historyService.updateHistoryVulnTaskItem(historyVulnTaskItem);
-    }
-
-    @Override
-    public void insertHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception {
-        historyService.insertHistoryVulnTask(historyVulnTask);
-    }
-
-    @Override
-    public void updateHistoryVulnTask(HistoryVulnTask historyVulnTask) throws Exception {
-        historyService.updateHistoryVulnTask(historyVulnTask);
-    }
-
-    @Override
-    public void updateHistoryVulnTaskResource(HistoryVulnTaskResourceWithBLOBs historyVulnTaskResource) throws Exception {
-        historyService.updateHistoryVulnTaskResource(historyVulnTaskResource);
     }
 
     @Override
@@ -149,11 +118,6 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
-    public HistoryVulnTask historyVulnTask(String id) {
-        return historyVulnTaskMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
     public void insertHistoryCloudTaskResource(HistoryCloudTaskResourceWithBLOBs historyCloudTaskResource) throws Exception {
         historyService.insertHistoryCloudTaskResource(historyCloudTaskResource);
     }
@@ -191,11 +155,6 @@ public class SystemProviderService implements ISystemProviderService {
     @Override
     public void insertHistoryCloudTaskLog(HistoryCloudTaskLogWithBLOBs historyCloudTaskLog) throws Exception {
         historyService.insertHistoryCloudTaskLog(historyCloudTaskLog);
-    }
-
-    @Override
-    public void insertHistoryVulnTaskLog(HistoryVulnTaskLogWithBLOBs historyVulnTaskLog) throws Exception {
-        historyService.insertHistoryVulnTaskLog(historyVulnTaskLog);
     }
 
     @Override
@@ -378,6 +337,40 @@ public class SystemProviderService implements ISystemProviderService {
         return userService.getLoginUserByName(id);
     }
 
+    public HistoryImageReportDTO getImageResultDto(String resultId) {
+        HistoryImageReportDTO imageResult = extHistoryScanMapper.getImageResultDto(resultId);
+        return imageResult;
+    }
+
+    public List<HistoryImageResultDTO> imageHistory(Map<String, Object> params) {
+        List<HistoryImageResultDTO> historyList = extHistoryScanMapper.imageHistory(params);
+        return historyList;
+    }
+
+    public List<HistoryCodeResultDTO> codeHistory(Map<String, Object> params) {
+        List<HistoryCodeResultDTO> historyList = extHistoryScanMapper.codeHistory(params);
+        return historyList;
+    }
+
+    public List<HistoryServerResultDTO> serverHistory(Map<String, Object> params) {
+        List<HistoryServerResultDTO> historyList = extHistoryScanMapper.serverHistory(params);
+        return historyList;
+    }
+
+    public List<HistoryFsResultDTO> fsHistory(Map<String, Object> params) {
+        List<HistoryFsResultDTO> historyList = extHistoryScanMapper.fsHistory(params);
+        return historyList;
+    }
+
+    public List<HistoryCloudNativeResultDTO> k8sHistory(Map<String, Object> params) {
+        List<HistoryCloudNativeResultDTO> historyList = extHistoryScanMapper.k8sHistory(params);
+        return historyList;
+    }
+
+    public List<HistoryCloudNativeConfigResultDTO> configHistory(Map<String, Object> params) {
+        List<HistoryCloudNativeConfigResultDTO> historyList = extHistoryScanMapper.configHistory(params);
+        return historyList;
+    }
 
 
 }

@@ -34,31 +34,23 @@
         dialogVisible: false,
         githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://docs.hummerrisk.com',
-        version: 'v1.0.0',
+        version: process.env.HR_VERSION?process.env.HR_VERSION:"v1.0.0",
         items: [
           {img: require(`@/assets/img/about/docs.png`), url: 'https://docs.hummerrisk.com'},
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
           {img: require(`@/assets/img/about/custodian.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/custodian/'},
           {img: require(`@/assets/img/about/prowler.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/prowler/'},
-          {img: require(`@/assets/img/about/nuclei.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/nuclei/'},
-          {img: require(`@/assets/img/about/xray.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/xray/'},
           {img: require(`@/assets/img/about/trivy.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/trivy/'},
           {img: require(`@/assets/img/about/kubench.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/kube-bench/'},
         ],
       }
     },
     created() {
-      this.getVersion();
     },
     methods: {
       open() {
         this.dialogVisible = true;
       },
-      getVersion() {
-        this.$get('/system/system/version', response => {
-          this.version = response.data;
-        });
-      }
     }
   }
 </script>

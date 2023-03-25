@@ -327,7 +327,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {accountListUrl, deleteAccountUrl, iamStrategyUrl, validateUrl} from "@/api/cloud/account/account";
-import {addProxyUrl, cloudPluginUrl, updateProxyUrl} from "@/api/system/system";
+import {addProxyUrl, cloudPluginUrl, pluginByIdUrl, proxyListAllUrl, updateProxyUrl} from "@/api/system/system";
 import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
@@ -485,7 +485,7 @@ const columnOptions = [
         accountWithGroup: {pluginIcon: 'aliyun.png'},
         checkedGroups: [],
         groups: [],
-        iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
+        iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-server-plugin'],
         checkedColumnNames: columnOptions.map((ele) => ele.props),
         columnNames: columnOptions,
         //名称搜索
@@ -624,21 +624,19 @@ const columnOptions = [
       //调参云账号对应的规则
       handleScan(params) {
         this.$router.push({
-          path: accountScanUrl + params.id,
+          path: '/account/accountscan/' + params.id,
         }).catch(error => error);
       },
       //查询插件
       activePlugin() {
-        let url = cloudPluginUrl;
-        this.result = this.$get(url, response => {
+        this.result = this.$get(cloudPluginUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });
       },
       //查询代理
       activeProxy() {
-        let url = "/proxy/list/all";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(proxyListAllUrl, response => {
           this.proxys = response.data;
         });
       },
@@ -663,8 +661,7 @@ const columnOptions = [
           form.script = res.data;
           this.script = res.data;
         });
-        let url = "/plugin/";
-        this.result = await this.$get(url + form.pluginId, response => {
+        this.result = await this.$get(pluginByIdUrl + form.pluginId, response => {
           let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
           form.tmpList = fromJson.data;
           for (let tmp of form.tmpList) {
@@ -679,8 +676,7 @@ const columnOptions = [
         this.$get(iamStrategyUrl + pluginId,res => {
           this.script = res.data;
         });
-        let url = "/plugin/";
-        this.result = await this.$get(url + pluginId, response => {
+        this.result = await this.$get(pluginByIdUrl + pluginId, response => {
           let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
           this.tmpList = fromJson.data;
           if (type === 'edit') {

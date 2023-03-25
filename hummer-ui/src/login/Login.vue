@@ -1,5 +1,5 @@
 <template>
-  <div class="login-background">
+  <div class="login-background" v-loading="result.loading">
     <vue-particles
       id="particles-js"
       class=""
@@ -20,30 +20,29 @@
       clickMode="push">
     </vue-particles>
     <div style="width: 100%;height: 100%;">
-      <div class="container" v-loading="result.loading" v-if="ready">
+      <div class="container" v-if="ready">
         <el-row type="flex">
 
-          <el-col :span="24">
+          <el-col :span="15" class="image">
+          </el-col>
+
+          <el-col :span="9">
             <el-form :model="form" :rules="rules" ref="form">
               <div class="title">
-                <img src="../assets/img/logo/logo-dark.png" style="width: 224px" alt="">
+                <img src="../assets/img/logo/logo-dark.png" style="width: 300px" alt="">
               </div>
               <div class="border"></div>
               <div class="welcome">
                 {{$t('commons.welcome')}}
               </div>
               <div class="form">
-                <el-form-item v-slot:default>
-                  <el-radio-group v-model="form.authenticate">
-                  </el-radio-group>
-                </el-form-item>
                 <el-form-item prop="username">
                   <el-input v-model="form.username" :placeholder="$t('commons.login_username')" autofocus
                             autocomplete="off"/>
                 </el-form-item>
                 <el-form-item prop="password">
                   <el-input v-model="form.password" :placeholder="$t('commons.password')" show-password autocomplete="off"
-                            maxlength="20" show-word-limit/>
+                            maxlength="150" show-word-limit/>
                 </el-form-item>
               </div>
               <div class="btn">
@@ -64,10 +63,10 @@
 </template>
 
 <script>
-import { saveLocalStorage } from '@/common/js/utils';
-import { DEFAULT_LANGUAGE } from "@/common/js/constants";
-import { signinUrl, isLoginUrl, ssoSigninUrl, languageUrl, ssoLoginUrl } from "@/api/auth/auth";
-import { setToken } from '@/common/js/auth';
+import {saveLocalStorage} from '@/common/js/utils';
+import {DEFAULT_LANGUAGE} from "@/common/js/constants";
+import {isLoginUrl, languageUrl, signinUrl} from "@/api/auth/auth";
+import {setToken} from '@/common/js/auth';
 
 /* eslint-disable */
   export default {
@@ -96,13 +95,15 @@ import { setToken } from '@/common/js/auth';
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
-        if (!response.data.success) {
-          this.ready = true;
-        } else {
+        console.log(response)
+        if (response.data.success) {
           let user = response.data.data;
+          console.log(response.data)
+          setToken(response.data.token);
           saveLocalStorage(response.data);
           this.getLanguage(user.language);
-          window.location.href = "/";
+        } else {
+          this.ready = true;
         }
       });
     },
@@ -133,7 +134,7 @@ import { setToken } from '@/common/js/auth';
                 this.doLogin();
                 break;
               default:
-                this.loginUrl = ssoSigninUrl;
+                this.loginUrl = signinUrl;
                 this.doLogin();
             }
           } else {
@@ -145,19 +146,19 @@ import { setToken } from '@/common/js/auth';
         this.result = this.$post(this.loginUrl, this.form, response => {
           saveLocalStorage(response);
           sessionStorage.setItem('loginSuccess', 'true');
-          setToken(response.data.token)
-          this.getLanguage(response.data.language);
+          setToken(response.data.token);
+          this.getLanguage(response.data.language, response.data.token);
         });
       },
-      getLanguage(language) {
+      getLanguage(language, token) {
         if (!language) {
           this.$get(languageUrl, response => {
             language = response.data;
             localStorage.setItem(DEFAULT_LANGUAGE, language);
-            window.location.href = "/"
-          })
+            if(!!token) window.location.href = "/";
+          });
         } else {
-          window.location.href = "/"
+          if(!!token) window.location.href = "/";
         }
       },
     }
@@ -165,115 +166,119 @@ import { setToken } from '@/common/js/auth';
 </script>
 
 <style scoped>
-  .container {
-    width: 30%;
-    min-width: 600px;
-    max-width: 740px;
-    height: 560px;
-    /*background-color: #fff;*/
-    margin: auto;
-    position: absolute;
-    top: 17%;
-    left: 10%;
-    right: 10%;
-    box-shadow: #dddddd 0 0 10px;
-  }
+.container {
+  height: calc(100% - 280px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  padding: 0 8%;
+}
 
-  .title {
-    margin-top: 50px;
-    font-size: 32px;
-    letter-spacing: 0;
-    text-align: center;
-  }
+.container >>> .el-row {
+  height: 100%;
+}
 
-  .border {
-    height: 2px;
-    margin: 20px auto 20px;
-    position: relative;
-    width: 80px;
-    background: #df913c;
-  }
+.title {
+  margin-top: 50px;
+  font-size: 32px;
+  letter-spacing: 0;
+  text-align: center;
+}
 
-  .welcome {
-    margin-top: 50px;
-    font-size: 14px;
-    color: #999999;
-    letter-spacing: 0;
-    line-height: 18px;
-    text-align: center;
-  }
+.border {
+  height: 2px;
+  margin: 20px auto 20px;
+  position: relative;
+  width: 80px;
+  background: #df913c;
+}
 
-  .form {
-    margin-top: 30px;
-    padding: 0 40px;
-  }
+.welcome {
+  margin-top: 50px;
+  font-size: 14px;
+  color: #999999;
+  letter-spacing: 0;
+  line-height: 18px;
+  text-align: center;
+}
 
-  .btn {
-    margin-top: 40px;
-    padding: 0 40px;
-  }
+.form {
+  margin-top: 30px;
+  padding: 0 40px;
+}
 
-  .btn > .submit {
-    width: 100%;
-    border-radius: 0;
-    border-color: #935e3a;
-    background-color: #935e3a;
-  }
+.btn {
+  margin-top: 40px;
+  padding: 0 40px;
+}
 
-  .btn > .submit:hover {
-    border-color: #df913c;
-    background-color: #df913c;
-  }
+.btn > .submit {
+  width: 100%;
+  border-radius: 5px;
+  border-color: #df913c;
+  background-color: #df913c;
+}
 
-  .btn > .submit:active {
-    border-color: #df913c;
-    background-color: #df913c;
-  }
+.btn > .submit:hover {
+  border-color: #FFA500;
+  background-color: #FFA500;
+}
 
-  .msg {
-    margin-top: 10px;
-    padding: 0 40px;
-    color: red;
-    text-align: center;
-  }
+.btn > .submit:active {
+  border-color: #FFA500;
+  background-color: #FFA500;
+}
 
-</style>
+.msg {
+  margin-top: 10px;
+  padding: 0 40px;
+  color: red;
+  text-align: center;
+}
 
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Helvetica Neue", ".PingFang SC", "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
-    font-size: 14px;
-    background-color: #f5f5f5;
-    line-height: 26px;
-    color: #2B415C;
-    -webkit-font-smoothing: antialiased;
-    margin: 0;
-  }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Neue Haas Grotesk Text Pro", "Arial Nova", "Segoe UI", "Helvetica Neue", ".PingFang SC", "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Sans SC", "Source Han Sans TC", "Noto Sans CJK TC", "Hiragino Sans GB", sans-serif;
+  font-size: 14px;
+  background-color: #f5f5f5;
+  line-height: 26px;
+  color: #2B415C;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
 
-  .form .el-input > .el-input__inner {
-    border-radius: 0;
-  }
+.form .el-input > .el-input__inner {
+  border-radius: 0;
+}
 
-  #particles-js {
-    width: 100%;
-    /*height: calc(100% - 100px);*/
-    position: absolute;
-  }
+.image {
+  background-image: url(../assets/img/login/login-left.png);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
 
-  .login-background {
-    /*background: linear-gradient(-180deg, #df913c 0%, #ffffff 100%);*/
-    background-image: url(../assets/background.png);
-    background-size: contain;
-    background-color: #334071;
-    width: 100%;
-    height: 100%; /**宽高100%是为了图片铺满屏幕 */
-    min-height: 760px;
-    z-index: -1;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+#particles-js {
+  width: 100%;
+  position: absolute;
+}
+
+.login-background {
+  /*background: linear-gradient(-180deg, #df913c 0%, #ffffff 100%);*/
+  background-image: url(../assets/background.png);
+  background-size: contain;
+  background-color: #142e48;
+  width: 100%;
+  height: 100%; /**宽高100%是为了图片铺满屏幕 */
+  min-height: 760px;
+  z-index: -1;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-repeat: no-repeat;
+}
 
 </style>
 

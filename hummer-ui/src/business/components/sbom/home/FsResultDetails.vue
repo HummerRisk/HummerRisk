@@ -45,6 +45,7 @@ import TableHeader from "@/business/components/common/components/DetailTableHead
 import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import {_filter, _sort} from "@/common/js/utils";
+import {fsResultItemListUrl} from "@/api/k8s/fs/fs";
 /* eslint-disable */
   export default {
     name: "ResultDetails",
@@ -94,7 +95,7 @@ import {_filter, _sort} from "@/common/js/utils";
         this.string2Key = title;
         this.string2PrettyFormat = "";
         if (row) {
-          this.$post("/resource/string2PrettyFormat", {json: details}, res => {
+          this.$post(string2PrettyFormatUrl, {json: details}, res => {
             this.string2PrettyFormat = res.data;
           });
         } else {
@@ -104,7 +105,7 @@ import {_filter, _sort} from "@/common/js/utils";
         this.visible =  true;
       },
       async search () {
-        let url = "/fs/resultItemList/" + this.currentPage + "/" + this.pageSize;
+        let url = fsResultItemListUrl + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.id;
         await this.$post(url, this.condition, response => {
           let data = response.data;

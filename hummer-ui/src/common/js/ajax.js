@@ -2,13 +2,14 @@ import {Message, MessageBox} from "element-ui";
 import axios from "axios";
 import {getToken, removeToken} from './auth';
 import i18n from "../../i18n/i18n";
+import {signinUrl, signoutUrl} from "@/api/auth/auth";
 
 
 export default {
   install(Vue) {
 
     // 登入请求不重定向
-    let unRedirectUrls = new Set(["auth/signin"]);
+    let unRedirectUrls = new Set([signinUrl]);
 
     if (!axios) {
       window.console.error("You have to install axios");
@@ -23,7 +24,7 @@ export default {
     let login = function () {
       MessageBox.alert(i18n.t("commons.tips"), i18n.t("commons.prompt"), {
         callback: () => {
-          axios.get("/auth/signout");
+          axios.get(signoutUrl);
           removeToken();
           localStorage.clear();
           window.location.href = "/login";

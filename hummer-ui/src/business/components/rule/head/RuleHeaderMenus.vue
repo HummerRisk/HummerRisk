@@ -19,10 +19,6 @@
             {{ $t("rule.cloud_rule") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/rule/vulnRule'">
-            {{ $t("vuln.vuln_rule") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/rule/serverRule'">
             {{ $t("server.server_rule") }}
           </el-menu-item>

@@ -1,6 +1,5 @@
 package com.hummer.cloud.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.mapper.*;
@@ -15,6 +14,9 @@ import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,75 +33,76 @@ import static com.alibaba.fastjson.JSON.parseArray;
  * @author harris
  */
 @Service
+@DubboService
 @Transactional(rollbackFor = Exception.class)
 public class RuleService {
 
-    @Resource
+    @Autowired
     @Lazy
     private RuleMapper ruleMapper;
-    @Resource
+    @Autowired
     @Lazy
     private RuleTagMapper ruleTagMapper;
-    @Resource
+    @Autowired
     @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Resource
+    @Autowired
     @Lazy
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     @Lazy
     private ExtRuleMapper extRuleMapper;
-    @Resource
+    @Autowired
     @Lazy
     private RuleTypeMapper ruleTypeMapper;
-    @Resource
+    @Autowired
     @Lazy
     private ExtRuleTagMapper extRuleTagMapper;
-    @Resource
+    @Autowired
     @Lazy
     private ExtRuleTypeMapper extRuleTypeMapper;
-    @Resource
+    @Autowired
     @Lazy
     private CloudTaskService cloudTaskService;
-    @Resource
+    @Autowired
     @Lazy
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource
+    @Autowired
     @Lazy
     private CommonThreadPool commonThreadPool;
-    @Resource
+    @Autowired
     @Lazy
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     @Lazy
     private AccountService accountService;
-    @Resource
+    @Autowired
     @Lazy
     private RuleGroupMapper ruleGroupMapper;
-    @Resource
+    @Autowired
     @Lazy
     private RuleGroupMappingMapper ruleGroupMappingMapper;
-    @Resource
+    @Autowired
     @Lazy
     private RuleInspectionReportMapper ruleInspectionReportMapper;
-    @Resource
+    @Autowired
     @Lazy
     private ExtRuleInspectionReportMapper extRuleInspectionReportMapper;
-    @Resource
+    @Autowired
     @Lazy
     private RuleInspectionReportMappingMapper ruleInspectionReportMappingMapper;
-    @Resource
+    @Autowired
     @Lazy
     private ExtRuleGroupMapper extRuleGroupMapper;
-    @Resource
+    @Autowired
     @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource
+    @Autowired
     @Lazy
     private CloudTaskMapper cloudTaskMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
-    @Resource
+    @DubboReference
     private ISystemProviderService systemProviderService;
 
     public List<RuleDTO> cloudList(CreateRuleRequest ruleRequest) {
@@ -123,10 +125,6 @@ public class RuleService {
 
     public List<RuleGroupDTO> allCloudRuleGroups(RuleGroupRequest request) {
         return extRuleGroupMapper.allCloudRuleGroups(request);
-    }
-
-    public List<RuleGroupDTO> allVulnRuleGroups(RuleGroupRequest request) {
-        return extRuleGroupMapper.allVulnRuleGroups(request);
     }
 
     public Rule saveRules(CreateRuleRequest ruleRequest) {
@@ -202,29 +200,6 @@ public class RuleService {
                             ruleTypeMapper.insertSelective(ruleType);
                         }
                     }
-                }
-            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.nuclei.name())) {
-                String resourceType = "nuclei";
-                example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(resourceType);
-                List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
-                if (ruleTypes.isEmpty()) {
-                    ruleType.setId(UUIDUtil.newUUID());
-                    ruleType.setResourceType(resourceType);
-                    ruleTypeMapper.insertSelective(ruleType);
-                }
-            } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.xray.name())) {
-                String groupName = "xss";
-                JSONArray jsonArray = JSON.parseArray(ruleRequest.getParameter());
-                for (Object o : jsonArray) {
-                    JSONObject jsonObject = (JSONObject) o;
-                    groupName = jsonObject.getString("defaultValue");
-                }
-                example.createCriteria().andRuleIdEqualTo(ruleRequest.getId()).andResourceTypeEqualTo(groupName);
-                List<RuleType> ruleTypes = ruleTypeMapper.selectByExample(example);
-                if (ruleTypes.isEmpty()) {
-                    ruleType.setId(UUIDUtil.newUUID());
-                    ruleType.setResourceType(groupName);
-                    ruleTypeMapper.insertSelective(ruleType);
                 }
             } else if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.prowler.name())) {
                 String resourceType = "prowler";
@@ -533,10 +508,6 @@ public class RuleService {
         return extRuleTypeMapper.cloudResourceTypes();
     }
 
-    public List<Map<String, String>> vulnResourceTypes() {
-        return extRuleTypeMapper.vulnResourceTypes();
-    }
-
     public List<RuleGroup> getRuleGroups(String pluginId) {
         RuleGroupExample example = new RuleGroupExample();
         example.createCriteria().andPluginIdEqualTo(pluginId);
@@ -649,8 +620,6 @@ public class RuleService {
                 if(scanId!=null) {
                     if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
                         systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
-                    } else {
-                        systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.vulnAccount.getType());
                     }
                 }
                 return cloudTask.getId();

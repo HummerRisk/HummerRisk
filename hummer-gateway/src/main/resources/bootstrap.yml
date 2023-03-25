@@ -1,6 +1,6 @@
 # Tomcat
 server:
-  port: 8088
+  port: 8080
 
 # Spring
 spring:
@@ -16,10 +16,10 @@ spring:
     nacos:
       discovery:
         # 服务注册地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
       config:
         # 配置中心地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
         # 共享配置
@@ -30,13 +30,18 @@ spring:
       eager: true
       transport:
         # 控制台地址
-        dashboard: ${HR_NACOS_SERVER_ADDR}:8718  # 本地启动使用 dashboard: 127.0.0.1:8718
+        dashboard: ${HMR_NACOS_SERVER_ADDR}:8718  # 本地启动使用 dashboard: 127.0.0.1:8718
       # nacos配置持久化
       datasource:
         ds1:
           nacos:
-            server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+            server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
             dataId: sentinel-hummer-gateway
             groupId: DEFAULT_GROUP
             data-type: json
             rule-type: gw-flow
+  data:
+    redis:
+      host: ${HMR_REDIS_HOST}
+      port: ${HMR_REDIS_PORT}
+      password: ${HMR_REDIS_PASSWORD}

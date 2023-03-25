@@ -28,9 +28,9 @@
         <el-table-column type="index" min-width="40"/>
         <el-table-column min-width="140" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')">
           <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ getAccountName(scope.row.cloudAccountId) }}
+              <span v-if="scope.row.accountName">
+              <img :src="require(`@/assets/img/platform/${scope.row.accountIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ scope.row.accountName }}
               </span>
           </template>
         </el-table-column>
@@ -70,6 +70,8 @@ import TableOperators from "../../common/components/TableOperators";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudEventDeleteUrl, cloudEventListUrl} from "@/api/cloud/event/event";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -229,7 +231,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/cloud/event/delete/" + row.eventId, {}, response => {
+            this.result = this.$post(cloudEventDeleteUrl + row.eventId, {}, response => {
               this.$success(this.$t('commons.delete_success'));
               this.search()
             });
@@ -256,7 +258,7 @@ export default {
 
 
     search() {
-      let url = "/cloud/event/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudEventListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -272,7 +274,7 @@ export default {
       this.search()
     },
     init() {
-      this.$get("/account/allList", response => {
+      this.$get(allListUrl, response => {
         this.accountList = response.data
         this.search()
       })
@@ -290,24 +292,6 @@ export default {
       let minute = dt.getMinutes().toString().padStart(2, '0');
       let second = dt.getSeconds().toString().padStart(2, '0');
       return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
-    },
-    getAccountName(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].name : ""
-    },
-    getPluginName(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].pluginName : ""
-    },
-    getAccountIcon(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].pluginIcon : ""
     },
     sort(column) {
       _sort(column, this.condition);

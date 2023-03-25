@@ -1,22 +1,18 @@
 package com.hummer.cloud.service;
 
+import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtAccountMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.cloud.mapper.ext.ExtResourceMapper;
 import com.hummer.cloud.mapper.ext.ExtRuleMapper;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.account.CloudAccountRequest;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
-import com.hummer.common.core.domain.request.rule.CreateRuleRequest;
-import com.hummer.common.core.dto.AccountDTO;
 import com.hummer.common.core.dto.QuartzTaskDTO;
-import com.hummer.common.core.dto.RuleDTO;
-import com.hummer.cloud.api.ICloudProviderService;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,56 +21,55 @@ import java.util.List;
 @DubboService
 public class CloudProviderService implements ICloudProviderService {
 
-    @Resource
+    @Autowired
     private CloudTaskMapper cloudTaskMapper;
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private ExtResourceMapper extResourceMapper;
-    @Resource
+    @Autowired
     private RuleMapper ruleMapper;
-    @Resource
+    @Autowired
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Resource
+    @Autowired
     private RuleGroupMappingMapper ruleGroupMappingMapper;
-    @Resource
+    @Autowired
     private RuleService ruleService;
-    @Resource
+    @Autowired
     private CloudTaskService cloudTaskService;
-    @Resource
+    @Autowired
     private ExtAccountMapper extAccountMapper;
-    @Resource
+    @Autowired
     private ExtRuleMapper extRuleMapper;
-    @Resource
+    @Autowired
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource
+    @Autowired
     private RuleTagMapper ruleTagMapper;
-    @Resource
+    @Autowired
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource
+    @Autowired
     private ResourceService resourceService;
-    @Resource
+    @Autowired
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource
+    @Autowired
     private ResourceMapper resourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private OrderService orderService;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
-    private NucleiService nucleiService;
-    @Resource
+    @Autowired
     private ProwlerService prowlerService;
-    @Resource
-    private XrayService xrayService;
-    @Resource
+    @Autowired
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
-    @Resource
+    @Autowired
     private CloudResourceSyncMapper cloudResourceSyncMapper;
-    @Resource
+    @Autowired
     private OssService ossService;
-    @Resource
+    @Autowired
     private OssMapper ossMapper;
+    @Autowired
+    private RuleGroupMapper ruleGroupMapper;
+
 
     @Override
     public List<CloudTask> selectCloudTaskList(CloudTaskExample example) {
@@ -122,18 +117,8 @@ public class CloudProviderService implements ICloudProviderService {
     }
 
     @Override
-    public List<AccountDTO> getVulnList(CloudAccountRequest request) {
-        return extAccountMapper.getVulnList(request);
-    }
-
-    @Override
-    public List<RuleDTO> vulnList(CreateRuleRequest request) {
-        return extRuleMapper.vulnList(request);
-    }
-
-    @Override
     public List<CloudTask> selectManualTasks(ManualRequest request) throws Exception {
-        return extCloudTaskMapper.selectManualVulnTasks(request);
+        return null;
     }
 
     @Override
@@ -151,9 +136,35 @@ public class CloudProviderService implements ICloudProviderService {
         ruleTagMappingMapper.deleteByExample(example);
     }
 
+    @Override
+    public void deleteRuleGroupMapping(RuleGroupMappingExample example) {
+        ruleGroupMappingMapper.deleteByExample(example);
+    }
 
+    @Override
+    public void insertRuleGroupMapping(RuleGroupMapping record) {
+        ruleGroupMappingMapper.insertSelective(record);
+    }
 
+    @Override
+    public List<RuleGroup> ruleGroupList(RuleGroupExample example) {
+        return ruleGroupMapper.selectByExample(example);
+    }
 
+    @Override
+    public List<CloudTask> getTopTasksForEmail(MessageOrder messageOrder) {
+        return extCloudTaskMapper.getTopTasksForEmail(messageOrder);
+    }
+
+    @Override
+    public int getReturnSumForEmail(MessageOrder messageOrder) {
+        return extCloudTaskMapper.getReturnSumForEmail(messageOrder);
+    }
+
+    @Override
+    public int getResourcesSumForEmail(MessageOrder messageOrder) {
+        return extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
+    }
 
 
 }

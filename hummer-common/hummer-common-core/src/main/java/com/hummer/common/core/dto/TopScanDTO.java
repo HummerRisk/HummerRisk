@@ -6,8 +6,6 @@ public class TopScanDTO {
 
     private String cloud;
 
-    private String vuln;
-
     private String server;
 
     private String image;
@@ -34,14 +32,6 @@ public class TopScanDTO {
 
     public void setCloud(String cloud) {
         this.cloud = cloud;
-    }
-
-    public String getVuln() {
-        return vuln;
-    }
-
-    public void setVuln(String vuln) {
-        this.vuln = vuln;
     }
 
     public String getServer() {

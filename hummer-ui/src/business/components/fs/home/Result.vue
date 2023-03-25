@@ -148,6 +148,7 @@ import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/fs/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {deleteFsResultUrl, fsDownloadUrl, fsResultListUrl, getFsResultUrl, logFsUrl} from "@/api/k8s/fs/fs";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -276,7 +277,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/fs/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = fsResultListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -287,11 +288,9 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/fs/getFsResult/";
-          this.$get(url + data.id, response => {
+          this.$get(getFsResultUrl + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
@@ -332,12 +331,10 @@ export default {
       this.init();
     },
     showResultLog (result) {
-      let logUrl = "/fs/log/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(logFsUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/fs/getFsResult/";
-      this.result = this.$get(resultUrl + result.id, response => {
+      this.result = this.$get(getFsResultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
       });
@@ -352,7 +349,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/fs/reScan/" + item.id, response => {
+            this.$get(fsReScanUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -366,7 +363,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/fs/deleteFsResult/" + obj.id,  res => {
+            this.result = this.$get(deleteFsResultUrl + obj.id,  res => {
               setTimeout(function () {window.location.reload()}, 2000);
               this.$success(this.$t('commons.delete_success'));
             });
@@ -393,7 +390,7 @@ export default {
       }
     },
     handleDownload(item) {
-      this.$post("/fs/download", {
+      this.$post(fsDownloadUrl, {
         id: item.id
       }, response => {
         if (response.success) {

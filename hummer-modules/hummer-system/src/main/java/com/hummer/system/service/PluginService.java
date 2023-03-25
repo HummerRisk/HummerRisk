@@ -12,9 +12,9 @@ import com.hummer.common.core.utils.ReadFileUtils;
 import com.hummer.system.mapper.PluginMapper;
 import com.hummer.system.mapper.ext.ExtPluginMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -26,10 +26,10 @@ public class PluginService {
     private static final String BASE_CREDENTIAL_DIC = "support/credential/";
     private static final String JSON_EXTENSION = ".json";
 
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
 
-    @Resource
+    @Autowired
     private ExtPluginMapper extPluginMapper;
 
     public List<Plugin> getAllPlugin(String scanType) {
@@ -40,7 +40,7 @@ public class PluginService {
             if (StringUtils.equalsIgnoreCase(scanType, ScanTypeConstants.prowler.name())) {
                 criteria.andIdEqualTo(PlatformUtils.aws).andTypeNotEqualTo(PlatformUtils.native_);
             } else {
-                criteria.andScanTypeLike(scanType).andTypeNotEqualTo(PlatformUtils.native_);
+                criteria.andScanTypeLike(scanType);
             }
         }
         return pluginMapper.selectByExample(example);
@@ -51,14 +51,6 @@ public class PluginService {
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
         criteria.andIdIn(PlatformUtils.getCloudPlugin());
-        return pluginMapper.selectByExample(example);
-    }
-
-    public List<Plugin> getVulnPlugin() {
-        PluginExample example = new PluginExample();
-        example.setOrderByClause("order_");
-        PluginExample.Criteria criteria = example.createCriteria();
-        criteria.andTypeEqualTo(PlatformUtils.vuln_);
         return pluginMapper.selectByExample(example);
     }
 

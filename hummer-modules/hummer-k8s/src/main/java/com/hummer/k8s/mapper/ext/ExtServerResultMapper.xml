@@ -277,34 +277,5 @@
         LIMIT 10;
     </select>
 
-    <select id="history" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryServerResultDTO">
-        SELECT
-        t.*,
-        t1.tag_key as tagKey,
-        t2.tag_name as tagName,
-        u.name as user,
-        sg.name as groupName,
-        t3.script as rule
-        FROM history_server_result t
-        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
-        left join rule_tag t2 on t1.tag_key = t2.tag_key
-        left join server_rule t3 on t.rule_id = t3.id
-        left join user u on t.apply_user = u.id
-        left join server s on s.id = t.server_id
-        left join server_group sg on sg.id = s.server_group_id
-
-        <where>
-            <if test="id != null">
-                AND t.id = #{id}
-            </if>
-            <if test="serverId != null">
-                AND t.server_id = #{serverId}
-            </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
-            </if>
-        </where>
-        ORDER BY t.is_severity, t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
-    </select>
 
 </mapper>

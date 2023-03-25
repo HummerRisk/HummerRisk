@@ -207,155 +207,6 @@
                 </div>
               </el-collapse-item>
               <!-- 云账号 end -->
-              <!-- 漏洞检测 start -->
-              <el-collapse-item name="2" v-if="report.historyVulnTaskDTOList && JSON.stringify(report.historyVulnTaskDTOList) !== '[]'">
-                <template slot="title">
-                  {{ $t('vuln.vuln_setting') }} <i class="el-icon-crop" style="margin-left: 5px;padding-top: 2px;"></i>
-                </template>
-                <div>
-                  <h2>Summary:&nbsp;</h2>
-                  <div style="margin: 10px 0 0 0;">
-                    <el-table :data="report.historyVulnTaskDTOList" border stripe style="width: 100%">
-                      <el-table-column prop="name" :label="$t('vuln.name')" min-width="10%" show-overflow-tooltip>
-                        <template v-slot:default="scope">
-                          <span>
-                            <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                             &nbsp;&nbsp; {{ scope.row.accountName }}
-                          </span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="9%" show-overflow-tooltip>
-                        <span>
-                          <template v-for="tag in tagSelect">
-                            <span :key="tag.value" v-if="scope.row.ruleTags">
-                              <span :key="tag.tagKey" v-if="scope.row.ruleTags.indexOf(tag.tagKey) > -1"> {{ tag.tagName }}</span>
-                            </span>
-                          </template>
-                          <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')===-1"> {{ scope.row.resourceTypes }}</span>
-                          <span v-if="!!scope.row.resourceTypes && scope.row.resourceTypes.indexOf('.')>-1">
-                            <template v-for="type in resourceTypes" >
-                              <span :key="type.value" v-if="scope.row.resourceTypes">
-                                <span :key="type.value" v-if="scope.row.resourceTypes.indexOf(type.value) > -1"> [{{ type.value }}]</span>
-                              </span>
-                            </template>
-                          </span>
-                        </span>
-                      </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="12%" show-overflow-tooltip>
-                        <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
-                          {{ scope.row.taskName }}
-                        </el-link>
-                      </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="6%" show-overflow-tooltip>
-                        {{ scope.row.applyUser }}
-                      </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
-                        <severity-type :row="scope.row"></severity-type>
-                      </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="12%" prop="status" sortable show-overflow-tooltip>
-                        <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                        </el-button>
-                        <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                        </el-button>
-                        <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
-                          <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                        </el-button>
-                        <el-button plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
-                          <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                        </el-button>
-                        <el-button plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
-                          <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-                        </el-button>
-                        <el-button plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
-                          <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-                        </el-button>
-                      </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="6%">
-                        <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
-                          <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
-                          <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
-                            {{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}
-                          </span>
-                          <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)">
-                            <el-link type="primary" class="text-click" @click="goResource(scope.row)">{{ scope.row.returnSum }}/{{ scope.row.resourcesSum }}</el-link>
-                          </span>
-                        </el-tooltip>
-                      </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable show-overflow-tooltip min-width="8%">
-                        <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
-                        <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)" style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
-                        <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
-                      </el-table-column>
-                      <el-table-column prop="createTime" min-width="13%" :label="$t('account.update_time')" sortable show-overflow-tooltip>
-                        <template v-slot:default="scope">
-                          <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                </div>
-                <div>
-                  <h2>Details:&nbsp;</h2>
-                  <div style="margin: 10px 0 0 0;" :key="historyVulnResource.id" v-for="historyVulnResource in report.historyVulnResourceReportDTOList">
-                    <el-card class="box-card">
-                      <div slot="header" class="clearfix">
-                        <el-row>
-                          <el-col v-bind:class="{ 'icon-title box-critical': historyVulnResource.severity === 'CRITICAL',
-                                'icon-title box-high': historyVulnResource.severity === 'HIGH',
-                                'icon-title box-medium': historyVulnResource.severity === 'MEDIUM',
-                                'icon-title box-low': historyVulnResource.severity === 'LOW',
-                                'icon-title box-unknown': historyVulnResource.severity === 'UNKNOWN' }"
-                                  :span="3">
-                            <span>{{ historyVulnResource.severity.substring(0, 1) }}</span>
-                          </el-col>
-                          <el-col :span="15" style="margin: -7px 0 0 15px;">
-                            <span style="font-size: 24px;font-weight: 500;">{{ historyVulnResource.resourceName }}</span>
-                            <span style="font-size: 20px;color: #888;margin-left: 5px;"> - {{ historyVulnResource.resourceType }}</span>
-                          </el-col>
-                          <el-col :span="6" style="float: right;">
-                            <span style="font-size: 20px;color: #999;float: right;">{{ 'RESOURCE' }}</span>
-                          </el-col>
-                        </el-row>
-                        <el-row style="font-size: 18px;padding: 10px;">
-                          <el-col :span="20">
-                            <span style="color: #888;margin: 5px;">{{ 'VULNERABILITY' }}</span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="margin: 5px;">{{ historyVulnResource.regionName }}</span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="margin: 5px;"><el-button type="danger" size="mini">{{ historyVulnResource.severity }}</el-button></span>
-                            <span style="color: #bbb;margin: 5px;">{{ '|' }}</span>
-                            <span style="color: #444;margin: 5px;">CREATE TIME: {{ historyVulnResource.updateTime | timestampFormatDate }}</span>
-                          </el-col>
-                          <el-col :span="4" style="float: right;">
-                            <span style="font-size: 20px;color: #000;float: right;">{{ historyVulnResource.returnSum }}/{{ historyVulnResource.resourcesSum }}</span>
-                          </el-col>
-                        </el-row>
-
-                        <div class="text div-json" v-if="JSON.stringify(historyVulnResource.resourceItemList) !== '[]'">
-                          <el-descriptions :column="2" v-for="(resourceItem, index) in historyVulnResource.resourceItemList" :key="index" :title="'Vulnerability' + (index+1)">
-                            <el-descriptions-item v-for="(vuln, index) in filterJson(resourceItem.resource)" :key="index" :label="vuln.key">
-                              <span v-if="!vuln.flag" show-overflow-tooltip>
-                                <el-tooltip class="item" effect="dark" :content="JSON.stringify(vuln.value)" placement="top-start">
-                                  <el-link type="primary" style="color: #0000e4;">{{ 'Details' }}</el-link>
-                                </el-tooltip>
-                              </span>
-                              <el-tooltip v-if="vuln.flag && vuln.value" class="item" effect="light" :content="typeof(vuln.value) === 'boolean'?vuln.value.toString():vuln.value" placement="top-start">
-                                <span class="table-expand-span-value">
-                                    {{ vuln.value }}
-                                </span>
-                              </el-tooltip>
-                              <span v-if="vuln.flag && !vuln.value"> N/A</span>
-                            </el-descriptions-item>
-                          </el-descriptions>
-                        </div>
-                      </div>
-                    </el-card>
-                  </div>
-                </div>
-              </el-collapse-item>
-              <!-- 漏洞检测 end -->
               <!-- 虚拟机 start -->
               <el-collapse-item name="3" v-if="report.historyServerResultList && JSON.stringify(report.historyServerResultList) !== '[]'">
                 <template slot="title">
@@ -476,7 +327,8 @@ import FsLogForm from "@/business/components/fs/home/LogForm";
 import K8sLogForm from "@/business/components/k8s/home/LogForm";
 import ConfigLogForm from "@/business/components/config/home/LogForm";
 import htmlToPdf from "@/common/js/htmlToPdf";
-
+import {allTaskListUrl, taskReportUrl, taskTagRuleListUrl,} from "@/api/system/task";
+import {resourceTypesUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
 export default {
@@ -498,7 +350,7 @@ export default {
       tasks: [],
       selectedTask: null,
       activeNames: ['1','2','3','4','5','6','7','8','9', '10', '11', '12', '13'],
-      version: 'v1.0.0',
+      version: process.env.HR_VERSION?process.env.HR_VERSION:"v1.0.0",
       report: {},
       tagSelect: [],
       resourceTypes: [],
@@ -513,18 +365,18 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$get("/task/allTaskList", response => {
+      this.result = this.$get(allTaskListUrl, response => {
         this.tasks = response.data;
       });
       this.initSelect();
     },
     async initSelect () {
       this.tagSelect = [];
-      await this.$get("/tag/rule/list", response => {
+      await this.$get(taskTagRuleListUrl, response => {
         this.tagSelect = response.data;
       });
       this.resourceTypes = [];
-      await this.$get("/rule/all/resourceTypes", response => {
+      await this.$get(resourceTypesUrl, response => {
         for (let item of response.data) {
           let typeItem = {};
           typeItem.value = item.name;
@@ -535,7 +387,7 @@ export default {
     },
     search() {
       if (this.selectedTask) {
-        this.result = this.$get("/task/report/" + this.selectedTask.id, response => {
+        this.result = this.$get(taskReportUrl + this.selectedTask.id, response => {
           this.report = response.data;
         });
       }
@@ -628,11 +480,6 @@ export default {
       link.click();
       window.URL.revokeObjectURL(url);
     },
-    getVersion() {
-      this.$get('/system/system/version', response => {
-        this.version = response.data;
-      });
-    },
     filterJsonKeyAndValue(json) {
       //json is json object , not array -- harris
       let list = json;
@@ -674,7 +521,6 @@ export default {
   },
   activated() {
     this.init();
-    this.getVersion();
   },
 }
 </script>

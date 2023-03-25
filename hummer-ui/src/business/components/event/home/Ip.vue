@@ -132,6 +132,8 @@ import ResultReadOnly from "@/business/components/common/components/ResultReadOn
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import IpChart from "@/business/components/event/head/IpChart";
+import {cloudEventInsightListUrl} from "@/api/cloud/event/event";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -298,7 +300,7 @@ export default {
       }
     },
     search() {
-      let url = "/cloud/event/insight/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudEventInsightListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -314,7 +316,7 @@ export default {
       this.search()
     },
     init() {
-      this.$get("/account/allList", response => {
+      this.$get(allListUrl, response => {
         this.accountList = response.data
         this.search()
       })

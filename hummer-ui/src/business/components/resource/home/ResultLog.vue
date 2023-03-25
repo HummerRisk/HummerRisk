@@ -87,7 +87,10 @@
 
 <script>
 /* eslint-disable */
-  export default {
+  import {cloudTaskLogByIdUrl} from "@/api/cloud/account/account";
+import {resourceLogUrl} from "@/api/cloud/resource/resource";
+
+export default {
     name: "ResultLog",
     components: {
     },
@@ -123,8 +126,7 @@
           return;
         }
         let showLogTaskId = this.row.showLogTaskId;
-        let url = "/cloud/task/log/taskId/";
-        this.$get(url + showLogTaskId, response => {
+        this.$get(cloudTaskLogByIdUrl + showLogTaskId, response => {
           for (let obj of response.data) {
             for (let item of this.row.cloudTaskItemLogDTOs) {
               if (obj.cloudTaskItem.id === item.cloudTaskItem.id) {
@@ -149,7 +151,7 @@
         this.innerDrawer = false;
       },
       showInformation(item, title) {
-        this.$post("/resource/resourceLog", item.cloudTaskItem, response => {
+        this.$post(resourceLogUrl, item.cloudTaskItem, response => {
           let data = response.data;
           switch (title) {
             case this.$t('resource.i18n_resource_scanning_log'):

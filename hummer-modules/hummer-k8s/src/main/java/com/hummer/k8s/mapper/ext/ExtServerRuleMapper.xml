@@ -86,8 +86,20 @@
         </if>
     </sql>
 
+    <resultMap id="BaseResultMap2" type="com.hummer.common.core.dto.ServerRuleDTO"
+               extends="com.hummer.k8s.mapper.ServerRuleMapper.BaseResultMap">
+        <result column="tagKey" property="tagKey" jdbcType="VARCHAR"/>
+        <result column="tagName" property="tagName" jdbcType="VARCHAR"/>
+        <collection property="tags" javaType="list" ofType="string" select="getTags" column="id">
+            <result column="tagKey" jdbcType="VARCHAR" property="tagKey"/>
+        </collection>
+        <collection property="groups" javaType="list" ofType="Integer" select="getRuleGroups" column="id">
+            <result column="groupId" jdbcType="VARCHAR" property="groupId"/>
+        </collection>
+    </resultMap>
+
     <select id="ruleList" parameterType="com.hummer.common.core.domain.request.server.ServerRuleRequest"
-            resultType="com.hummer.common.core.dto.ServerRuleDTO">
+            resultMap="BaseResultMap2">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -95,6 +107,7 @@
         FROM server_rule t
         left join rule_tag_mapping t1 on t1.rule_id = t.id
         left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join rule_group_mapping t3 on t.id = t3.rule_id
 
         <where>
             <if test="request.combine != null">
@@ -119,8 +132,25 @@
             <if test="request.description != null and request.description != ''">
                 and LOWER(t.description) like CONCAT('%',LOWER(#{request.description}),'%')
             </if>
+            <if test="request.ruleGroupId != null and request.ruleGroupId != ''">
+                and t3.group_id = #{request.ruleGroupId}
+            </if>
         </where>
         ORDER BY t.last_modified desc
+    </select>
+
+    <select id="getTags" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT t.tag_key as tagKey
+        FROM rule_tag t
+        WHERE tag_key IN
+              (SELECT tag_key FROM rule_tag_mapping WHERE rule_id = #{id})
+    </select>
+
+    <select id="getRuleGroups" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT t.id as groupId
+        FROM rule_group t
+        WHERE t.id IN
+              (SELECT group_id FROM rule_group_mapping WHERE rule_id = #{id})
     </select>
 
 </mapper>

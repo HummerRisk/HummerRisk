@@ -34,6 +34,8 @@ import com.hummer.cloud.mapper.ext.ExtCloudEventMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudEventSyncLogMapper;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
+import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
+import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.CloudEventGroupDTO;
 import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
@@ -55,6 +57,7 @@ import com.volcengine.service.cloudtrail.impl.CloudTrailServiceImpl;
 import common.utils.HttpClientUtils;
 import common.utils.SignUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -63,7 +66,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,30 +74,28 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class CloudEventService {
 
-    @Resource
+    @Autowired
     private AccountService accountService;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private CloudEventMapper cloudEventMapper;
-    @Resource
+    @Autowired
     private ExtCloudEventMapper extCloudEventMapper;
-    @Resource
+    @Autowired
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
-
-    @Resource
+    @Autowired
     private ExtCloudEventSyncLogMapper extCloudEventSyncLogMapper;
-
-    @Resource
+    @Autowired
     private CloudEventRegionLogMapper cloudEventRegionLogMapper;
-    @Resource
+    @Autowired
     @Lazy
     private CommonThreadPool commonThreadPool;
     private static final int MAX_PAGE_NUM = 1000;
     private static final int MAX_INSERT_SIZE = 30;
 
     private static final String[] LOW_RISK_ARR = {"GET","查","获取","LOGIN","LOGOUT","登陆","登出"};
-    @Resource
+    @Autowired
     private PlatformTransactionManager transactionManager;
 
     public List<CloudEventRegionLog> getCloudEventRegionLog(int logId) {
@@ -117,7 +117,7 @@ public class CloudEventService {
         return cloudEventSyncLogMapper.selectByExample(cloudEventSyncLogExample);
     }
 
-    public List<CloudEventSyncLog> getCloudEventSyncLog(CloudEventRequest cloudEventRequest) {
+    public List<CloudEventSyncLogVo> getCloudEventSyncLog(CloudEventRequest cloudEventRequest) {
         return extCloudEventSyncLogMapper.getCloudEventSyncLog(cloudEventRequest);
     }
 
@@ -138,7 +138,7 @@ public class CloudEventService {
         cloudEventMapper.deleteByExample(cloudEventExample);
     }
 
-    public List<CloudEventWithBLOBs> getCloudEvents(CloudEventRequest cloudEventRequest) {
+    public List<CloudEventWithBLOBsVo> getCloudEvents(CloudEventRequest cloudEventRequest) {
         return extCloudEventMapper.getCloudEventList(cloudEventRequest);
     }
 
@@ -288,7 +288,7 @@ public class CloudEventService {
             LogUtil.error("saveCloudEvent{}:" + e.getMessage());
             cloudEventSyncLog.setStatus(2);
             String exceptionStr = e.getMessage();
-            if (exceptionStr.length() > 512) {
+            if (exceptionStr != null && exceptionStr.length() > 512) {
                 exceptionStr = exceptionStr.substring(0, 511);
             }
             cloudEventSyncLog.setException(exceptionStr);
@@ -298,7 +298,7 @@ public class CloudEventService {
     }
 
     public List<CloudEventWithBLOBs> getCloudEvents(AccountWithBLOBs account, Map<String, String> accountMap, String startTime, String endTime,
-                                           int pageNum, int maxResult) throws Exception {
+                                                    int pageNum, int maxResult) throws Exception {
         List<CloudEventWithBLOBs> result;
         switch (account.getPluginId()) {
             case PlatformUtils.aliyun:
@@ -341,7 +341,7 @@ public class CloudEventService {
         requestParams.put("SignatureMethod","HMAC-SHA256");
         requestParams.put("Region",accountMap.get("region"));
         requestParams.put("EventBeginDate",startTime.substring(0,10));
-        requestParams.put("EventEndDate",endTime.substring(0,10));
+        requestParams.put("EventEndDate",DateUtils.addDateStr("yyyy-MM-dd",endTime.substring(0,10),1));
         requestParams.put("PageSize",maxResult);
         if(nextToken!=null){
             requestParams.put("SearchAfter",nextToken);
@@ -368,14 +368,20 @@ public class CloudEventService {
                 if(eventName.contains("MODIFY")){
                     cloudEventWithBLOBs.setEventRating(1);
                 }
+                String region = item.getString("Region");
+                String regionName = item.getString("RegionCn");
+                if(StringUtils.isBlank(region)){
+                    region = "cn-beijing-6";
+                    regionName = "华北1（北京）";
+                }
                 cloudEventWithBLOBs.setEventId(item.getString("EventId"));
                 cloudEventWithBLOBs.setEventType(item.getString("EventType"));
                 cloudEventWithBLOBs.setRequestId(item.getString("RequestId"));
                 cloudEventWithBLOBs.setUserAgent(item.getString("UserAgent"));
                 cloudEventWithBLOBs.setSourceIpAddress(item.getString("SourceIpAddress"));
                 cloudEventWithBLOBs.setSyncRegion(accountMap.get("region"));
-                cloudEventWithBLOBs.setAcsRegion(item.getString("Region"));
-                cloudEventWithBLOBs.setRegionName(item.getString("RegionCn"));
+                cloudEventWithBLOBs.setAcsRegion(region);
+                cloudEventWithBLOBs.setRegionName(regionName);
                 String requestParameters =  item.getString("RequestParameters");
                 cloudEventWithBLOBs.setRequestParameters(requestParameters!=null && requestParameters.length()>500?requestParameters.substring(0,500):requestParameters);
                 cloudEventWithBLOBs.setEventSource(item.getString("EventSource"));
@@ -442,19 +448,57 @@ public class CloudEventService {
     }
 
     private List<CloudEventWithBLOBs> getBaiduEvents(Map<String, String> accountMap, String startTime, String endTime, int pageNum, int maxResult) throws Exception {
+        startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
+        endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
         BaiduCredential baiduCredential = new BaiduCredential();
-        baiduCredential.setAccessKeyId(accountMap.get("ak"));
-        baiduCredential.setSecretAccessKey(accountMap.get("sk"));
+        baiduCredential.setAccessKeyId(accountMap.get("AccessKeyId"));
+        baiduCredential.setSecretAccessKey(accountMap.get("SecretAccessKey"));
         BaiduRequest req = new BaiduRequest();
         req.setBaiduCredential(baiduCredential);
         Map<String,String> params = new HashMap<>();
         Map<String,String> headers = new HashMap<>();
         BaiduRequest.QueryEventRequest queryEventRequest = req.createQueryEventRequest();
+        queryEventRequest.setStartTime(startTime);
+        queryEventRequest.setEndTime(endTime);
+        queryEventRequest.setPageNo(pageNum);
+        queryEventRequest.setPageSize(maxResult);
         InternalRequest internalRequest = req.createRequest(HttpMethodName.POST,"/v1/events/query"
                 ,params,headers,queryEventRequest,"http://iam.bj.baidubce.com","Iam");
-        req.execute(internalRequest, QueryEventResponse.class,"Iam");
-
-        return null;
+        QueryEventResponse response = req.execute(internalRequest, QueryEventResponse.class, "Iam");
+        return response.getData().stream().map(item -> {
+            CloudEventWithBLOBs cloudEvent = new CloudEventWithBLOBs();
+            cloudEvent.setEventId(UUIDUtil.newUUID());
+            cloudEvent.setEventType(item.getString("eventType"));
+            cloudEvent.setEventSource(item.getString("eventSource"));
+            cloudEvent.setEventName(item.getString("eventName"));
+            cloudEvent.setEventTime(item.getLong("eventTimeInMilliseconds"));
+            cloudEvent.setSourceIpAddress(item.getString("userIpAddress"));
+            cloudEvent.setUserAgent(item.getString("userAgent"));
+            String region = item.getString("regionId");
+            if(StringUtils.isBlank(region)){
+                region = "bj";
+            }
+            cloudEvent.setSyncRegion(region);
+            cloudEvent.setAcsRegion(region);
+            cloudEvent.setRegionName(accountMap.get("regionName"));
+            cloudEvent.setRequestId(item.getString("requestId"));
+            cloudEvent.setEventMessage(item.getString("errorMessage"));
+            cloudEvent.setApiVersion(item.getString("apiVersion"));
+            cloudEvent.setUserIdentity(item.getString("userIdentity"));
+            JSONObject userIdentity = item.getJSONObject("userIdentity");
+            if(userIdentity != null){
+                cloudEvent.setUserName(userIdentity.getString("userDisplayName"));
+            }
+            cloudEvent.setReferencedResources(item.getString("resources"));
+            JSONArray resources = item.getJSONArray("resources");
+            if(resources != null && resources.size() > 0){
+                cloudEvent.setResourceType(resources.getJSONObject(0).getString("resourceType"));
+                cloudEvent.setResourceName(resources.getJSONObject(0).getString("resourceName"));
+            }
+            cloudEvent.setEventRating(0);
+            cloudEvent.setCloudAuditEvent(item.toJSONString());
+            return cloudEvent;
+        }).collect(Collectors.toList());
     }
 
     private List<CloudEventWithBLOBs> getHuaweiCloudEvents(Map<String, String> accountMap, String startTime
@@ -577,7 +621,7 @@ public class CloudEventService {
     }
 
     public List<CloudEventWithBLOBs> getAwsEvents(Map<String, String> accountMap, String startTime, String endTime,
-                                         int pageNum, int maxResult) {
+                                                  int pageNum, int maxResult) {
         AWSCredentials awsCredentials = new BasicAWSCredentials(accountMap.get("accessKey"), accountMap.get("secretKey"));
         AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
         AWSCloudTrail awsCloudTrail = AWSCloudTrailClient.builder().withRegion(accountMap.get("region")).withCredentials(awsCredentialsProvider).build();
@@ -630,7 +674,7 @@ public class CloudEventService {
     }
 
     public List<CloudEventWithBLOBs> getAliyunCloudEvents(Map<String, String> accountMap, String startTime, String endTime,
-                                                 int pageNum, int maxResult) throws Exception {
+                                                          int pageNum, int maxResult) throws Exception {
         startTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", startTime).replace(" ", "T") + "Z";
         endTime = DateUtils.localDateStrToUtcDateStr("yyyy-MM-dd HH:mm:ss", endTime).replace(" ", "T") + "Z";
         Config config = new Config().setAccessKeyId(accountMap.get("accessKey")).setAccessKeySecret(accountMap.get("secretKey"));
@@ -723,7 +767,7 @@ public class CloudEventService {
         return false;
     }
 
-    public ChartDTO ipAccessChart(String ip, String startDate, String endDate){
+    public ChartDTO ipAccessChart(String ip,String startDate,String endDate){
         List<Map<String, Object>> ipAccessList = extCloudEventMapper.selectIpAccessTimesGroupByDate(ip, startDate, endDate);
         Map<String,Integer> ipAccessMap = ipAccessList.stream().collect(Collectors.toMap(item->{
             return (String)item.get("accessDate");

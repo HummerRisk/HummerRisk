@@ -326,6 +326,15 @@ import ResultReadOnly from "@/business/components/common/components/ResultReadOn
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  resourceRegionDataUrl,
+  resourceRegulationUrl,
+  resourceRuleDataUrl, resourceSeverityDataUrl,
+  resourceTypeDataUrl, ossManualListUrl,
+  string2PrettyFormatUrl
+} from "@/api/cloud/resource/resource";
+import {ossResourceListUrl} from "@/api/cloud/oss/oss";
+import {tagRuleListUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -602,7 +611,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/resource/account/delete/" + obj.id, res => {
+            this.result = this.$get(resourceAccountDeleteUrl + obj.id, res => {
               setTimeout(function () {
                 window.location.reload()
               }, 2000);
@@ -621,7 +630,7 @@ export default {
       this.severityDataSearch();
     },
     async search() {
-      let url = "/oss/manual/list/" + this.currentPage + "/" + this.pageSize;
+      let url = ossManualListUrl + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
       this.condition.accountId = this.accountId;
       this.result = await this.$post(url, this.condition, response => {
@@ -631,7 +640,7 @@ export default {
       });
     },
     resourceSearch() {
-      let url = "/oss/resource/list/" + this.resourcePage + "/" + this.resourceSize;
+      let url = ossResourceListUrl + this.resourcePage + "/" + this.resourceSize;
       this.resourceCondition.accountId = this.accountId;
       this.result = this.$post(url, this.resourceCondition, response => {
         let data = response.data;
@@ -641,7 +650,7 @@ export default {
     },
     async initSelect() {
       this.tagSelect = [];
-      await this.$get("/tag/rule/list", response => {
+      await this.$get(tagRuleListUrl, response => {
         this.tagSelect = response.data;
       });
       if (!!getCurrentAccountID()) {
@@ -689,7 +698,7 @@ export default {
       let showLogTaskId = cloudTask.id;
       let url = "";
       if (showLogTaskId) {
-        url = "/cloud/task/log/taskId/";
+        url = cloudTaskLogByIdUrl;
       }
       this.logForm.cloudTaskItemLogDTOs = [];
       this.logForm.showLogTaskId = showLogTaskId;
@@ -700,7 +709,7 @@ export default {
     },
     showTaskDetail(item) {
       this.detailForm = {};
-      this.$get("/cloud/task/detail/" + item.id, response => {
+      this.$get(cloudTaskDetailUrl + item.id, response => {
         if (response.success) {
           this.detailForm = response.data;
           this.detailVisible = true;
@@ -733,7 +742,7 @@ export default {
     },
     regionDataSearch() {
       this.regionCondition.id = this.accountId;
-      this.$post('/resource/regionData', this.regionCondition, response => {
+      this.$post(resourceRegionDataUrl, this.regionCondition, response => {
         let data = response.data;
         this.regionData = data;
       });
@@ -743,7 +752,7 @@ export default {
     },
     severityDataSearch() {
       this.severityCondition.id = this.accountId;
-      this.$post('/resource/severityData', this.severityCondition, response => {
+      this.$post(resourceSeverityDataUrl, this.severityCondition, response => {
         let data = response.data;
         this.severityData = data;
       });
@@ -753,7 +762,7 @@ export default {
     },
     resourceTypeDataSearch() {
       this.resourceTypeCondition.id = this.accountId;
-      this.$post('/resource/resourceTypeData', this.resourceTypeCondition, response => {
+      this.$post(resourceTypeDataUrl, this.resourceTypeCondition, response => {
         let data = response.data;
         this.resourceTypeData = data;
       });
@@ -763,7 +772,7 @@ export default {
     },
     ruleDataSearch() {
       this.ruleCondition.id = this.accountId;
-      this.$post('/resource/ruleData', this.ruleCondition, response => {
+      this.$post(resourceRuleDataUrl, this.ruleCondition, response => {
         let data = response.data;
         this.ruleData = data;
       });
@@ -772,7 +781,7 @@ export default {
       this.string2Key = title;
       this.string2PrettyFormat = "";
       if (row) {
-        this.$post("/resource/string2PrettyFormat", {json: details}, res => {
+        this.$post(string2PrettyFormatUrl, {json: details}, res => {
           this.string2PrettyFormat = res.data;
         });
       } else {
@@ -822,7 +831,7 @@ export default {
       this.resourceSearch();
     },
     showSeverityDetail(item) {
-      this.$get("/resource/regulation/" + item.ruleId, response => {
+      this.$get(resourceRegulationUrl + item.ruleId, response => {
         if (response.success) {
           this.regulationData = response.data;
           this.regulationVisible = true;

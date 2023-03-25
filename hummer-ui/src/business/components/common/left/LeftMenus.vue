@@ -27,22 +27,14 @@
             <i class="iconfont icon-gongyouyunzengzhifuwushenqingliucheng-06"></i>
             <span slot="title">{{ $t('commons.cloud_scan') }}</span>
           </el-menu-item>
-          <el-menu-item index="/vuln" onselectstart="return false">
-            <i class="iconfont icon-erji-loudongsaomiaoguanli"></i>
-            <span slot="title">{{ $t('vuln.vuln_setting') }}</span>
-          </el-menu-item>
           <el-menu-item index="/report" onselectstart="return false">
             <i class="iconfont icon-xitonganquanheguibaobiao"></i>
             <span slot="title">{{ $t('resource.statistics') }}</span>
           </el-menu-item>
-          <el-menu-item index="/log" onselectstart="return false">
+          <el-menu-item index="/event" onselectstart="return false">
             <i class="iconfont icon-anquanhegui"></i>
             <span slot="title">{{ $t('event.audit') }}</span>
           </el-menu-item>
-<!--          <el-menu-item index="/cost" onselectstart="return false">-->
-<!--            <i class="iconfont icon-feiyongbaohan"></i>-->
-<!--            <span slot="title">{{ $t('cost.analyze') }}</span>-->
-<!--          </el-menu-item>-->
           <el-menu-item index="/oss">
             <i class="iconfont icon-ossduixiangcunchuOSS"></i>
             <span slot="title">{{ $t('oss.oss_setting') }}</span>
@@ -86,20 +78,20 @@
             <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
           </el-menu-item>
         </el-submenu>
-        <el-submenu index="3">
-          <template slot="title">
-            <i class="iconfont icon-menu"></i>
-            <span slot="title">{{ $t('task.task_setting') }}</span>
-          </template>
-          <el-menu-item index="/task" onselectstart="return false">
-            <i class="iconfont icon-history"></i>
-            <span slot="title">{{ $t('task.task_manage') }}</span>
-          </el-menu-item>
-          <el-menu-item index="/taskReport" onselectstart="return false">
-            <i class="iconfont icon-image-text"></i>
-            <span slot="title">{{ $t('task.task_report') }}</span>
-          </el-menu-item>
-        </el-submenu>
+<!--        <el-submenu index="3">-->
+<!--          <template slot="title">-->
+<!--            <i class="iconfont icon-menu"></i>-->
+<!--            <span slot="title">{{ $t('task.task_setting') }}</span>-->
+<!--          </template>-->
+<!--          <el-menu-item index="/task" onselectstart="return false">-->
+<!--            <i class="iconfont icon-history"></i>-->
+<!--            <span slot="title">{{ $t('task.task_manage') }}</span>-->
+<!--          </el-menu-item>-->
+<!--          <el-menu-item index="/taskReport" onselectstart="return false">-->
+<!--            <i class="iconfont icon-image-text"></i>-->
+<!--            <span slot="title">{{ $t('task.task_report') }}</span>-->
+<!--          </el-menu-item>-->
+<!--        </el-submenu>-->
         <el-submenu index="4">
           <template slot="title">
             <i class="iconfont icon-xitongcaidan"></i>

@@ -232,6 +232,14 @@ import ProxyDialogFooter from "@/business/components/common/components/ProxyDial
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  addCodeUrl,
+  codeListUrl,
+  codePluginUrl,
+  codeValidateUrl, scanCodeUrl, updateCodeUrl
+} from "@/api/k8s/code/code";
+import {proxyListAllUrl} from "@/api/system/system";
+import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -395,7 +403,7 @@ export default {
     },
     async create() {
       if(this.sboms && this.sboms.length > 0) {
-        await this.$post("/sbom/allSbomVersionList", {sbomId: this.sboms[0].id},response => {
+        await this.$post(allSbomVersionListUrl, {sbomId: this.sboms[0].id},response => {
           this.versions = response.data;
           this.addAccountForm = [ { "sbomId": this.sboms[0].id, "sbomVersionId" : this.versions[0].id, "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
         });
@@ -404,7 +412,7 @@ export default {
       this.activeProxy();
     },
     initSboms() {
-      this.result = this.$post("/sbom/allSbomList", {},response => {
+      this.result = this.$post(allSbomListUrl, {},response => {
         this.sboms = response.data;
       });
     },
@@ -412,14 +420,13 @@ export default {
       let params = {
         sbomId: item.sbomId
       };
-      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+      this.result = this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
       });
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
@@ -436,7 +443,7 @@ export default {
             let formData = new FormData();
             this.result = this.$request({
               method: 'POST',
-              url: "/code/validate",
+              url: codeValidateUrl,
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined
@@ -461,7 +468,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/code/list/" + this.currentPage + "/" + this.pageSize;
+      let url = codeListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -488,7 +495,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/code/deleteCode/" + obj.id, () => {
+            this.result = this.$get(deleteCodeUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -517,8 +524,7 @@ export default {
     },
     //新增Git项目账号信息/选择插件查询Git项目账号信息
     async changePluginForAdd (form){
-      let url = "/code/plugin";
-      this.result = await this.$get(url, response => {
+      this.result = await this.$get(codePluginUrl, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         form.tmpList = fromJson.data;
         for (let tmp of form.tmpList) {
@@ -530,8 +536,7 @@ export default {
     },
     //编辑Git项目账号信息/选择插件查询Git项目账号信息
     async changePlugin (type){
-      let url = "/code/plugin";
-      this.result = await this.$get(url, response => {
+      this.result = await this.$get(codePluginUrl, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         this.tmpList = fromJson.data;
         if (type === 'edit') {
@@ -572,7 +577,7 @@ export default {
         data["sbomVersionId"] = item.sbomVersionId;
         if (item.isProxy) data["proxyId"] = item.proxyId;
         if (type === 'add') {
-          this.result = this.$post("/code/addCode", data,response => {
+          this.result = this.$post(addCodeUrl, data,response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -604,7 +609,7 @@ export default {
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.result = this.$post("/code/addCode", data,response => {
+            this.result = this.$post(addCodeUrl, data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.search();
@@ -615,7 +620,7 @@ export default {
             });
           } else {
             data["id"] = item.id;
-            this.result = this.$post("/code/updateCode", data,response => {
+            this.result = this.$post(updateCodeUrl, data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();
@@ -633,7 +638,7 @@ export default {
     },
     async addAccount (addAccountForm) {
       if(this.sboms && this.sboms.length > 0) {
-        await this.$post("/sbom/allSbomVersionList", {sbomId: this.sboms[0].id},response => {
+        await this.$post(allSbomVersionListUrl, {sbomId: this.sboms[0].id},response => {
           this.versions = response.data;
           let newParam = { "sbomId": this.sboms[0].id, "sbomVersionId" : this.versions[0].id, "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
           addAccountForm.push(newParam);
@@ -653,7 +658,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/code/scan/" + item.id,response => {
+            this.$get(scanCodeUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({

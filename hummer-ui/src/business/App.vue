@@ -52,6 +52,7 @@ import HrLanguageSwitch from "./components/common/head/LanguageSwitch";
 import {getIsCollapse, saveLocalStorage} from "@/common/js/utils";
 import Notification from "@/business/components/common/head/Notification";
 import { isLoginUrl } from "@/api/auth/auth";
+import { setToken } from '@/common/js/auth';
 
 export default {
     name: "app",
@@ -73,7 +74,6 @@ export default {
           window.location.href = "/login";
         }
       }).catch(error => {
-        console.log("The user login is error", error);
         window.location.href = "/login";
       });
     },

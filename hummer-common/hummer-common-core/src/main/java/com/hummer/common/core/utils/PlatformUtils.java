@@ -63,7 +63,6 @@ import com.hummer.common.core.proxy.k8s.K8sCredential;
 import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.ksyun.KsyunCredential;
 import com.hummer.common.core.proxy.ksyun.KsyunRequest;
-import com.hummer.common.core.proxy.nuclei.NucleiCredential;
 import com.hummer.common.core.proxy.openshift.OpenShiftRequest;
 import com.hummer.common.core.proxy.openstack.OpenStackCredential;
 import com.hummer.common.core.proxy.openstack.OpenStackRequest;
@@ -76,7 +75,6 @@ import com.hummer.common.core.proxy.vsphere.VsphereBaseRequest;
 import com.hummer.common.core.proxy.vsphere.VsphereClient;
 import com.hummer.common.core.proxy.vsphere.VsphereCredential;
 import com.hummer.common.core.proxy.vsphere.VsphereRegion;
-import com.hummer.common.core.proxy.xray.XrayCredential;
 import com.jdcloud.sdk.service.iam.model.DescribeGroupsRequest;
 import com.jdcloud.sdk.service.iam.model.DescribeGroupsResponse;
 import com.qingcloud.sdk.config.EnvContext;
@@ -130,9 +128,6 @@ public class PlatformUtils {
     public final static String ucloud = "hummer-ucloud-plugin";
     public final static String jdcloud = "hummer-jdcloud-plugin";
     public final static String ksyun = "hummer-ksyun-plugin";
-    //漏洞检测插件
-    public final static String nuclei = "hummer-nuclei-plugin";
-    public final static String xray = "hummer-xray-plugin";
     //主机插件
     public final static String server = "hummer-server-plugin";
     //云原生检测插件
@@ -141,27 +136,25 @@ public class PlatformUtils {
     public final static String rancher = "hummer-rancher-plugin";
     public final static String kubesphere = "hummer-kubesphere-plugin";
     public final static String[] userForbiddenArr = {"The IAM user is forbidden"};
-    // 插件类型: 多云、漏洞、云原生
+    // 插件类型: 混合云、云原生
     public final static String cloud_ = "cloud";
-    public final static String vuln_ = "vuln";
     public final static String native_ = "native";
 
     /**
      * 支持的插件
      * 云平台插件: aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud
-     * 漏洞检测插件: xray, nuclei
      * 云原生检测插件: k8s, openshift, rancher, kubesphere
      */
     public final static List<String> getPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud,
-                nuclei, xray, k8s, openshift, rancher, kubesphere,jdcloud,ksyun);
+                k8s, openshift, rancher, kubesphere, jdcloud, ksyun);
     }
 
     /**
      * 支持云平台插件
      */
     public final static List<String> getCloudPlugin() {
-        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud,ksyun);
+        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s, jdcloud, ksyun);
     }
 
     /**
@@ -169,25 +162,7 @@ public class PlatformUtils {
      */
     public static boolean isSupportCloudAccount(String source) {
         // 云平台插件
-        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s,jdcloud,ksyun);
-
-        // 利用list的包含方法,进行判断
-        return tempList.contains(source);
-    }
-
-    /**
-     * 支持漏洞检测插件
-     */
-    public final static List<String> getVulnPlugin() {
-        return Arrays.asList(nuclei, xray);
-    }
-
-    /**
-     * 是否支持漏洞检测插件
-     */
-    public static boolean isSupportVuln(String source) {
-        // 漏洞检测插件
-        List<String> tempList = Arrays.asList(xray, nuclei);
+        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s, jdcloud, ksyun);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
@@ -202,6 +177,16 @@ public class PlatformUtils {
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);
+    }
+
+    /**
+     * 是否同步资源
+     * @param source
+     * @return
+     */
+    public static boolean isSyncResource(String source){
+        List<String> notSyncResource = Arrays.asList(k8s);
+        return !notSyncResource.contains(source);
     }
 
     /**
@@ -228,15 +213,15 @@ public class PlatformUtils {
         if (StringUtils.isNotEmpty(proxyType)) {
             if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
                 } else {
-                    proxy = "export http_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
                 }
             } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
                 } else {
-                    proxy = "export https_proxy=http://" + proxyIp + ":" + proxyPort + ";" + "\n";
+                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
                 }
             }
         } else {
@@ -330,7 +315,7 @@ public class PlatformUtils {
             case gcp:
                 String credential = params.get("credential");
                 try {
-                    CommandUtils.commonExecCmdWithResult("export GOOGLE_APPLICATION_CREDENTIALS=" + credential, dirPath);
+                    CommandUtils.commonExecCmdWithResult("export GOOGLE_APPLICATION_CREDENTIALS='" + credential + "'", dirPath);
                     CommandUtils.saveAsFile(credential, dirPath, "google_application_credentials.json", false);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -338,6 +323,9 @@ public class PlatformUtils {
                 pre = "GOOGLE_CLOUD_PROJECT=" + region + " ";
                 break;
             case k8s:
+                String url = params.get("url");
+                String token = params.get("token");
+                pre = "K8S_HOST=" + url + " K8S_TOKEN=" + token + " ";
                 break;
             case huoshan:
                 String AccessKeyId = params.get("AccessKeyId");
@@ -381,51 +369,16 @@ public class PlatformUtils {
                 String accessKey = params.get("AccessKey");
                 String secretAccessKey = params.get("SecretAccessKey");
                 pre = "JDCLOUD_ACCESSKEY=" + accessKey + " " +
-                        "JDCLOUD_SECRETKEY="+secretAccessKey+" "+
-                        "JDCLOUD_DEFAULT_REGION="+ region +" ";
+                        "JDCLOUD_SECRETKEY=" + secretAccessKey + " " +
+                        "JDCLOUD_DEFAULT_REGION=" + region + " ";
                 break;
             case ksyun:
                 String ksyunAccessKey = params.get("AccessKey");
                 String ksyunSecretAccessKey = params.get("SecretAccessKey");
                 pre = "KSYUN_ACCESSKEY=" + ksyunAccessKey + " " +
-                        "KSYUN_SECRETKEY="+ksyunSecretAccessKey+" "+
-                        "KSYUN_DEFAULT_REGION="+ region +" ";
+                        "KSYUN_SECRETKEY=" + ksyunSecretAccessKey + " " +
+                        "KSYUN_DEFAULT_REGION=" + region + " ";
                 break;
-            case nuclei:
-                try {
-                    String nucleiCredential = params.get("nucleiCredential");
-                    CommandUtils.saveAsFile(nucleiCredential, dirPath, "urls.txt", false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (behavior.equals("validate")) {
-                    return proxy + "split nuclei -t " + dirPath + "/" + fileName + " -validate";
-                }
-                return proxy + "split nuclei -l " + dirPath + "/urls.txt -t " + dirPath + "/" + fileName + " -o " + dirPath + "/result.txt";
-            case xray:
-                try {
-                    String xrayCredential = params.get("xrayCredential");
-                    CommandUtils.saveAsFile(xrayCredential, dirPath, "urls.txt", false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (behavior.equals("validate")) {
-                    return "";
-                }
-                //操作系统（本地开发使用的命令和组件不一样）
-                //linux: xray_linux_amd64
-                //window: xray_darwin_amd64
-                //mac: xray_windows_amd64
-                String osInfo = OSinfoUtil.getOSname().toString();
-                String xray = "xray_linux_amd64";
-                if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Mac_OS.toString())||StringUtils.equalsIgnoreCase(osInfo, EPlatform.Mac_OS_X.toString())) {
-                    xray = "xray_darwin_amd64";
-                } else if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Linux.toString())) {
-                    xray = "xray_linux_amd64";
-                } else if (StringUtils.equalsIgnoreCase(osInfo, EPlatform.Windows.toString())) {
-                    xray = "xray_windows_amd64";
-                }
-                return proxy + "./" + xray + " webscan --plugins " + (StringUtils.isNotEmpty(fileName) ? fileName : "xss") + " --url-file " + dirPath + "/urls.txt  --json-output " + dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE;
         }
         switch (behavior) {
             case "run":
@@ -519,18 +472,6 @@ public class PlatformUtils {
                 map.put("credential", gcpCredential.getCredentials());
                 map.put("region", region);
                 break;
-            case nuclei:
-                map.put("type", nuclei);
-                NucleiCredential nucleiCredential = new Gson().fromJson(account.getCredential(), NucleiCredential.class);
-                map.put("nucleiCredential", nucleiCredential.getTargetAddress());
-                map.put("region", region);
-                break;
-            case xray:
-                map.put("type", xray);
-                XrayCredential xrayCredential = new Gson().fromJson(account.getCredential(), XrayCredential.class);
-                map.put("xrayCredential", xrayCredential.getTargetAddress());
-                map.put("region", region);
-                break;
             case huoshan:
                 map.put("type", huoshan);
                 HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
@@ -570,16 +511,16 @@ public class PlatformUtils {
                 break;
             case jdcloud:
                 map.put("type", jdcloud);
-                JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(),JDCloudCredential.class);
-                map.put("AccessKey",jdCloudCredential.getAccessKey());
-                map.put("SecretAccessKey",jdCloudCredential.getSecretAccessKey());
+                JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(), JDCloudCredential.class);
+                map.put("AccessKey", jdCloudCredential.getAccessKey());
+                map.put("SecretAccessKey", jdCloudCredential.getSecretAccessKey());
                 map.put("region", region);
                 break;
             case ksyun:
                 map.put("type", ksyun);
-                KsyunCredential ksyunCredential = new Gson().fromJson(account.getCredential(),KsyunCredential.class);
-                map.put("AccessKey",ksyunCredential.getAccessKey());
-                map.put("SecretAccessKey",ksyunCredential.getSecretAccessKey());
+                KsyunCredential ksyunCredential = new Gson().fromJson(account.getCredential(), KsyunCredential.class);
+                map.put("AccessKey", ksyunCredential.getAccessKey());
+                map.put("SecretAccessKey", ksyunCredential.getSecretAccessKey());
                 map.put("region", region);
                 break;
             case k8s:
@@ -827,18 +768,6 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
                     }
                     break;
-                case nuclei:
-                    JSONObject nucleiJsonObject = new JSONObject();
-                    nucleiJsonObject.put("regionId", "ALL");
-                    nucleiJsonObject.put("regionName", "Nuclei 漏洞检测");
-                    if (!jsonArray.contains(nucleiJsonObject)) jsonArray.add(nucleiJsonObject);
-                    break;
-                case xray:
-                    JSONObject xrayJsonObject = new JSONObject();
-                    xrayJsonObject.put("regionId", "ALL");
-                    xrayJsonObject.put("regionName", "Xray 漏洞检测");
-                    if (!jsonArray.contains(xrayJsonObject)) jsonArray.add(xrayJsonObject);
-                    break;
                 case huoshan:
                     try {
                         JSONObject jsonObject = new JSONObject();
@@ -1068,10 +997,6 @@ public class PlatformUtils {
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
-            case nuclei:
-                return true;
-            case xray:
-                return true;
             case huoshan:
                 IIamService iamService = IamServiceImpl.getInstance();
                 HuoshanCredential huoshanCredential = new Gson().fromJson(account.getCredential(), HuoshanCredential.class);
@@ -1083,7 +1008,7 @@ public class PlatformUtils {
                     listUsersRequest.setLimit(3);
 
                     ListUsersResponse listUsersResponse = iamService.listUsers(listUsersRequest);
-                    return listUsersResponse.getResult()!=null;
+                    return listUsersResponse.getResult() != null;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1092,9 +1017,9 @@ public class PlatformUtils {
 
                 try {
                     BccClientConfiguration config = new BccClientConfiguration();
-                    config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(),baiduCredential.getSecretAccessKey()));
+                    config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(), baiduCredential.getSecretAccessKey()));
                     config.setEndpoint(baiduCredential.getEndpoint());
-                    return new BccClient(config)!=null;
+                    return new BccClient(config) != null;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1104,7 +1029,7 @@ public class PlatformUtils {
                 try {
                     Auth auth = Auth.create(qiniuCredential.getAccessKey(), qiniuCredential.getSecretKey());
                     String upToken = auth.uploadToken(qiniuCredential.getBucket());
-                    return upToken!=null;
+                    return upToken != null;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1124,7 +1049,7 @@ public class PlatformUtils {
                     input.setLimit(1);
 
                     InstanceService.DescribeInstancesOutput output = service.describeInstances(input);
-                    return output!=null;
+                    return output != null;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1138,27 +1063,27 @@ public class PlatformUtils {
                                     System.getenv(uCloudCredential.getUcloudPublicKey())
                             )
                     ));
-                    return ucloudClient!=null;
+                    return ucloudClient != null;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case jdcloud:
-                JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(),JDCloudCredential.class);
+                JDCloudCredential jdCloudCredential = new Gson().fromJson(account.getCredential(), JDCloudCredential.class);
                 JDRequest jdRequest = new JDRequest(jdCloudCredential);
-                try{
+                try {
                     DescribeGroupsResponse describeGroupsResponse = jdRequest.getIAMClient().describeGroups(new DescribeGroupsRequest());
                     int statusCode = describeGroupsResponse.getJdcloudHttpResponse().getStatusCode();
                     return statusCode == 200;
-                }catch (Exception e){
+                } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case ksyun:
-                KsyunCredential ksyunCredential = new Gson().fromJson(account.getCredential(),KsyunCredential.class);
+                KsyunCredential ksyunCredential = new Gson().fromJson(account.getCredential(), KsyunCredential.class);
                 KsyunRequest ksyunRequest = new KsyunRequest(ksyunCredential);
-                try{
+                try {
                     client.iam.listusers.v20151101.ListUsersResponse listUsersResponse = ksyunRequest.getListUserClient().doGet("iam.api.ksyun.com", new client.iam.listusers.v20151101.ListUsersRequest());
-                    return listUsersResponse.getError()==null;
-                }catch (Exception e){
+                    return listUsersResponse.getError() == null;
+                } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
             case k8s:
@@ -1168,9 +1093,9 @@ public class PlatformUtils {
                     K8sRequest k8sRequest = new K8sRequest();
                     k8sRequest.setCredential(account.getCredential());
                     ApiClient apiClient = k8sRequest.getK8sClient(proxy);
-                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
                     String pretty = "true";
-                    V1NamespaceList result = apiInstance.listNamespace(pretty, true, null,
+                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
+                    V1NodeList result = apiInstance.listNode(pretty, true, null,
                             null, null, null, null, null, null, null);
                     return result != null;
                 } catch (Exception e) {
@@ -1266,23 +1191,17 @@ public class PlatformUtils {
             case gcp:
                 strCn = RegionsConstants.GcpMap.get(strEn);
                 break;
-            case nuclei:
-                strCn = strEn;
-                break;
-            case xray:
-                strCn = strEn;
-                break;
             case huoshan:
                 strCn = strEn;
                 break;
             case baidu:
-                strCn = strEn;
+                strCn = RegionsConstants.BaiduMap.get(strEn);
                 break;
             case qiniu:
                 strCn = strEn;
                 break;
             case qingcloud:
-                strCn = strEn;
+                strCn = RegionsConstants.QingcloudMap.get(strEn);
                 break;
             case ucloud:
                 strCn = strEn;
@@ -1315,7 +1234,7 @@ public class PlatformUtils {
                 if (StringUtils.contains(resource, "aliyun.polardb")) {
                     // 不支持aliyun.polardb资源的区域
                     stringArray = new String[]{"cn-wulanchabu", "cn-heyuan", "cn-guangzhou", "me-east-1",
-                            "cn-nanjing","ap-northeast-2","ap-southeast-7","me-central-1","cn-fuzhou"};
+                            "cn-nanjing", "ap-northeast-2", "ap-southeast-7", "me-central-1", "cn-fuzhou"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
                 } else if (StringUtils.contains(resource, "aliyun.mongodb")) {
@@ -1325,7 +1244,7 @@ public class PlatformUtils {
                     return !tempList.contains(region);
                 } else if (StringUtils.contains(resource, "aliyun.slb")) {
                     // 不支持aliyun.slb资源的区域
-                    stringArray = new String[]{"cn-nanjing","me-central-1"};
+                    stringArray = new String[]{"cn-nanjing", "me-central-1"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
                 } else if (StringUtils.contains(resource, "aliyun.ram")) {
@@ -1338,20 +1257,20 @@ public class PlatformUtils {
                     stringArray = new String[]{"cn-beijing"};
                     tempList = Arrays.asList(stringArray);
                     return tempList.contains(region);
-                } else if (StringUtils.contains(resource,"aliyun.rds")) {
+                } else if (StringUtils.contains(resource, "aliyun.rds")) {
                     stringArray = new String[]{"cn-fuzhou"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
-                } else if (StringUtils.contains(resource,"aliyun.redis")){
+                } else if (StringUtils.contains(resource, "aliyun.redis")) {
                     stringArray = new String[]{"cn-fuzhou"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
-                } else if (StringUtils.contains(resource,"aliyun.mse")){
-                    stringArray = new String[]{"cn-fuzhou","cn-nanjing","me-east-1"};
+                } else if (StringUtils.contains(resource, "aliyun.mse")) {
+                    stringArray = new String[]{"cn-fuzhou", "cn-nanjing", "me-east-1"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
-                }else if (StringUtils.contains(resource,"aliyun.nas")){
-                    stringArray = new String[]{"ap-southeast-7","cn-fuzhou","cn-nanjing"};
+                } else if (StringUtils.contains(resource, "aliyun.nas")) {
+                    stringArray = new String[]{"ap-southeast-7", "cn-fuzhou", "cn-nanjing"};
                     tempList = Arrays.asList(stringArray);
                     return !tempList.contains(region);
                 }
@@ -1416,14 +1335,13 @@ public class PlatformUtils {
                 break;
             case gcp:
                 break;
-            case nuclei:
-                break;
-            case xray:
-                break;
             case huoshan:
                 break;
             case baidu:
-                if("hbfsg".equals(region)){
+                if ("hbfsg".equals(region)) {
+                    return false;
+                }
+                if ("sin".equals(region)) {
                     return false;
                 }
                 break;
@@ -1493,12 +1411,13 @@ public class PlatformUtils {
 
     /**
      * 检查返回值里是否包含用户被禁止的关键字
+     *
      * @param result
      * @return
      */
-    public static boolean isUserForbidden(String result){
-        for(String userForbiddenStr : userForbiddenArr){
-            if(result.contains(userForbiddenStr)){
+    public static boolean isUserForbidden(String result) {
+        for (String userForbiddenStr : userForbiddenArr) {
+            if (result.contains(userForbiddenStr)) {
                 return true;
             }
         }

@@ -31,6 +31,7 @@
           <span v-if="scope.row.type == 'cloud'" style="color: #f84846;"> {{ $t('system.cloud') }}</span>
           <span v-else-if="scope.row.type == 'vuln'" style="color: #fe9636;"> {{ $t('system.vuln') }}</span>
           <span v-else-if="scope.row.type == 'native'" style="color: #4dabef;"> {{ $t('system.native') }}</span>
+          <span v-else-if="scope.row.type == 'server'" style="color: #1d982f;"> {{ $t('server.server_1') }}</span>
           <span v-else> N/A</span>
         </el-table-column>
         <el-table-column prop="order" v-if="checkedColumnNames.includes('order')" :label="$t('system.plugin_order')" min-width="60"/>

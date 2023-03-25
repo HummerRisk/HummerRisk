@@ -49,7 +49,6 @@
         <sun.activation.version>1.2.0</sun.activation.version>
         <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
         <mybatis.spring.boot.starter.version>3.0.1</mybatis.spring.boot.starter.version>
-        <quartz.spring.boot.starter.version>1.1.0</quartz.spring.boot.starter.version>
         <mysql.connector.java.version>8.0.32</mysql.connector.java.version>
         <flyway.mysql.version>9.15.0</flyway.mysql.version>
     </properties>
@@ -108,7 +107,7 @@
         <module>hummer-gateway</module>
         <module>hummer-visual</module>
         <module>hummer-modules</module>
-        <module>hummer-dubbo-api</module>
+        <module>hummer-api</module>
         <module>hummer-common</module>
     </modules>
 

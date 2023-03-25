@@ -74,6 +74,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import MetricChart from "@/business/components/common/chart/MetricChart";
 import { DETAIL_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {codeMetricChartUrl, codeResultItemListBySearchUrl} from "@/api/k8s/code/code";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -212,14 +213,14 @@ const columnOptions = [
         this.init();
       },
       search () {
-        let url = "/code/resultItemListBySearch/" + this.currentPage + "/" + this.pageSize;
+        let url = codeResultItemListBySearchUrl + this.currentPage + "/" + this.pageSize;
         this.condition.resultId = this.resultId;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
         });
-        this.result = this.$get("/sbom/codeMetricChart/"+ this.resultId, response => {
+        this.result = this.$get(codeMetricChartUrl + this.resultId, response => {
           this.content = response.data;
         });
       },

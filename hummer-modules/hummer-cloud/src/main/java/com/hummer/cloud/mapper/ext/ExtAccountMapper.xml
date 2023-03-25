@@ -134,42 +134,7 @@
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
             </if>
-            AND p1.type = 'cloud'
-        </where>
-        order by t.update_time desc
-    </select>
-
-    <select id="getVulnList" resultMap="BaseResultMap">
-        select
-        t.*,
-        p.proxy_ip,
-        p.proxy_port,
-        p.proxy_name,
-        p.proxy_password,
-        user.name as userName,
-        IF(p.proxy_ip, true, false) as isProxy
-        from cloud_account as t
-        left join user on t.creator = user.id
-        left join proxy p on t.proxy_id = p.id
-        LEFT JOIN plugin p1 on t.plugin_id = p1.id
-        <where>
-            <if test="request.combine != null">
-                <include refid="combine">
-                    <property name="condition" value="request.combine"/>
-                    <property name="name" value="request.name"/>
-                </include>
-            </if>
-
-            <if test="request.name != null and request.name != ''">
-                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
-            </if>
-            <if test="request.userName != null and request.userName != ''">
-                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
-            </if>
-            <if test="request.status != null and request.status != ''">
-                and t.status = #{request.status}
-            </if>
-            AND p1.type = 'vuln'
+            AND p1.type in ('cloud', 'native')
         </where>
         order by t.update_time desc
     </select>

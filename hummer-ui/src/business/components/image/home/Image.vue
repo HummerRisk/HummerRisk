@@ -344,6 +344,16 @@ import ImageUpload from "../head/ImageUpload";
 import ImageTarUpload from "../head/ImageTarUpload";
 import MainContainer from "../.././common/components/MainContainer";
 import {IMAGE_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {
+  addImageUrl,
+  allImageReposUrl,
+  deleteImageUrl,
+  imageListUrl, repoItemListUrl,
+  scanImageUrl,
+  updateImageUrl
+} from "@/api/k8s/image/image";
+import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
+import {proxyListAllUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -396,10 +406,10 @@ export default {
   },
   data() {
     return {
-      queryPath: '/image/imageList/',
-      deletePath: '/image/deleteImage/',
-      createPath: '/image/addImage',
-      updatePath: '/image/updateImage',
+      queryPath: imageListUrl,
+      deletePath: deleteImageUrl,
+      createPath: addImageUrl,
+      updatePath: updateImageUrl,
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -503,13 +513,13 @@ export default {
       this.createVisible = true;
     },
     async initSbom(params) {
-      await this.$post("/sbom/allSbomVersionList", params,response => {
+      await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
         if(this.versions && this.versions.length > 0) this.form.sbomVersionId = this.versions[0].id;
       });
     },
     initSboms() {
-      this.result = this.$post("/sbom/allSbomList", {},response => {
+      this.result = this.$post(allSbomListUrl, {},response => {
         this.sboms = response.data;
       });
     },
@@ -517,7 +527,7 @@ export default {
       let params = {
         sbomId: item.sbomId
       };
-      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+      this.result = this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
       });
     },
@@ -548,7 +558,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get('/image/scan/' + data.id, response => {
+            this.$get(scanImageUrl + data.id, response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({
@@ -649,15 +659,13 @@ export default {
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
     //查询仓库
     activeRepo() {
-      let url = "/image/allImageRepos";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(allImageReposUrl, response => {
         this.repos = response.data;
       });
     },
@@ -693,7 +701,7 @@ export default {
       this.tarFile = file;
     },
     changeImage(id) {
-      this.$post("/image/repoItemList", {repoId: id}, response => {
+      this.$post(repoItemListUrl, {repoId: id}, response => {
         this.images = response.data;
       });
     },

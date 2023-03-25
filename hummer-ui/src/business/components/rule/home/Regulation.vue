@@ -112,6 +112,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {RULE_INSPECTION_REPORT_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {ruleGroupDeleteUrl, ruleInspectionReportsUrl, ruleListUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -233,7 +234,7 @@ const columnOptions = [
       handleListSearch () {
         let condition = {};
         condition.combine = {regulation: {operator: 'in', value: this.itemId }};
-        let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, condition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
@@ -259,7 +260,7 @@ const columnOptions = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/rule/group/delete/" + item.id, () => {
+              this.result = this.$get(ruleGroupDeleteUrl + item.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -275,7 +276,7 @@ const columnOptions = [
       },
       //查询列表
       search() {
-        let url = "/rule/ruleInspectionReports/" + this.currentPage + "/" + this.pageSize;
+        let url = ruleInspectionReportsUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;

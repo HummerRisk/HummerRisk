@@ -6,6 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
+import {imageRepoChartUrl} from "@/api/k8s/image/image";
 /* eslint-disable */
 export default {
   name: "LeftChart",
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get("/image/imageRepoChart", response => {
+      this.$get(imageRepoChartUrl, response => {
         let data = response.data;
         this.options = {
           title: {

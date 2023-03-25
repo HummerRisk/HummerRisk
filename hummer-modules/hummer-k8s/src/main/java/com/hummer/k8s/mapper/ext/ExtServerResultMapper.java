@@ -1,10 +1,9 @@
 package com.hummer.k8s.mapper.ext;
 
-import com.hummer.common.core.dto.HistoryServerResultDTO;
-import com.hummer.common.core.dto.ServerListDTO;
-import com.hummer.common.core.dto.ServerResultDTO;
 import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
+import com.hummer.common.core.dto.ServerListDTO;
+import com.hummer.common.core.dto.ServerResultDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,7 +22,5 @@ public interface ExtServerResultMapper {
     List<String> serverChartX(Map<String, Object> params);
 
     List<Integer> serverChartY(Map<String, Object> params);
-
-    List<HistoryServerResultDTO> history(Map<String, Object> params);
 
 }

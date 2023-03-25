@@ -18,8 +18,11 @@
 </template>
 
 <script>
-import {DEFAULT_LANGUAGE, EN_US, TokenKey, ZH_CN, ZH_TW} from '../../../../common/js/constants';
-import {getCurrentUser} from "../../../../common/js/utils";
+import {DEFAULT_LANGUAGE, EN_US, ZH_CN, ZH_TW} from '@/common/js/constants';
+import {getCurrentUser} from "@/common/js/utils";
+import {setToken} from "@/common/js/auth";
+import {userUpdateCurrentUrl} from "@/api/system/system";
+
 /* eslint-disable */
   export default {
     name: "LanguageSwitch",
@@ -72,8 +75,8 @@ import {getCurrentUser} from "../../../../common/js/utils";
           language: language
         };
         this.checkLanguage(language);
-        this.result = this.$post("/user/update/current", user, response => {
-          localStorage.setItem(TokenKey, JSON.stringify(response.data));
+        this.result = this.$post(userUpdateCurrentUrl, user, response => {debugger
+          setToken(response.data.token);
           window.location.reload();
         });
       }

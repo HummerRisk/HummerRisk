@@ -19,10 +19,10 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "account")
 public class AccountController {
-    @Resource
+    @Autowired
     private AccountService accountService;
 
     @I18n
@@ -56,15 +56,6 @@ public class AccountController {
     @GetMapping("listByGroup/{pluginId}")
     public List<Account> listByGroup(@PathVariable String pluginId) {
         return accountService.listByGroup(pluginId);
-    }
-
-    @I18n
-    @ApiOperation(value = "所有漏洞检测")
-    @GetMapping("vulnList")
-    public List<AccountDTO> vulnList() {
-        CloudAccountRequest request = new CloudAccountRequest();
-        request.setStatus(CloudAccountConstants.Status.VALID.name());
-        return accountService.vulnList(request);
     }
 
     @I18n

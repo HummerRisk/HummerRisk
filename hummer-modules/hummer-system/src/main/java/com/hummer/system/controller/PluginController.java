@@ -10,16 +10,16 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.PluginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "插件")
 @RestController
 @RequestMapping(value = "plugin")
 public class PluginController {
-    @Resource
+    @Autowired
     private PluginService pluginService;
 
     @I18n
@@ -27,13 +27,6 @@ public class PluginController {
     @GetMapping("cloud")
     public List<Plugin> getCloudPlugin() {
         return pluginService.getCloudPlugin();
-    }
-
-    @I18n
-    @ApiOperation(value = "所有漏洞插件")
-    @GetMapping("vuln")
-    public List<Plugin> getVulnPlugin() {
-        return pluginService.getVulnPlugin();
     }
 
     @I18n

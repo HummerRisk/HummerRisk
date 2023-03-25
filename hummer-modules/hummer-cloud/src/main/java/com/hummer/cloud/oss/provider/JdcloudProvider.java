@@ -2,12 +2,12 @@ package com.hummer.cloud.oss.provider;
 
 import com.alibaba.fastjson.JSON;
 import com.hummer.cloud.oss.constants.ObjectTypeConstants;
-import com.hummer.common.core.constant.RegionsConstants;
-import com.hummer.common.core.domain.OssBucket;
-import com.hummer.common.core.domain.OssWithBLOBs;
 import com.hummer.cloud.oss.dto.BucketMetric;
 import com.hummer.cloud.oss.dto.BucketObjectDTO;
+import com.hummer.common.core.constant.RegionsConstants;
+import com.hummer.common.core.domain.OssBucket;
 import com.hummer.common.core.domain.OssRegion;
+import com.hummer.common.core.domain.OssWithBLOBs;
 import com.hummer.common.core.proxy.jdcloud.JDCloudCredential;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class JdcloudProvider implements OssProvider {
+public class JdcloudProvider implements OssProvider{
     private static final String BASE_REGION_DIC = "support/regions/";
     private static final String JSON_EXTENSION = ".json";
 
@@ -209,7 +209,7 @@ public class JdcloudProvider implements OssProvider {
         return objects;
     }
 
-    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket, List<CommonPrefix> commonPrefixes, String prefix){
+    private List<BucketObjectDTO> convertToBucketFolder(OssBucket bucket,  List<CommonPrefix> commonPrefixes, String prefix){
         List<BucketObjectDTO> objects = new ArrayList<>();
         for (CommonPrefix commonPrefix : commonPrefixes) {
             BucketObjectDTO bucketObject = new BucketObjectDTO();

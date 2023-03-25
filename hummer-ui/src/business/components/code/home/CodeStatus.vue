@@ -14,6 +14,8 @@
 
 <script>
   /* eslint-disable */
+  import {codeValidateByIdUrl} from "@/api/k8s/code/code";
+
   export default {
     name: "CodeStatus",
     inject:['search'],
@@ -26,7 +28,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/code/validate/" + row.id, {}, response => {
+              this.$post(codeValidateByIdUrl + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                   this.$emit('search');

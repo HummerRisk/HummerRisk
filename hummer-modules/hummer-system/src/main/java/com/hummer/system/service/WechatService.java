@@ -2,12 +2,13 @@ package com.hummer.system.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.common.core.constant.ParamConstants;
+import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.EncryptUtils;
-import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.message.NotificationBasicResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +23,9 @@ import java.util.Map;
 @Service
 public class WechatService {
 
-    @Resource
+    @Autowired
     private SystemParameterMapper systemParameterMapper;
-    @Resource
+    @Autowired
     private RestTemplate restTemplate;
 
     private static final String ACCESS_TOKEN_URL = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}";

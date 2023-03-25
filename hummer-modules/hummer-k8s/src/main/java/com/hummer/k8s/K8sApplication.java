@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  */
 @EnableHrFeignClients
 @EnableDubbo
-@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
+@SpringBootApplication
 public class K8sApplication {
     public static void main(String[] args) {
         SpringApplication.run(K8sApplication.class, args);

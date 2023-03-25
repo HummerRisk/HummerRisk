@@ -217,6 +217,8 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import {CODE_RULE_CONFIGS} from "../../common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
+import {codeChangeStatusUrl, codeRuleListUrl, deleteCodeRuleUrl} from "@/api/k8s/code/code";
+import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
 export default {
@@ -315,7 +317,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/code/deleteCodeRule/" + item.id, () => {
+            this.result = this.$get(deleteCodeRuleUrl + item.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -325,7 +327,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/code/ruleList/" + this.currentPage + "/" + this.pageSize;
+      let url = codeRuleListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -333,8 +335,7 @@ export default {
       });
     },
     tagLists() {
-      let url = "/rule/ruleTags";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(ruleTagsUrl, response => {
         this.tags = response.data;
       });
     },
@@ -446,7 +447,7 @@ export default {
       }
     },
     changeStatus (item) {
-      this.result = this.$post('/code/changeStatus', {id: item.id, status: item.status?1:0}, response => {
+      this.result = this.$post(codeChangeStatusUrl, {id: item.id, status: item.status?1:0}, response => {
         if (item.status == 1) {
           this.$success(this.$t('rule.change_status_on'));
         } else if (item.status == 0) {

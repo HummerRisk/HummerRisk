@@ -34,4 +34,187 @@
         ORDER BY create_time desc
         LIMIT 1
     </update>
+
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.core.dto.HistoryImageReportDTO" extends="com.hummer.system.mapper.HistoryImageResultMapper.BaseResultMap">
+        <collection property="imageResultItemWithBLOBsList" ofType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getImageResultDto" resultMap="HistoryImageReportDTOMap" parameterType="java.lang.String">
+        SELECT t.*
+        FROM history_image_result t
+        WHERE t.id = #{id}
+    </select>
+
+    <select id="getimageResultItemWithBLOBsList" resultType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" parameterType="java.lang.String">
+        SELECT t.*
+        FROM image_result_item t
+        WHERE t.result_id = #{id}
+    </select>
+
+    <select id="imageHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryImageResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_image_result t
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="imageId != null">
+                AND t.image_id = #{imageId}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <select id="codeHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCodeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_code_result t
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="codeId != null">
+                AND t.code_id = #{codeId}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <select id="serverHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryServerResultDTO">
+        SELECT
+        t.*,
+        t1.tag_key as tagKey,
+        t2.tag_name as tagName,
+        u.name as user,
+        sg.name as groupName,
+        t3.script as rule
+        FROM history_server_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join server_rule t3 on t.rule_id = t3.id
+        left join user u on t.apply_user = u.id
+        left join server s on s.id = t.server_id
+        left join server_group sg on sg.id = s.server_group_id
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="serverId != null">
+                AND t.server_id = #{serverId}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.is_severity, t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
+    </select>
+
+    <select id="fsHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryFsResultDTO">
+        SELECT
+        t.*,
+        t1.file_name as fileName,
+        t1.size as size,
+        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_file_system_result t
+        LEFT JOIN file_system t1 on t.fs_id = t1.id
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="fsId != null">
+                AND t.fs_id = #{fsId}
+            </if>
+            <if test="sbomVersionId != null">
+                AND t.sbom_version_id = #{sbomVersionId}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <select id="k8sHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as high,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as medium,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as low,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as unknown,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as configCritical,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as configHigh,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as configMedium,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'low') as configLow,
+        (select count(*) from cloud_native_result_config_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'unknown') as configUnknown,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'fail') as fail,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'warn') as warn,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'info') as info,
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'pass') as pass
+        FROM history_cloud_native_result t
+
+        <where>
+            <if test="id != null">
+                AND t.id = #{id}
+            </if>
+            <if test="cloudNativeId != null">
+                AND t.cloud_native_id = #{cloudNativeId}
+            </if>
+            <if test="name != null">
+                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <select id="configHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCloudNativeResultDTO">
+        SELECT
+        t.*,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'HIGH') as high,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'MEDIUM') as medium,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
+        FROM history_cloud_native_config_result t
+
+        <where>
+            <if test="id != null and id != ''">
+                AND t.id = #{id}
+            </if>
+            <if test="configId != null and configId != ''">
+                AND t.config_id = #{configId}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.name) like CONCAT('%',LOWER(#{name}),'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
 </mapper>

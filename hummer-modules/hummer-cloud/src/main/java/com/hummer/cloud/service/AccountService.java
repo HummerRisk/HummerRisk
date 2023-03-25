@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyuncs.exceptions.ClientException;
-import com.hummer.cloud.mapper.AccountMapper;
-import com.hummer.cloud.mapper.PluginMapper;
-import com.hummer.cloud.mapper.ProxyMapper;
-import com.hummer.cloud.mapper.RuleAccountParameterMapper;
+import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtAccountMapper;
 import com.hummer.common.core.constant.CloudAccountConstants;
 import com.hummer.common.core.constant.ResourceOperation;
@@ -27,11 +24,11 @@ import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,20 +44,24 @@ import static com.alibaba.fastjson.JSON.parseObject;
 @Transactional(rollbackFor = Exception.class)
 public class AccountService {
 
-    @Resource
+    @Autowired
     private ExtAccountMapper extAccountMapper;
-    @Resource
+    @Autowired
     private AccountMapper accountMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private RuleAccountParameterMapper ruleAccountParameterMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
-    @Resource
+    @Autowired
     private CloudSyncService cloudSyncService;
+    @Autowired
+    private CloudEventSyncLogMapper cloudEventSyncLogMapper;
+    @Autowired
+    private CloudEventMapper cloudEventMapper;
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
@@ -71,10 +72,6 @@ public class AccountService {
         example.createCriteria().andPluginIdEqualTo(pluginId).andStatusEqualTo("VALID");
         List<Account> accounts = accountMapper.selectByExample(example);
         return accounts;
-    }
-
-    public List<AccountDTO> vulnList(CloudAccountRequest request) {
-        return extAccountMapper.getVulnList(request);
     }
 
     public AccountWithBLOBs getAccount(String id) {
@@ -174,7 +171,7 @@ public class AccountService {
                 accountMapper.insertSelective(account);
                 updateRegionsThrows(account);
                 OperationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
-                if (!PlatformUtils.isSupportVuln(account.getPluginId()) && validate.isFlag()) cloudSyncService.sync(account.getId());
+                if (validate.isFlag() && PlatformUtils.isSyncResource(account.getPluginId())) cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
         } catch (Exception e) {
@@ -233,7 +230,7 @@ public class AccountService {
 
                 //检验账号已更新状态
                 OperationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.UPDATE, "i18n_update_cloud_account");
-                if (!PlatformUtils.isSupportVuln(account.getPluginId()) && validate.isFlag()) cloudSyncService.sync(account.getId());
+                if (validate.isFlag()) cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
 
@@ -246,6 +243,12 @@ public class AccountService {
     public void delete(String accountId) {
         AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(accountId);
         accountMapper.deleteByPrimaryKey(accountId);
+        CloudEventExample cloudEventExample = new CloudEventExample();
+        cloudEventExample.createCriteria().andCloudAccountIdEqualTo(accountId);
+        cloudEventMapper.deleteByExample(cloudEventExample);
+        CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
+        cloudEventSyncLogExample.createCriteria().andAccountIdEqualTo(accountId);
+        cloudEventSyncLogMapper.deleteByExample(cloudEventSyncLogExample);
         OperationLogService.log(tokenService.getLoginUser().getUser(), accountId, accountWithBLOBs.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_account");
     }
 

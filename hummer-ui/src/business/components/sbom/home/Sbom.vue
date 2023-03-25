@@ -463,6 +463,14 @@ import CodeLogForm from "@/business/components/code/home/LogForm";
 import ImageLogForm from "@/business/components/image/home/LogForm";
 import FsLogForm from "@/business/components/fs/home/LogForm";
 import htmlToPdf from "@/common/js/htmlToPdf";
+import {
+  sbomApplicationsUrl,
+  sbomCodeLogUrl, sbomCodeResultUrl, sbomFsLogUrl,
+  sbomFsResultUrl,
+  sbomGetCodeResultUrl, sbomGetFsResultUrl,
+  sbomGetImageResultUrl,
+  sbomImageLogUrl, sbomImageResultUrl
+} from "@/api/k8s/sbom/sbom";
 
 /* eslint-disable */
 export default {
@@ -525,20 +533,16 @@ export default {
       let params = {
         name: this.filterText
       };
-      this.result = this.$post("/sbom/applications", params, response => {
-        if (response.success) {
-          this.applications = response.data;
-          for(let sbom of this.applications) {
-            for(let version of sbom.sbomVersionList) {
-              this.sbomVersion = version;
-              break;
-            }
+      this.result = this.$post(sbomApplicationsUrl, params, response => {
+        this.applications = response.data;
+        for(let sbom of this.applications) {
+          for(let version of sbom.sbomVersionList) {
+            this.sbomVersion = version;
             break;
           }
-          this.searchScan();
-        } else {
-          this.$error(response.message);
+          break;
         }
+        this.searchScan();
       });
     },
     filterTag (tag) {
@@ -546,13 +550,13 @@ export default {
     },
     searchScan() {
       if(this.sbomVersion) {
-        this.$get("/sbom/codeResult/" + this.sbomVersion.id, response => {
+        this.$get(sbomCodeResultUrl + this.sbomVersion.id, response => {
           this.codeData = response.data;
         });
-        this.$get("/sbom/imageResult/" + this.sbomVersion.id, response => {
+        this.$get(sbomImageResultUrl + this.sbomVersion.id, response => {
           this.imageData = response.data;
         });
-        this.$get("/sbom/fsResult/" + this.sbomVersion.id, response => {
+        this.$get(sbomFsResultUrl + this.sbomVersion.id, response => {
           this.fsData = response.data;
         });
       }
@@ -576,36 +580,30 @@ export default {
       this.fsVisible = true;
     },
     showCodeResultLog(result) {
-      let logUrl = "/sbom/codeLog/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(sbomCodeLogUrl + result.id, response => {
         this.logCodeData = response.data;
       });
-      let resultUrl = "/sbom/getCodeResult/";
-      this.result = this.$get(resultUrl + result.id, response => {
+      this.result = this.$get(sbomGetCodeResultUrl + result.id, response => {
         this.logCodeForm = response.data;
         this.logCodeForm.returnJson = JSON.parse(this.logCodeForm.returnJson);
       });
       this.logCodeVisible = true;
     },
     showImageResultLog(result) {
-      let logUrl = "/sbom/imageLog/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(sbomImageLogUrl + result.id, response => {
         this.logImageData = response.data;
       });
-      let resultUrl = "/image/getImageResultWithBLOBs/";
-      this.result = this.$get(resultUrl + result.id, response => {
+      this.result = this.$get(sbomGetImageResultUrl + result.id, response => {
         this.logImageForm = response.data;
         this.logImageForm.resultJson = JSON.parse(this.logImageForm.resultJson);
       });
       this.logImageVisible = true;
     },
     showFsResultLog(result) {
-      let logUrl = "/fs/log/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(sbomFsLogUrl + result.id, response => {
         this.logFsData = response.data;
       });
-      let resultUrl = "/fs/getFsResult/";
-      this.result = this.$get(resultUrl + result.id, response => {
+      this.result = this.$get(sbomGetFsResultUrl + result.id, response => {
         this.logFsForm = response.data;
         this.logFsForm.returnJson = JSON.parse(this.logFsForm.returnJson);
       });
@@ -625,17 +623,17 @@ export default {
       this.fsResultId = "";
       if(item.codeId) {
         this.codeResultId = item.id;
-        this.result = this.$get("/sbom/codeMetricChart/"+ this.codeResultId, response => {
+        this.result = this.$get(sbomCodeMetricChartUrl + this.codeResultId, response => {
           this.content = response.data;
         });
       } else if(item.imageId) {
         this.imageResultId = item.id;
-        this.result = this.$get("/sbom/imageMetricChart/"+ this.imageResultId, response => {
+        this.result = this.$get(sbomImageMetricChartUrl + this.imageResultId, response => {
           this.content = response.data;
         });
       } else if(item.fsId) {
         this.fsResultId = item.id;
-        this.result = this.$get("/sbom/fsMetricChart/"+ this.fsResultId, response => {
+        this.result = this.$get(sbomFsMetricChartUrl + this.fsResultId, response => {
           this.content = response.data;
         });
       }

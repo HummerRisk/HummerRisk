@@ -234,6 +234,13 @@ import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
 import LogForm from "@/business/components/fs/home/LogForm";
 import CodeDiff from 'vue-code-diff';
+import {
+  deleteHistoryFsResultUrl,
+  getFsResultUrl,
+  historyFsUrl,
+  historyResultItemListUrl,
+  logFsUrl
+} from "@/api/k8s/fs/fs";
 /* eslint-disable */
   export default {
     name: "HistoryList",
@@ -305,7 +312,7 @@ import CodeDiff from 'vue-code-diff';
       },
       //查询列表
       async search() {
-        let url = "/fs/history/" + this.currentPage + "/" + this.pageSize;
+        let url = historyFsUrl + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.fsId = this.selectNodeIds[0];
         } else {
@@ -345,7 +352,7 @@ import CodeDiff from 'vue-code-diff';
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get("/fs/deleteHistoryFsResult/" + obj.id,  res => {
+              this.result = this.$get(deleteHistoryFsResultUrl + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -355,7 +362,7 @@ import CodeDiff from 'vue-code-diff';
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post("/fs/history/" + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
+        await this.$post(historyFsUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
@@ -381,23 +388,20 @@ import CodeDiff from 'vue-code-diff';
           this.$warning(this.$t('resource.no_resources_allowed'));
           return;
         }
-        let url = "/fs/historyResultItemList";
-        this.result = this.$post(url, {resultId: params.id}, response => {
+        this.result = this.$post(historyResultItemListUrl, {resultId: params.id}, response => {
           let data = response.data;
           this.statisticsData = data;
           this.statisticsList = true;
         });
-        this.result = this.$get("/sbom/fsMetricChart/"+ params.id, response => {
+        this.result = this.$get(fsMetricChartUrl + params.id, response => {
           this.content = response.data;
         });
       },
       showResultLog (result) {
-        let logUrl = "/fs/log/";
-        this.result = this.$get(logUrl + result.id, response => {
+        this.result = this.$get(logFsUrl + result.id, response => {
           this.logData = response.data;
         });
-        let resultUrl = "/fs/getFsResult/";
-        this.result = this.$get(resultUrl + result.id, response => {
+        this.result = this.$get(getFsResultUrl + result.id, response => {
           this.logForm = response.data;
           this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
         });

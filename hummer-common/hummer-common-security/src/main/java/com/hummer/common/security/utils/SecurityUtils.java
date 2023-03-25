@@ -7,8 +7,6 @@ import com.hummer.common.core.utils.Md5Utils;
 import com.hummer.common.core.utils.ServletUtils;
 import com.hummer.common.core.utils.StringUtils;
 import com.hummer.system.api.model.LoginUser;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

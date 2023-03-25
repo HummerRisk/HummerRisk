@@ -2,7 +2,6 @@ package com.hummer.system.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.common.core.constant.RoleConstants;
 import com.hummer.common.core.domain.Favorite;
 import com.hummer.common.core.domain.Task;
 import com.hummer.common.core.domain.TaskItem;
@@ -17,9 +16,9 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "任务")
@@ -27,7 +26,7 @@ import java.util.List;
 @RequestMapping("task")
 public class TaskController {
 
-    @Resource
+    @Autowired
     private TaskService taskService;
 
     @I18n

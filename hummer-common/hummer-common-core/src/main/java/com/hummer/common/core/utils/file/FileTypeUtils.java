@@ -1,10 +1,11 @@
 package com.hummer.common.core.utils.file;
 
-import java.io.File;
-import java.util.Objects;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.util.Objects;
 
 /**
  * 文件类型工具类

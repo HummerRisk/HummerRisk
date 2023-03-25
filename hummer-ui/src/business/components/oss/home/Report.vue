@@ -536,6 +536,17 @@ import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {getRuleByTaskIdUrl, ruleInspectionReportUrl, ruleListUrl, ruleTagsUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
+import {cloudPluginUrl} from "@/api/system/system";
+import {
+  resourceRuleGroupsUrl,
+  resourceReportIsoUrl,
+  resourceReportListUrl,
+  resourceListUrl,
+  resourceRegulationUrl
+} from "@/api/cloud/resource/resource";
+import {ossRuleGroupListUrl} from "@/api/cloud/oss/oss";
+import {accountListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions2 = [
@@ -832,7 +843,7 @@ export default {
     },
     async search () {
       this.condition.accountId = this.accountId;
-      this.result = await this.$post("/oss/ruleGroup/list/" + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
+      this.result = await this.$post(ossRuleGroupListUrl + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
         let data = response.data;
         this.ftotal = data.itemCount;
         this.ftableData = data.listObject;
@@ -932,7 +943,7 @@ export default {
       });
     },
     async reportIsoSearch() {
-      await this.$get("/resource/report/iso/" + this.accountId + '/' + this.groupId, response => {
+      await this.$get(resourceReportIsoUrl + this.accountId + '/' + this.groupId, response => {
         this.content = response.data;
         this.content.groupName = this.groupName;
         this.reportListSearch();
@@ -940,7 +951,7 @@ export default {
       });
     },
     async reportListSearch() {
-      let url = "/resource/reportList/" + this.currentPage + "/" + this.pageSize;
+      let url = resourceReportListUrl + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
       this.riskCondition.accountId = this.accountId;
       this.riskCondition.groupId = this.groupId;
@@ -951,7 +962,7 @@ export default {
       });
     },
     async searchResource() {
-      let url = "/resource/resourceList/" + this.resourceCurrentPage + "/" + this.resourcePageSize;
+      let url = resourceListUrl + this.resourceCurrentPage + "/" + this.resourcePageSize;
       //在这里实现事件
       this.resourceCondition.accountId = this.accountId;
       this.resourceCondition.groupId = this.groupId;
@@ -967,8 +978,7 @@ export default {
       }).catch(error => error);
     },
     tagLists() {
-      let url = "/rule/ruleTags";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(ruleTagsUrl, response => {
         this.tags = response.data;
       });
       if (!!getCurrentAccountID()) {
@@ -977,8 +987,7 @@ export default {
     },
     //查询插件
     activePlugin() {
-      let url = "/plugin/cloud";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(cloudPluginUrl, response => {
         let data = response.data;
         this.plugins =  data;
       });
@@ -988,7 +997,7 @@ export default {
       this.viewRule(item);
     },
     async viewRule (item) {
-      await this.$get("/rule/getRuleByTaskId/" + item.id, response => {
+      await this.$get(getRuleByTaskIdUrl + item.id, response => {
         this.ruleForm = response.data;
         if (typeof(this.ruleForm.parameter) == 'string') this.ruleForm.parameter = JSON.parse(this.ruleForm.parameter);
         this.ruleForm.tagKey = this.ruleForm.tags[0];
@@ -998,12 +1007,12 @@ export default {
       this.severityOptions = severityOptions;
     },
     ruleSetOptionsFnc () {
-      this.$post("/resource/rule/groups" , {"accountId":this.accountId}, res => {
+      this.$post(resourceRuleGroupsUrl, {"accountId":this.accountId}, res => {
         this.ruleSetOptions = res.data;
       });
     },
     inspectionSeportOptionsFnc () {
-      this.$get("/rule/all/ruleInspectionReport", res => {
+      this.$get(ruleInspectionReportUrl, res => {
         this.inspectionSeportOptions = res.data;
       });
     },
@@ -1051,7 +1060,7 @@ export default {
       this.visible=true;
     },
     handleScan () {
-      this.$get("/rule/reScan/" + item.id + "/" + item.accountId, response => {
+      this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
         if (response.success) {
           this.search();
         }
@@ -1082,7 +1091,7 @@ export default {
               {value: this.$t('resource.suggestions_for_improvement'), key: "improvement"},
             ];
             this.accountIds = this.accountIds.concat(Array.from(this.selectIds));
-            this.result = this.$download("/resource/export", {
+            this.result = this.$download(resourceExportUrl, {
               columns: columns,
               accountIds: this.accountIds,
             }, response => {
@@ -1098,7 +1107,7 @@ export default {
       });
     },
     accountList() {
-      let url = "/account/list/" + this.accountPage + "/" + this.accountSize;
+      let url = accountListUrl + this.accountPage + "/" + this.accountSize;
       this.result = this.$post(url, {}, response => {
         let data = response.data;
         this.accountTotal = data.itemCount;
@@ -1131,7 +1140,7 @@ export default {
               {value: this.$t('resource.basic_requirements_for_grade_protection'), key: "basicRequirements"},
               {value: this.$t('resource.suggestions_for_improvement'), key: "improvement"},
             ];
-            this.result = this.$download("/oss/groupExport", {
+            this.result = this.$download(ossGroupExportUrl, {
               columns: columns,
               accountId: this.accountId,
               groupId: data.id,
@@ -1158,7 +1167,7 @@ export default {
     },
     handleListSearch () {
       this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-      let url = "/rule/list/" + this.ruleListPage + "/" + this.ruleListPageSize;
+      let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
       this.result = this.$post(url, this.ruleCondition, response => {
         let data = response.data;
         this.ruleListTotal = data.itemCount;
@@ -1173,7 +1182,7 @@ export default {
       window.open(item.suggestion,'_blank','');
     },
     showSeverityDetail(item) {
-      this.$get("/resource/regulation/" + item.ruleId, response => {
+      this.$get(resourceRegulationUrl + item.ruleId, response => {
         if (response.success) {
           this.regulationData = response.data;
           this.regulationVisible = true;

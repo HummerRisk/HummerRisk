@@ -17,6 +17,7 @@ import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
@@ -36,47 +36,47 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 public class ImageService {
 
-    @Resource
+    @Autowired
     private ExtImageRepoMapper extImageRepoMapper;
-    @Resource
+    @Autowired
     private ImageMapper imageMapper;
-    @Resource
+    @Autowired
     private ImageRepoMapper imageRepoMapper;
-    @Resource
+    @Autowired
     private ExtImageMapper extImageMapper;
-    @Resource
+    @Autowired
     private ExtImageRuleMapper extImageRuleMapper;
-    @Resource
+    @Autowired
     private ImageRuleMapper imageRuleMapper;
-    @Resource
+    @Autowired
     private ExtImageResultMapper extImageResultMapper;
-    @Resource
+    @Autowired
     private ImageResultLogMapper imageResultLogMapper;
-    @Resource
+    @Autowired
     private CommonThreadPool commonThreadPool;
-    @Resource
+    @Autowired
     private ImageResultMapper imageResultMapper;
-    @Resource
+    @Autowired
     private ImageRepoItemMapper imageRepoItemMapper;
-    @Resource
+    @Autowired
     private ExtImageRepoItemMapper extImageRepoItemMapper;
-    @Resource
+    @Autowired
     private ImageRepoSyncLogMapper imageRepoSyncLogMapper;
-    @Resource
+    @Autowired
     private ImageResultItemMapper imageResultItemMapper;
-    @Resource
+    @Autowired
     private ExtImageResultItemMapper extImageResultItemMapper;
-    @Resource
+    @Autowired
     private ImageRepoSettingMapper imageRepoSettingMapper;
-    @Resource
+    @Autowired
     private SbomVersionMapper sbomVersionMapper;
-    @Resource
+    @Autowired
     private SbomMapper sbomMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
@@ -632,8 +632,8 @@ public class ImageService {
                     repo = repo.substring(0, repo.length() - 1);
                 }
                 dockerLogin =
-                        "export TRIVY_USERNAME=" + imageRepo.getUserName() + ";\n" +
-                                "export TRIVY_PASSWORD=" + imageRepo.getPassword() + ";";
+                        "export TRIVY_USERNAME='" + imageRepo.getUserName() + "';" + "\n" +
+                                "export TRIVY_PASSWORD='" + imageRepo.getPassword() + "';" + "\n";
             }
             String fileName = "";
             if (StringUtils.equalsIgnoreCase("image", image.getType()) || StringUtils.equalsIgnoreCase("repo", image.getType())) {
@@ -681,7 +681,7 @@ public class ImageService {
     }
 
     public HistoryImageReportDTO getImageResultDto(String resultId) {
-        HistoryImageReportDTO dto = extImageResultMapper.getImageResultDto(resultId);
+        HistoryImageReportDTO dto = systemProviderService.getImageResultDto(resultId);
         return dto;
     }
 
@@ -975,7 +975,7 @@ public class ImageService {
     }
 
     public List<HistoryImageResultDTO> history(Map<String, Object> params) {
-        List<HistoryImageResultDTO> historyList = extImageResultMapper.history(params);
+        List<HistoryImageResultDTO> historyList = systemProviderService.imageHistory(params);
         return historyList;
     }
 

@@ -10,10 +10,10 @@ import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.mapper.ProxyMapper;
 import com.hummer.system.mapper.ext.ExtProxyMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -23,16 +23,16 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class ProxyService {
 
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
 
-    @Resource
+    @Autowired
     private ExtProxyMapper extProxyMapper;
 
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
-    @Resource
+    @Autowired
     private OperationLogService operationLogService;
 
     public Proxy insert(Proxy proxy) throws Exception {

@@ -292,7 +292,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import DialogFooter from "../../common/components/DialogFooter";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
-import {groupListUrl, regionsListUrl, resourceListUrl, tagListUrl} from "@/api/cloud/account/account";
+import {groupListUrl, regionsListUrl, reportListUrl, resourceListUrl, tagListUrl} from "@/api/cloud/account/account";
 import {
   getResourceTypesById,
   getRuleUrl,

@@ -4,9 +4,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudNative.*;
+import com.hummer.common.core.domain.request.image.ImageRequest;
 import com.hummer.common.core.domain.request.k8s.*;
 import com.hummer.common.core.dto.*;
-import com.hummer.common.core.domain.request.image.ImageRequest;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
@@ -14,10 +14,10 @@ import com.hummer.k8s.service.K8sService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "k8s")
 public class K8sController {
-    @Resource
+    @Autowired
     private K8sService k8sService;
 
     @I18n

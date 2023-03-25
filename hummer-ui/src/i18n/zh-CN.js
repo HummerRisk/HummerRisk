@@ -5,6 +5,7 @@ export default {
     help_documentation: '帮助文档',
     notification: '通知',
     api_help_documentation: 'API文档',
+    advisory: '问题咨询',
     delete_cancelled: '已取消删除',
     workspace: '工作空间',
     organization: '组织',
@@ -661,6 +662,7 @@ export default {
     rule_group: '云检测规则组',
     suggestion: '优化建议',
     rule_sum: '(共 {0} 条规则)',
+    group_type: '规则组类型',
   },
   resource: {
     have_risk: '有风险',
@@ -945,6 +947,7 @@ export default {
     create_certificate: '创建凭据',
     update_certificate: '修改凭据',
     delete_certificate: '删除凭据',
+    server_rule_group: '主机检测规则组',
     server_rule: '主机检测规则',
     server_result: '主机检测结果',
     servers_setting: '主机管理',
@@ -1243,7 +1246,7 @@ export default {
     oss_chart_vuln: '存储桶统计',
     oss_bucket_chart: '对象存储桶文件统计',
     oss_bucket_chart_vuln: '存储桶文件统计',
-    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、青云、京东云、七牛云、Amazon Web Services。',
+    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、百度云、青云、京东云、七牛云、Amazon Web Services。',
   },
   task: {
     task_setting: '任务编排',
@@ -1380,6 +1383,8 @@ export default {
     install_log: '安装日志',
     reinstall_operator: '安装 Operator',
     reinstall_kubench: '安装 CIS Benchmark',
+    rule_group: 'K8s 检测规则组',
+    k8s_rule: 'K8s 检测规则',
   },
   config: {
     config_settings: '部署配置',
@@ -1549,7 +1554,7 @@ export default {
     last_event_time: '最后时间',
     event_id: '事件ID',
     event_source: '事件源',
-    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、金山云、Amazon Web Services。',
+    cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、火山引擎、百度云、金山云、Amazon Web Services。',
     seven_day_data: '七日内 IP 调用量',
   },
   second: {

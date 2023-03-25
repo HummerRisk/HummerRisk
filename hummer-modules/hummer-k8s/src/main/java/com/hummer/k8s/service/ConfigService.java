@@ -6,13 +6,13 @@ import com.aliyuncs.exceptions.ClientException;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.config.ConfigRequest;
+import com.hummer.common.core.domain.request.config.ConfigResultItemRequest;
+import com.hummer.common.core.domain.request.config.ConfigResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.core.domain.request.config.ConfigRequest;
-import com.hummer.common.core.domain.request.config.ConfigResultItemRequest;
-import com.hummer.common.core.domain.request.config.ConfigResultRequest;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtCloudNativeConfigMapper;
@@ -23,12 +23,12 @@ import com.hummer.system.api.ISystemProviderService;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -41,27 +41,27 @@ import java.util.Objects;
 @Transactional(rollbackFor = Exception.class)
 public class ConfigService {
 
-    @Resource
+    @Autowired
     private ExtCloudNativeConfigMapper extCloudNativeConfigMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigMapper cloudNativeConfigMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigResultMapper cloudNativeConfigResultMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigResultItemMapper cloudNativeConfigResultItemMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigResultLogMapper cloudNativeConfigResultLogMapper;
-    @Resource
+    @Autowired
     private ExtCloudNativeConfigResultMapper extCloudNativeConfigResultMapper;
-    @Resource
+    @Autowired
     private CloudNativeConfigRuleMapper cloudNativeConfigRuleMapper;
-    @Resource
+    @Autowired
     private ExtConfigResultItemMapper extConfigResultItemMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
@@ -375,7 +375,7 @@ public class ConfigService {
             }
             CommandUtils.saveAsFile(cloudNativeConfig.getConfigYaml(), TrivyConstants.DEFAULT_BASE_DIR, "trivy.yaml", false);
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
-            String command = _proxy + TrivyConstants.TRIVY_CONFIG + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_YAML + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON + TrivyConstants.TRIVY_SERVER;
+            String command = _proxy + TrivyConstants.TRIVY_CONFIG + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_YAML + TrivyConstants.TRIVY_TYPE + TrivyConstants.DEFAULT_BASE_DIR + TrivyConstants.TRIVY_JSON;
             LogUtil.info(cloudNativeConfig.getId() + " {k8sConfig}[command]: " + cloudNativeConfig.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
 
@@ -397,7 +397,7 @@ public class ConfigService {
         if(resultJsons != null) {
             for (Object obj : resultJsons) {
                 JSONObject jsonObject = (JSONObject) obj;
-                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations"));
+                JSONArray misconfigurations = JSONArray.parseArray(jsonObject.getString("Misconfigurations")!=null?jsonObject.getString("Misconfigurations"):"[]");
                 for (Object o : misconfigurations) {
                     JSONObject resultObject = (JSONObject) o;
                     CloudNativeConfigResultItemWithBLOBs cloudNativeConfigResultItem = new CloudNativeConfigResultItemWithBLOBs();
@@ -490,7 +490,7 @@ public class ConfigService {
     }
 
     public List<HistoryCloudNativeConfigResultDTO> history(Map<String, Object> params) {
-        List<HistoryCloudNativeConfigResultDTO> historyList = extCloudNativeConfigResultMapper.history(params);
+        List<HistoryCloudNativeConfigResultDTO> historyList = systemProviderService.configHistory(params);
         return historyList;
     }
 

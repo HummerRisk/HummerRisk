@@ -1,7 +1,6 @@
 package com.hummer.common.core.dto;
 
 
-
 import com.hummer.common.core.domain.Rule;
 import com.hummer.common.core.domain.SelectTag;
 
@@ -10,8 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class QuartzTaskDTO extends Rule {
-
-    private String cron;
 
     private String type;
 
@@ -24,14 +21,6 @@ public class QuartzTaskDTO extends Rule {
     private String AccountId;
 
     private String regions;
-
-    public String getCron() {
-        return cron;
-    }
-
-    public void setCron(String cron) {
-        this.cron = cron;
-    }
 
     public String getType() {
         return type;

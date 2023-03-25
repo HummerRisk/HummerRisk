@@ -145,6 +145,7 @@ import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/code/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {codeDownloadUrl, codeResultListUrl, deleteCodeResultUrl, getCodeResultUrl, logCodeUrl} from "@/api/k8s/code/code";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -273,7 +274,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/code/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = codeResultListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -284,11 +285,9 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/code/getCodeResult/";
-          this.$get(url + data.id, response => {
+          this.$get(getCodeResultUrl + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
@@ -329,12 +328,10 @@ export default {
       this.init();
     },
     showResultLog (result) {
-      let logUrl = "/code/log/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(logCodeUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/code/getCodeResult/";
-      this.result = this.$get(resultUrl + result.id, response => {
+      this.result = this.$get(getCodeResultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
       });
@@ -349,7 +346,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/code/reScan/" + item.id, response => {
+            this.$get(codeReScanUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -363,7 +360,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/code/deleteCodeResult/" + obj.id,  res => {
+            this.result = this.$get(deleteCodeResultUrl + obj.id,  res => {
               setTimeout(function () {window.location.reload()}, 2000);
               this.$success(this.$t('commons.delete_success'));
             });
@@ -390,7 +387,7 @@ export default {
       }
     },
     handleDownload(item) {
-      this.$post("/code/download", {
+      this.$post(codeDownloadUrl, {
         id: item.id
       }, response => {
         if (response.success) {

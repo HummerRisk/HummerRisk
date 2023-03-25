@@ -368,6 +368,19 @@ import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver";
 import Regions from "@/business/components/account/home/Regions";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {proxyListAllUrl} from "@/api/system/system";
+import {
+  addOssUrl,
+  deleteOssUrl,
+  ossAccountsUrl, ossBatchSyncUrl, ossBucketListUrl,
+  ossChangeAccountUrl,
+  ossDownloadObjectUrl,
+  ossGroupsUrl, ossIamStrategyUrl, ossListUrl,
+  ossLogUrl, ossObjectsUrl,
+  ossValidateUrl, updateOssUrl
+} from "@/api/cloud/oss/oss";
+import {ruleScanUrl} from "@/api/cloud/rule/rule";
+import {getAccountUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -493,7 +506,7 @@ export default {
       proxys: [],
       tmpList: [],
       item: {},
-      iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-nuclei-plugin', 'hummer-server-plugin', 'hummer-xray-plugin', 'hummer-tsunami-plugin'],
+      iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-server-plugin'],
       proxyForm: {},
       proxyType: [
         {id: 'Http', value: "Http"},
@@ -634,7 +647,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/oss/list/" + this.currentPage + "/" + this.pageSize;
+      let url = ossListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -651,16 +664,14 @@ export default {
     },
     //查询可以添加的云账号到对象存储账号列表中
     activeAccount() {
-      let url = "/oss/accounts";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(ossAccountsUrl, response => {
         let data = response.data;
         this.accounts =  data;
       });
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
@@ -695,11 +706,10 @@ export default {
     },
     handleEdit(item) {
       this.ossTitle = this.$t('oss.update');
-      this.$get("/oss/iam/strategy/" + item.id,res1 => {
+      this.$get(ossIamStrategyUrl + item.id,res1 => {
         this.script = res1.data;
       });
-      let url = "/oss/changeAccount/";
-      this.cloudResult = this.$get(url + item.id, response => {
+      this.cloudResult = this.$get(ossChangeAccountUrl + item.id, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         let data = fromJson.data;
         this.form = item;
@@ -717,14 +727,13 @@ export default {
     },
     //选择插件查询云账号信息
     async changeAccount (accountId){
-      this.$get("/oss/iam/strategy/" + accountId,res1 => {
+      this.$get(ossIamStrategyUrl + accountId,res1 => {
         this.script = res1.data;
       });
-      let url = "/oss/changeAccount/";
-      this.cloudResult = await this.$get(url + accountId, response => {
+      this.cloudResult = await this.$get(ossChangeAccountUrl + accountId, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         let data = fromJson.data;
-        this.$get("/account/getAccount/" + accountId,res => {
+        this.$get(getAccountUrl + accountId,res => {
           this.form = res.data;
           let credentials = typeof(res.data.credential) === 'string'?JSON.parse(res.data.credential):res.data.credential;
           this.tmpList = data;
@@ -765,7 +774,7 @@ export default {
           item["pluginId"] = item.pluginId;
 
           if (type === 'add') {
-            this.cloudResult = this.$post("/oss/add", item,response => {
+            this.cloudResult = this.$post(addOssUrl, item,response => {
               if (response.success) {
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.search();
@@ -775,7 +784,7 @@ export default {
               }
             });
           } else {
-            this.cloudResult = this.$post("/oss/update", item,response => {
+            this.cloudResult = this.$post(updateOssUrl, item,response => {
               if (response.success) {
                 this.$success(this.$t('account.i18n_hr_update_success'));
                 this.handleClose();
@@ -792,15 +801,14 @@ export default {
       });
     },
     showLog (item) {
-      let logUrl = "/oss/log/";
-      this.result = this.$get(logUrl + item.id, response => {
+      this.result = this.$get(ossLogUrl + item.id, response => {
         this.logData = response.data;
         this.logForm = item;
       });
       this.logVisible = true;
     },
     handleSync(item) {
-      this.result = this.$get("/oss/batch/sync/" + item.id, response => {
+      this.result = this.$get(ossBatchSyncUrl + item.id, response => {
         if(response.success) {
           this.$success(this.$t('event.sync'));
           this.search();
@@ -812,7 +820,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/oss/delete/" + item.id,  res => {
+            this.result = this.$get(deleteOssUrl + item.id,  res => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -826,7 +834,7 @@ export default {
         clearInterval(this.timer);
         this.timer = setInterval(this.getStatus, 60000);
       }
-      let url = "/oss/list/" + this.currentPage + "/" + this.pageSize;
+      let url = ossListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         for (let data of response.data.listObject) {
           for (let item of this.tableData) {
@@ -854,7 +862,7 @@ export default {
       this.bucketVisible = true;
     },
     searchBuckets() {
-      let url = "/oss/bucketList/" + this.bucketPage + "/" + this.bucketPageSize;
+      let url = ossBucketListUrl + this.bucketPage + "/" + this.bucketPageSize;
       this.bucketCondition.ossId = this.ossId;
       this.result = this.$post(url, this.bucketCondition, response => {
         let data = response.data;
@@ -864,7 +872,7 @@ export default {
     },
     showObject(bucket) {
       this.path = '/';
-      this.result = this.$get("/oss/objects/" + bucket.id, response => {
+      this.result = this.$get(ossObjectsUrl + bucket.id, response => {
         this.objectData = response.data;
         this.innerDrawer = true;
       });
@@ -872,7 +880,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post("/oss/objects/" + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
+        this.result = this.$post(ossObjectsUrl + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
           this.objectData = response.data;
           this.innerDrawer = true;
         });
@@ -902,7 +910,7 @@ export default {
           if (action === 'confirm') {
             this.result = this.$request({
               method: 'POST',
-              url: "/oss/validate",
+              url: ossValidateUrl,
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined
@@ -924,7 +932,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post("/oss/validate/" + row.id, {}, response => {
+            this.$post(ossValidateUrl + row.id, {}, response => {
               let data = response.data;
               if (data) {
                 if (data.flag) {
@@ -949,7 +957,7 @@ export default {
       this.scanVisible = true;
     },
     initGroups(pluginId) {
-      this.result = this.$get("/oss/groups/" + pluginId,response => {
+      this.result = this.$get(ossGroupsUrl + pluginId,response => {
         this.groups = response.data;
       });
     },
@@ -980,7 +988,7 @@ export default {
               accountId: this.accountWithGroup.id,
               groups: this.checkedGroups
             }
-            this.groupResult = this.$post("/rule/scan", params, () => {
+            this.groupResult = this.$post(ruleScanUrl, params, () => {
               this.$success(this.$t('account.i18n_hr_create_success'));
               this.scanVisible = false;
               this.$router.push({
@@ -996,7 +1004,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$download("/oss/downloadObject/" + item.bucketId, {
+            this.result = this.$download(ossDownloadObjectUrl + item.bucketId, {
               objectId: item.id
             }, response => {
               let blob = new Blob([response.data], {type: "'application/octet-stream'"});

@@ -441,6 +441,14 @@ import AccountType from "@/business/components/task/home/AccountType";
 import MainContainer from "../.././common/components/MainContainer";
 import {TASK_CONFIGS} from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  deleteTaskUrl,
+  getTaskUrl, taskDetailGroupUrl,
+  taskDetailRuleUrl, taskDetailTagUrl, taskExecuteUrl,
+  taskItemListUrl, taskListUrl, taskLogListUrl,
+  taskReExecuteUrl,
+  updateTaskUrl
+} from "@/api/system/task";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -602,7 +610,7 @@ export default {
       return row.status === value;
     },
     search() {
-      let url = "/task/taskList/" + this.currentPage + "/" + this.pageSize;
+      let url = taskListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -613,14 +621,14 @@ export default {
 
     },
     searchTag(item) {
-      this.result = this.$post("/task/detailTag",item, response => {
+      this.result = this.$post(taskDetailTagUrl,item, response => {
         if (response.success) {
           this.tagDetailTable = response.data;
         }
       });
     },
     searchGroup(item) {
-      this.result = this.$post("/task/detailGroup",item, response => {
+      this.result = this.$post(taskDetailGroupUrl,item, response => {
         if (response.success) {
           this.groupDetailTable = response.data;
         }
@@ -642,14 +650,14 @@ export default {
         this.$warning(this.$t('task.task_waiting'));
         return;
       }
-      this.result = this.$post("/task/taskLogList", task, response => {
+      this.result = this.$post(taskLogListUrl, task, response => {
         let data = response.data;
         this.taskLogListTable = data;
         this.taskLogListVisible = true;
       });
     },
     showTaskDetail(item) {
-      this.result = this.$post("/task/taskItemList", item, response => {
+      this.result = this.$post(taskItemListUrl, item, response => {
         let data = response.data;
         this.detailTable = data;
         this.detailVisible = true;
@@ -658,12 +666,10 @@ export default {
     showTaskRuleDetail(item) {
       if (item.ruleType === 'rule') {
         this.ruleDetailForm = {};
-        this.result = this.$post("/task/detailRule",item, response => {
+        this.result = this.$post(taskDetailRuleUrl,item, response => {
           if (response.success) {
             let data = response.data;
             if (item.accountType === 'cloudAccount') {
-              this.ruleDetailForm = data.ruleDTO;
-            } else if(item.accountType === 'vulnAccount') {
               this.ruleDetailForm = data.ruleDTO;
             } else if(item.accountType === 'serverAccount') {
               this.ruleDetailForm = data.serverRuleDTO;
@@ -682,14 +688,14 @@ export default {
       }
     },
     handleExecute(item) {
-      this.result = this.$get("/task/execute/" + item.id, response => {
+      this.result = this.$get(taskExecuteUrl + item.id, response => {
         this.$success(this.$t('task.task_start'));
         this.search();
       });
     },
     handleEdit(item) {
       this.form = item;
-      this.result = this.$post("/task/taskItemList", item, response => {
+      this.result = this.$post(taskItemListUrl, item, response => {
         let data = response.data;
         this.updateTableData = data;
         this.updateVisible = true;
@@ -700,7 +706,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/task/deleteTask/" + item.id, () => {
+            this.result = this.$get(deleteTaskUrl + item.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -709,7 +715,7 @@ export default {
       });
     },
     handleReExecute(item) {
-      this.result = this.$get("/task/reExecute/" + item.id, response => {
+      this.result = this.$get(taskReExecuteUrl + item.id, response => {
         this.$success(this.$t('task.task_restart'));
       });
     },
@@ -743,7 +749,7 @@ export default {
         return;
       }
       this.form.taskItemList = this.updateTableData;
-      this.result = this.$post("/task/updateTask", this.form, response => {
+      this.result = this.$post(updateTaskUrl, this.form, response => {
         if (response.success) {
           this.$success(this.$t('commons.save_success'));
           this.handleClose();
@@ -782,11 +788,9 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/task/getTask/";
-          this.$get(url + data.id, response => {
+          this.$get(getTaskUrl + data.id, response => {
             let result = response.data;
             if (data.status !== result.status) {
               data.status = result.status;
@@ -813,10 +817,6 @@ export default {
             if (item.accountType === 'cloudAccount') {
               this.$router.push({
                 path: '/resource/result',
-              }).catch(error => error);
-            } else if(item.accountType === 'vulnAccount') {
-              this.$router.push({
-                path: '/resource/vulnResult',
               }).catch(error => error);
             } else if(item.accountType === 'serverAccount') {
               this.$router.push({

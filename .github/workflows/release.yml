@@ -28,7 +28,7 @@ jobs:
           version=`echo ${RELEASE_VERSION##*/}`
           filename=hummerrisk-installer-$version
           mv installer/hummerrisk $filename
-          sed -i "s@HR_CURRENT_VERSION=.*@HR_CURRENT_VERSION=${version}@g" $filename/install.conf
+          sed -i "s@HMR_CURRENT_VERSION=.*@HMR_CURRENT_VERSION=${version}@g" $filename/install.conf
           sed -i "s@VERSION=.*@VERSION=${version}@g" $filename/scripts/const.sh
           tar -czvf $filename.tar.gz $filename
           mv installer/quick_start.sh ./

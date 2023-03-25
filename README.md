@@ -120,8 +120,6 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 - [MySQL](https://www.mysql.com/)：使用了 MySQL 作为数据库引擎
 - [Cloud Custodian](https://cloudcustodian.io/)：使用了 Cloud Custodian 作为云平台检测引擎
 - [Prowler](https://prowler.pro/)：使用了 Prowler 作为 AWS 检测引擎
-- [Nuclei](https://nuclei.projectdiscovery.io/)：使用了 Nuclei 作为漏洞检测引擎
-- X-ray：使用了 X-ray 作为漏洞检测引擎
 - [Trivy](https://github.com/aquasecurity/trivy)：使用了 Trivy 作为云原生检测引擎
 - [Kube-Bench](https://github.com/aquasecurity/kube-bench)：使用了 Kube-Bench 作为 CIS Kubernetes Benchmark 检测工具
 - [Element](https://element.eleme.cn/#/)：使用了 Element 提供的优秀组件库

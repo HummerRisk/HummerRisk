@@ -3,25 +3,27 @@ package com.hummer.k8s.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.dto.*;
-import com.hummer.common.core.handler.annotation.I18n;
-import com.hummer.common.core.utils.PageUtils;
-import com.hummer.common.core.utils.Pager;
+import com.hummer.common.core.domain.request.rule.BindRuleRequest;
+import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.domain.request.server.ServerCertificateRequest;
 import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.domain.request.server.ServerRuleRequest;
+import com.hummer.common.core.dto.*;
+import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.core.utils.PageUtils;
+import com.hummer.common.core.utils.Pager;
 import com.hummer.k8s.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "server")
 public class ServerController {
-    @Resource
+    @Autowired
     private ServerService serverService;
 
     @ApiOperation(value = "所有主机分组")
@@ -78,8 +80,8 @@ public class ServerController {
 
     @ApiOperation(value = "一键检测主机规则")
     @PostMapping("scan")
-    public Boolean scan(@RequestBody List<String> selectIds) {
-        return serverService.scan(selectIds);
+    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
+        serverService.scan(request);
     }
 
     @ApiOperation(value = "添加主机分组")
@@ -103,14 +105,14 @@ public class ServerController {
     @ApiOperation(value = "添加主机")
     @PostMapping(value = "addServer", consumes = {"multipart/form-data"})
     public ServerValidateDTO addServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
-                         @RequestPart("request") Server request) throws Exception {
+                                       @RequestPart("request") Server request) throws Exception {
         return serverService.addServer(keyFile, request);
     }
 
     @ApiOperation(value = "编辑主机")
     @PostMapping(value = "editServer", consumes = {"multipart/form-data"})
     public ServerValidateDTO editServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
-                          @RequestPart("request") Server request) throws Exception {
+                                        @RequestPart("request") Server request) throws Exception {
         return serverService.editServer(keyFile, request);
     }
 
@@ -130,7 +132,7 @@ public class ServerController {
     @I18n
     @ApiOperation(value = "主机规则列表")
     @PostMapping(value = "ruleList/{goPage}/{pageSize}")
-    public Pager<List<ServerRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRuleRequest request) {
+    public Pager<List<ServerRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRuleRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.ruleList(request));
     }
@@ -220,14 +222,14 @@ public class ServerController {
     @ApiOperation(value = "添加主机凭据")
     @PostMapping(value = "addCertificate", consumes = {"multipart/form-data"})
     public int addCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
-                         @RequestPart("request") ServerCertificate request) throws Exception {
+                              @RequestPart("request") ServerCertificate request) throws Exception {
         return serverService.addCertificate(keyFile, request);
     }
 
     @ApiOperation(value = "编辑主机凭据")
     @PostMapping(value = "editCertificate", consumes = {"multipart/form-data"})
     public int editCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
-                          @RequestPart("request") ServerCertificate request) throws Exception {
+                               @RequestPart("request") ServerCertificate request) throws Exception {
         return serverService.editCertificate(keyFile, request);
     }
 
@@ -320,5 +322,41 @@ public class ServerController {
             }
         }
     }
+
+    @I18n
+    @ApiOperation(value = "所有已绑定规则组的规则")
+    @GetMapping("allBindList/{id}")
+    public List<ServerRule> allBindList(@PathVariable String id) {
+        return serverService.allBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "所有未绑定规则组的规则")
+    @GetMapping("unBindList/{id}")
+    public List<ServerRule> unBindList(@PathVariable String id) {
+        return serverService.unBindList(id);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组绑定规则")
+    @PostMapping(value = "bindRule")
+    public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
+        serverService.bindRule(request);
+    }
+
+    @I18n
+    @ApiOperation(value = "规则组")
+    @GetMapping(value = "ruleGroups")
+    public List<RuleGroup> getRuleGroups() {
+        return serverService.getRuleGroups();
+    }
+
+    @I18n
+    @ApiOperation(value = "按规则组检测主机规则")
+    @GetMapping("scanByGroup/{groupId}/{serverId}")
+    public void scanByGroup(@PathVariable String groupId, @PathVariable String serverId) throws Exception {
+        serverService.scanByGroup(groupId, serverId);
+    }
+
 
 }

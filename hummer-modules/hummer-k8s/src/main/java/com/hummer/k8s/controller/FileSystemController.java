@@ -14,15 +14,15 @@ import com.hummer.common.core.dto.HistoryFsResultDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.k8s.service.FileSystemService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
-import com.hummer.k8s.service.FileSystemService;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ import java.util.Map;
 @RequestMapping(value = "fs")
 public class FileSystemController {
 
-    @Resource
+    @Autowired
     private FileSystemService fileSystemService;
 
     @I18n

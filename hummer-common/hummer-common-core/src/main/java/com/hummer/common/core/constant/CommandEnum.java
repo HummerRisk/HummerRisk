@@ -5,8 +5,7 @@ package com.hummer.common.core.constant;
  */
 public enum CommandEnum {
     custodian("custodian"), run("run"), dryrun("--dryrun"), schema("schema"),
-    report("report"), version("version"), validate("validate"), nuclei("nuclei"),
-    prowler("prowler"), xray("xray"), tsunami("tsunami");
+    report("report"), version("version"), validate("validate"), prowler("prowler");
 
     private String command;
 

@@ -170,6 +170,9 @@ import {FS_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TarUpload from "../head/TarUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
+import {proxyListAllUrl} from "@/api/system/system";
+import {addFsUrl, deleteFsUrl, fsListUrl, scanFsUrl, updateFsUrl} from "@/api/k8s/fs/fs";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -322,13 +325,13 @@ export default {
       this.activeProxy();
     },
     async initSbom(params) {
-      await this.$post("/sbom/allSbomVersionList", params,response => {
+      await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
         if(this.versions && this.versions.length > 0) this.addAccountForm.sbomVersionId = this.versions[0].id;
       });
     },
     initSboms() {
-      this.result = this.$post("/sbom/allSbomList", {},response => {
+      this.result = this.$post(allSbomListUrl, {},response => {
         this.sboms = response.data;
       });
     },
@@ -336,14 +339,13 @@ export default {
       let params = {
         sbomId: item.sbomId
       };
-      this.result = this.$post("/sbom/allSbomVersionList", params,response => {
+      this.result = this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
       });
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
@@ -352,7 +354,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/fs/list/" + this.currentPage + "/" + this.pageSize;
+      let url = fsListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -378,7 +380,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/fs/deleteFs/" + obj.id, () => {
+            this.result = this.$get(deleteFsUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -412,7 +414,7 @@ export default {
           formData.append("request", new Blob([JSON.stringify(this.addAccountForm)], {type: "application/json"}));
           let axiosRequestConfig = {
             method: "POST",
-            url: "/fs/addFs",
+            url: addFsUrl,
             data: formData,
             headers: {
               "Content-Type": 'multipart/form-data'
@@ -444,7 +446,7 @@ export default {
           formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
           let axiosRequestConfig = {
             method: "POST",
-            url: "/fs/updateFs",
+            url: updateFsUrl,
             data: formData,
             headers: {
               "Content-Type": 'multipart/form-data'
@@ -470,7 +472,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/fs/scan/" + item.id,response => {
+            this.$get(scanFsUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({

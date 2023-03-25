@@ -21,6 +21,8 @@ public class ServerRuleDTO extends ServerRule {
 
     private String pluginIcon;
 
+    private List<Integer> groups = new ArrayList<>();
+
     public String getTagKey() {
         return tagKey;
     }
@@ -59,5 +61,13 @@ public class ServerRuleDTO extends ServerRule {
 
     public void setPluginIcon(String pluginIcon) {
         this.pluginIcon = pluginIcon;
+    }
+
+    public List<Integer> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Integer> groups) {
+        this.groups = groups;
     }
 }

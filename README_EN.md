@@ -128,8 +128,6 @@ If you find any security problems during use, please contact us directly through
 - [MySQL](https://www.mysql.com/)：Database
 - [Cloud Custodian](https://cloudcustodian.io/)：Cloud platform detection engine
 - [Prowler](https://prowler.pro/)： AWS detection engine
-- [Nuclei](https://nuclei.projectdiscovery.io/)：Vulnerability engine
-- X-ray：Vulnerability engine
 - [Trivy](https://github.com/aquasecurity/trivy): k8s detection engine
 - [Kube-Bench](https://github.com/aquasecurity/kube-bench): CIS Kubernetes Benchmark detection tool
 - [Element](https://element.eleme.cn/#/)：UI

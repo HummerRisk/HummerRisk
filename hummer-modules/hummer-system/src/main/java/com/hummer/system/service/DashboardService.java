@@ -3,6 +3,7 @@ package com.hummer.system.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.ParamConstants;
 import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
@@ -16,8 +17,6 @@ import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
 import com.hummer.common.core.dto.TopScanDTO;
-import com.hummer.common.core.utils.PlatformUtils;
-import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.mapper.ext.ExtDashboardMapper;
@@ -25,9 +24,9 @@ import com.hummer.system.mapper.ext.ExtVulnMapper;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 import static com.alibaba.fastjson.JSON.parseArray;
@@ -35,13 +34,13 @@ import static com.alibaba.fastjson.JSON.parseArray;
 @Service
 public class DashboardService {
 
-    @Resource
-    private ExtVulnMapper extVulnMapper;
-    @Resource
-    private ExtDashboardMapper extDashboardMapper;
-    @Resource
+    @Autowired
     private HistoryService historyService;
-    @Resource
+    @Autowired
+    private ExtVulnMapper extVulnMapper;
+    @Autowired
+    private ExtDashboardMapper extDashboardMapper;
+    @Autowired
     private SystemParameterMapper systemParameterMapper;
     @DubboReference
     private ICloudProviderService cloudProviderService;
@@ -98,14 +97,6 @@ public class DashboardService {
 
     public List<HistoryScanDTO> history(Map<String, Object> params) {
         List<HistoryScanDTO> historyList = extVulnMapper.history(params);
-        for (HistoryScanDTO scanHistory : historyList) {
-            scanHistory.setOutput(toJSONString2(scanHistory.getOutput() != null ? scanHistory.getOutput() : "[]"));
-        }
-        return historyList;
-    }
-
-    public List<HistoryScanDTO> vulnHistory(Map<String, Object> params) {
-        List<HistoryScanDTO> historyList = extVulnMapper.vulnHistory(params);
         for (HistoryScanDTO scanHistory : historyList) {
             scanHistory.setOutput(toJSONString2(scanHistory.getOutput() != null ? scanHistory.getOutput() : "[]"));
         }
@@ -188,11 +179,7 @@ public class DashboardService {
         cloudTaskExample.createCriteria().andStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
         List<CloudTask> cloudTasks = cloudProviderService.selectCloudTaskList(cloudTaskExample);
         for (CloudTask cloudTask : cloudTasks) {
-            if (PlatformUtils.isSupportVuln(cloudTask.getPluginId())) {
-                sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.vulnAccount.getType());
-            } else {
-                sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.cloudAccount.getType());
-            }
+            sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.cloudAccount.getType());
         }
 
         CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();

@@ -2,12 +2,11 @@ package com.hummer.system.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.hummer.common.core.constant.RoleConstants;
+import com.hummer.common.core.domain.UserKey;
+import com.hummer.common.core.domain.request.user.UserKeyRequest;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.core.domain.UserKey;
-import com.hummer.common.core.domain.request.user.UserKeyRequest;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.ApiKeyHandler;
 import com.hummer.system.service.UserKeyService;
@@ -15,10 +14,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,9 +26,9 @@ import java.util.Objects;
 @RequestMapping("user/key")
 public class UserKeysController {
 
-    @Resource
+    @Autowired
     private UserKeyService userKeyService;
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
     @I18n

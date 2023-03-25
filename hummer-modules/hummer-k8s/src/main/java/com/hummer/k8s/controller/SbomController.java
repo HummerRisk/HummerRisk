@@ -3,21 +3,20 @@ package com.hummer.k8s.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.sbom.DownloadRequest;
+import com.hummer.common.core.domain.request.sbom.SbomRequest;
+import com.hummer.common.core.domain.request.sbom.SbomVersionRequest;
+import com.hummer.common.core.domain.request.sbom.SettingVersionRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import com.hummer.common.core.domain.request.sbom.DownloadRequest;
-import com.hummer.common.core.domain.request.sbom.SbomVersionRequest;
-import com.hummer.common.core.domain.request.sbom.SettingVersionRequest;
-import com.hummer.common.core.domain.request.sbom.SbomRequest;
 import com.hummer.k8s.service.SbomService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "SBOM管理")
@@ -25,7 +24,7 @@ import java.util.List;
 @RequestMapping(value = "sbom")
 public class SbomController {
 
-    @Resource
+    @Autowired
     private SbomService sbomService;
 
     @I18n

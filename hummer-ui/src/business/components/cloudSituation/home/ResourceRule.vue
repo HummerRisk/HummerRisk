@@ -66,6 +66,8 @@
 /* eslint-disable */
 import {getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import {resourceTypesUrl, tagRuleListUrl} from "@/api/cloud/rule/rule";
+import {resourceRiskListUrl, taskDetailUrl} from "@/api/cloud/resource/resource";
 
 export default {
     name: "ResourceType",
@@ -94,11 +96,11 @@ export default {
     methods: {
       async initSelect() {
         this.tagSelect = [];
-        await this.$get("/tag/rule/list", response => {
+        await this.$get(tagRuleListUrl, response => {
           this.tagSelect = response.data;
         });
         this.resourceTypes = [];
-        await this.$get("/rule/all/resourceTypes", response => {
+        await this.$get(resourceTypesUrl, response => {
           for (let item of response.data) {
             let typeItem = {};
             typeItem.value = item.name;
@@ -111,27 +113,27 @@ export default {
         }
       },
       getType(){
-        this.type = "NO-SCAN"
+        this.type = "NO-SCAN";
         if(this.riskCount && this.riskCount > 0){
-          this.type = "HAVE-RISK"
+          this.type = "HAVE-RISK";
         }else{
-          this.result = this.$get("/cloud/resource/task/count/" +  this.accountId+"/"+this.regionId+"/"+this.resourceType,response => {
+          this.result = this.$get(resourceTaskCountUrl +  this.accountId + "/" + this.regionId + "/" + this.resourceType, response => {
             if(response.data > 0){
-              this.type = "NO-RISK"
+              this.type = "NO-RISK";
             }else{
-              this.type = "NO-SCAN"
+              this.type = "NO-SCAN";
             }
           });
         }
       },
       showTaskDetail(item) {
-        localStorage.setItem(ACCOUNT_ID, this.accountId);
+        localStorage.setItem(ACCOUNT_ID, item.accountId);
         localStorage.setItem(ACCOUNT_NAME, this.accountName);
         this.$router.push({
           path: '/account/result',
         }).catch(error => error);
         this.detailForm = {};
-        this.$get("/cloud/task/detail/" + item.id, response => {
+        this.$get(taskDetailUrl + item.id, response => {
           if (response.success) {
             this.detailForm = response.data;
             this.detailVisible = true;
@@ -140,7 +142,7 @@ export default {
       },
       showRegions() {
         this.initSelect();
-        this.result = this.$get("/cloud/resource/risk/list/"+this.regionId+"/"+  this.hummerId,response => {
+        this.result = this.$get(resourceRiskListUrl + this.regionId + "/" + this.hummerId, response => {
           this.string2PrettyFormat = response.data
           this.regionsVisible =  true;
         });

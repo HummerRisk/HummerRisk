@@ -6,7 +6,6 @@ import Setting from "@/business/components/settings/router";
 import Account from "@/business/components/account/router";
 import Server from "@/business/components/server/router";
 import Image from "@/business/components/image/router";
-import Vuln from "@/business/components/vuln/router";
 import Rule from "@/business/components/rule/router";
 import Resource from "@/business/components/resource/router";
 import Dashboard from "@/business/components/dashboard/router";
@@ -21,9 +20,8 @@ import Code from "@/business/components/code/router";
 import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/event/router";
 import Config from "@/business/components/config/router";
-import Cost from "@/business/components/cost/router";
 import Fs from "@/business/components/fs/router";
-import {removeToken} from "@/common/js/auth";
+import {getToken} from '@/common/js/auth';
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -40,7 +38,6 @@ const router = new VueRouter({
     Account,
     Server,
     Image,
-    Vuln,
     Rule,
     Resource,
     Task,
@@ -56,18 +53,13 @@ const router = new VueRouter({
     Log,
     Config,
     Fs,
-    Cost
   ]
 });
 
 router.beforeEach((to, from, next) => {
-  //解决localStorage清空，cookie没失效导致的卡死问题
-  if (!localStorage.getItem('Admin-Token')) {
-    axios.get("/auth/signout");
-    removeToken();
-    localStorage.clear();
+  let token = getToken();
+  if (!token) {
     window.location.href = "/login";
-    next();
   } else {
     next();
   }

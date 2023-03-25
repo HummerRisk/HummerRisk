@@ -7,7 +7,7 @@ function resolve(dir) {
 module.exports = {
   // 部署生产环境和开发环境下的URL。
   // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
-  publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
+  publicPath: "/",
   productionSourceMap: false,
   configureWebpack: {
     devtool: 'source-map',
@@ -33,26 +33,29 @@ module.exports = {
     }
   },
   devServer: {
-    port: 8080,
+    host: '0.0.0.0',
+    port: 80,
+    open: true,
     proxy: {
-      ['^(?!/login)']: {
-        target: 'http://localhost:8088',
+      [process.env.VUE_APP_BASE_API]: {
+        target: `http://localhost:8080`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
-      },
-    }
+      }
+    },
+    disableHostCheck: true
   },
   pages: {
     business: {
       entry: "src/business/main.js",
-      template: "src/business/index.html",
+      template: "src/business/index_.html",
       filename: "index.html"
     },
     login: {
-      entry: "src/login/login.js",
-      template: "src/login/login.html",
+      entry: "src/login/login_.js",
+      template: "src/login/login_.html",
       filename: "login.html"
     }
   }

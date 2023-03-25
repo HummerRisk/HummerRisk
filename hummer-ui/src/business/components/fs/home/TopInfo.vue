@@ -59,6 +59,7 @@
 
 <script>
 import Container from "../.././common/components/Container";
+import {fsTopInfoUrl} from "@/api/k8s/fs/fs";
 
 /* eslint-disable */
 export default {
@@ -73,7 +74,7 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.$post("/fs/topInfo", {}, response => {
+      this.result = this.$post(fsTopInfoUrl, {}, response => {
         let data = response.data;
         this.topInfo = data;
       });

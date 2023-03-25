@@ -1,8 +1,8 @@
 /* eslint-disable */
 export default {
-  name: "Log",
-  path: "/log",
-  redirect: "/log/sync",
+  name: "Event",
+  path: "/event",
+  redirect: "/event/sync",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/event/base')
   },

@@ -251,6 +251,7 @@ import TableOperators from "../../common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import {K8S_SITUATION_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudNativeSourceListUrl, k8sSituationUrl, k8sSourceImagesUrl} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -394,13 +395,13 @@ export default {
       if (!!this.selectNodeIds) {
         param.cloudNativeId = this.selectNodeIds[0];
       }
-      this.result = this.$post("/k8s/situation", param, response => {
+      this.result = this.$post(k8sSituationUrl, param, response => {
         let data = response.data;
         this.situationInfo = data;
       });
     },
     search() {
-      let url = "/k8s/cloudNativeSourceList/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudNativeSourceListUrl + this.currentPage + "/" + this.pageSize;
       if (!!this.selectNodeIds) {
         this.condition.cloudNativeId = this.selectNodeIds[0];
       } else {
@@ -430,7 +431,7 @@ export default {
       let data = ["DaemonSet", "Deployment", "StatefulSet", "Pod", "Job", "CronJob"];
       if (data.includes(item.sourceType)) {
         this.showImage = true;
-        this.$get("/k8s/sourceImages/" + item.id, response => {
+        this.$get(k8sSourceImagesUrl + item.id, response => {
           this.imageData = response.data;
         });
       }

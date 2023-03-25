@@ -28,9 +28,10 @@
         <el-table-column type="index" min-width="40"/>
         <el-table-column min-width="140" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')">
           <template v-slot:default="scope">
-              <span><img :src="require(`@/assets/img/platform/${ getAccountIcon(scope.row.cloudAccountId)}`)"
-                         style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ getAccountName(scope.row.cloudAccountId) }}</span>
+              <span v-if="scope.row.accountName">
+                <img :src="require(`@/assets/img/platform/${scope.row.accountIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.accountName }}
+              </span>
           </template>
         </el-table-column>
         <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="170"></el-table-column>
@@ -59,6 +60,8 @@ import TableOperators from "../../common/components/TableOperators";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {cloudEventGroupListUrl} from "@/api/cloud/event/event";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -194,7 +197,6 @@ export default {
       this.dateTime = [this.formatDate(startTime * 1), this.formatDate(endTime * 1)]
     } else {
       this.currentAccount = localStorage.getItem(ACCOUNT_ID)
-      // this.dateTime = [this.formatDate(new Date().getTime()-1000*60*60*24),this.formatDate(new Date().getTime())]
     }
     this.init()
   },
@@ -235,7 +237,7 @@ export default {
       }
     },
     search() {
-      let url = "/cloud/event/group/list/" + this.currentPage + "/" + this.pageSize;
+      let url = cloudEventGroupListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -251,7 +253,7 @@ export default {
       this.search()
     },
     init() {
-      this.$get("/account/allList", response => {
+      this.$get(allListUrl, response => {
         this.accountList = response.data
         this.search()
       })
@@ -269,24 +271,6 @@ export default {
       let minute = dt.getMinutes().toString().padStart(2, '0');
       let second = dt.getSeconds().toString().padStart(2, '0');
       return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
-    },
-    getAccountName(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].name : ""
-    },
-    getPluginName(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].pluginName : ""
-    },
-    getAccountIcon(accountId) {
-      let result = this.accountList.filter(item => {
-        return item.id === accountId
-      })
-      return result.length > 0 ? result[0].pluginIcon : ""
     },
     sort(column) {
       _sort(column, this.condition);

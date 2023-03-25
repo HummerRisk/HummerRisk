@@ -12,7 +12,7 @@
                 <el-col :span="24">
                   <div class="grid-content bg-purple-light">
                     <span class="grid-content-log-span">
-                       云账号: {{ row.account.name }}
+                       {{ $t('event.cloud_account') }}: {{ row.account.name }}
                     </span>
                     <span class="grid-content-status-span" v-if="scope.row.status === 0" style="color: #579df8">
                       <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -24,7 +24,7 @@
                       <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
                     </span>
                     <span class="grid-content-status-span">
-                       区域: {{ scope.row.region }}
+                       {{ $t('event.region') }}: {{ scope.row.region }}
                     </span>
                 </div>
                 </el-col>
@@ -48,7 +48,9 @@
 
 <script>
 /* eslint-disable */
-  export default {
+  import {cloudEventSyncLogRegionListUrl} from "@/api/cloud/event/event";
+
+export default {
     name: "ResultLog",
     components: {
     },
@@ -84,8 +86,7 @@
           return;
         }
         let showLogTaskId = this.row.showLogTaskId;
-        let url = "/cloud/event/sync/log/region/list/" ;
-        this.post(url + showLogTaskId,{}, response => {
+        this.post(cloudEventSyncLogRegionListUrl + showLogTaskId,{}, response => {
           for (let obj of response.data) {
             for (let item of this.row.regionLogs) {
               if (obj.id === item.id) {

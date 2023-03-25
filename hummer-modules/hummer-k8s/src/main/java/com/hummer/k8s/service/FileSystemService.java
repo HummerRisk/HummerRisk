@@ -6,14 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.dto.*;
-import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
 import com.hummer.common.core.domain.request.fs.FsRequest;
 import com.hummer.common.core.domain.request.fs.FsResultItemRequest;
 import com.hummer.common.core.domain.request.fs.FsResultRequest;
 import com.hummer.common.core.domain.request.fs.FsRuleRequest;
+import com.hummer.common.core.dto.*;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
+import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtFileSystemMapper;
@@ -25,11 +25,11 @@ import com.hummer.system.api.ISystemProviderService;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -45,27 +45,27 @@ import static com.hummer.k8s.service.ImageService.changeFlowFormat;
 @Transactional(rollbackFor = Exception.class)
 public class FileSystemService {
 
-    @Resource
+    @Autowired
     private ExtFileSystemMapper extFileSystemMapper;
-    @Resource
+    @Autowired
     private FileSystemMapper fileSystemMapper;
-    @Resource
+    @Autowired
     private ExtFileSystemRuleMapper extFileSystemRuleMapper;
-    @Resource
+    @Autowired
     private FileSystemRuleMapper fileSystemRuleMapper;
-    @Resource
+    @Autowired
     private ExtFileSystemResultMapper extFileSystemResultMapper;
-    @Resource
+    @Autowired
     private FileSystemResultMapper fileSystemResultMapper;
-    @Resource
+    @Autowired
     private FileSystemResultLogMapper fileSystemResultLogMapper;
-    @Resource
+    @Autowired
     private FileSystemResultItemMapper fileSystemResultItemMapper;
-    @Resource
+    @Autowired
     private ExtFileSystemResultItemMapper extFileSystemResultItemMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
@@ -539,7 +539,7 @@ public class FileSystemService {
     }
 
     public List<HistoryFsResultDTO> history(Map<String, Object> params) {
-        List<HistoryFsResultDTO> historyList = extFileSystemResultMapper.history(params);
+        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(params);
         return historyList;
     }
 

@@ -144,6 +144,13 @@ import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/config/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {
+  configDownloadUrl,
+  configReScanUrl,
+  configResultListUrl, deleteCloudNativeConfigResultUrl,
+  getCloudNativeConfigResultUrl,
+  logConfigUrl
+} from "@/api/k8s/config/config";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -266,7 +273,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/config/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = configResultListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -277,11 +284,9 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/config/getCloudNativeConfigResult/";
-          this.$get(url + data.id, response => {
+          this.$get(getCloudNativeConfigResultUrl + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
@@ -322,12 +327,10 @@ export default {
       this.init();
     },
     showResultLog (result) {
-      let logUrl = "/config/log/";
-      this.result = this.$get(logUrl + result.id, response => {
+      this.result = this.$get(logConfigUrl + result.id, response => {
         this.logData = response.data;
       });
-      let resultUrl = "/config/getCloudNativeConfigResult/";
-      this.result = this.$get(resultUrl + result.id, response => {
+      this.result = this.$get(getCloudNativeConfigResultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
       });
@@ -342,7 +345,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/config/reScan/" + item.id, response => {
+            this.$get(configReScanUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -356,7 +359,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/config/deleteCloudNativeConfigResult/" + obj.id,  res => {
+            this.result = this.$get(deleteCloudNativeConfigResultUrl + obj.id,  res => {
               setTimeout(function () {window.location.reload()}, 2000);
               this.$success(this.$t('commons.delete_success'));
             });
@@ -383,7 +386,7 @@ export default {
       }
     },
     handleDownload(item) {
-      this.$post("/config/download", {
+      this.$post(configDownloadUrl, {
         id: item.id
       }, response => {
         if (response.success) {

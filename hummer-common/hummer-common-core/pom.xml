@@ -255,13 +255,6 @@
 
         <!-- tool -->
 
-        <!-- quartz -->
-        <dependency>
-            <groupId>com.hummer</groupId>
-            <artifactId>quartz-spring-boot-starter</artifactId>
-            <version>${quartz.spring.boot.starter.version}</version>
-        </dependency>
-
         <!-- 执行 js 代码依赖 -->
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
@@ -702,7 +695,7 @@
         <dependency>
             <groupId>com.baidubce</groupId>
             <artifactId>bce-java-sdk</artifactId>
-            <version>0.10.235</version>
+            <version>0.10.244</version>
             <exclusions>
                 <exclusion>
                     <artifactId>bcprov-jdk15on</artifactId>

@@ -326,6 +326,21 @@ import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID, severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import AccountChange from "@/business/components/common/head/AccountSwitch";
+import {
+  getRuleByTaskIdUrl,
+  ruleGroupsUrl,
+  ruleInspectionReport,
+  ruleReScanUrl,
+  ruleTagsUrl
+} from "@/api/cloud/rule/rule";
+import {cloudPluginUrl} from "@/api/system/system";
+import {
+  resourceExportUrl,
+  resourceReportIsoUrl,
+  resourceReportListUrl,
+  resourceRuleGroupsUrl
+} from "@/api/cloud/resource/resource";
+import {accountListUrl} from "@/api/cloud/account/account";
 
 /* eslint-disable */
   export default {
@@ -431,7 +446,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         await this.groupSearch();
       },
       async groupSearch () {
-        this.result = await this.$post("/resource/rule/groups", {accountId: this.accountId}, response => {
+        this.result = await this.$post(resourceRuleGroupsUrl, {accountId: this.accountId}, response => {
           this.groups = response.data;
           if(this.groups.length > 0) {
             this.groupId = this.groups[0].id;
@@ -441,14 +456,14 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         });
       },
       async reportIsoSearch() {
-        await this.$get("/resource/report/iso/" + this.accountId + '/' + this.groupId, response => {
+        await this.$get(resourceReportIsoUrl + this.accountId + '/' + this.groupId, response => {
           this.content = response.data;
           this.content.groupName = this.groupName;
           this.reportListSearch();
         });
       },
       async reportListSearch() {
-        let url = "/resource/reportList/" + this.currentPage + "/" + this.pageSize;
+        let url = resourceReportListUrl + this.currentPage + "/" + this.pageSize;
         //在这里实现事件
         this.condition.accountId = this.accountId;
         this.condition.groupId = this.groupId;
@@ -464,8 +479,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         }).catch(error => error);
       },
       tagLists() {
-        let url = "/rule/ruleTags";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
         if (!!getCurrentAccountID()) {
@@ -474,8 +488,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
       },
       //查询插件
       activePlugin() {
-        let url = "/plugin/cloud";
-        this.result = this.$get(url, response => {
+        this.result = this.$get(cloudPluginUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });
@@ -485,7 +498,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         this.viewRule(item);
       },
       async viewRule (item) {
-        await this.$get("/rule/getRuleByTaskId/" + item.id, response => {
+        await this.$get(getRuleByTaskIdUrl + item.id, response => {
           this.ruleForm = response.data;
           if (typeof(this.ruleForm.parameter) == 'string') this.ruleForm.parameter = JSON.parse(this.ruleForm.parameter);
           this.ruleForm.tagKey = this.ruleForm.tags[0];
@@ -495,12 +508,12 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc () {
-        this.$get("/rule/ruleGroups/" + null, res => {
+        this.$get(ruleGroupsUrl + null, res => {
           this.ruleSetOptions = res.data;
         });
       },
       inspectionSeportOptionsFnc () {
-        this.$get("/rule/all/ruleInspectionReport", res => {
+        this.$get(ruleInspectionReport, res => {
           this.inspectionSeportOptions = res.data;
         });
       },
@@ -550,7 +563,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         this.visible=true;
       },
       handleScan () {
-        this.$get("/rule/reScan/" + item.id + "/" + item.accountId, response => {
+        this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
           if (response.success) {
             this.search();
           }
@@ -581,7 +594,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
                 {value: this.$t('resource.suggestions_for_improvement'), key: "improvement"},
               ];
               this.accountIds = this.accountIds.concat(Array.from(this.selectIds));
-              this.result = this.$download("/resource/export", {
+              this.result = this.$download(resourceExportUrl, {
                 columns: columns,
                 accountIds: this.accountIds,
               }, response => {
@@ -597,7 +610,7 @@ import AccountChange from "@/business/components/common/head/AccountSwitch";
         });
       },
       accountList() {
-        let url = "/account/list/" + this.accountPage + "/" + this.accountSize;
+        let url = accountListUrl + this.accountPage + "/" + this.accountSize;
         this.result = this.$post(url, {}, response => {
           let data = response.data;
           this.accountTotal = data.itemCount;

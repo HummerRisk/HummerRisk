@@ -17,9 +17,9 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.DashboardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ import java.util.Map;
 @RequestMapping("dashboard")
 public class DashboardController {
 
-    @Resource
+    @Autowired
     private DashboardService dashboardService;
 
     @I18n
@@ -73,14 +73,6 @@ public class DashboardController {
     public Pager<List<HistoryScanDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.history(params));
-    }
-
-    @I18n
-    @ApiOperation(value = "漏洞检测历史记录")
-    @PostMapping("vuln/history/{goPage}/{pageSize}")
-    public Pager<List<HistoryScanDTO>> vulnHistory(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, dashboardService.vulnHistory(params));
     }
 
     @I18n

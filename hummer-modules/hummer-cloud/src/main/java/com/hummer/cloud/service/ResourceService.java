@@ -10,30 +10,27 @@ import com.hummer.cloud.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.cloud.mapper.ext.ExtResourceMapper;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.excel.ExcelExportRequest;
+import com.hummer.common.core.domain.request.resource.ResourceRequest;
+import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.core.domain.request.excel.ExcelExportRequest;
-import com.hummer.common.core.domain.request.resource.ResourceRequest;
-import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.quartz.service.QuartzManageService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,45 +49,38 @@ import static com.alibaba.fastjson.JSON.parseObject;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ResourceService {
-    @Resource @Lazy
+    @Autowired
+    @Lazy
     private ExtResourceMapper extResourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceMapper resourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceRuleMapper resourceRuleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemMapper cloudTaskItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskMapper cloudTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private AccountMapper accountMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskItemLogMapper cloudTaskItemLogMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private CloudTaskService cloudTaskService;
-    @Resource @Lazy
+    @Autowired @Lazy
     private OrderService orderService;
-    @Resource @Lazy
+    @Autowired @Lazy
     private RuleMapper ruleMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ResourceItemMapper resourceItemMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ExtHistoryScanMapper extHistoryScanMapper;
-    @Resource @Lazy
+    @Autowired @Lazy
     private ProxyMapper proxyMapper;
-    @Resource @Lazy
-    private CloudAccountQuartzTaskMapper quartzTaskMapper;
-    @Resource @Lazy
-    private CloudAccountQuartzTaskRelationMapper quartzTaskRelationMapper;
-    @Resource @Lazy
-    private CloudAccountQuartzTaskRelaLogMapper quartzTaskRelaLogMapper;
-    @Resource @Lazy
-    private QuartzManageService quartzManageService;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
@@ -98,10 +88,6 @@ public class ResourceService {
 
     public SourceDTO source (String accountId) {
         return extResourceMapper.source(accountId);
-    }
-
-    public SourceDTO vulnSource (String accountId) {
-        return extResourceMapper.vulnSource(accountId);
     }
 
     public List<ResourceDTO> search(ResourceRequest request) {
@@ -380,15 +366,6 @@ public class ResourceService {
                 case "custodian":
                     createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation);
                     break;
-                case "nuclei":
-                    createNucleiResource(resourceWithBLOBs, taskItem, operation);
-                    break;
-                case "xray":
-                    createXrayResource(resourceWithBLOBs, taskItem, operation);
-                    break;
-                case "tsunami":
-                    createTsunamiResource(resourceWithBLOBs, taskItem, operation);
-                    break;
                 case "prowler":
                     createProwlerResource(resourceWithBLOBs, taskItem, cloudTask, operation);
                     break;
@@ -423,91 +400,6 @@ public class ResourceService {
             JSONArray jsonArray = parseArray(resourceWithBLOBs.getResources());
             resourceWithBLOBs.setReturnSum((long) jsonArray.size());
             resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
-    private void createNucleiResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
-        try {
-            String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
-            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
-            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-            String command = PlatformUtils.fixedCommand(CommandEnum.nuclei.getCommand(), CommandEnum.run.getCommand(), dirPath, "nuclei.yaml", map);
-            if(taskItem.getDetails().contains("workflows:")) {
-                command = command.replace("-t", "-w");
-            }
-            LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
-            CommandUtils.saveAsFile(taskItem.getDetails(), dirPath, "nuclei.yaml", false);//重启服务后容器内文件在/tmp目录下会丢失
-            String resultStr = CommandUtils.commonExecCmdWithResultByNuclei(command, dirPath);
-
-            String nucleiRun = resultStr;
-            String metadata = resultStr;
-            String resources = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.NUCLEI_RUN_RESULT_FILE);
-
-            resourceWithBLOBs.setCustodianRunLog(nucleiRun);
-            resourceWithBLOBs.setMetadata(metadata);
-            resourceWithBLOBs.setResources(resources);
-
-            resourceWithBLOBs.setResourcesSum((long) 1);
-            if (StringUtils.isNotEmpty(resourceWithBLOBs.getResources())) {
-                resourceWithBLOBs.setReturnSum((long) 1);
-            } else {
-                resourceWithBLOBs.setReturnSum((long) 0);
-            }
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
-    private void createXrayResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
-        try {
-            CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
-            String fileName = cloudTask.getResourceTypes() == null ? "" : cloudTask.getResourceTypes().replace("[", "").replace("]", "");
-            String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskItem.getTaskId() + "/" + taskItem.getRegionId();
-            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
-            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-            String command = PlatformUtils.fixedCommand(CommandEnum.xray.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-
-            LogUtil.info(taskItem.getTaskId() + " {}[command]: " + command);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-
-            String xrayRun = command;
-            String metadata = resultStr;
-            String resources = ReadFileUtils.readToBufferByXray(dirPath + "/" + CloudTaskConstants.XRAY_RUN_RESULT_FILE, resultStr);
-
-            resourceWithBLOBs.setCustodianRunLog(xrayRun);
-            resourceWithBLOBs.setMetadata(metadata);
-            resourceWithBLOBs.setResources(resources);
-
-            resourceWithBLOBs.setResourcesSum((long) 1);
-            if (StringUtils.isNotEmpty(resourceWithBLOBs.getResources())) {
-                resourceWithBLOBs.setReturnSum((long) 1);
-            } else {
-                resourceWithBLOBs.setReturnSum((long) 0);
-            }
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
-    private void createTsunamiResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, String operation) {
-        try {
 
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
@@ -741,23 +633,6 @@ public class ResourceService {
 
         HistoryScanExample historyScanExample = new HistoryScanExample();
         historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
-
-        CloudAccountQuartzTaskRelationExample quartzTaskRelationExample = new CloudAccountQuartzTaskRelationExample();
-        quartzTaskRelationExample.createCriteria().andSourceIdEqualTo(accountId);
-        List<CloudAccountQuartzTaskRelation> quartzTaskRelationList = quartzTaskRelationMapper.selectByExample(quartzTaskRelationExample);
-        for (CloudAccountQuartzTaskRelation quartzTaskRelation : quartzTaskRelationList) {
-            CloudAccountQuartzTaskRelaLogExample quartzTaskRelaLogExample = new CloudAccountQuartzTaskRelaLogExample();
-            quartzTaskRelaLogExample.createCriteria().andQuartzTaskRelaIdEqualTo(quartzTaskRelation.getId());
-            quartzTaskRelaLogMapper.deleteByExample(quartzTaskRelaLogExample);
-            quartzTaskRelationMapper.deleteByPrimaryKey(quartzTaskRelation.getId());
-
-            CloudAccountQuartzTask quartzTask = quartzTaskMapper.selectByPrimaryKey(quartzTaskRelation.getQuartzTaskId());
-            String triggerId = quartzTask.getTriggerId();
-            Trigger trigger = quartzManageService.getTrigger(new TriggerKey(triggerId));
-            quartzManageService.deleteJob(trigger.getJobKey());
-
-            quartzTaskMapper.deleteByPrimaryKey(quartzTaskRelation.getQuartzTaskId());
-        }
 
         OperationLogService.log(tokenService.getLoginUser().getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
 

@@ -4,9 +4,7 @@ import {
   IsCollapse,
   K8S_ID, K8S_NAME,
   REFRESH_SESSION_USER_URL,
-  ROLE_ADMIN,
-  TokenKey,
-  VULN_ID
+  TokenKey
 } from "./constants";
 import axios from "axios";
 
@@ -20,10 +18,6 @@ export function getCurrentAccountID() {
 
 export function getCurrentAccountName() {
   return localStorage.getItem(ACCOUNT_NAME);
-}
-
-export function getVulnID() {
-  return localStorage.getItem(VULN_ID);
 }
 
 export function getK8sID() {

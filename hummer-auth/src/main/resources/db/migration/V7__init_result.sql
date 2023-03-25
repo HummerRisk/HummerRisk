@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS `cloud_task` (
     `create_time`                   bigint                DEFAULT NULL COMMENT '创建时间',
     `task_name`                     varchar(256)          DEFAULT NULL COMMENT '任务名称',
     `description`                   varchar(1024)         DEFAULT NULL COMMENT '描述',
-    `cron`                          varchar(128)          DEFAULT NULL COMMENT 'cron表达式',
     `trigger_id`                    varchar(255)          DEFAULT NULL COMMENT '触发ID',
     `prev_fire_time`                bigint                DEFAULT NULL COMMENT '上次执行时间',
     `last_fire_time`                bigint                DEFAULT NULL COMMENT '下次执行时间',
@@ -20,7 +19,6 @@ CREATE TABLE IF NOT EXISTS `cloud_task` (
     `resource_types`                varchar(256)          DEFAULT NULL COMMENT '资源类型',
     `resources_sum`                 bigint                DEFAULT 0 COMMENT '资源总量',
     `return_sum`                    bigint                DEFAULT 0 COMMENT '输出检测结果资源数',
-    `cron_desc`                     varchar(512)          DEFAULT NULL COMMENT '定时时间(cron中文翻译)',
     `scan_type`                     varchar(32)           DEFAULT NULL COMMENT '检测类型',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;

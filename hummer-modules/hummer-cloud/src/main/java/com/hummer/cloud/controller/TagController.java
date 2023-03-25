@@ -6,9 +6,9 @@ import com.hummer.common.core.dto.RuleTagDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "标签")
@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("tag")
 public class TagController {
 
-    @Resource
+    @Autowired
     private RuleService ruleService;
 
     @I18n

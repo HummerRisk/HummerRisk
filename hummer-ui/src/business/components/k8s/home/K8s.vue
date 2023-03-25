@@ -303,6 +303,15 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {nativePluginUrl, pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
+import {
+  addK8sUrl,
+  deleteK8sUrl, k8sListUrl, k8sValidatesUrl,
+  logK8sUrl,
+  reinstallKubenchUrl,
+  reinstallOperatorUrl,
+  updateK8sUrl
+} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -507,16 +516,14 @@ export default {
     },
     //查询插件
     activePlugin() {
-      let url = "/plugin/native";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(nativePluginUrl, response => {
         let data = response.data;
         this.plugins =  data;
       });
     },
     //查询代理
     activeProxy() {
-      let url = "/proxy/list/all";
-      this.result = this.$get(url, response => {
+      this.result = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
@@ -532,7 +539,7 @@ export default {
           if (action === 'confirm') {
             this.result = this.$request({
               method: 'POST',
-              url: "/k8s/validate",
+              url: k8sValidatesUrl,
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined
@@ -558,7 +565,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post("/k8s/validate/" + row.id, {}, response => {
+            this.$post(k8sValidateUrl + row.id, {}, response => {
               let data = response.data;
               if (data) {
                 if (data.flag) {
@@ -580,7 +587,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post("/k8s/operatorStatusValidate/" + row.id, {}, response => {
+            this.$post(operatorStatusValidateUrl + row.id, {}, response => {
               let data = response.data;
               if (data) {
                 if (data.flag) {
@@ -605,7 +612,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post("/k8s/kubenchStatusValidate/" + row.id, {}, response => {
+            this.$post(kubenchStatusValidateUrl + row.id, {}, response => {
               let data = response.data;
               if (data) {
                 if (data.flag) {
@@ -633,7 +640,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/k8s/list/" + this.currentPage + "/" + this.pageSize;
+      let url = k8sListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -661,7 +668,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$post("/k8s/delete/" + obj.id, {}, () => {
+            this.result = this.$post(deleteK8sUrl + obj.id, {}, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -695,8 +702,7 @@ export default {
     },
     //新增云原生账号信息/选择插件查询云原生账号信息
     async changePluginForAdd (form){
-      let url = "/plugin/";
-      this.result = await this.$get(url + form.pluginId, response => {
+      this.result = await this.$get(pluginByIdUrl + form.pluginId, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         form.tmpList = fromJson.data;
         for (let tmp of form.tmpList) {
@@ -708,8 +714,7 @@ export default {
     },
     //编辑云原生账号信息/选择插件查询云原生账号信息
     async changePlugin (pluginId, type){
-      let url = "/plugin/";
-      this.result = await this.$get(url + pluginId, response => {
+      this.result = await this.$get(pluginByIdUrl + pluginId, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         this.tmpList = fromJson.data;
         if (type === 'edit') {
@@ -751,7 +756,7 @@ export default {
         if (item.isProxy) data["proxyId"] = item.proxyId;
 
         if (type === 'add') {
-          this.k8sResult = this.$post("/k8s/add", data,response => {
+          this.k8sResult = this.$post(addK8sUrl, data,response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -781,7 +786,7 @@ export default {
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.k8sResult = this.$post("/k8s/add", data,response => {
+            this.k8sResult = this.$post(addK8sUrl, data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.search();
@@ -792,7 +797,7 @@ export default {
             });
           } else {
             data["id"] = item.id;
-            this.k8sResult = this.$post("/k8s/update", data,response => {
+            this.k8sResult = this.$post(updateK8sUrl, data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();
@@ -829,7 +834,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/k8s/scan/" + item.id,response => {
+            this.$get(scanK8sUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.$router.push({
@@ -847,7 +852,7 @@ export default {
       });
     },
     showLog(item){
-      this.result = this.$get("/k8s/log/" + item.id, response => {
+      this.result = this.$get(logK8sUrl + item.id, response => {
         this.logData = response.data;
       });
       this.logForm = item;
@@ -860,7 +865,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post("/k8s/reinstallOperator/" + item.id, {}, response => {
+            this.$post(reinstallOperatorUrl + item.id, {}, response => {
               this.$success(this.$t('commons.success'));
               this.showLog(item);
             });
@@ -873,7 +878,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post("/k8s/reinstallKubench/" + item.id, {}, response => {
+            this.$post(reinstallKubenchUrl + item.id, {}, response => {
               this.$success(this.$t('commons.success'));
               this.showLog(item);
             });

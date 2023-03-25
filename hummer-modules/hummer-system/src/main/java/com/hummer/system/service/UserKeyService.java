@@ -3,20 +3,20 @@ package com.hummer.system.service;
 import com.hummer.common.core.constant.ApiKeyConstants;
 import com.hummer.common.core.constant.ResourceConstants;
 import com.hummer.common.core.constant.ResourceOperation;
-import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.domain.UserKey;
 import com.hummer.common.core.domain.UserKeyExample;
 import com.hummer.common.core.domain.request.user.UserKeyRequest;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.mapper.UserKeyMapper;
 import com.hummer.system.mapper.ext.ExtUserKeyMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,19 +27,19 @@ import java.util.UUID;
 @Service
 public class UserKeyService {
 
-    @Resource
+    @Autowired
     private UserKeyMapper userKeyMapper;
 
-    @Resource
+    @Autowired
     private ExtUserKeyMapper extUserKeyMapper;
 
-    @Resource
+    @Autowired
     private UserService userService;
 
-    @Resource
+    @Autowired
     private TokenService tokenService;
 
-    @Resource
+    @Autowired
     private OperationLogService operationLogService;
 
     public List<UserKey> getUserKeysInfo(UserKeyRequest request) {

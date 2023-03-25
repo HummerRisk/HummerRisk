@@ -100,7 +100,6 @@ export default {
   methods: {
     init() {
     },
-
     handleClose() {
       this.logVisible=false;
     },

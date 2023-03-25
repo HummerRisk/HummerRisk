@@ -1,6 +1,6 @@
 # Tomcat
 server:
-  port: 9201
+  port: 9300
 
 # Spring
 spring:
@@ -10,39 +10,41 @@ spring:
   profiles:
     # 环境配置
     active: prod
-  freemarker.content-type: text/html
-  thymeleaf:
-    cache: false
-    mode: HTML
-  mvc:
-    throw-exception-if-no-handler-found: true
-  web:
-    resources:
-      static-locations=classpath: /templates/
   cloud:
     bootstrap:
       enabled: true
     nacos:
       discovery:
         # 服务注册地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
       config:
         # 配置中心地址
-        server-addr: ${HR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
+        server-addr: ${HMR_NACOS_SERVER_ADDR}:8848  # 本地启动使用 server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${HMR_MYSQL_HOST}:${HMR_MYSQL_PORT}/${HMR_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: ${HMR_MYSQL_USER}
+    password: ${HMR_MYSQL_PASSWORD}
+  data:
+    redis:
+      host: ${HMR_REDIS_HOST}
+      port: ${HMR_REDIS_PORT}
+      password: ${HMR_REDIS_PASSWORD}
 
+#dubbo 配置
 dubbo:
   protocol:
     name: system
-    port: 8002
-    host: ${HR_NACOS_SERVER_ADDR}
+    port: 8001
+    host: ${HMR_NACOS_SERVER_ADDR}
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
-    address: nacos://${HR_NACOS_SERVER_ADDR}:8848
+    address: nacos://${HMR_NACOS_SERVER_ADDR}:8848
   scan:
     # 配置需要扫描的注解包
     base-packages: com.hummer.system
@@ -55,12 +57,12 @@ dubbo:
 xxl:
   job:
     admin:
-      addresses: http://${HR_NACOS_SERVER_ADDR}:8084/xxl-job-admin/
+      addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HR_NACOS_SERVER_ADDR}:9210
-      ip: ${HR_NACOS_SERVER_ADDR}
-      port: 9210
+      address: ${HMR_XXL_SYSTEM_ADDR}:9301
+      ip: ${HMR_XXL_SYSTEM_ADDR}
+      port: 9301
       appName: hummer-system
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-system
       logretentiondays: 30

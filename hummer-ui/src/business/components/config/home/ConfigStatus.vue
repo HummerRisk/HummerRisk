@@ -14,6 +14,8 @@
 
 <script>
   /* eslint-disable */
+  import {configValidateByIdUrl} from "@/api/k8s/config/config";
+
   export default {
     name: "ConfigStatus",
     props: {
@@ -25,7 +27,7 @@
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.$post("/config/validate/" + row.id, {}, response => {
+              this.$post(configValidateByIdUrl + row.id, {}, response => {
                 if (response.data) {
                   this.$success(this.$t('account.success'));
                   this.$emit('search');

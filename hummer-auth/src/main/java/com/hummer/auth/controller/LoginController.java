@@ -1,7 +1,7 @@
 package com.hummer.auth.controller;
 
 import com.hummer.auth.service.SysLoginService;
-import com.hummer.common.core.domain.R;
+import com.hummer.auth.service.UserService;
 import com.hummer.common.core.domain.request.LoginRequest;
 import com.hummer.common.core.text.ResultHolder;
 import com.hummer.common.core.utils.JwtUtils;
@@ -28,6 +28,9 @@ public class LoginController {
     private TokenService tokenService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private SysLoginService sysLoginService;
 
     @GetMapping(value = "healthz")
@@ -52,7 +55,7 @@ public class LoginController {
     @GetMapping(value = "isLogin")
     public ResultHolder isLogin() {
         String token = SecurityUtils.getToken();
-        if (StringUtils.isNotEmpty(token)) {
+        if (StringUtils.isNotEmpty(token) && !StringUtils.equalsIgnoreCase("undefined", token)) {
             LoginUser loginUser = tokenService.getLoginUser();
             if (loginUser == null) return ResultHolder.error("");
             User user = loginUser.getUser();
@@ -64,7 +67,7 @@ public class LoginController {
     }
 
     @GetMapping("signout")
-    public ResultHolder logout(HttpServletRequest request) {
+    public ResultHolder logout(HttpServletRequest request) throws Exception {
         String token = SecurityUtils.getToken(request);
         if (StringUtils.isNotEmpty(token)) {
             String userId = JwtUtils.getUserId(token);
@@ -72,8 +75,14 @@ public class LoginController {
             AuthUtil.logoutByToken(token);
             // 记录用户退出日志
             sysLoginService.logout(userId);
+            return ResultHolder.success("");
         }
         return ResultHolder.success("");
+    }
+
+    @GetMapping(value = "language")
+    public String getDefaultLanguage() {
+        return userService.getDefaultLanguage();
     }
 
 }

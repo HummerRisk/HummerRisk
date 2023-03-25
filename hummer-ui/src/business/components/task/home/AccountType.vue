@@ -3,9 +3,6 @@
     <el-tag size="mini" type="primary" v-if="row.accountType === 'cloudAccount'">
       {{ $t('task.task_cloud') }}
     </el-tag>
-    <el-tag size="mini" type="primary" v-else-if="row.accountType === 'vulnAccount'">
-      {{ $t('task.task_vuln') }}
-    </el-tag>
     <el-tag size="mini" type="primary" v-else-if="row.accountType === 'serverAccount'">
       {{ $t('task.task_server') }}
     </el-tag>

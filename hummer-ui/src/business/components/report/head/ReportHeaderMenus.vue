@@ -16,18 +16,6 @@
             {{ $t("account.statistical_analysis") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/report/vulnReport'">
-            {{ $t("vuln.vuln_statistics") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/report/vulnHistory'">
-            {{ $t("vuln.history") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/report/vlunOverview'">
-            {{ $t("vuln.statistical_analysis") }}
-          </el-menu-item>
-
         </el-menu>
       </el-col>
     </el-row>

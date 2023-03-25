@@ -16,11 +16,7 @@ import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.exception.PluginException;
 import com.hummer.common.core.proxy.Request;
-import com.hummer.common.core.utils.ConfigEntity;
-import com.hummer.common.core.utils.EndpointUtil;
-import com.hummer.common.core.utils.RegionUtil;
-import com.hummer.common.core.utils.RequestUtil;
-import com.hummer.common.core.utils.ServiceUtil;
+import com.hummer.common.core.utils.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 

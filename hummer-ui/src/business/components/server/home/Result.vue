@@ -410,6 +410,7 @@ import RuleType from "./RuleType";
 import {SERVER_RESULT_CONFIGS, SERVER_RESULT_CONFIGS2} from "../../common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import {getServerResultUrl, serverLogUrl, serverResultListUrl, resultServerListUrl} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -632,13 +633,13 @@ export default {
     },
     //查询列表
     search() {
-      let url = "/server/resultList/" + this.currentPage + "/" + this.pageSize;
+      let url = serverResultListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
       });
-      this.result = this.$post("/server/resultServerList/" + this.serverPage + "/" + this.serverSize, this.serverCondition, response => {
+      this.result = this.$post(resultServerListUrl + this.serverPage + "/" + this.serverSize, this.serverCondition, response => {
         let data = response.data;
         this.serverTotal = data.itemCount;
         this.serverData = data.listObject;
@@ -648,11 +649,9 @@ export default {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
-        this.timer = setInterval(this.getStatus,60000);
       } else {
         for (let data of this.tableData) {
-          let url = "/server/getServerResult/";
-          this.$get(url + data.id, response => {
+          this.$get(getServerResultUrl + data.id, response => {
             let result = response.data;
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
@@ -688,24 +687,22 @@ export default {
       this.init();
     },
     showResultLog (result) {
-      let url = "/server/log/";
       this.logForm = result;
-      this.$get(url + result.id, response => {
+      this.$get(serverLogUrl + result.id, response => {
         this.logData = response.data;
         this.logVisible = true;
       });
-      this.$get("/server/getServerResult/" + result.id, response => {
+      this.$get(getServerResultUrl + result.id, response => {
         this.logForm = response.data;
       });
     },
     showDetailLog (result) {
-      let url = "/server/log/";
       this.logForm = result;
-      this.$get(url + result.id, response => {
+      this.$get(serverLogUrl + result.id, response => {
         this.logData = response.data;
         this.innerVisible = true;
       });
-      this.$get("/server/getServerResult/" + result.id, response => {
+      this.$get(getServerResultUrl + result.id, response => {
         this.logForm = response.data;
       });
     },
@@ -721,7 +718,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get("/server/rescan/" + item.id, response => {
+            this.$get(serverReScanUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -735,7 +732,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get("/server/deleteServerResult/" + obj.id,  res => {
+            this.result = this.$get(deleteServerResultUrl + obj.id,  res => {
               this.search();
               this.$success(this.$t('commons.delete_success'));
             });

@@ -4,19 +4,14 @@ export const DEFAULT_LANGUAGE = "default_language";
 export const ACCOUNT_ID = "account_id";
 export const ACCOUNT_NAME = "account_name";
 export const ACCOUNT = "account";
-export const VULN_ID = "vuln_id";
-export const VULN_NAME = "vuln_name";
 export const K8S_ID = "k8s_id";
 export const K8S_NAME = "k8s_name";
 export const K8S = "k8s";
 export const ROLE_ADMIN = "admin";
 export const IsCollapse = "IsCollapse";
-
 export const CURRENT_ACCOUNT = "current_account";
-
 export const REFRESH_SESSION_USER_URL = "user/refresh";
 export const DEFAULT = "default";
-
 export const ZH_CN = "zh-CN";
 export const ZH_TW = "zh-TW";
 export const EN_US = "en-US";

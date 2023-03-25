@@ -5,19 +5,19 @@ import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.RuleService;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.rule.*;
-import com.hummer.common.core.handler.annotation.I18n;
-import com.hummer.common.core.utils.PageUtils;
-import com.hummer.common.core.utils.Pager;
 import com.hummer.common.core.dto.GroupDTO;
 import com.hummer.common.core.dto.RuleDTO;
 import com.hummer.common.core.dto.RuleGroupDTO;
 import com.hummer.common.core.dto.RuleTagDTO;
+import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.core.utils.PageUtils;
+import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "rule")
 public class RuleController {
-    @Resource
+    @Autowired
     private RuleService ruleService;
 
     @I18n
@@ -74,13 +74,6 @@ public class RuleController {
     @GetMapping(value = "allCloudRuleGroups")
     public List<RuleGroupDTO> allCloudRuleGroups() {
         return ruleService.allCloudRuleGroups(new RuleGroupRequest());
-    }
-
-    @I18n
-    @ApiOperation(value = "所有漏洞检测规则组")
-    @GetMapping(value = "allVulnRuleGroups")
-    public List<RuleGroupDTO> allVulnRuleGroups() {
-        return ruleService.allVulnRuleGroups(new RuleGroupRequest());
     }
 
     @I18n
@@ -161,12 +154,6 @@ public class RuleController {
     @GetMapping(value = "all/cloudResourceTypes")
     public List<Map<String, String>> cloudResourceTypes() {
         return ruleService.cloudResourceTypes();
-    }
-
-    @ApiOperation(value = "漏洞检测规则类型")
-    @GetMapping(value = "all/vulnResourceTypes")
-    public List<Map<String, String>> vulnResourceTypes() {
-        return ruleService.vulnResourceTypes();
     }
 
     @I18n

@@ -8,18 +8,18 @@ import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudNative.*;
+import com.hummer.common.core.domain.request.image.ImageRequest;
 import com.hummer.common.core.domain.request.k8s.*;
+import com.hummer.common.core.domain.request.k8s.rbac.Links;
+import com.hummer.common.core.domain.request.k8s.rbac.Nodes;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
-import com.hummer.common.core.domain.request.image.ImageRequest;
-import com.hummer.common.core.domain.request.k8s.rbac.Links;
-import com.hummer.common.core.domain.request.k8s.rbac.Nodes;
 import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.k8s.K8sSource;
 import com.hummer.common.core.proxy.kubesphere.KubeSphereRequest;
 import com.hummer.common.core.proxy.rancher.RancherRequest;
+import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.*;
@@ -28,11 +28,11 @@ import com.hummer.system.api.ISystemProviderService;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,51 +46,51 @@ import java.util.*;
 @Transactional(rollbackFor = Exception.class)
 public class K8sService {
 
-    @Resource
+    @Autowired
     private CloudNativeMapper cloudNativeMapper;
-    @Resource
+    @Autowired
     private CloudNativeResultMapper cloudNativeResultMapper;
-    @Resource
+    @Autowired
     private ExtCloudNativeResultMapper extCloudNativeResultMapper;
-    @Resource
+    @Autowired
     private CloudNativeResultLogMapper cloudNativeResultLogMapper;
-    @Resource
+    @Autowired
     private CloudNativeResultItemMapper cloudNativeResultItemMapper;
-    @Resource
+    @Autowired
     private CloudNativeSourceMapper cloudNativeSourceMapper;
-    @Resource
+    @Autowired
     private CloudNativeSourceSyncLogMapper cloudNativeSourceSyncLogMapper;
-    @Resource
+    @Autowired
     private CloudNativeRuleMapper cloudNativeRuleMapper;
-    @Resource
+    @Autowired
     private ExtCloudNativeMapper extCloudNativeMapper;
-    @Resource
+    @Autowired
     private ExtCloudNativeSourceMapper extCloudNativeSourceMapper;
-    @Resource
+    @Autowired
     private CommonThreadPool commonThreadPool;
-    @Resource
+    @Autowired
     private CloudNativeResultConfigItemMapper cloudNativeResultConfigItemMapper;
-    @Resource
+    @Autowired
     private CloudNativeSourceImageMapper cloudNativeSourceImageMapper;
-    @Resource
+    @Autowired
     private ExtK8sResultItemMapper extK8sResultItemMapper;
-    @Resource
+    @Autowired
     private ExtK8sResultConfigItemMapper extK8sResultConfigItemMapper;
-    @Resource
+    @Autowired
     private CloudNativeResultKubenchMapper cloudNativeResultKubenchMapper;
-    @Resource
+    @Autowired
     private CloudNativeSourceRbacNodeMapper cloudNativeSourceRbacNodeMapper;
-    @Resource
+    @Autowired
     private CloudNativeSourceRbacLinkMapper cloudNativeSourceRbacLinkMapper;
-    @Resource
+    @Autowired
     private CloudNativeSourceRbacRelationMapper cloudNativeSourceRbacRelationMapper;
-    @Resource
+    @Autowired
     private ExtCloudNativeSourceRbacMapper extCloudNativeSourceRbacMapper;
-    @Resource
+    @Autowired
     private ProxyMapper proxyMapper;
-    @Resource
+    @Autowired
     private PluginMapper pluginMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
@@ -1102,7 +1102,7 @@ public class K8sService {
     }
 
     public List<HistoryCloudNativeResultDTO> history(Map<String, Object> params) {
-        List<HistoryCloudNativeResultDTO> historyList = extCloudNativeResultMapper.history(params);
+        List<HistoryCloudNativeResultDTO> historyList = systemProviderService.k8sHistory(params);
         return historyList;
     }
 
@@ -1186,6 +1186,8 @@ public class K8sService {
             K8sRequest k8sRequest = new K8sRequest();
             k8sRequest.setCredential(cloudNative.getCredential());
 
+            k8sRequest.deleteChartRepo();
+            k8sRequest.createChartRepo();
             k8sRequest.deleteOperatorChart();
             k8sRequest.createOperatorChart();
 

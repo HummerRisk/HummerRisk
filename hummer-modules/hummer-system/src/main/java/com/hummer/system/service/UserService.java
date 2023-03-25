@@ -2,17 +2,15 @@ package com.hummer.system.service;
 
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.member.AddMemberRequest;
 import com.hummer.common.core.domain.request.member.EditPassWordRequest;
 import com.hummer.common.core.domain.request.member.UserRequest;
-import com.hummer.common.core.domain.request.organization.AddOrgMemberRequest;
-import com.hummer.common.core.domain.request.organization.QueryOrgMemberRequest;
 import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.dto.UserRoleDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.CodingUtil;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.common.security.utils.SecurityUtils;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.RoleMapper;
 import com.hummer.system.mapper.UserMapper;
@@ -20,11 +18,11 @@ import com.hummer.system.mapper.UserRoleMapper;
 import com.hummer.system.mapper.ext.ExtUserMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,17 +33,17 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class UserService {
 
-    @Resource
+    @Autowired
     private UserMapper userMapper;
-    @Resource
+    @Autowired
     private RoleMapper roleMapper;
-    @Resource
+    @Autowired
     private UserRoleMapper userRoleMapper;
-    @Resource
+    @Autowired
     private ExtUserMapper extUserMapper;
-    @Resource
+    @Autowired
     private TokenService tokenService;
-    @Resource
+    @Autowired
     private OperationLogService operationLogService;
 
     public UserDTO insert(UserRequest user) throws Exception {
@@ -162,6 +160,8 @@ public class UserService {
         UserRoleDTO userRole = getUserRole(userId);
         userDTO.setUserRoles(Optional.ofNullable(userRole.getUserRoles()).orElse(new ArrayList()));
         userDTO.setRoles(Optional.ofNullable(userRole.getRoles()).orElse(new ArrayList()));
+        String token = SecurityUtils.getToken();
+        userDTO.setToken(token);
         return userDTO;
     }
 
@@ -283,69 +283,6 @@ public class UserService {
 
     public UserDTO getUserInfo(String userId) throws Exception {
         return getUserDTO(userId);
-    }
-
-    public void addMember(AddMemberRequest request) {
-        if (!CollectionUtils.isEmpty(request.getUserIds())) {
-            for (String userId : request.getUserIds()) {
-                UserRoleExample userRoleExample = new UserRoleExample();
-                userRoleExample.createCriteria().andUserIdEqualTo(userId).andSourceIdEqualTo(request.getWorkspaceId());
-                List<UserRole> userRoles = userRoleMapper.selectByExample(userRoleExample);
-                if (!userRoles.isEmpty()) {
-                    HRException.throwException(Translator.get("user_already_exists"));
-                } else {
-                    for (String roleId : request.getRoleIds()) {
-                        UserRole userRole = new UserRole();
-                        userRole.setRoleId(roleId);
-                        userRole.setSourceId(request.getWorkspaceId());
-                        userRole.setUserId(userId);
-                        userRole.setId(UUID.randomUUID().toString());
-                        userRole.setUpdateTime(System.currentTimeMillis());
-                        userRole.setCreateTime(System.currentTimeMillis());
-                        userRoleMapper.insertSelective(userRole);
-                    }
-                }
-            }
-        }
-    }
-
-    public void deleteMember(String workspaceId, String userId) {
-        UserRoleExample example = new UserRoleExample();
-        example.createCriteria().andRoleIdLike("%test%")
-                .andUserIdEqualTo(userId).andSourceIdEqualTo(workspaceId);
-
-        userRoleMapper.deleteByExample(example);
-    }
-
-    public void addOrganizationMember(AddOrgMemberRequest request) {
-        if (!CollectionUtils.isEmpty(request.getUserIds())) {
-            for (String userId : request.getUserIds()) {
-                UserRoleExample userRoleExample = new UserRoleExample();
-                userRoleExample.createCriteria().andUserIdEqualTo(userId).andSourceIdEqualTo(request.getOrganizationId());
-                List<UserRole> userRoles = userRoleMapper.selectByExample(userRoleExample);
-                if (!userRoles.isEmpty()) {
-                    HRException.throwException(Translator.get("user_already_exists") + ": " + userId);
-                } else {
-                    for (String roleId : request.getRoleIds()) {
-                        UserRole userRole = new UserRole();
-                        userRole.setId(UUID.randomUUID().toString());
-                        userRole.setRoleId(roleId);
-                        userRole.setSourceId(request.getOrganizationId());
-                        userRole.setUserId(userId);
-                        userRole.setUpdateTime(System.currentTimeMillis());
-                        userRole.setCreateTime(System.currentTimeMillis());
-                        userRoleMapper.insertSelective(userRole);
-                    }
-                }
-            }
-        }
-    }
-
-    public void delOrganizationMember(String organizationId, String userId) {
-        UserRoleExample userRoleExample = new UserRoleExample();
-        userRoleExample.createCriteria().andRoleIdLike("%org%").andUserIdEqualTo(userId).andSourceIdEqualTo(organizationId);
-
-        userRoleMapper.deleteByExample(userRoleExample);
     }
 
     public boolean checkUserPassword(String userId, String password) throws Exception {
