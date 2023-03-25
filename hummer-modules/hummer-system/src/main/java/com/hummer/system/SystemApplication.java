@@ -1,6 +1,7 @@
 package com.hummer.system;
 
 import com.hummer.common.security.annotation.EnableHrFeignClients;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -11,7 +12,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @author harris1943
  */
 @EnableHrFeignClients
-@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
+@EnableDubbo
+@SpringBootApplication
 public class SystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(SystemApplication.class, args);
