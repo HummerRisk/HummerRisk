@@ -49,7 +49,8 @@ dubbo:
   application:
     name: ${spring.application.name}
     qos-port: 22223
-
+  consumer:
+    check: false
 #xxl-job 配置
 xxl:
   job:
