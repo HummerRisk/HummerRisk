@@ -11,6 +11,7 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -81,6 +82,9 @@ public class UserController {
     @PostMapping("/update/current")
     public UserDTO updateCurrentUser(@RequestBody User user) throws Exception {
         userService.updateUser(user);
+        LoginUser loginUser = tokenService.getLoginUser();
+        loginUser.getUser().setLanguage(user.getLanguage());
+        tokenService.setLoginUser(loginUser);
         return userService.getUserDTO(user.getId());
     }
 
