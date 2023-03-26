@@ -1,8 +1,8 @@
 package com.hummer.cloud.mapper.ext;
 
+import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.RuleDTO;
 import com.hummer.common.core.dto.RuleGroupDTO;
-import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

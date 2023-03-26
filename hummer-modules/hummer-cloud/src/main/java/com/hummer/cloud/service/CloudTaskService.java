@@ -8,20 +8,26 @@ import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
-import com.hummer.common.core.dto.*;
+import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
+import com.hummer.common.core.utils.CommandUtils;
+import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.core.utils.PlatformUtils;
+import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.IOperationLogService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.alibaba.fastjson.JSON.parseArray;
 
 /**
  * @author harris
@@ -59,6 +65,8 @@ public class CloudTaskService {
     private ProwlerService prowlerService;
     @Autowired
     private TokenService tokenService;
+    @DubboReference
+    private IOperationLogService operationLogService;
 
     public CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId) {
         try {
@@ -151,7 +159,7 @@ public class CloudTaskService {
 
             });
             cloudTaskMapper.deleteByPrimaryKey(cloudTask.getId());
-            OperationLogService.log(tokenService.getLoginUser().getUser(), taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "i18n_delete_cloud_task");
+            operationLogService.log(tokenService.getLoginUser().getUser(), taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "i18n_delete_cloud_task");
         } catch (Exception e) {
             LogUtil.error("Delete manual cloudTask error{} " + e.getMessage());
             HRException.throwException(e.getMessage());

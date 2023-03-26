@@ -18,7 +18,9 @@ import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.IOperationLogService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +59,8 @@ public class CloudSyncService {
     private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
     @Autowired
     private TokenService tokenService;
+    @DubboReference
+    private IOperationLogService operationLogService;
     /**
      * 获取同步日志
      *
@@ -235,7 +239,7 @@ public class CloudSyncService {
 
                 });
                 //向首页活动添加操作信息
-                OperationLogService.log(tokenService.getLoginUser().getUser(), id, account.getName(), ResourceTypeConstants.SYNC.name(), ResourceOperation.SYNC, "i18n_start_sync_resource");
+                operationLogService.log(tokenService.getLoginUser().getUser(), id, account.getName(), ResourceTypeConstants.SYNC.name(), ResourceOperation.SYNC, "i18n_start_sync_resource");
             }
         }
     }

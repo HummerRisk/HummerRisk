@@ -18,6 +18,7 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -84,6 +85,9 @@ public class ResourceService {
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
+
+    @DubboReference
+    private IOperationLogService operationLogService;
 
 
     public SourceDTO source (String accountId) {
@@ -538,7 +542,7 @@ public class ResourceService {
                     });
                 }};
             }).collect(Collectors.toList());
-            OperationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -609,7 +613,7 @@ public class ResourceService {
                     });
                 }};
             }).collect(Collectors.toList());
-            OperationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -634,7 +638,7 @@ public class ResourceService {
         HistoryScanExample historyScanExample = new HistoryScanExample();
         historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
 
-        OperationLogService.log(tokenService.getLoginUser().getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
+        operationLogService.log(tokenService.getLoginUser().getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
 
     }
 

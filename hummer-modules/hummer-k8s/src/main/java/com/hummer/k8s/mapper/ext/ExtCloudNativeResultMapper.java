@@ -7,7 +7,6 @@ import com.hummer.common.core.dto.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ExtCloudNativeResultMapper {
 

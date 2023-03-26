@@ -13,6 +13,7 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -67,6 +68,8 @@ public class ProwlerService {
     private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
+    @DubboReference
+    private IOperationLogService operationLogService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
@@ -153,7 +156,7 @@ public class ProwlerService {
             }
         }
         //向首页活动添加操作信息
-        OperationLogService.log(tokenService.getLoginUser().getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        operationLogService.log(tokenService.getLoginUser().getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 

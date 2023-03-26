@@ -23,7 +23,9 @@ import com.hummer.common.core.exception.PluginException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.IOperationLogService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,8 @@ public class AccountService {
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
     @Autowired
     private CloudEventMapper cloudEventMapper;
+    @DubboReference
+    private IOperationLogService operationLogService;
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
@@ -170,7 +174,7 @@ public class AccountService {
 
                 accountMapper.insertSelective(account);
                 updateRegionsThrows(account);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
+                operationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
                 if (validate.isFlag() && PlatformUtils.isSyncResource(account.getPluginId())) cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
@@ -229,7 +233,7 @@ public class AccountService {
                 updateRegionsThrows(account);
 
                 //检验账号已更新状态
-                OperationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.UPDATE, "i18n_update_cloud_account");
+                operationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.UPDATE, "i18n_update_cloud_account");
                 if (validate.isFlag()) cloudSyncService.sync(account.getId());
                 return getCloudAccountById(account.getId());
             }
@@ -249,7 +253,7 @@ public class AccountService {
         CloudEventSyncLogExample cloudEventSyncLogExample = new CloudEventSyncLogExample();
         cloudEventSyncLogExample.createCriteria().andAccountIdEqualTo(accountId);
         cloudEventSyncLogMapper.deleteByExample(cloudEventSyncLogExample);
-        OperationLogService.log(tokenService.getLoginUser().getUser(), accountId, accountWithBLOBs.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_account");
+        operationLogService.log(tokenService.getLoginUser().getUser(), accountId, accountWithBLOBs.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_account");
     }
 
     public Object getRegions(String id) {
@@ -334,7 +338,7 @@ public class AccountService {
                     ruleAccountParameterMapper.deleteByExample(example);
                 }
             });
-            OperationLogService.log(tokenService.getLoginUser().getUser(), list.get(0).getRuleId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, " i18n_clean_cloud_account");
+            operationLogService.log(tokenService.getLoginUser().getUser(), list.get(0).getRuleId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, " i18n_clean_cloud_account");
         } catch (Exception e) {
             throw e;
         }
@@ -344,7 +348,7 @@ public class AccountService {
     public boolean saveParameter(List<QuartzTaskDTO> list) {
         try {
             list.forEach(this::accept);
-            OperationLogService.log(tokenService.getLoginUser().getUser(), list.get(0).getId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_save_cloud_account");
+            operationLogService.log(tokenService.getLoginUser().getUser(), list.get(0).getId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_save_cloud_account");
         } catch (Exception e) {
             throw e;
         }

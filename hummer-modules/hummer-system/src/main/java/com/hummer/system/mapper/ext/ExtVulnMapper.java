@@ -1,9 +1,9 @@
 package com.hummer.system.mapper.ext;
 
 
-import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.domain.request.chart.ChartData;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
+import com.hummer.common.core.dto.HistoryScanDTO;
 
 import java.util.List;
 import java.util.Map;

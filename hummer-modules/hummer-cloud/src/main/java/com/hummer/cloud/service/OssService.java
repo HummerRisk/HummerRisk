@@ -29,11 +29,13 @@ import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.text.ResultHolder;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.IOperationLogService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +82,9 @@ public class OssService {
     private ExtCloudTaskMapper extCloudTaskMapper;
     @Autowired
     private TokenService tokenService;
+
+    @DubboReference
+    private IOperationLogService operationLogService;
 
     private static final String BASE_CANNED_ACL_TYPE = "cannedACL";
     private static final String BASE_STORAGE_CLASS_TYPE = "storageClass";
@@ -245,7 +250,7 @@ public class OssService {
             saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", false, 0);
             return;
         }
-        OperationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), ResourceOperation.SYNC, "i18n_start_oss_sync");
+        operationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), ResourceOperation.SYNC, "i18n_start_oss_sync");
         ossMapper.updateByPrimaryKeySelective(oss);
         syncBucketInfo(oss);
     }
@@ -400,7 +405,7 @@ public class OssService {
         int count = 0;
         StringBuilder message = new StringBuilder();
         for (final OssBucket bucket : buckets) {
-            OperationLogService.log(tokenService.getLoginUser().getUser(), bucket.getId(), bucket.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.DELETE, "i18n_delete_bucket");
+            operationLogService.log(tokenService.getLoginUser().getUser(), bucket.getId(), bucket.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.DELETE, "i18n_delete_bucket");
             try {
                 OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
                 if (null != account && !OSSConstants.ACCOUNT_STATUS.VALID.equals(account.getStatus())) {
@@ -439,7 +444,7 @@ public class OssService {
             }
             result.setId(UUIDUtil.newUUID());
             ossBucketMapper.insertSelective(result);
-            OperationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
+            operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
             return result;
         } catch (Exception e) {
             LogUtil.error("Failed to create the bucket: " + params.getBucketName(), e);
@@ -639,7 +644,7 @@ public class OssService {
                     });
                 }};
             }).collect(Collectors.toList());
-            OperationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -685,7 +690,7 @@ public class OssService {
             try {
                 fis = new FileInputStream(basePath + objectId);
                 ossProvider.uploadFile(bucket, account, objectId, fis, size);
-                OperationLogService.log(tokenService.getLoginUser().getUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
+                operationLogService.log(tokenService.getLoginUser().getUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
             } catch (Exception e) {
                 LogUtil.error(String.format("Failed to upload file %s to %s, %s", objectId, bucket.getBucketName(), e.getMessage()));
                 throw new RuntimeException("Failed to upload file");

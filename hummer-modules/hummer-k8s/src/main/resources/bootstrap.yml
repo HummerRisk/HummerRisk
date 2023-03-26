@@ -36,7 +36,7 @@ dubbo:
     name: dubbo
     # 这个dubbo的协议端口在一台服务器上的时候，每个项目的必须配置成不一样的（否则将启动失败），或者配置为-1，使用随机端口
     port: 8003
-    #host: ${HMR_NACOS_SERVER_ADDR}
+#    host: ${HMR_NACOS_SERVER_ADDR}
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
     address: nacos://${HMR_NACOS_SERVER_ADDR}:8848
