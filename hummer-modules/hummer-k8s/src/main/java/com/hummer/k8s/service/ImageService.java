@@ -353,6 +353,7 @@ public class ImageService {
 
     public void deleteImage(String id) throws Exception {
         imageMapper.deleteByPrimaryKey(id);
+        deleteResultByImageId(id);
         operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image");
     }
 
@@ -434,7 +435,8 @@ public class ImageService {
             List<ImageRuleDTO> ruleList = ruleList(null);
             ImageResultWithBLOBs result = new ImageResultWithBLOBs();
 
-            deleteResultByImageId(id);
+            deleteRescanResultByImageId(id);
+
             for (ImageRuleDTO dto : ruleList) {
                 BeanUtils.copyBean(result, image);
                 result.setId(UUIDUtil.newUUID());
@@ -575,13 +577,45 @@ public class ImageService {
     }
 
     public void deleteImageResult(String id) throws Exception {
+        ImageResultLogExample logExample = new ImageResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        imageResultLogMapper.deleteByExample(logExample);
+
+        ImageResultItemExample itemExample = new ImageResultItemExample();
+        itemExample.createCriteria().andResultIdEqualTo(id);
+        imageResultItemMapper.deleteByExample(itemExample);
+
+        systemProviderService.deleteHistoryImageResult(id);
         imageResultMapper.deleteByPrimaryKey(id);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
     }
 
-    public void deleteResultByImageId(String id) throws Exception {
+    public void deleteRescanResultByImageId(String id) throws Exception {
         ImageResultExample example = new ImageResultExample();
         example.createCriteria().andImageIdEqualTo(id);
         imageResultMapper.deleteByExample(example);
+    }
+
+    public void deleteResultByImageId(String id) throws Exception {
+
+        ImageResultExample example = new ImageResultExample();
+        example.createCriteria().andImageIdEqualTo(id);
+        List<ImageResult> list = imageResultMapper.selectByExample(example);
+
+        for (ImageResult result : list) {
+            ImageResultLogExample logExample = new ImageResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
+            imageResultLogMapper.deleteByExample(logExample);
+
+            ImageResultItemExample itemExample = new ImageResultItemExample();
+            itemExample.createCriteria().andResultIdEqualTo(result.getId());
+            imageResultItemMapper.deleteByExample(itemExample);
+
+            systemProviderService.deleteHistoryImageResult(result.getId());
+        }
+        imageResultMapper.deleteByExample(example);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+
     }
 
     public ResultDTO execute(Image image) throws Exception {
