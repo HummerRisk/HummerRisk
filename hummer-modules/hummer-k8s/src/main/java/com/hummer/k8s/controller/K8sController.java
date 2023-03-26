@@ -92,7 +92,7 @@ public class K8sController {
 
     @ApiOperation(value = "删除云原生账号")
     @PostMapping(value = "delete/{accountId}")
-    public void deleteAccount(@PathVariable String accountId) {
+    public void deleteAccount(@PathVariable String accountId) throws Exception {
         k8sService.delete(accountId);
     }
 

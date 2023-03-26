@@ -54,8 +54,7 @@ public class ServerController {
     @I18n
     @ApiOperation(value = "主机列表")
     @PostMapping("serverList/{goPage}/{pageSize}")
-    public Pager<List<ServerDTO>> getServerList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest server) {
+    public Pager<List<ServerDTO>> getServerList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest server) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.getServerList(server));
     }
@@ -152,7 +151,7 @@ public class ServerController {
 
     @ApiOperation(value = "删除主机规则")
     @GetMapping(value = "deleteServerRule/{id}")
-    public void deleteServerRule(@PathVariable String id) throws Exception  {
+    public void deleteServerRule(@PathVariable String id) throws Exception {
         serverService.deleteServerRule(id);
     }
 

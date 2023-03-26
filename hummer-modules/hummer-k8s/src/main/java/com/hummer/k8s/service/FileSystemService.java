@@ -157,14 +157,12 @@ public class FileSystemService {
     }
 
     public void deleteFs(String id) throws Exception {
+        FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(id);
         fileSystemMapper.deleteByPrimaryKey(id);
-        FileSystemResultExample example = new FileSystemResultExample();
-        example.createCriteria().andFsIdEqualTo(id);
-        List<FileSystemResult> list = fileSystemResultMapper.selectByExample(example);
-        if(list.size() > 0) {
-            throw new Exception(Translator.get("i18n_exist_error_result"));
-        }
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs");
+
+        deleteResultByFsId(id);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs");
+
     }
 
     public boolean validate(List<String> ids) {
@@ -263,8 +261,24 @@ public class FileSystemService {
         return fileSystemResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public void deleteFsResult(String id) throws Exception {
+    public void deleteRescanFsResult(String id) throws Exception {
         fileSystemResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void deleteFsResult(String id) throws Exception {
+        FileSystemResultLogExample logExample = new FileSystemResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        fileSystemResultLogMapper.deleteByExample(logExample);
+
+        FileSystemResultItemExample itemExample = new FileSystemResultItemExample();
+        itemExample.createCriteria().andResultIdEqualTo(id);
+        fileSystemResultItemMapper.deleteByExample(itemExample);
+
+        systemProviderService.deleteHistoryFsResult(id);
+        fileSystemResultMapper.deleteByPrimaryKey(id);
+
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
+
     }
 
     public List<FileSystemResultItemWithBLOBs> resultItemList(FileSystemResultItem fileSystemResultItem) {
@@ -288,7 +302,7 @@ public class FileSystemService {
             List<FsRuleDTO> ruleList = ruleList(null);
             FileSystemResult result = new FileSystemResult();
 
-            deleteResultByFsId(id);
+            deleteRescanResultByFsId(id);
 
             for(FsRuleDTO dto : ruleList) {
                 BeanUtils.copyBean(result, fileSystem);
@@ -342,10 +356,30 @@ public class FileSystemService {
 
     }
 
-    public void deleteResultByFsId(String id) throws Exception {
+    public void deleteRescanResultByFsId(String id) throws Exception {
         FileSystemResultExample example = new FileSystemResultExample();
         example.createCriteria().andFsIdEqualTo(id);
         fileSystemResultMapper.deleteByExample(example);
+    }
+
+    public void deleteResultByFsId(String id) throws Exception {
+        FileSystemResultExample example = new FileSystemResultExample();
+        example.createCriteria().andFsIdEqualTo(id);
+        List<FileSystemResult> list = fileSystemResultMapper.selectByExample(example);
+        for (FileSystemResult result : list) {
+            FileSystemResultLogExample logExample = new FileSystemResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
+            fileSystemResultLogMapper.deleteByExample(logExample);
+
+            FileSystemResultItemExample itemExample = new FileSystemResultItemExample();
+            itemExample.createCriteria().andResultIdEqualTo(result.getId());
+            fileSystemResultItemMapper.deleteByExample(itemExample);
+
+            systemProviderService.deleteHistoryFsResult(result.getId());
+        }
+        fileSystemResultMapper.deleteByPrimaryKey(id);
+
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
     }
 
     public void saveFsResultLog(String resultId, String operation, String output, boolean result) throws Exception {

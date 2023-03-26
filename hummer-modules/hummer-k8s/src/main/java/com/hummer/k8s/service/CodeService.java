@@ -112,8 +112,10 @@ public class CodeService {
     }
 
     public void deleteCode(String id) throws Exception {
+        Code code = codeMapper.selectByPrimaryKey(id);
         codeMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code");
+        deleteResultByCodeId(id);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code");
     }
 
     public boolean validate(List<String> ids) {
@@ -218,7 +220,17 @@ public class CodeService {
     }
 
     public void deleteCodeResult(String id) throws Exception {
+        CodeResultLogExample logExample = new CodeResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        codeResultLogMapper.deleteByExample(logExample);
+
+        CodeResultItemExample itemExample = new CodeResultItemExample();
+        itemExample.createCriteria().andResultIdEqualTo(id);
+        codeResultItemMapper.deleteByExample(itemExample);
+
+        systemProviderService.deleteHistoryCodeResult(id);
         codeResultMapper.deleteByPrimaryKey(id);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
     }
 
     public List<CodeResultItemWithBLOBs> resultItemList(CodeResultItem codeResultItem) {
@@ -243,7 +255,7 @@ public class CodeService {
             List<CodeRuleDTO> ruleList = ruleList(null);
             CodeResult result = new CodeResult();
 
-            deleteResultByCodeId(id);
+            deleteRescanResultByCodeId(id);
 
             for(CodeRuleDTO dto : ruleList) {
                 BeanUtils.copyBean(result, code);
@@ -297,10 +309,30 @@ public class CodeService {
 
     }
 
-    public void deleteResultByCodeId(String id) throws Exception {
+    public void deleteRescanResultByCodeId(String id) throws Exception {
         CodeResultExample example = new CodeResultExample();
         example.createCriteria().andCodeIdEqualTo(id);
         codeResultMapper.deleteByExample(example);
+    }
+
+    public void deleteResultByCodeId(String id) throws Exception {
+        CodeResultExample example = new CodeResultExample();
+        example.createCriteria().andCodeIdEqualTo(id);
+        List<CodeResult> list = codeResultMapper.selectByExample(example);
+
+        for (CodeResult codeResult : list) {
+            CodeResultLogExample logExample = new CodeResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(codeResult.getId());
+            codeResultLogMapper.deleteByExample(logExample);
+
+            CodeResultItemExample itemExample = new CodeResultItemExample();
+            itemExample.createCriteria().andResultIdEqualTo(codeResult.getId());
+            codeResultItemMapper.deleteByExample(itemExample);
+
+            systemProviderService.deleteHistoryCodeResult(codeResult.getId());
+        }
+        codeResultMapper.deleteByExample(example);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
     }
 
     public void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception {

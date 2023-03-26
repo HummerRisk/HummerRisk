@@ -182,9 +182,11 @@ public class ConfigService {
         return null;
     }
 
-    public void delete(String accountId) {
+    public void delete(String accountId) throws Exception {
         CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(accountId);
         cloudNativeConfigMapper.deleteByPrimaryKey(accountId);
+
+        deleteResultByCloudNativeConfigId(accountId);
         operationLogService.log(tokenService.getLoginUser().getUser(), accountId, cloudNativeConfig.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native_config");
     }
 
@@ -212,7 +214,7 @@ public class ConfigService {
             List<CloudNativeConfigRule> ruleList = cloudNativeConfigRuleMapper.selectByExample(null);
             CloudNativeConfigResult result = new CloudNativeConfigResult();
 
-            deleteResultByCloudNativeConfigId(id);
+            deleteRescanResultByCloudNativeConfigId(id);
 
             for(CloudNativeConfigRule rule : ruleList) {
                 BeanUtils.copyBean(result, cloudNativeConfig);
@@ -258,10 +260,30 @@ public class ConfigService {
         return result.getId();
     }
 
-    public void deleteResultByCloudNativeConfigId(String id) throws Exception {
+    public void deleteRescanResultByCloudNativeConfigId(String id) throws Exception {
         CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
         example.createCriteria().andConfigIdEqualTo(id);
         cloudNativeConfigResultMapper.deleteByExample(example);
+    }
+
+    public void deleteResultByCloudNativeConfigId(String id) throws Exception {
+        CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
+        example.createCriteria().andConfigIdEqualTo(id);
+        List<CloudNativeConfigResult> list = cloudNativeConfigResultMapper.selectByExample(example);
+
+        for (CloudNativeConfigResult configResult : list) {
+            CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(configResult.getId());
+            cloudNativeConfigResultLogMapper.deleteByExample(logExample);
+
+            CloudNativeConfigResultItemExample itemExample = new CloudNativeConfigResultItemExample();
+            itemExample.createCriteria().andResultIdEqualTo(configResult.getId());
+            cloudNativeConfigResultItemMapper.deleteByExample(itemExample);
+
+            systemProviderService.deleteHistoryCloudNativeConfigResult(configResult.getId());
+        }
+        cloudNativeConfigResultMapper.deleteByExample(example);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_config_result");
     }
 
     public void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception {
@@ -460,7 +482,20 @@ public class ConfigService {
     }
 
     public void deleteCloudNativeConfigResult(String id) throws Exception {
+
+        CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeConfigResultLogMapper.deleteByExample(logExample);
+
+        CloudNativeConfigResultItemExample itemExample = new CloudNativeConfigResultItemExample();
+        itemExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeConfigResultItemMapper.deleteByExample(itemExample);
+
+        systemProviderService.deleteHistoryCloudNativeConfigResult(id);
+
         cloudNativeConfigResultMapper.deleteByPrimaryKey(id);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_config_result");
+
     }
 
     public MetricChartDTO metricChart (String resultId) {
@@ -502,9 +537,6 @@ public class ConfigService {
     }
 
     public void deleteHistoryConfigResult(String id) throws Exception {
-        CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
-        logExample.createCriteria().andResultIdEqualTo(id);
-        cloudNativeConfigResultLogMapper.deleteByExample(logExample);
         systemProviderService.deleteHistoryCloudNativeConfigResult(id);
     }
 

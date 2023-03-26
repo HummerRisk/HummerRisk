@@ -73,7 +73,7 @@ public class ConfigController {
 
     @ApiOperation(value = "删除云原生部署配置")
     @GetMapping(value = "delete/{accountId}")
-    public void deleteAccount(@PathVariable String accountId) {
+    public void deleteAccount(@PathVariable String accountId) throws Exception {
         configService.delete(accountId);
     }
 

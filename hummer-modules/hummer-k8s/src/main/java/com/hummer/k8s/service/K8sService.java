@@ -386,9 +386,10 @@ public class K8sService {
         return null;
     }
 
-    public void delete(String accountId) {
+    public void delete(String accountId) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
         cloudNativeMapper.deleteByPrimaryKey(accountId);
+        deleteResultByCloudNativeId(accountId);
         operationLogService.log(tokenService.getLoginUser().getUser(), accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
     }
 
@@ -588,7 +589,8 @@ public class K8sService {
             List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
             CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
-            deleteResultByCloudNativeId(id);
+            deleteRescanResultByCloudNativeId(id);
+
             for (CloudNativeRule rule : ruleList) {
                 BeanUtils.copyBean(result, cloudNative);
                 result.setId(UUIDUtil.newUUID());
@@ -862,10 +864,32 @@ public class K8sService {
         }
     }
 
-    public void deleteResultByCloudNativeId(String id) throws Exception {
+    public void deleteRescanResultByCloudNativeId(String id) throws Exception {
         CloudNativeResultExample example = new CloudNativeResultExample();
         example.createCriteria().andCloudNativeIdEqualTo(id);
         cloudNativeResultMapper.deleteByExample(example);
+    }
+
+    public void deleteResultByCloudNativeId(String id) throws Exception {
+
+        CloudNativeResultExample example = new CloudNativeResultExample();
+        example.createCriteria().andCloudNativeIdEqualTo(id);
+        List<CloudNativeResult> list = cloudNativeResultMapper.selectByExample(example);
+
+        for (CloudNativeResult result : list) {
+            CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
+            cloudNativeResultLogMapper.deleteByExample(logExample);
+
+            CloudNativeResultItemExample itemExample = new CloudNativeResultItemExample();
+            itemExample.createCriteria().andResultIdEqualTo(result.getId());
+            cloudNativeResultItemMapper.deleteByExample(itemExample);
+
+            systemProviderService.deleteHistoryK8sResult(result.getId());
+        }
+        cloudNativeResultMapper.deleteByExample(example);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_k8s_result");
+
     }
 
     public void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
@@ -1013,7 +1037,18 @@ public class K8sService {
     }
 
     public void deleteCloudNativeResult(String id) throws Exception {
+        CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeResultLogMapper.deleteByExample(logExample);
+
+        CloudNativeResultItemExample itemExample = new CloudNativeResultItemExample();
+        itemExample.createCriteria().andResultIdEqualTo(id);
+        cloudNativeResultItemMapper.deleteByExample(itemExample);
+
+        systemProviderService.deleteHistoryK8sResult(id);
         cloudNativeResultMapper.deleteByPrimaryKey(id);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+
     }
 
     public List<CloudNativeResultLogWithBLOBs> getCloudNativeResultLog(String resultId) {

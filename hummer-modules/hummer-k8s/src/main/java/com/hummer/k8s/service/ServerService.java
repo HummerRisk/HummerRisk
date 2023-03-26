@@ -139,7 +139,9 @@ public class ServerService {
         Integer scanId = systemProviderService.insertScanHistory(server);
         this.messageOrderId = systemProviderService.createServerMessageOrder(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-            deleteServerResultById(id);
+
+            deleteRescanServerResultById(id);
+
             ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
             serverRuleRequest.setStatus(true);
             serverRuleRequest.setType(server.getType());
@@ -237,14 +239,38 @@ public class ServerService {
         return result.getId();
     }
 
-    public void deleteServerResultById(String id) {
+    public void deleteRescanServerResultById(String id) {
         ServerResultExample example = new ServerResultExample();
         example.createCriteria().andServerIdEqualTo(id);//serverId
         serverResultMapper.deleteByExample(example);
     }
 
-    public void deleteServerResult(String id) {
+    public void deleteServerResultById(String id) throws Exception {
+
+        ServerResultExample example = new ServerResultExample();
+        example.createCriteria().andServerIdEqualTo(id);//serverId
+        List<ServerResult> list = serverResultMapper.selectByExample(example);
+
+        for (ServerResult result : list) {
+            ServerResultLogExample logExample = new ServerResultLogExample();
+            logExample.createCriteria().andResultIdEqualTo(result.getId());
+            serverResultLogMapper.deleteByExample(logExample);
+
+            systemProviderService.deleteHistoryServerResult(result.getId());
+        }
+        serverResultMapper.deleteByExample(example);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_result");
+
+    }
+
+    public void deleteServerResult(String id) throws Exception {
+        ServerResultLogExample logExample = new ServerResultLogExample();
+        logExample.createCriteria().andResultIdEqualTo(id);
+        serverResultLogMapper.deleteByExample(logExample);
+
+        systemProviderService.deleteHistoryServerResult(id);
         serverResultMapper.deleteByPrimaryKey(id);
+        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_result");
     }
 
     public void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception {
@@ -458,6 +484,7 @@ public class ServerService {
 
     public void deleteServer(String id) throws Exception {
         serverMapper.deleteByPrimaryKey(id);
+        deleteServerResultById(id);
         operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
     }
 
@@ -920,7 +947,9 @@ public class ServerService {
                 serverMapper.updateByPrimaryKeySelective(server);
             }
             if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-                deleteServerResultById(server.getId());
+
+                deleteRescanServerResultById(server.getId());
+
                 ServerRuleRequest serverRuleRequest = new ServerRuleRequest();
                 serverRuleRequest.setStatus(true);
                 serverRuleRequest.setType(server.getType());
