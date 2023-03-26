@@ -39,9 +39,9 @@ spring:
 #dubbo 配置
 dubbo:
   protocol:
-    name: system
+    name: dubbo
     port: 8001
-    host: ${HMR_NACOS_SERVER_ADDR}
+    #host: ${HMR_NACOS_SERVER_ADDR}
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
     address: nacos://${HMR_NACOS_SERVER_ADDR}:8848

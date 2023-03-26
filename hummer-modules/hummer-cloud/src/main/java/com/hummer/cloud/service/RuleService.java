@@ -34,9 +34,10 @@ import static com.alibaba.fastjson.JSON.parseArray;
 /**
  * @author harris
  */
+//@Service
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class RuleService {
+public class RuleService   {
 
     @Autowired
     @Lazy
