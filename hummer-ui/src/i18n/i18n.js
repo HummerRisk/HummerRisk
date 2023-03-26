@@ -45,11 +45,9 @@ Vue.prototype.$setLang = function (lang) {
   if (i18n.locale !== lang) {
     if (!loadedLanguages.includes(lang)) {
       let file = lang.replace("_", "-");
-      return import(`./${file}`).then(response => {
-        i18n.mergeLocaleMessage(lang, response.default);
-        loadedLanguages.push(lang);
-        return setI18nLanguage(lang)
-      })
+      i18n.mergeLocaleMessage(lang, require(`@/i18n/${file}.js`).default);
+      loadedLanguages.push(lang);
+      return setI18nLanguage(lang)
     }
     return Promise.resolve(setI18nLanguage(lang))
   }
