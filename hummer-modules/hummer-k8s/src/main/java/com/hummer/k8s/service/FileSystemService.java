@@ -12,7 +12,7 @@ import com.hummer.common.core.domain.request.fs.FsResultRequest;
 import com.hummer.common.core.domain.request.fs.FsRuleRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.k8s.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;

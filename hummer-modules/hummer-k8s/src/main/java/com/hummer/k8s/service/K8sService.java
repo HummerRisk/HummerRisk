@@ -14,7 +14,7 @@ import com.hummer.common.core.domain.request.k8s.rbac.Links;
 import com.hummer.common.core.domain.request.k8s.rbac.Nodes;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.k8s.i18n.Translator;
 import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.k8s.K8sSource;
 import com.hummer.common.core.proxy.kubesphere.KubeSphereRequest;

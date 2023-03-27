@@ -14,7 +14,7 @@ import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.domain.request.server.ServerRuleRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.k8s.i18n.Translator;
 import com.hummer.common.core.proxy.server.SshUtil;
 import com.hummer.common.core.proxy.server.WinRMHelper;
 import com.hummer.common.core.utils.*;
