@@ -326,7 +326,14 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {accountListUrl, deleteAccountUrl, iamStrategyUrl, validateUrl} from "@/api/cloud/account/account";
+import {
+  accountListUrl,
+  addAccountUrl,
+  deleteAccountUrl,
+  iamStrategyUrl,
+  updateAccountUrl,
+  validateUrl
+} from "@/api/cloud/account/account";
 import {addProxyUrl, cloudPluginUrl, pluginByIdUrl, proxyListAllUrl, updateProxyUrl} from "@/api/system/system";
 import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 

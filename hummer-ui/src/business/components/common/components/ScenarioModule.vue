@@ -68,8 +68,7 @@ import {getCurrentAccountID} from "@/common/js/utils";
 import NodeTree from "@/business/components/common/components/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
-import {addAccountUrl} from "@/api/cloud/oss/oss";
-import {allListUrl} from "@/api/cloud/account/account";
+import {addAccountUrl, allListUrl} from "@/api/cloud/account/account";
 import {cloudPluginUrl} from "@/api/system/system";
 /* eslint-disable */
   export default {

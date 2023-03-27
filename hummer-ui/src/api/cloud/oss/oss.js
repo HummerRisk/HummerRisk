@@ -25,10 +25,6 @@ export const ossBatchSyncUrl = "/cloud/oss/batch/sync/";
 
 export const deleteOssUrl = "/cloud/oss/delete/";
 
-export const addAccountUrl = "/cloud/account/add";
-
-export const updateAccountUrl = "/cloud/account/update";
-
 export const ossBucketListUrl = "/cloud/oss/bucketList/";
 
 export const ossObjectsUrl = "/cloud/oss/objects/";
