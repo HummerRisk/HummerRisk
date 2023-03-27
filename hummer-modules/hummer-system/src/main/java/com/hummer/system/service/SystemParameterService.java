@@ -18,7 +18,7 @@ import com.hummer.common.core.domain.SystemParameterExample;
 import com.hummer.common.core.domain.Webhook;
 import com.hummer.common.core.domain.WebhookExample;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.system.i18n.Translator;
 import com.hummer.common.core.utils.CommandUtils;
 import com.hummer.common.core.utils.FileUploadUtils;
 import com.hummer.common.core.utils.LogUtil;

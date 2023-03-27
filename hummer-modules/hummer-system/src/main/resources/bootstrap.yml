@@ -46,6 +46,9 @@ dubbo:
   registry:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
     address: nacos://${HMR_NACOS_SERVER_ADDR}:8848
+  provider:
+    timeout: 60000
+    retries: 5
   scan:
     # 配置需要扫描的注解包
     base-packages: com.hummer.system
