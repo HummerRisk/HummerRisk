@@ -55,7 +55,7 @@ public class UserController {
 
     @ApiOperation(value = "删除用户")
     @GetMapping("/special/delete/{userId}")
-    public void deleteUser(@PathVariable(value = "userId") String userId) {
+    public void deleteUser(@PathVariable(value = "userId") String userId) throws Exception {
         userService.deleteUser(userId);
     }
 

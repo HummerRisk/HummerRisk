@@ -4,6 +4,7 @@ import com.hummer.common.core.constant.CacheConstants;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.constant.UserConstants;
+import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.exception.ServiceException;
 import com.hummer.common.core.text.Convert;
 import com.hummer.common.core.utils.StringUtils;
@@ -59,13 +60,11 @@ public class SysLoginService {
         // 查询用户信息
         LoginUser userInfo = userService.getLoginUserByName(username);
 
-        User user = userInfo.getUser();
-        if (StringUtils.equals(user.getStatus(), "0")) {
-            throw new ServiceException("对不起，您的账号：" + username + " 已被删除");
+        if (userInfo == null) {
+            throw new ServiceException("对不起，您的账号：" + username + " 不存在");
         }
-        if (StringUtils.equals(user.getStatus(), "0")) {
-            throw new ServiceException("对不起，您的账号：" + username + " 已停用");
-        }
+        UserDTO user = userInfo.getUser();
+
         passwordService.validate(user, password);
         userService.createOperationLog(user, Objects.requireNonNull(user).getId(), user.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.LOGIN, "用户登录", userInfo.getIpAddr());
         return userInfo;
@@ -74,7 +73,7 @@ public class SysLoginService {
     public void logout(String userId) throws Exception {
         // 查询用户信息
         LoginUser userInfo = userService.getLoginUserByName(userId);
-        User user = userInfo.getUser();
+        UserDTO user = userInfo.getUser();
         userService.createOperationLog(user, Objects.requireNonNull(user).getId(), user.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.LOGOUT, "用户登出", userInfo.getIpAddr());
 
     }

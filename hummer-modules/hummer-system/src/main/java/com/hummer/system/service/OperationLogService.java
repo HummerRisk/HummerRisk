@@ -3,6 +3,7 @@ package com.hummer.system.service;
 import com.hummer.common.core.domain.OperationLog;
 import com.hummer.common.core.domain.OperationLogExample;
 import com.hummer.common.core.domain.request.log.OperatorLogRequest;
+import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
@@ -31,7 +32,7 @@ public class OperationLogService implements IOperationLogService {
     private TokenService tokenService;
 
     @Override
-    public void log(User user, String resourceId, String resourceName, String resourceType, String operation, String message) {
+    public void log(UserDTO user, String resourceId, String resourceName, String resourceType, String operation, String message) {
         String ip = tokenService.getLoginUser().getIpAddr()!=null?tokenService.getLoginUser().getIpAddr():"";
         OperationLog operationLog = createOperationLog(user, resourceId, resourceName, resourceType, operation, message, ip);
         operationLogMapper.insertSelective(operationLog);
@@ -46,7 +47,7 @@ public class OperationLogService implements IOperationLogService {
     }
 
     @Override
-    public OperationLog createOperationLog(User user, String resourceId, String resourceName, String resourceType, String operation, String message, String ip) {
+    public OperationLog createOperationLog(UserDTO user, String resourceId, String resourceName, String resourceType, String operation, String message, String ip) {
         OperationLog operationLog = new OperationLog();
         operationLog.setId(UUIDUtil.newUUID());
         operationLog.setResourceId(resourceId);

@@ -1,6 +1,8 @@
 package com.hummer.auth.service;
 
+import com.amazonaws.services.ec2.model.UserData;
 import com.hummer.common.core.constant.CacheConstants;
+import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.exception.ServiceException;
 import com.hummer.common.redis.service.RedisService;
 import com.hummer.common.security.utils.SecurityUtils;
@@ -34,7 +36,7 @@ public class SysPasswordService {
         return CacheConstants.PWD_ERR_CNT_KEY + username;
     }
 
-    public void validate(User user, String password) {
+    public void validate(UserDTO user, String password) {
         String username = user.getId();
 
         Integer retryCount = redisService.getCacheObject(getCacheKey(username));
@@ -57,7 +59,7 @@ public class SysPasswordService {
         }
     }
 
-    public boolean matches(User user, String rawPassword) {
+    public boolean matches(UserDTO user, String rawPassword) {
         return SecurityUtils.matchesPassword(rawPassword, user.getPassword());
     }
 

@@ -2,7 +2,7 @@ package com.hummer.common.core.constant;
 
 /**
  * 权限相关通用常量
- * 
+ *
  * @author harris1943
  */
 public class SecurityConstants
@@ -36,6 +36,11 @@ public class SecurityConstants
      * 用户标识
      */
     public static final String USER_KEY = "user_key";
+
+    /**
+     * 用户IP
+     */
+    public static final String IP_ADDR = "ip_addr";
 
     /**
      * 登录用户

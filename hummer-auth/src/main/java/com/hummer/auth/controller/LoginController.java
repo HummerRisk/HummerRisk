@@ -3,6 +3,7 @@ package com.hummer.auth.controller;
 import com.hummer.auth.service.SysLoginService;
 import com.hummer.auth.service.UserService;
 import com.hummer.common.core.domain.request.LoginRequest;
+import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.text.ResultHolder;
 import com.hummer.common.core.utils.JwtUtils;
 import com.hummer.common.core.utils.StringUtils;
@@ -58,7 +59,7 @@ public class LoginController {
         if (StringUtils.isNotEmpty(token) && !StringUtils.equalsIgnoreCase("undefined", token)) {
             LoginUser loginUser = tokenService.getLoginUser();
             if (loginUser == null) return ResultHolder.error("");
-            User user = loginUser.getUser();
+            UserDTO user = loginUser.getUser();
             if ((user != null) && StringUtils.isBlank(user.getLanguage()))
                 user.setLanguage(LocaleContextHolder.getLocale().toString());
             return ResultHolder.success(user);

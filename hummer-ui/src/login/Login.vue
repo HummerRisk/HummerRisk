@@ -95,12 +95,13 @@ import {setToken} from '@/common/js/auth';
     },
     beforeCreate() {
       this.$get(isLoginUrl).then(response => {
-        console.log(response)
         if (response.data.success) {
           let user = response.data.data;
-          console.log(response.data)
           setToken(response.data.token);
-          saveLocalStorage(response.data);
+          let responseUser = {
+            data : response.data.data
+          };
+          saveLocalStorage(responseUser);
           this.getLanguage(user.language);
         } else {
           this.ready = true;
@@ -144,7 +145,10 @@ import {setToken} from '@/common/js/auth';
       },
       doLogin() {
         this.result = this.$post(this.loginUrl, this.form, response => {
-          saveLocalStorage(response);
+          let responseUser = {
+            data : response.data.user
+          };
+          saveLocalStorage(responseUser);
           sessionStorage.setItem('loginSuccess', 'true');
           setToken(response.data.token);
           this.getLanguage(response.data.language, response.data.token);

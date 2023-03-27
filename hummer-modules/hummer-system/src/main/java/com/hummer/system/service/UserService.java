@@ -8,6 +8,7 @@ import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.dto.UserRoleDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
+import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.CodingUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.common.security.utils.SecurityUtils;
@@ -17,7 +18,6 @@ import com.hummer.system.mapper.UserMapper;
 import com.hummer.system.mapper.UserRoleMapper;
 import com.hummer.system.mapper.ext.ExtUserMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -123,7 +123,7 @@ public class UserService {
 
     public void createUser(User userRequest) throws Exception {
         User user = new User();
-        BeanUtils.copyProperties(userRequest, user);
+        BeanUtils.copyBean(user, userRequest);
         user.setCreateTime(System.currentTimeMillis());
         user.setUpdateTime(System.currentTimeMillis());
         // 默认1:启用状态
@@ -156,7 +156,7 @@ public class UserService {
             throw new Exception();
         }
         UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user, userDTO);
+        BeanUtils.copyBean(user, userDTO);
         UserRoleDTO userRole = getUserRole(userId);
         userDTO.setUserRoles(Optional.ofNullable(userRole.getUserRoles()).orElse(new ArrayList()));
         userDTO.setRoles(Optional.ofNullable(userRole.getRoles()).orElse(new ArrayList()));
@@ -179,9 +179,17 @@ public class UserService {
         UserExample example = new UserExample();
         example.createCriteria().andNameEqualTo(userName);
         List<User> users = userMapper.selectByExample(example);
-        com.hummer.system.api.domain.User user = new com.hummer.system.api.domain.User();
-        BeanUtils.copyProperties(user, users.get(0));
-        loginUser.setUser(user);
+        User exuser = users.get(0);
+        if (users.size() == 0 || exuser == null) {
+            return new LoginUser();
+        }
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyBean(userDTO, exuser);
+        UserRoleDTO userRole = getUserRole(exuser.getId());
+        userDTO.setUserRoles(Optional.ofNullable(userRole.getUserRoles()).orElse(new ArrayList<>()));
+        userDTO.setRoles(Optional.ofNullable(userRole.getRoles()).orElse(new ArrayList<>()));
+
+        loginUser.setUser(userDTO);
         return loginUser;
     }
 
@@ -237,9 +245,9 @@ public class UserService {
         return extUserMapper.getUserList(request);
     }
 
-    public void deleteUser(String userId) {
+    public void deleteUser(String userId) throws Exception {
         User user = new User();
-        BeanUtils.copyProperties(user, tokenService.getLoginUser().getUser());
+        BeanUtils.copyBean(user, tokenService.getLoginUser().getUser());
         if (user == null) return;
         if (StringUtils.equals(user.getId(), userId)) {
             HRException.throwException(Translator.get("cannot_delete_current_user"));

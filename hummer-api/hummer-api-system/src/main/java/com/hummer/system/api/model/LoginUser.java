@@ -3,6 +3,7 @@ package com.hummer.system.api.model;
 import java.io.Serializable;
 import java.util.Set;
 
+import com.hummer.common.core.dto.UserDTO;
 import com.hummer.system.api.domain.User;
 
 /**
@@ -56,7 +57,7 @@ public class LoginUser implements Serializable {
     /**
      * 用户信息
      */
-    private User user;
+    private UserDTO user;
 
     public String getToken() {
         return token;
@@ -82,11 +83,11 @@ public class LoginUser implements Serializable {
         this.expireTime = expireTime;
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 

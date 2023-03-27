@@ -68,7 +68,10 @@ export default {
       this.$get(isLoginUrl).then(response => {
         if (response.data.success) {
           this.$setLang(response.data.data.language);
-          saveLocalStorage(response.data);
+          let responseUser = {
+            data : response.data.data
+          };
+          saveLocalStorage(responseUser);
           this.auth = true;
         } else {
           window.location.href = "/login";
