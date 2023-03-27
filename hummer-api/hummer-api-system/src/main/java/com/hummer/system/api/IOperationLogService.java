@@ -13,8 +13,6 @@ public interface IOperationLogService {
 
     List<OperationLog> selectOperationLog(OperatorLogRequest log);
 
-    void log(String resourceId, String resourceName, String resourceType, String operation, String message);
-
     void log(User user, String resourceId, String resourceName, String resourceType, String operation, String message);
 
     void log(OperationLog operationLog);

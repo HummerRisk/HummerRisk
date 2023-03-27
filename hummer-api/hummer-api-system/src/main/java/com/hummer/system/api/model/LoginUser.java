@@ -41,7 +41,7 @@ public class LoginUser implements Serializable {
     /**
      * 登录IP地址
      */
-    private String ipAddr;
+    private String ipAddr = "";
 
     /**
      * 权限列表

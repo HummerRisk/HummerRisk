@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @DubboService
-@Service
 @Transactional(rollbackFor = Exception.class)
 public class OperationLogService implements IOperationLogService {
 
@@ -32,16 +31,8 @@ public class OperationLogService implements IOperationLogService {
     private TokenService tokenService;
 
     @Override
-    public void log(String resourceId, String resourceName, String resourceType, String operation, String message) {
-        User user = tokenService.getLoginUser().getUser();
-        String ip = tokenService.getLoginUser().getIpAddr();
-        OperationLog operationLog = createOperationLog(user, resourceId, resourceName, resourceType, operation, message, ip);
-        operationLogMapper.insertSelective(operationLog);
-    }
-
-    @Override
     public void log(User user, String resourceId, String resourceName, String resourceType, String operation, String message) {
-        String ip = tokenService.getLoginUser().getIpAddr();
+        String ip = tokenService.getLoginUser().getIpAddr()!=null?tokenService.getLoginUser().getIpAddr():"";
         OperationLog operationLog = createOperationLog(user, resourceId, resourceName, resourceType, operation, message, ip);
         operationLogMapper.insertSelective(operationLog);
     }
