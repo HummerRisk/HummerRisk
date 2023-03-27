@@ -32,11 +32,11 @@
             </div>
             <div class="bg-purple-div">
               <span>
-                 开始时间:{{scope.row.startTime | timestampFormatDate}}
+                  {{ $t('el.datepicker.startTime') }}:{{scope.row.startTime | timestampFormatDate}}
               </span>
               <br>
               <span>
-                 结束时间:{{scope.row.endTime | timestampFormatDate}} {{scope.row.exception}}
+                  {{ $t('el.datepicker.endTime') }}:{{scope.row.endTime | timestampFormatDate}} {{scope.row.exception}}
               </span>
             </div>
           </template>
