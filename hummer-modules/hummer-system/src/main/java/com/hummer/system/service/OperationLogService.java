@@ -33,7 +33,13 @@ public class OperationLogService implements IOperationLogService {
 
     @Override
     public void log(UserDTO user, String resourceId, String resourceName, String resourceType, String operation, String message) {
-        String ip = tokenService.getLoginUser().getIpAddr()!=null?tokenService.getLoginUser().getIpAddr():"";
+        String ip;
+        try {
+            ip = tokenService.getLoginUser()!=null?tokenService.getLoginUser().getIpAddr():"";
+        } catch (Exception e) {
+            //redis里获取
+            ip = "";
+        }
         OperationLog operationLog = createOperationLog(user, resourceId, resourceName, resourceType, operation, message, ip);
         operationLogMapper.insertSelective(operationLog);
     }
