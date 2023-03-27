@@ -1,4 +1,4 @@
-package com.hummer.common.core.i18n;
+package com.hummer.cloud.i18n;
 
 import org.apache.commons.lang3.StringUtils;
 

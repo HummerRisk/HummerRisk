@@ -33,7 +33,7 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "云账号列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<AccountDTO>> getCloudAccountList(
@@ -42,7 +42,7 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.getCloudAccountList(request));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "所有云账号")
     @GetMapping("allList")
     public List<AccountDTO> getCloudAccountList() {
@@ -51,14 +51,14 @@ public class AccountController {
         return accountService.getCloudAccountList(request);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "规则组获取云账号")
     @GetMapping("listByGroup/{pluginId}")
     public List<Account> listByGroup(@PathVariable String pluginId) {
         return accountService.listByGroup(pluginId);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "云账号详情")
     @GetMapping("getAccount/{id}")
     public AccountWithBLOBs getAccount(@PathVariable String id) {
@@ -88,14 +88,14 @@ public class AccountController {
         return accountService.validate(id);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "添加云账号")
     @PostMapping("add")
     public AccountWithBLOBs addAccount(@RequestBody CreateCloudAccountRequest request) throws Exception {
         return accountService.addAccount(request);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "更新云账号")
     @PostMapping("update")
     public AccountWithBLOBs editAccount(@RequestBody UpdateCloudAccountRequest request) throws Exception {
@@ -108,14 +108,14 @@ public class AccountController {
         accountService.delete(accountId);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "获取云账号区域")
     @GetMapping("getRegions/{id}")
     public Object getRegions(@PathVariable String id) {
         return accountService.getRegions(id);
     }
 
-    @I18n
+    //@I18n
     @ApiIgnore
     @PostMapping("string2PrettyFormat")
     public String string2PrettyFormat(@RequestBody AccountWithBLOBs accountWithBLOBs) {
@@ -134,7 +134,7 @@ public class AccountController {
         return accountService.saveParameter(list);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "规则列表")
     @PostMapping(value = "rule/list/{goPage}/{pageSize}")
     public Pager<List<RuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody QuartzTaskDTO dto) {
@@ -142,7 +142,7 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.getRules(dto));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "规则组列表")
     @PostMapping("group/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> groupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -150,7 +150,7 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.groupList(params));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "等保条例列表")
     @PostMapping("report/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> reportList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -158,7 +158,7 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.reportList(params));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "规则标签列表")
     @PostMapping("tag/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> tagList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -166,7 +166,7 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.tagList(params));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "区域列表")
     @PostMapping("regions/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> regionsList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -174,7 +174,7 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.regionsList(params));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "资源列表")
     @PostMapping("resource/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -182,14 +182,14 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.resourceList(params));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "IAM策略信息")
     @GetMapping("iam/strategy/{type}")
     public String strategy(@PathVariable String type) throws Exception {
         return accountService.strategy(type);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "历史数据")
     @PostMapping("historyList/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> historyList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -197,7 +197,7 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.historyList(params));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "对比历史数据")
     @PostMapping("historyDiffList/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> historyDiffList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {

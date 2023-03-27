@@ -25,27 +25,27 @@ public class CloudSyncController {
     @Autowired
     private CloudSyncService cloudSyncService;
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "云账号同步")
     @GetMapping(value = "sync/{accountId}")
     public void sync(@PathVariable String accountId) throws Exception {
         cloudSyncService.sync(accountId);
     }
 
-    @I18n
+    //@I18n
     @GetMapping(value = "resourceType/list/{syncId}")
     public List<Map<String,Object>> listResourceType(@PathVariable String syncId) {
         return cloudSyncService.getResourceType(syncId);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "删除同步任务")
     @GetMapping(value = "delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
         cloudSyncService.deleteSync(id);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "云账号同步日志列表")
     @PostMapping(value = "log/list/{goPage}/{pageSize}")
     public Pager<List<CloudResourceSync>> listResourceSync(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudResourceSyncRequest cloudResourceSyncRequest) {
@@ -53,14 +53,14 @@ public class CloudSyncController {
         return PageUtils.setPageInfo(page, cloudSyncService.getCloudResourceSyncLogs(cloudResourceSyncRequest));
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "云账号同步日志详情")
     @GetMapping(value = "log/item/list/{syncId}")
     public List<CloudResourceSyncItemDTO> listResourceSyncItem(@PathVariable String syncId) {
         return cloudSyncService.getCloudResourceSyncItem(syncId);
     }
 
-    @I18n
+    //@I18n
     @ApiOperation(value = "资源态势拓扑图")
     @GetMapping(value = "cloudTopology")
     public CloudTopology cloudTopology() {

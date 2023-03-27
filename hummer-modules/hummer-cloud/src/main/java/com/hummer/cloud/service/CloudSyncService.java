@@ -15,7 +15,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
 import com.hummer.common.core.domain.request.sync.CloudTopology;
 import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;

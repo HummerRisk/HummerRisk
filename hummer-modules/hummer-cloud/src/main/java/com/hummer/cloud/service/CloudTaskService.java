@@ -10,7 +10,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.CommandUtils;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.PlatformUtils;

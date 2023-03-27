@@ -20,7 +20,7 @@ import com.hummer.common.core.dto.RuleDTO;
 import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.exception.PluginException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;

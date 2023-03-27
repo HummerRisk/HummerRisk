@@ -8,7 +8,7 @@ import com.hummer.common.core.constant.CommandEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.dto.ResourceDTO;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.ISystemProviderService;
 import com.xxl.job.core.handler.annotation.XxlJob;

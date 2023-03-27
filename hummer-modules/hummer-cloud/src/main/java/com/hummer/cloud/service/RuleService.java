@@ -9,7 +9,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.rule.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.PlatformUtils;

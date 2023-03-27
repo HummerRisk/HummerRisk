@@ -1,6 +1,6 @@
 package com.hummer.cloud.oss.provider;
 
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.SigarUtil;
 import org.hyperic.sigar.*;

@@ -15,7 +15,7 @@ import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;

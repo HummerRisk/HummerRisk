@@ -1,4 +1,4 @@
-package com.hummer.common.core.i18n;
+package com.hummer.cloud.i18n;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.JavaBeanSerializer;

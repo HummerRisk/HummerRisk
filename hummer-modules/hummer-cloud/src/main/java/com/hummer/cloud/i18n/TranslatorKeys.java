@@ -1,4 +1,4 @@
-package com.hummer.common.core.i18n;
+package com.hummer.cloud.i18n;
 
 import java.util.Arrays;
 import java.util.HashSet;
