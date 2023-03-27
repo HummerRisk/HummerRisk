@@ -50,7 +50,7 @@ dubbo:
     # 配置需要扫描的注解包
     base-packages: com.hummer.system
   application:
-    name: ${spring.application.name}
+    name: ${spring.application.name}-dubbo
     qos-port: 22223
   consumer:
     check: false
