@@ -1,7 +1,6 @@
 package com.hummer.common.core.utils;
 
 import com.hummer.common.core.dto.IpDTO;
-import com.hummer.common.core.i18n.Translator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.SubnetUtils;
@@ -127,7 +126,7 @@ public class IpUtil {
 
     public static BigInteger countIpv6(String startIp, String endIp) throws Exception{
         if(ipv6ToNumber(startIp).compareTo(ipv6ToNumber(endIp)) > (-1)){
-            throw new Exception(Translator.get("i18n_start_end_ip_part"));
+            throw new Exception("i18n_start_end_ip_part");
         }
         return ipv6ToNumber(endIp).subtract(ipv6ToNumber(startIp)).add(BigInteger.valueOf(1));
     }

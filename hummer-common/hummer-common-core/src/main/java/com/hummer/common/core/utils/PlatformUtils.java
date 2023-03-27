@@ -39,7 +39,6 @@ import com.hummer.common.core.domain.CloudNative;
 import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.exception.PluginException;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.Request;
 import com.hummer.common.core.proxy.aliyun.AliyunCredential;
 import com.hummer.common.core.proxy.aliyun.AliyunRequest;
@@ -553,7 +552,6 @@ public class PlatformUtils {
         try {
             JSONArray jsonArray = new JSONArray();
             if (!flag) {
-                LogUtil.error(Translator.get("i18n_ex_plugin_validate"));
                 return new JSONArray();
             }
             switch (account.getPluginId()) {

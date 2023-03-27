@@ -1,4 +1,4 @@
-package com.hummer.common.core.text;
+package com.hummer.common.core.handler;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
