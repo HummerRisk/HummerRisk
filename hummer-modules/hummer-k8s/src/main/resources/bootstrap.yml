@@ -56,8 +56,8 @@ xxl:
       addresses: http://${HMR_XXL_JOB_ADDR}:8084/xxl-job-admin/
     accessToken: default_token
     executor:
-      address: ${HMR_XXL_K8S_ADDR}:9501
-      ip: ${HMR_XXL_K8S_ADDR}
+      address:
+      ip:
       port: 9501
       appName: hummer-k8s
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-k8s
