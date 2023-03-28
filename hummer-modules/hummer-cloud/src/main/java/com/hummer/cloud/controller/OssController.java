@@ -15,6 +15,7 @@ import com.hummer.common.core.dto.ResourceDTO;
 import com.hummer.common.core.dto.RuleGroupDTO;
 import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.handler.ResultHolder;
+import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import io.swagger.annotations.Api;
