@@ -905,7 +905,7 @@ public class ServerService {
         List<String> ids = new ArrayList<>();
         RuleGroupMappingExample example = new RuleGroupMappingExample();
         example.createCriteria().andGroupIdEqualTo(id);
-        List<RuleGroupMapping> list = cloudProviderService.ruleGroupMappings(example);
+        List<RuleGroupMapping> list = cloudProviderService.selectRuleGroupMappings(example);
         for (RuleGroupMapping groupMapping : list) {
             ids.add(groupMapping.getRuleId());
         }

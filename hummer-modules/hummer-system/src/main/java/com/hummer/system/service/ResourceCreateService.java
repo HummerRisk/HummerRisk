@@ -37,8 +37,6 @@ public class ResourceCreateService {
     @Autowired
     private TaskItemResourceMapper taskItemResourceMapper;
     @Autowired
-    private TaskService taskService;
-    @Autowired
     private HistoryService historyService;
     @Autowired
     private HistoryScanMapper historyScanMapper;
@@ -227,94 +225,6 @@ public class ResourceCreateService {
             historyIdMap.remove(historyScanToBeProceed.getId());
         }
 
-    }
-
-    //任务编排
-    @XxlJob("taskArrangementJobHandler")
-    public void taskArrangementJobHandler() throws Exception {
-        //任务编排
-        final TaskExample taskExample = new TaskExample();
-        TaskExample.Criteria taskCriteria = taskExample.createCriteria();
-        taskCriteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
-        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            taskCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
-        }
-        taskExample.setOrderByClause("create_time limit 10");
-        List<Task> tasks = taskMapper.selectByExample(taskExample);
-        List<String> status = Arrays.asList(TaskConstants.TASK_STATUS.ERROR.name(), TaskConstants.TASK_STATUS.FINISHED.name(), TaskConstants.TASK_STATUS.WARNING.name());
-        for (Task task : tasks) {
-            final Task taskToBeProceed;
-            try {
-                taskToBeProceed = BeanUtils.copyBean(new Task(), task);
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage());
-            }
-            if (processingGroupIdMap.get(taskToBeProceed.getId()) != null) {
-                return;
-            }
-            processingGroupIdMap.put(taskToBeProceed.getId(), taskToBeProceed.getId());
-            TaskItemExample taskItemExample = new TaskItemExample();
-            TaskItemExample.Criteria taskItemCriteria = taskItemExample.createCriteria();
-            taskItemCriteria.andTaskIdEqualTo(task.getId());
-            List<TaskItem> taskItems = taskItemMapper.selectByExample(taskItemExample);
-            for (TaskItem taskItem : taskItems) {
-                TaskItemResourceExample taskItemResourceExample = new TaskItemResourceExample();
-                TaskItemResourceExample.Criteria resourceCriteria = taskItemResourceExample.createCriteria();
-                resourceCriteria.andTaskItemIdEqualTo(taskItem.getId());
-                long sum = taskItemResourceMapper.countByExample(taskItemResourceExample);
-                long i = 0;//总数量
-                List<TaskItemResource> taskItemResources = taskItemResourceMapper.selectByExample(taskItemResourceExample);
-                for (TaskItemResource taskItemResource : taskItemResources) {
-                    long n = 0;//已经检测完的数量
-                    if (StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.cloudAccount.getType())) {
-                        HistoryCloudTaskExample example = new HistoryCloudTaskExample();
-                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andStatusIn(status);
-                        n = historyCloudTaskMapper.countByExample(example);
-                        i = i + n;
-                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.serverAccount.getType())) {
-                        HistoryServerResultExample example = new HistoryServerResultExample();
-                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyServerResultMapper.countByExample(example);
-                        i = i + n;
-                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.imageAccount.getType())) {
-                        HistoryImageResultExample example = new HistoryImageResultExample();
-                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyImageResultMapper.countByExample(example);
-                        i = i + n;
-                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.codeAccount.getType())) {
-                        HistoryCodeResultExample example = new HistoryCodeResultExample();
-                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyCodeResultMapper.countByExample(example);
-                        i = i + n;
-                    } else if(StringUtils.equalsIgnoreCase(taskItemResource.getAccountType(), TaskEnum.fsAccount.getType())) {
-                        HistoryFileSystemResultExample example = new HistoryFileSystemResultExample();
-                        example.createCriteria().andIdEqualTo(taskItemResource.getResourceId()).andResultStatusIn(status);
-                        n = historyFileSystemResultMapper.countByExample(example);
-                        i = i + n;
-                    }
-                    if (n > 0) {//任务结束时插入结束日志，但是只保留一条
-                        TaskItemResourceLogExample taskItemResourceLogExample = new TaskItemResourceLogExample();
-                        taskItemResourceLogExample.createCriteria().andTaskItemIdEqualTo(taskItemResource.getTaskItemId()).andTaskItemResourceIdEqualTo(String.valueOf(taskItemResource.getId()))
-                                .andResourceIdEqualTo(taskItemResource.getResourceId()).andOperationEqualTo("i18n_end_task").andResultEqualTo(true);
-                        long c = taskItemResourceLogMapper.countByExample(taskItemResourceLogExample);
-                        if (c == 0) {
-                            taskService.saveTaskItemResourceLog(taskItemResource.getTaskItemId(), String.valueOf(taskItemResource.getId()), taskItemResource.getResourceId(), "i18n_end_task", "", true);
-                        }
-                    }
-                }
-                if (sum == i) {//若总数与检测数相等，代表子项任务完成
-                    taskItem.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
-                    taskItemMapper.updateByPrimaryKeySelective(taskItem);
-                }
-            }
-            taskItemCriteria.andStatusIn(status);
-            long count = taskItemMapper.countByExample(taskItemExample);
-            if(taskItems.size() == count) {//若完成状态总数与检测子项数相等，代表总任务完成
-                task.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
-                taskMapper.updateByPrimaryKeySelective(task);
-            }
-            processingGroupIdMap.remove(taskToBeProceed.getId());
-        }
     }
 
 

@@ -24,7 +24,7 @@ public interface ICloudProviderService {
 
     List<RuleTagMapping> ruleTagMappings(RuleTagMappingExample example);
 
-    List<RuleGroupMapping> ruleGroupMappings(RuleGroupMappingExample example);
+    List<RuleGroupMapping> selectRuleGroupMappings(RuleGroupMappingExample example);
 
     List<CloudTask> selectManualTasks(ManualRequest request) throws Exception;
 

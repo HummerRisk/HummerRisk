@@ -112,7 +112,7 @@ public class CloudProviderService implements ICloudProviderService {
     }
 
     @Override
-    public List<RuleGroupMapping> ruleGroupMappings(RuleGroupMappingExample example) {
+    public List<RuleGroupMapping> selectRuleGroupMappings(RuleGroupMappingExample example) {
         return ruleGroupMappingMapper.selectByExample(example);
     }
 

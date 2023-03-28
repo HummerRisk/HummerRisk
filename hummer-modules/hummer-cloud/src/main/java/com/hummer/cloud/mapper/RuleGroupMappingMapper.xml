@@ -144,9 +144,9 @@
       This element was generated on Tue Jan 19 17:40:09 CST 2022.
     -->
     insert into rule_group_mapping (id, rule_id, group_id
-      )
+    )
     values (#{id,jdbcType=INTEGER}, #{ruleId,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}
-      )
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.hummer.common.core.domain.RuleGroupMapping">
     <!--
@@ -219,8 +219,8 @@
     -->
     update rule_group_mapping
     set id = #{record.id,jdbcType=INTEGER},
-      rule_id = #{record.ruleId,jdbcType=VARCHAR},
-      group_id = #{record.groupId,jdbcType=VARCHAR}
+    rule_id = #{record.ruleId,jdbcType=VARCHAR},
+    group_id = #{record.groupId,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -250,7 +250,7 @@
     -->
     update rule_group_mapping
     set rule_id = #{ruleId,jdbcType=VARCHAR},
-      group_id = #{groupId,jdbcType=VARCHAR}
+    group_id = #{groupId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -307,7 +307,7 @@ import {
 } from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
-import {allServerListUrl, serverAllBindListUrl, serverBindRuleUrl} from "@/api/k8s/server/server";
+import {allServerListUrl, serverAllBindListUrl, serverBindRuleUrl, serverUnBindListUrl} from "@/api/k8s/server/server";
 import {ruleGroupDeleteUrl, ruleGroupListUrl, ruleGroupSaveUrl, ruleGroupUpdateUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏

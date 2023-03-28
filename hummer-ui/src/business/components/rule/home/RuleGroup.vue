@@ -333,7 +333,14 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {ruleGroupListUrl, ruleListUrl, scanByGroupUrl} from "@/api/cloud/rule/rule";
+import {
+  bindRuleUrl,
+  ruleAllBindListUrl,
+  ruleGroupListUrl,
+  ruleListUrl,
+  ruleUnBindListUrl,
+  scanByGroupUrl
+} from "@/api/cloud/rule/rule";
 import {cloudListByGroupUrl} from "@/api/cloud/account/account";
 import {cloudPluginUrl} from "@/api/system/system";
 
