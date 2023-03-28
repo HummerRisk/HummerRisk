@@ -23,7 +23,7 @@ export const imageRepoListUrl = "/k8s/image/imageRepoList/";
 
 export const deleteImageRepoUrl = "/k8s/image/deleteImageRepo/";
 
-export const addImageRepoUrl = "/k8s/image/addImageRepo/";
+export const addImageRepoUrl = "/k8s/image/addImageRepo";
 
 export const editImageRepoUrl = "/k8s/image/editImageRepo/";
 

@@ -348,9 +348,13 @@ import {
   addImageRepoUrl,
   deleteImageRepoUrl,
   editImageRepoUrl,
-  imageRepoListUrl, imageRepoSettingUrl, repoItemListUrl, repoSyncListUrl,
+  imageRepoListUrl,
+  imageRepoSettingUrl,
+  repoItemListUrl,
+  repoSyncListUrl,
   scanImageRepoUrl,
-  scanImagesRepoUrl, syncImageUrl
+  scanImagesRepoUrl,
+  syncImageUrl
 } from "@/api/k8s/image/image";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 import {proxyListAllUrl} from "@/api/system/system";
@@ -436,12 +440,6 @@ export default {
   },
   data() {
     return {
-      queryPath: imageRepoListUrl,
-      deletePath: deleteImageRepoUrl,
-      createPath: addImageRepoUrl,
-      updatePath: editImageRepoUrl,
-      scanPath: scanImageRepoUrl,
-      scanAllPath: scanImagesRepoUrl,
       result: {},
       createVisible: false,
       updateVisible: false,
@@ -644,7 +642,7 @@ export default {
       this.form = row;
     },
     search() {
-      this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
+      this.result = this.$post(this.buildPagePath(imageRepoListUrl), this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
@@ -663,7 +661,7 @@ export default {
     editRepo(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post(this.updatePath, this.form, () => {
+          this.result = this.$post(editImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
             this.updateVisible = false;
@@ -676,7 +674,8 @@ export default {
     saveRepo(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post(this.createPath, this.form, () => {
+          console.log(this.form)
+          this.result = this.$post(addImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
             this.createVisible = false;
@@ -691,7 +690,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get(this.deletePath + obj.id, response => {
+            this.result = this.$get(deleteImageRepoUrl + obj.id, response => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -784,7 +783,7 @@ export default {
     saveAdd() {
       this.$refs['addForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post(this.scanPath, this.addForm, response => {
+          this.result = this.$post(scanImageRepoUrl, this.addForm, response => {
             if (response.success) {
               this.$success(this.$t('schedule.event_start'));
               this.innerAdd = false;
@@ -813,7 +812,7 @@ export default {
           if (action === 'confirm') {
             this.result = this.$request({
               method: 'POST',
-              url: this.scanAllPath,
+              url: scanImagesRepoUrl,
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined

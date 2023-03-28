@@ -81,7 +81,20 @@
         </if>
     </sql>
 
-    <select id="imageRepoList" resultType="com.hummer.common.core.domain.ImageRepo">
+    <resultMap id="imageRepoListBaseResultMap" type="com.hummer.common.core.domain.ImageRepo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="repo" jdbcType="VARCHAR" property="repo" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="password" jdbcType="LONGVARCHAR" property="password" />
+    </resultMap>
+
+    <select id="imageRepoList" resultMap="imageRepoListBaseResultMap">
         select
         t.*
         from image_repo as t
