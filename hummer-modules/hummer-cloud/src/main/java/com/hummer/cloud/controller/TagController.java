@@ -19,7 +19,7 @@ public class TagController {
     @Autowired
     private RuleService ruleService;
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "规则标签列表")
     @GetMapping(value = "rule/list")
     public List<RuleTagDTO> listRuleTags() throws Exception {

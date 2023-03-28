@@ -89,35 +89,35 @@ public class CloudEventController {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getSourceIpInsight(cloudEventRequest));
     }
-    //@I18n
+    @I18n
     @ApiOperation(value = "操作审计概览TOP统计")
     @PostMapping("topInfo")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return cloudEventService.topInfo(params);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "云账号统计")
     @GetMapping("cloudChart")
     public List<Map<String, Object>> cloudChart() {
         return cloudEventService.cloudChart();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "区域统计")
     @GetMapping("regionChart")
     public List<Map<String, Object>> regionChart() {
         return cloudEventService.regionChart();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "风险统计")
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return cloudEventService.severityChart();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "IP 访问统计")
     @GetMapping("ipAccessChart/{ip}/{startDate}/{endDate}")
     public ChartDTO ipAccessChart(@PathVariable String ip,@PathVariable String startDate,@PathVariable String endDate){

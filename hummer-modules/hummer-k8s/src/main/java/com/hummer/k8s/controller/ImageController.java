@@ -27,7 +27,7 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像仓库列表")
     @PostMapping("imageRepoList/{goPage}/{pageSize}")
     public Pager<List<ImageRepo>> imageRepoList(
@@ -36,14 +36,14 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.imageRepoList(request));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "添加镜像仓库")
     @PostMapping("addImageRepo")
     public ImageRepo addImageRepo(@RequestBody ImageRepo imageRepo) throws Exception {
         return imageService.addImageRepo(imageRepo);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "编辑镜像仓库")
     @PostMapping("editImageRepo")
     public ImageRepo editImageRepo(@RequestBody ImageRepo imageRepo) throws Exception {
@@ -56,14 +56,14 @@ public class ImageController {
         imageService.deleteImageRepo(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "查询所有镜像仓库")
     @GetMapping("allImageRepos")
     public List<ImageRepo> allImageRepos() {
         return imageService.allImageRepos();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像仓库中的镜像列表")
     @PostMapping("repoItemList/{goPage}/{pageSize}")
     public Pager<List<ImageRepoItemDTO>> repoItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRepoItemRequest request) {
@@ -71,14 +71,14 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.repoItemList(request));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像仓库中的镜像列表")
     @PostMapping("repoItemList")
     public List<ImageRepoItemDTO> repoItemList(@RequestBody ImageRepoItemRequest request) {
         return imageService.repoItemList(request);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像列表")
     @PostMapping("imageList/{goPage}/{pageSize}")
     public Pager<List<ImageDTO>> imageList(
@@ -87,21 +87,21 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.imageList(request));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "所有已绑定项目的镜像")
     @GetMapping("allBindList/{sbomVersionId}")
     public List<Image> allBindList(@PathVariable String sbomVersionId) {
         return imageService.allBindList(sbomVersionId);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "所有未绑定项目的镜像")
     @GetMapping("unBindList")
     public List<Image> unBindList() {
         return imageService.unBindList();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "添加镜像")
     @PostMapping(value = "addImage", consumes = {"multipart/form-data"})
     public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
@@ -110,7 +110,7 @@ public class ImageController {
         return imageService.addImage(iconFile, tarFile, request);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "修改镜像")
     @PostMapping(value = "updateImage", consumes = {"multipart/form-data"})
     public Image updateImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
@@ -125,7 +125,7 @@ public class ImageController {
         imageService.deleteImage(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像检测规则列表")
     @PostMapping(value = "ruleList/{goPage}/{pageSize}")
     public Pager<List<ImageRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRuleRequest request) {
@@ -169,7 +169,7 @@ public class ImageController {
         imageService.reScan(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像检测结果列表")
     @PostMapping(value = "resultListWithBLOBs/{goPage}/{pageSize}")
     public Pager<List<ImageResultWithBLOBsDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
@@ -177,7 +177,7 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.resultListWithBLOBs(request));
     }
 
-    //@I18n
+    @I18n
     @ApiIgnore
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<ImageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
@@ -186,28 +186,28 @@ public class ImageController {
     }
 
 
-    //@I18n
+    @I18n
     @ApiIgnore
     @GetMapping(value = "getImageResultDto/{resultId}")
     public HistoryImageReportDTO getImageResultDto(@PathVariable String resultId) {
         return imageService.getImageResultDto(resultId);
     }
 
-    //@I18n
+    @I18n
     @ApiIgnore
     @GetMapping(value = "getImageResult/{resultId}")
     public ImageResultDTO getImageResult(@PathVariable String resultId) {
         return imageService.getImageResult(resultId);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像检测结果详情")
     @GetMapping(value = "getImageResultWithBLOBs/{resultId}")
     public ImageResultWithBLOBs getImageResultWithBLOBs(@PathVariable String resultId) {
         return imageService.getImageResultWithBLOBs(resultId);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<ImageResultLogWithBLOBs> getImageResultLog(@PathVariable String resultId) {
@@ -220,7 +220,7 @@ public class ImageController {
         imageService.deleteImageResult(id);
     }
 
-    //@I18n
+    @I18n
     @ApiIgnore
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<ImageResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
@@ -228,7 +228,7 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.resultItemList(request));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "检测结果详情")
     @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
     public Pager<List<ImageResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItemRequest request) {
@@ -236,21 +236,21 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.resultItemListBySearch(request));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像仓库同步日志列表")
     @GetMapping("repoSyncList/{id}")
     public List<ImageRepoSyncLogWithBLOBs> repoSyncList(@PathVariable String id) {
         return imageService.repoSyncList(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "同步镜像")
     @GetMapping("syncImage/{id}")
     public void syncImage(@PathVariable String id) throws Exception {
         imageService.syncImage(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "执行镜像仓库中的镜像")
     @PostMapping("scanImageRepo")
     public void scanImageRepo(@RequestBody ScanImageRepoRequest request) throws Exception {
@@ -269,35 +269,35 @@ public class ImageController {
         return imageService.download(map);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "概览TOP统计")
     @PostMapping("topInfo")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return imageService.topInfo(params);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像仓库统计")
     @GetMapping("imageRepoChart")
     public List<Map<String, Object>> imageRepoChart() {
         return imageService.imageRepoChart();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "风险统计")
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return imageService.severityChart();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "所有镜像")
     @GetMapping("allList")
     public List<Image> allList() {
         return imageService.allList();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
     public Pager<List<HistoryImageResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -305,7 +305,7 @@ public class ImageController {
         return PageUtils.setPageInfo(page, imageService.history(params));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "检测结果历史详情")
     @PostMapping("historyResultItemList")
     public List<ImageResultItemWithBLOBs> historyResultItemList(@RequestBody ImageResultItem request) {
@@ -318,14 +318,14 @@ public class ImageController {
         imageService.deleteHistoryImageResult(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像仓库列表")
     @PostMapping("repo/setting")
     public void imageRepoSetting(@RequestBody ImageRepoSetting imageRepoSetting) throws Exception {
         imageService.imageRepoSetting(imageRepoSetting);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "镜像仓库列表")
     @GetMapping("repo/setting/{repoId}")
     public ImageRepoSetting getImageRepoSetting(@PathVariable String repoId) throws Exception {

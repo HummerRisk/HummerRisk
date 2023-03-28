@@ -30,31 +30,31 @@ public class CloudTaskController {
     @Autowired
     private OrderService orderService;
 
-    //@I18n
+    @I18n
     @GetMapping(value = "detail/{taskId}")
     public CloudTaskDTO getTaskDetail(@PathVariable String taskId) {
         return orderService.getTaskDetail(taskId);
     }
 
-    //@I18n
+    @I18n
     @GetMapping(value = "copy/{taskId}")
     public CloudTaskCopyDTO copy(@PathVariable String taskId) {
         return orderService.copy(taskId);
     }
 
-    //@I18n
+    @I18n
     @GetMapping(value = "log/taskId/{taskId}")
     public List<CloudTaskItemLogDTO> getTaskItemLogByTask(@PathVariable String taskId) {
         return orderService.getTaskItemLogByTaskId(taskId);
     }
 
-    //@I18n
+    @I18n
     @GetMapping(value = "quartz/log/taskId/{taskId}")
     public List<CloudTaskItemLogDTO> getQuartzLogByTask(@PathVariable String taskId) {
         return orderService.getQuartzLogByTask(taskId);
     }
 
-    //@I18n
+    @I18n
     @PostMapping("quartz/log/{taskItemId}/{goPage}/{pageSize}")
     public Pager<List<CloudTaskItemLogWithBLOBs>> getquartzLogDetails(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String taskItemId) {
         CloudTaskItemWithBLOBs taskItem = orderService.taskItemWithBLOBs(taskItemId);
@@ -72,7 +72,7 @@ public class CloudTaskController {
         orderService.retry(taskId);
     }
 
-    //@I18n
+    @I18n
     @PostMapping("manual/list/{goPage}/{pageSize}")
     public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -85,7 +85,7 @@ public class CloudTaskController {
         return cloudTaskService.morelTask(taskId);
     }
 
-    //@I18n
+    @I18n
     @PostMapping("manual/create")
     public CloudTask saveManualTask(@RequestBody QuartzTaskDTO quartzTaskDTO) {
         quartzTaskDTO.setType("manual");

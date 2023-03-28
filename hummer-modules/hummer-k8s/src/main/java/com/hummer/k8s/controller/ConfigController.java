@@ -36,7 +36,7 @@ public class ConfigController {
     @Autowired
     private ConfigService configService;
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "云原生部署配置列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigDTO>> getCloudNativeConfigList(
@@ -57,14 +57,14 @@ public class ConfigController {
         return configService.validate(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "添加云原生部署配置")
     @PostMapping("add")
     public CloudNativeConfig addCloudNative(@RequestBody CloudNativeConfig request) {
         return configService.addCloudNativeConfig(request);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "更新云原生部署配置")
     @PostMapping("update")
     public CloudNativeConfig editCloudNativeConfig(@RequestBody CloudNativeConfig request) throws Exception {
@@ -83,7 +83,7 @@ public class ConfigController {
         return configService.uploadYaml(file);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "云原生部署配置检测")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
@@ -96,7 +96,7 @@ public class ConfigController {
         configService.reScan(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "云原生部署配置检测结果列表")
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
@@ -104,7 +104,7 @@ public class ConfigController {
         return PageUtils.setPageInfo(page, configService.resultList(request));
     }
 
-    //@I18n
+    @I18n
     @ApiIgnore
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
@@ -112,7 +112,7 @@ public class ConfigController {
         return PageUtils.setPageInfo(page, configService.resultItemList(request));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "云原生部署配置检测结果详情列表")
     @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItem>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultItemRequest request) {
@@ -120,14 +120,14 @@ public class ConfigController {
         return PageUtils.setPageInfo(page, configService.resultItemListBySearch(request));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "云原生部署配置检测结果详情")
     @GetMapping(value = "getCloudNativeConfigResult/{resultId}")
     public CloudNativeConfigResultDTO getCloudNativeConfigResult(@PathVariable String resultId) {
         return configService.getCloudNativeConfigResult(resultId);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "云原生部署配置检测日志")
     @GetMapping(value = "log/{resultId}")
     public List<CloudNativeConfigResultLogWithBLOBs> getCloudNativeConfigResultLog(@PathVariable String resultId) {
@@ -140,7 +140,7 @@ public class ConfigController {
         configService.deleteCloudNativeConfigResult(id);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "风险数据信息")
     @GetMapping("metricChart/{resultId}")
     public MetricChartDTO metricChart(@PathVariable String resultId) {
@@ -153,35 +153,35 @@ public class ConfigController {
         return configService.download(map);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "概览TOP统计")
     @PostMapping("topInfo")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return configService.topInfo(params);
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "config 统计")
     @GetMapping("configChart")
     public List<Map<String, Object>> configChart() {
         return configService.configChart();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "风险统计")
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return configService.severityChart();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "所有部署配置")
     @GetMapping("allList")
     public List<CloudNativeConfig> allList() {
         return configService.allList();
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "部署检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
     public Pager<List<HistoryCloudNativeConfigResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
@@ -189,7 +189,7 @@ public class ConfigController {
         return PageUtils.setPageInfo(page, configService.history(params));
     }
 
-    //@I18n
+    @I18n
     @ApiOperation(value = "检测结果历史详情")
     @PostMapping("historyResultItemList")
     public List<CloudNativeConfigResultItemWithBLOBs> historyResultItemList(@RequestBody CloudNativeConfigResultItem request) {

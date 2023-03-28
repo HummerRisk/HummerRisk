@@ -24,32 +24,32 @@ public class CloudResourceController {
     @Autowired
     private CloudResourceService cloudResourceService;
 
-    //@I18n
+    @I18n
     @GetMapping(value = "summary")
     public List<CloudResourceSummary> summary(@RequestParam(required = false) String accountId) throws Exception {
         return cloudResourceService.getSummary(accountId);
     }
 
-    //@I18n
+    @I18n
     @GetMapping(value = "summary/{accountId}")
     public List<CloudResourceSummary> summaryByAccountId(@PathVariable String accountId) throws Exception {
         return cloudResourceService.getSummary(accountId);
     }
 
-    //@I18n
+    @I18n
     @PostMapping(value = "list/{goPage}/{pageSize}")
     public Pager<List<CloudResourceItemDTO>> listResource(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudResourceItemRequest cloudResourceItemRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudResourceService.getResources(cloudResourceItemRequest));
     }
 
-    //@I18n
+    @I18n
     @GetMapping(value = "risk/list/{regionId}/{hummerId}")
     public List<CloudTask> listResourceRisk(@PathVariable String regionId, @PathVariable String hummerId) {
         return cloudResourceService.getCloudTaskByHummerId(hummerId,regionId);
     }
 
-    //@I18n
+    @I18n
     @GetMapping(value = "task/count/{accountId}/{regionId}/{resourceType}")
     public Integer countResourceTask(@PathVariable String accountId,@PathVariable String regionId,@PathVariable String resourceType) {
         return cloudResourceService.countResourceTask(accountId,regionId,resourceType);
