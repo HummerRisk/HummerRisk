@@ -321,7 +321,10 @@ import {
   ruleAllBindListUrl,
   ruleGroupListUrl,
   ruleGroupSaveUrl,
-  ruleGroupUpdateUrl, ruleListUrl, scanByGroupUrl
+  ruleGroupUpdateUrl,
+  ruleListUrl,
+  ruleUnBindListUrl,
+  scanByGroupUrl
 } from "@/api/cloud/rule/rule";
 import {cloudPluginUrl} from "@/api/system/system";
 import {cloudListByGroupUrl} from "@/api/cloud/account/account";
