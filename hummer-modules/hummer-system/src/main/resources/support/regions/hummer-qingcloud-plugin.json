@@ -1,0 +1,22 @@
+[
+  {
+    "regionId": "PEK3",
+    "regionName": "北京3"
+  },
+  {
+    "regionId": "GD2",
+    "regionName": "广东2"
+  },
+  {
+    "regionId": "SH1",
+    "regionName": "上海1"
+  },
+  {
+    "regionId": "AP2",
+    "regionName": "亚太2"
+  },
+  {
+    "regionId": "AP3",
+    "regionName": "雅加达区"
+  }
+]
