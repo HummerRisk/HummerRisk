@@ -136,4 +136,6 @@ public interface ISystemProviderService {
 
     List<HistoryCloudNativeConfigResultDTO> configHistory(Map<String, Object> params);
 
+    String getCodeCredential();
+
 }

@@ -526,16 +526,7 @@ public class CodeService {
     }
 
     public String getCredential() {
-        String BASE_CREDENTIAL_DIC = "support/credential/";
-        String JSON_EXTENSION = ".json";
-        String pluginId = "hummer-code-plugin";
-        try {
-            return ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, pluginId, JSON_EXTENSION);
-        } catch (Exception e) {
-            LogUtil.error("Error getting credential parameters: " + pluginId, e);
-            HRException.throwException(Translator.get("i18n_ex_plugin_get"));
-        }
-        return Translator.get("i18n_ex_plugin_get");
+        return systemProviderService.getCodeCredential();
     }
 
     public Map<String, Object> topInfo(Map<String, Object> params) {

@@ -132,12 +132,12 @@
         </el-form>
         <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
         <div style="margin: 10px 10px 10px 50px;">
-          <div style="color: red;">{{ $t('commons.note') }}</div>
-          <div style="color: red;">{{ $t('code.code_note') }}</div>
-          <div style="color: red;">{{ $t('code.code_note2') }}</div>
-          <div style="color: red;">{{ $t('code.code_note3') }}</div>
-          <div style="color: red;">{{ $t('code.code_note4') }}</div>
-          <div style="color: red;">{{ $t('code.code_note5') }}</div>
+          <div style="color: red;">* {{ $t('commons.note') }}</div>
+          <div style="color: red;">* {{ $t('code.code_note') }}</div>
+          <div style="color: red;">* {{ $t('code.code_note2') }}</div>
+          <div style="color: red;">* {{ $t('code.code_note3') }}</div>
+          <div style="color: red;">* {{ $t('code.code_note4') }}</div>
+          <div style="color: red;">* {{ $t('code.code_note5') }}</div>
         </div>
       </div>
       <proxy-dialog-create-footer

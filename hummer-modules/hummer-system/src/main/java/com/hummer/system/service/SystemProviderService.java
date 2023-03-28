@@ -4,8 +4,12 @@ package com.hummer.system.service;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
 import com.hummer.common.core.dto.*;
+import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.core.utils.ReadFileUtils;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
+import com.hummer.system.i18n.Translator;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.system.mapper.ext.ExtVulnMapper;
@@ -337,39 +341,60 @@ public class SystemProviderService implements ISystemProviderService {
         return userService.getLoginUserByName(id);
     }
 
+    @Override
     public HistoryImageReportDTO getImageResultDto(String resultId) {
         HistoryImageReportDTO imageResult = extHistoryScanMapper.getImageResultDto(resultId);
         return imageResult;
     }
 
+    @Override
     public List<HistoryImageResultDTO> imageHistory(Map<String, Object> params) {
         List<HistoryImageResultDTO> historyList = extHistoryScanMapper.imageHistory(params);
         return historyList;
     }
 
+    @Override
     public List<HistoryCodeResultDTO> codeHistory(Map<String, Object> params) {
         List<HistoryCodeResultDTO> historyList = extHistoryScanMapper.codeHistory(params);
         return historyList;
     }
 
+    @Override
     public List<HistoryServerResultDTO> serverHistory(Map<String, Object> params) {
         List<HistoryServerResultDTO> historyList = extHistoryScanMapper.serverHistory(params);
         return historyList;
     }
 
+    @Override
     public List<HistoryFsResultDTO> fsHistory(Map<String, Object> params) {
         List<HistoryFsResultDTO> historyList = extHistoryScanMapper.fsHistory(params);
         return historyList;
     }
 
+    @Override
     public List<HistoryCloudNativeResultDTO> k8sHistory(Map<String, Object> params) {
         List<HistoryCloudNativeResultDTO> historyList = extHistoryScanMapper.k8sHistory(params);
         return historyList;
     }
 
+    @Override
     public List<HistoryCloudNativeConfigResultDTO> configHistory(Map<String, Object> params) {
         List<HistoryCloudNativeConfigResultDTO> historyList = extHistoryScanMapper.configHistory(params);
         return historyList;
+    }
+
+    @Override
+    public String getCodeCredential() {
+        String BASE_CREDENTIAL_DIC = "support/credential/";
+        String JSON_EXTENSION = ".json";
+        String pluginId = "hummer-code-plugin";
+        try {
+            return ReadFileUtils.readConfigFile(BASE_CREDENTIAL_DIC, pluginId, JSON_EXTENSION);
+        } catch (Exception e) {
+            LogUtil.error("Error getting credential parameters: " + pluginId, e);
+            HRException.throwException(Translator.get("i18n_ex_plugin_get"));
+        }
+        return Translator.get("i18n_ex_plugin_get");
     }
 
 
