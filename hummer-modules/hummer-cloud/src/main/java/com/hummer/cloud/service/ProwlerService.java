@@ -263,7 +263,7 @@ public class ProwlerService {
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
                     orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-                    throw new Exception(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
+                    HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String prowlerRun = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.PROWLER_RUN_RESULT_FILE);
                 String metadata = taskItem.getCustomData();
@@ -343,10 +343,10 @@ public class ProwlerService {
                     read.close();
 
                 } else {
-                    throw new Exception(Translator.get("i18n_not_found_file"));
+                    HRException.throwException(Translator.get("i18n_not_found_file"));
                 }
             } catch (Exception error) {
-                throw new Exception(Translator.get("i18n_read_file_error") + error.getMessage());
+                HRException.throwException(Translator.get("i18n_read_file_error") + error.getMessage());
             }
 
             //资源、规则、申请人关联表

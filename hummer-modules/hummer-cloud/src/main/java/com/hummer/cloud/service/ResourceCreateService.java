@@ -9,6 +9,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.dto.ResourceDTO;
 import com.hummer.cloud.i18n.Translator;
+import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.ISystemProviderService;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -308,7 +309,7 @@ public class ResourceCreateService {
                 readResource = false;
             }
             if (resultStr.contains("ERROR"))
-                throw new Exception(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
 
 
             for (CloudTaskItemResourceWithBLOBs taskItemResource : list) {
@@ -323,7 +324,7 @@ public class ResourceCreateService {
                 if (rule == null) {
                     orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
                             false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
-                    throw new Exception(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
+                    HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String custodianRun = ReadFileUtils.readToBuffer(dirPath + "/" + taskItemResource.getDirName() + "/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
                 String metadata = ReadFileUtils.readJsonFile(dirPath + "/" + taskItemResource.getDirName() + "/", CloudTaskConstants.METADATA_RESULT_FILE);

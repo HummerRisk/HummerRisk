@@ -1,10 +1,10 @@
 package com.hummer.cloud.controller.handler;
 
 import com.google.gson.Gson;
+import com.hummer.common.core.handler.ResultHolder;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.handler.annotation.NoResultHolder;
 import com.hummer.cloud.i18n.Translator;
-import com.hummer.common.core.handler.ResultHolder;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;

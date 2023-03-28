@@ -16,6 +16,7 @@ import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequ
 import com.hummer.common.core.domain.request.sync.CloudTopology;
 import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.cloud.i18n.Translator;
+import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
@@ -174,7 +175,7 @@ public class CloudSyncService {
                             readResource = false;
                         }
                         if (resultStr.contains("ERROR"))
-                            throw new Exception(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+                            HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
 
                         String custodianRun = ReadFileUtils.readToBuffer(dirPath + "/all-resources/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
                         String metadata = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.METADATA_RESULT_FILE);

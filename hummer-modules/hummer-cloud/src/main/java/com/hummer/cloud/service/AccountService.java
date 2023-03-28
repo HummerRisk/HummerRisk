@@ -133,11 +133,10 @@ public class AccountService {
         }
     }
 
-    public AccountWithBLOBs addAccount(CreateCloudAccountRequest request) throws PluginException {
+    public AccountWithBLOBs addAccount(CreateCloudAccountRequest request) throws HRException {
         try{
             //参数校验
-            if (StringUtils.isEmpty(request.getCredential())
-                    || StringUtils.isEmpty(request.getName()) || StringUtils.isEmpty(request.getPluginId())) {
+            if (StringUtils.isEmpty(request.getCredential()) || StringUtils.isEmpty(request.getName()) || StringUtils.isEmpty(request.getPluginId())) {
                 HRException.throwException(Translator.get("i18n_ex_cloud_account_name_or_plugin"));
             }
 
