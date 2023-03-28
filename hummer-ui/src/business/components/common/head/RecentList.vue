@@ -15,8 +15,6 @@
 </template>
 
 <script>
-import {hasRoles} from "../../../../common/js/utils";
-import {ROLE_USER} from "../../../../common/js/constants";
 /* eslint-disable */
   export default {
     name: "RecentList",
@@ -49,11 +47,9 @@ import {ROLE_USER} from "../../../../common/js/constants";
 
     methods: {
       recent: function () {
-        if (hasRoles(ROLE_USER)) {
-          this.result = this.$get(this.options.url, (response) => {
-            this.items = response.data;
-          });
-        }
+        this.result = this.$get(this.options.url, (response) => {
+          this.items = response.data;
+        });
       }
     }
   }

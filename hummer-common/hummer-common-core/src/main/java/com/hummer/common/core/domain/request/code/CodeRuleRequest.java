@@ -13,7 +13,11 @@ public class CodeRuleRequest extends CodeRule {
 
     private List<String> tags;
 
+    private List<String> groups;
+
     private String tagKey;
+
+    private String ruleGroupId;
 
     private Map<String, Object> combine;
 
@@ -39,5 +43,21 @@ public class CodeRuleRequest extends CodeRule {
 
     public void setCombine(Map<String, Object> combine) {
         this.combine = combine;
+    }
+
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
+    }
+
+    public String getRuleGroupId() {
+        return ruleGroupId;
+    }
+
+    public void setRuleGroupId(String ruleGroupId) {
+        this.ruleGroupId = ruleGroupId;
     }
 }

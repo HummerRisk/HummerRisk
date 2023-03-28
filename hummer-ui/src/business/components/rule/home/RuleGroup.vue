@@ -126,6 +126,17 @@
       <el-drawer class="rtl" :title="$t('rule.create_group')" :visible.sync="createVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
+          <el-form-item :label="$t('rule.group_type')" :rules="{required: true, message: $t('rule.group_type'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="createForm.type" :placeholder="$t('rule.group_type')">
+              <el-option
+                v-for="item in groupTypes"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('rule.rule_set')"/>
           </el-form-item>
@@ -158,6 +169,9 @@
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.group_type')" prop="type">
+            <el-input v-model="infoForm.type" :disabled="true" autocomplete="off" :placeholder="$t('rule.group_type')"/>
+          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
@@ -190,6 +204,9 @@
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.group_type')" prop="type">
+            {{ infoForm.type }}
+          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             {{ infoForm.name }}
           </el-form-item>
@@ -207,10 +224,10 @@
       <!--Info group-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_set_list')"
+                      :title="$t('rule.rule_list')"
                       :items="items2" :columnNames="columnNames2"
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
@@ -306,7 +323,7 @@
 import TableOperators from "../../common/components/TableOperators";
 import MainContainer from "../../common/components/MainContainer";
 import Container from "../../common/components/Container";
-import GroupTableHeader from "../head/GroupTableHeader";
+import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "../../common/pagination/TablePagination";
 import FTablePagination from "../../common/pagination/FTablePagination";
@@ -531,6 +548,11 @@ const columnOptions2 = [
         ],
         checkAll2: true,
         isIndeterminate2: false,
+        groupTypes: [
+          {id: 'cloud', name: 'Cloud'},
+          {id: 'k8s', name: 'K8s'},
+          {id: 'server', name: 'Server'},
+        ],
       }
     },
 

@@ -431,7 +431,6 @@ public class ConfigService {
                     cloudNativeConfigResultItem.setDescription(resultObject.getString("Description"));
                     cloudNativeConfigResultItem.setMessage(resultObject.getString("Message"));
                     cloudNativeConfigResultItem.setNamespace(resultObject.getString("Namespace"));
-                    cloudNativeConfigResultItem.setLayer(resultObject.getString("Layer"));
                     cloudNativeConfigResultItem.setQuery(resultObject.getString("Query"));
                     cloudNativeConfigResultItem.setPrimaryUrl(resultObject.getString("PrimaryURL"));
                     cloudNativeConfigResultItem.setResolution(resultObject.getString("Resolution"));
@@ -443,7 +442,6 @@ public class ConfigService {
                     cloudNativeConfigResultItemMapper.insertSelective(cloudNativeConfigResultItem);
                     i++;
                 }
-
             }
         }
 
