@@ -18,9 +18,8 @@
 </template>
 
 <script>
-import {DEFAULT_LANGUAGE, TokenKey, EN_US, ZH_CN, ZH_TW} from '@/common/js/constants';
+import {DEFAULT_LANGUAGE, EN_US, ZH_CN, ZH_TW} from '@/common/js/constants';
 import {getCurrentUser, saveLocalStorage} from "@/common/js/utils";
-import {setToken} from "@/common/js/auth";
 import {userUpdateCurrentUrl} from "@/api/system/system";
 
 

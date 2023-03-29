@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter from 'vue-router';
 import RouterSidebar from "./RouterSidebar";
-import axios from "axios";
 import Setting from "@/business/components/settings/router";
 import Account from "@/business/components/account/router";
 import Server from "@/business/components/server/router";
@@ -21,7 +20,8 @@ import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/event/router";
 import Config from "@/business/components/config/router";
 import Fs from "@/business/components/fs/router";
-import {getToken} from '@/common/js/auth';
+import {signoutUrl} from "@/api/auth/auth";
+import axios from "axios";
 
 Vue.use(VueRouter);
 /* eslint-disable */
@@ -57,9 +57,12 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  let token = getToken();
-  if (!token) {
+  //解决localStorage清空，cookie没失效导致的卡死问题
+  if (!localStorage.getItem('Admin-Token')) {
+    axios.get(signoutUrl);
+    localStorage.setItem('Admin-Token', "{}");
     window.location.href = "/login";
+    next();
   } else {
     next();
   }

@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {getK8sID, getK8sName, getCurrentAccountID} from "@/common/js/utils";
+import {getCurrentAccountID, getK8sID, getK8sName} from "@/common/js/utils";
 import {ACCOUNT, K8S, K8S_ID, K8S_NAME} from "@/common/js/constants";
 import {allCloudNativeListUrl} from "@/api/k8s/k8s/k8s";
 
