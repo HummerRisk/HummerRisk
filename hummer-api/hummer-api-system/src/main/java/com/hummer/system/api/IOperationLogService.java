@@ -4,7 +4,6 @@ package com.hummer.system.api;
 import com.hummer.common.core.domain.OperationLog;
 import com.hummer.common.core.domain.request.log.OperatorLogRequest;
 import com.hummer.common.core.dto.UserDTO;
-import com.hummer.system.api.domain.User;
 
 import java.util.List;
 

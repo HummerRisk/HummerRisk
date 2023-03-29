@@ -14,11 +14,11 @@ import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.domain.request.server.ServerRuleRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.k8s.i18n.Translator;
 import com.hummer.common.core.proxy.server.SshUtil;
 import com.hummer.common.core.proxy.server.WinRMHelper;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
+import com.hummer.k8s.i18n.Translator;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtServerCertificateMapper;
 import com.hummer.k8s.mapper.ext.ExtServerMapper;
@@ -537,9 +537,9 @@ public class ServerService {
             switch (server.getType()) {
                 case "linux":
                     if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
-                        return SshUtil.executeSsh2(SshUtil.loginSsh2(server, proxy), cmd);
+                        return SshUtil.executeSsh2(SshUtil.loginSsh2(server, proxy), "sudo " + cmd);
                     } else {
-                        return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), cmd);
+                        return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), "sudo " + cmd);
                     }
                 case "windows":
                     String result = WinRMHelper.execute(server, cmd);

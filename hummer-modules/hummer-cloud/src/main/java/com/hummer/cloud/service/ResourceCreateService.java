@@ -1,6 +1,7 @@
 package com.hummer.cloud.service;
 
 import com.google.gson.Gson;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.oss.constants.OSSConstants;
 import com.hummer.common.core.constant.CloudTaskConstants;
@@ -8,7 +9,6 @@ import com.hummer.common.core.constant.CommandEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.dto.ResourceDTO;
-import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.ISystemProviderService;

@@ -1,10 +1,9 @@
 package com.hummer.system.api.model;
 
+import com.hummer.common.core.dto.UserDTO;
+
 import java.io.Serializable;
 import java.util.Set;
-
-import com.hummer.common.core.dto.UserDTO;
-import com.hummer.system.api.domain.User;
 
 /**
  * 用户信息

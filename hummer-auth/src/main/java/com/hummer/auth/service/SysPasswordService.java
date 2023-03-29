@@ -1,12 +1,10 @@
 package com.hummer.auth.service;
 
-import com.amazonaws.services.ec2.model.UserData;
 import com.hummer.common.core.constant.CacheConstants;
 import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.exception.ServiceException;
 import com.hummer.common.redis.service.RedisService;
 import com.hummer.common.security.utils.SecurityUtils;
-import com.hummer.system.api.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

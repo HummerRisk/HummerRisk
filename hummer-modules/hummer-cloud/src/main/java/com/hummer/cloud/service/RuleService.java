@@ -2,6 +2,7 @@ package com.hummer.cloud.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.*;
 import com.hummer.common.core.constant.*;
@@ -9,7 +10,6 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.rule.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.PlatformUtils;

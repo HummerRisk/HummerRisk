@@ -1,7 +1,7 @@
 package com.hummer.auth.mapper;
 
-import com.hummer.system.api.domain.User;
 import com.hummer.common.core.domain.UserExample;
+import com.hummer.system.api.domain.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

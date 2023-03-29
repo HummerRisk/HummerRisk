@@ -2,14 +2,13 @@ package com.hummer.k8s.config;
 
 import com.hummer.common.core.utils.CommonBeanFactory;
 import com.hummer.k8s.i18n.Translator;
+import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-
-import jakarta.validation.Validator;
 
 
 @Configuration

@@ -2,6 +2,7 @@ package com.hummer.cloud.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hummer.cloud.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.cloud.mapper.ext.ExtOssMapper;
@@ -25,7 +26,6 @@ import com.hummer.common.core.dto.ResourceDTO;
 import com.hummer.common.core.dto.RuleGroupDTO;
 import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.cloud.i18n.Translator;
 import com.hummer.common.core.handler.ResultHolder;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
