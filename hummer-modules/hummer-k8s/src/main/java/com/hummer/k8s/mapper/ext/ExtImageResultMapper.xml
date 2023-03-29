@@ -105,7 +105,32 @@
         </if>
     </sql>
 
-    <select id="resultListWithBLOBs" resultType="com.hummer.common.core.dto.ImageResultWithBLOBsDTO">
+    <resultMap id="resultListWithBLOBsBaseResultMap" type="com.hummer.common.core.dto.ImageResultWithBLOBsDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="image_id" jdbcType="VARCHAR" property="imageId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="unfixed" jdbcType="BIT" property="unfixed" />
+        <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
+        <result column="result_json" jdbcType="LONGVARCHAR" property="resultJson" />
+    </resultMap>
+
+    <select id="resultListWithBLOBs" resultMap="resultListWithBLOBsBaseResultMap">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -150,7 +175,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="resultList" resultType="com.hummer.common.core.dto.ImageResultDTO">
+    <select id="resultList" resultMap="resultListWithBLOBsBaseResultMap">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -195,7 +220,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="getImageResult" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.ImageResultDTO">
+    <select id="getImageResult" parameterType="java.lang.String" resultMap="resultListWithBLOBsBaseResultMap">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,

@@ -82,7 +82,28 @@
         </if>
     </sql>
 
-    <select id="resultList" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultRequest" resultType="com.hummer.common.core.dto.CloudNativeResultDTO">
+    <resultMap id="resultListBaseResultMap" type="com.hummer.common.core.dto.CloudNativeResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="cloud_native_id" jdbcType="VARCHAR" property="cloudNativeId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="return_config_sum" jdbcType="BIGINT" property="returnConfigSum" />
+        <result column="vulnerability_report" jdbcType="LONGVARCHAR" property="vulnerabilityReport" />
+        <result column="config_audit_report" jdbcType="LONGVARCHAR" property="configAuditReport" />
+        <result column="kube_bench" jdbcType="LONGVARCHAR" property="kubeBench" />
+    </resultMap>
+
+    <select id="resultList" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultRequest" resultMap="resultListBaseResultMap">
         SELECT
         t.*,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
@@ -272,7 +293,7 @@
          )
     </select>
 
-    <select id="getCloudNativeResult" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.CloudNativeResultDTO">
+    <select id="getCloudNativeResult" parameterType="java.lang.String" resultMap="resultListBaseResultMap">
         SELECT
         t.*,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,

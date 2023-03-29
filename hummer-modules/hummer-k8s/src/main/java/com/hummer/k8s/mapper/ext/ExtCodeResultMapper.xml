@@ -93,7 +93,29 @@
         </if>
     </sql>
 
-    <select id="resultListWithBLOBs" resultType="com.hummer.common.core.dto.CodeResultDTO">
+    <resultMap id="resultListWithBLOBsBaseResultMap" type="com.hummer.common.core.dto.CodeResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="code_id" jdbcType="VARCHAR" property="codeId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="return_json" jdbcType="LONGVARCHAR" property="returnJson" />
+    </resultMap>
+
+    <select id="resultListWithBLOBs" resultMap="resultListWithBLOBsBaseResultMap">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -131,7 +153,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="resultList" resultType="com.hummer.common.core.dto.CodeResultDTO">
+    <select id="resultList" resultMap="resultListWithBLOBsBaseResultMap">
         SELECT
         t.*,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -168,7 +190,7 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="getCodeResult" parameterType="java.lang.String" resultType="com.hummer.common.core.dto.CodeResultDTO">
+    <select id="getCodeResult" parameterType="java.lang.String" resultMap="resultListWithBLOBsBaseResultMap">
         SELECT
         t.*,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
