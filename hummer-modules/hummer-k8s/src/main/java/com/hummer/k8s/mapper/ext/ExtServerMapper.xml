@@ -3,7 +3,7 @@
 <mapper namespace="com.hummer.k8s.mapper.ext.ExtServerMapper">
 
     <resultMap id="ServerResultMap" type="com.hummer.common.core.dto.ServerDTO"
-               extends="com.hummer.k8s.mapper.ServerMapper.BaseResultMap">
+               extends="com.hummer.k8s.mapper.ServerMapper.ResultMapWithBLOBs">
         <result column="user" property="user"/>
     </resultMap>
 

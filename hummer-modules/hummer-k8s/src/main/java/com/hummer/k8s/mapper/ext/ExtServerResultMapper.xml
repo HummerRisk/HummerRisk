@@ -87,8 +87,33 @@
         </if>
     </sql>
 
+    <resultMap id="resultListBaseResultMap" type="com.hummer.common.core.dto.ServerResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="server_id" jdbcType="VARCHAR" property="serverId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="server_group_id" jdbcType="VARCHAR" property="serverGroupId" />
+        <result column="server_group_name" jdbcType="VARCHAR" property="serverGroupName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="port" jdbcType="VARCHAR" property="port" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
+    </resultMap>
+
     <select id="resultList" parameterType="com.hummer.common.core.domain.request.server.ServerResultRequest"
-            resultType="com.hummer.common.core.dto.ServerResultDTO">
+            resultMap="resultListBaseResultMap">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -129,7 +154,7 @@
     </select>
 
     <resultMap id="ServerListBaseResultMap" type="com.hummer.common.core.dto.ServerListDTO"
-               extends="com.hummer.k8s.mapper.ServerMapper.BaseResultMap">
+               extends="com.hummer.k8s.mapper.ServerMapper.ResultMapWithBLOBs">
         <result column="user" jdbcType="VARCHAR" property="user" />
         <result column="groupName" jdbcType="VARCHAR" property="groupName" />
         <result column="riskSum" jdbcType="INTEGER" property="riskSum" />
@@ -218,7 +243,32 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="selectServerResultDTO" resultType="com.hummer.common.core.dto.ServerResultDTO">
+    <resultMap id="selectServerResultDTOBaseResultMap" type="com.hummer.common.core.dto.ServerResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="server_id" jdbcType="VARCHAR" property="serverId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="server_group_id" jdbcType="VARCHAR" property="serverGroupId" />
+        <result column="server_group_name" jdbcType="VARCHAR" property="serverGroupName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="port" jdbcType="VARCHAR" property="port" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
+    </resultMap>
+
+    <select id="selectServerResultDTO" resultMap="selectServerResultDTOBaseResultMap">
         SELECT
         t.*,
         t1.tag_key as tagKey,
