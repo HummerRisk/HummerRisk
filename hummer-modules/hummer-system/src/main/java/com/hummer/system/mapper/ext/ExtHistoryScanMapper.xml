@@ -35,7 +35,7 @@
         LIMIT 1
     </update>
 
-    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.core.dto.HistoryImageReportDTO" extends="com.hummer.system.mapper.HistoryImageResultMapper.BaseResultMap">
+    <resultMap id="HistoryImageReportDTOMap" type="com.hummer.common.core.dto.HistoryImageReportDTO" extends="com.hummer.system.mapper.HistoryImageResultMapper.ResultMapWithBLOBs">
         <collection property="imageResultItemWithBLOBsList" ofType="com.hummer.common.core.domain.ImageResultItemWithBLOBs" javaType="list" select="getimageResultItemWithBLOBsList" column="id">
         </collection>
     </resultMap>
@@ -52,7 +52,31 @@
         WHERE t.result_id = #{id}
     </select>
 
-    <select id="imageHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryImageResultDTO">
+    <resultMap id="imageHistoryBaseResultMap" type="com.hummer.common.core.dto.HistoryImageResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="image_id" jdbcType="VARCHAR" property="imageId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="unfixed" jdbcType="BIT" property="unfixed" />
+        <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
+        <result column="result_json" jdbcType="LONGVARCHAR" property="resultJson" />
+    </resultMap>
+
+    <select id="imageHistory" parameterType="java.util.Map" resultMap="imageHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -76,7 +100,28 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="codeHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCodeResultDTO">
+    <resultMap id="codeHistoryBaseResultMap" type="com.hummer.common.core.dto.HistoryCodeResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="code_id" jdbcType="VARCHAR" property="codeId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="return_json" jdbcType="LONGVARCHAR" property="returnJson" />
+    </resultMap>
+
+    <select id="codeHistory" parameterType="java.util.Map" resultMap="codeHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -100,7 +145,31 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="serverHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryServerResultDTO">
+    <resultMap id="serverHistoryBaseResultMap" type="com.hummer.common.core.dto.HistoryServerResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="server_id" jdbcType="VARCHAR" property="serverId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="server_group_id" jdbcType="VARCHAR" property="serverGroupId" />
+        <result column="server_group_name" jdbcType="VARCHAR" property="serverGroupName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="port" jdbcType="VARCHAR" property="port" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
+    </resultMap>
+
+    <select id="serverHistory" parameterType="java.util.Map" resultMap="serverHistoryBaseResultMap">
         SELECT
         t.*,
         t1.tag_key as tagKey,
@@ -130,7 +199,27 @@
         ORDER BY t.is_severity, t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
     </select>
 
-    <select id="fsHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryFsResultDTO">
+    <resultMap id="fsHistoryBaseResultMap" type="com.hummer.common.core.dto.HistoryFsResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="fs_id" jdbcType="VARCHAR" property="fsId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="return_json" jdbcType="LONGVARCHAR" property="returnJson" />
+    </resultMap>
+
+    <select id="fsHistory" parameterType="java.util.Map" resultMap="fsHistoryBaseResultMap">
         SELECT
         t.*,
         t1.file_name as fileName,
@@ -160,7 +249,27 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="k8sHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCloudNativeResultDTO">
+    <resultMap id="k8sHistoryBaseResultMap" type="com.hummer.common.core.dto.HistoryCloudNativeResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="cloud_native_id" jdbcType="VARCHAR" property="cloudNativeId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="vulnerability_report" jdbcType="LONGVARCHAR" property="vulnerabilityReport" />
+        <result column="config_audit_report" jdbcType="LONGVARCHAR" property="configAuditReport" />
+        <result column="kube_bench" jdbcType="LONGVARCHAR" property="kubeBench" />
+    </resultMap>
+
+    <select id="k8sHistory" parameterType="java.util.Map" resultMap="k8sHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as critical,
@@ -193,7 +302,24 @@
         ORDER BY t.update_time desc
     </select>
 
-    <select id="configHistory" parameterType="java.util.Map" resultType="com.hummer.common.core.dto.HistoryCloudNativeResultDTO">
+    <resultMap id="configHistoryBaseResultMap" type="com.hummer.common.core.dto.HistoryCloudNativeConfigResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="config_id" jdbcType="VARCHAR" property="configId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="result_json" jdbcType="LONGVARCHAR" property="resultJson" />
+    </resultMap>
+
+    <select id="configHistory" parameterType="java.util.Map" resultMap="configHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
