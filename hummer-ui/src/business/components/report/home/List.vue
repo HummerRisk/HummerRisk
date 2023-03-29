@@ -541,7 +541,8 @@ import {cloudPluginUrl} from "@/api/system/system";
 import {
   resourceExportUrl,
   resourceGroupExportUrl,
-  resourceRegulationUrl, resourceRuleGroupListUrl,
+  resourceRegulationUrl,
+  resourceRuleGroupListUrl,
   resourceRuleGroupsUrl
 } from "@/api/cloud/resource/resource";
 import {accountListUrl} from "@/api/cloud/account/account";

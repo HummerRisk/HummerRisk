@@ -290,14 +290,14 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TableOperator from "../../common/components/TableOperator";
-import Container from "../../common/components/Container";
-import MainContainer from "../../common/components/MainContainer";
-import TableOperators from "../../common/components/TableOperators";
+import TableOperator from "@/business/components/common/components/TableOperator";
+import Container from "@/business/components/common/components/Container";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {K8S_CONFIGS} from "../../common/components/search/search-components";
+import {K8S_CONFIGS} from "@/business/components/common/components/search/search-components";
 import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
@@ -306,7 +306,9 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {nativePluginUrl, pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
 import {
   addK8sUrl,
-  deleteK8sUrl, k8sListUrl, k8sValidatesUrl,
+  deleteK8sUrl,
+  k8sListUrl,
+  k8sValidatesUrl,
   logK8sUrl,
   reinstallKubenchUrl,
   reinstallOperatorUrl,

@@ -529,21 +529,27 @@ import MetricChart from "@/business/components/report/home/MetricChart";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import {severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
-import FTablePagination from "../../common/pagination/FTablePagination";
+import FTablePagination from "@/business/components/common/pagination/FTablePagination";
 import ReportTableHeader from "@/business/components/oss/head/ReportTableHeader";
-import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
+import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "@/business/components/common/components/search/search-components";
 import HrChart from "@/business/components/common/chart/HrChart";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import ResultReadOnly from "@/business/components/report/head/ResultReadOnly";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {getRuleByTaskIdUrl, ruleInspectionReportUrl, ruleListUrl, ruleTagsUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
+import {
+  getRuleByTaskIdUrl,
+  ruleInspectionReportUrl,
+  ruleListUrl,
+  ruleReScanUrl,
+  ruleTagsUrl
+} from "@/api/cloud/rule/rule";
 import {cloudPluginUrl} from "@/api/system/system";
 import {
-  resourceRuleGroupsUrl,
+  resourceListUrl,
+  resourceRegulationUrl,
   resourceReportIsoUrl,
   resourceReportListUrl,
-  resourceListUrl,
-  resourceRegulationUrl
+  resourceRuleGroupsUrl
 } from "@/api/cloud/resource/resource";
 import {ossRuleGroupListUrl} from "@/api/cloud/oss/oss";
 import {accountListUrl} from "@/api/cloud/account/account";

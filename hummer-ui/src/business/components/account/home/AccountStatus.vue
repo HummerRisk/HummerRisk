@@ -14,9 +14,9 @@
 
 <script>
 
-import { validateUrl } from "@/api/cloud/account/account";
+import {validateUrl} from "@/api/cloud/account/account";
 
-  /* eslint-disable */
+/* eslint-disable */
   export default {
     name: "AccountStatus",
     inject:['search'],

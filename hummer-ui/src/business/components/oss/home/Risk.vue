@@ -309,11 +309,11 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import Container from "../../common/components/Container";
-import MainContainer from "../../common/components/MainContainer";
-import TableOperators from "../../common/components/TableOperators";
+import Container from "@/business/components/common/components/Container";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {RESOURCE_CONFIGS, RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
@@ -327,10 +327,12 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
+  ossManualListUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
-  resourceRuleDataUrl, resourceSeverityDataUrl,
-  resourceTypeDataUrl, ossManualListUrl,
+  resourceRuleDataUrl,
+  resourceSeverityDataUrl,
+  resourceTypeDataUrl,
   string2PrettyFormatUrl
 } from "@/api/cloud/resource/resource";
 import {ossResourceListUrl} from "@/api/cloud/oss/oss";

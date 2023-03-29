@@ -298,18 +298,19 @@
   </main-container>
 </template>
 <script>
-import MainContainer from "../../common/components/MainContainer";
+import MainContainer from "@/business/components/common/components/MainContainer";
 import SearchList from "@/business/components/k8sSituation/home/SearchList";
 import LogForm from "@/business/components/k8s/home/LogForm";
 import * as d3 from 'd3';
 import htmlToPdf from "@/common/js/htmlToPdf";
 import {
-  nodeTopologyUrl,
-  namespaceTopologyUrl,
+  allK8sUrl,
   getCloudNativeResultWithBLOBsTopoUrl,
   getK8sImageUrl,
   k8sLogTopoUrl,
-  allK8sUrl, k8sRiskTopologyUrl
+  k8sRiskTopologyUrl,
+  namespaceTopologyUrl,
+  nodeTopologyUrl
 } from "@/api/k8s/k8s/k8s";
 
 /* eslint-disable */

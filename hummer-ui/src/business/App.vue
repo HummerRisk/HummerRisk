@@ -43,16 +43,15 @@
 </template>
 
 <script>
-import HrTopMenus from "./components/common/head/HeaderTopMenus";
-import LeftMenus from "./components/common/left/LeftMenus";
-import HrView from "./components/common/router/HrView";
-import HrUser from "./components/common/head/HeaderUser";
-import Help from "./components/common/head/Help";
-import HrLanguageSwitch from "./components/common/head/LanguageSwitch";
+import HrTopMenus from "@/business/components/common/head/HeaderTopMenus";
+import LeftMenus from "@/business/components/common/left/LeftMenus";
+import HrView from "@/business/components/common/router/HrView";
+import HrUser from "@/business/components/common/head/HeaderUser";
+import Help from "@/business/components/common/head/Help";
+import HrLanguageSwitch from "@/business/components/common/head/LanguageSwitch";
 import {getIsCollapse, saveLocalStorage} from "@/common/js/utils";
 import Notification from "@/business/components/common/head/Notification";
-import { isLoginUrl } from "@/api/auth/auth";
-import { setToken } from '@/common/js/auth';
+import {isLoginUrl} from "@/api/auth/auth";
 
 export default {
     name: "app",

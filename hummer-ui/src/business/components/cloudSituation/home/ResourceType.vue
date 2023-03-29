@@ -17,10 +17,10 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  import {syncResourceTypeListUrl} from "@/api/cloud/sync/sync";
+/* eslint-disable */
+import {syncResourceTypeListUrl} from "@/api/cloud/sync/sync";
 
-  export default {
+export default {
     name: "ResourceType",
     props: {
       syncId: String,

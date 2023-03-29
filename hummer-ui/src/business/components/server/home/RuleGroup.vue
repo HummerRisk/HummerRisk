@@ -290,21 +290,18 @@
 </template>
 
 <script>
-import TableOperators from "../../common/components/TableOperators";
-import MainContainer from "../../common/components/MainContainer";
-import Container from "../../common/components/Container";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import Container from "@/business/components/common/components/Container";
 import GroupTableHeader from "@/business/components/rule/head/GroupTableHeader";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TablePagination from "../../common/pagination/TablePagination";
-import FTablePagination from "../../common/pagination/FTablePagination";
-import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/DialogFooter";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import FTablePagination from "@/business/components/common/pagination/FTablePagination";
+import TableOperator from "@/business/components/common/components/TableOperator";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
-import {
-  SERVER_RULE_CONFIGS,
-  SERVER_RULE_GROUP_CONFIGS
-} from "../../common/components/search/search-components";
+import {SERVER_RULE_CONFIGS, SERVER_RULE_GROUP_CONFIGS} from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
 import {allServerListUrl, serverAllBindListUrl, serverBindRuleUrl, serverUnBindListUrl} from "@/api/k8s/server/server";

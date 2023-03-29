@@ -13,10 +13,10 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  import {fsValidateByIdUrl} from "@/api/k8s/fs/fs";
+/* eslint-disable */
+import {fsValidateByIdUrl} from "@/api/k8s/fs/fs";
 
-  export default {
+export default {
     name: "FsStatus",
     inject:['search'],
     props: {

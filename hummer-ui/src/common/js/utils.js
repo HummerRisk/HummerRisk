@@ -1,11 +1,4 @@
-import {
-  ACCOUNT_ID,
-  ACCOUNT_NAME,
-  IsCollapse,
-  K8S_ID, K8S_NAME,
-  REFRESH_SESSION_USER_URL,
-  TokenKey
-} from "./constants";
+import {ACCOUNT_ID, ACCOUNT_NAME, IsCollapse, K8S_ID, K8S_NAME, REFRESH_SESSION_USER_URL, TokenKey} from "./constants";
 import axios from "axios";
 
 export function getCurrentUser() {

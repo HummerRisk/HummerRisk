@@ -219,25 +219,20 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TableOperator from "../../common/components/TableOperator";
-import Container from "../../common/components/Container";
-import MainContainer from "../../common/components/MainContainer";
+import TableOperator from "@/business/components/common/components/TableOperator";
+import Container from "@/business/components/common/components/Container";
+import MainContainer from "@/business/components/common/components/MainContainer";
 import CodeStatus from "./CodeStatus";
-import TableOperators from "../../common/components/TableOperators";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {CODE_CONFIGS} from "../../common/components/search/search-components";
+import {CODE_CONFIGS} from "@/business/components/common/components/search/search-components";
 import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {
-  addCodeUrl,
-  codeListUrl,
-  codePluginUrl,
-  codeValidateUrl, scanCodeUrl, updateCodeUrl
-} from "@/api/k8s/code/code";
+import {addCodeUrl, codeListUrl, codePluginUrl, codeValidateUrl, scanCodeUrl, updateCodeUrl} from "@/api/k8s/code/code";
 import {proxyListAllUrl} from "@/api/system/system";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 

@@ -356,11 +356,11 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import Container from "../../common/components/Container";
-import MainContainer from "../../common/components/MainContainer";
-import TableOperators from "../../common/components/TableOperators";
+import Container from "@/business/components/common/components/Container";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_BUCKET_CONFIGS, OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
@@ -372,12 +372,18 @@ import {proxyListAllUrl} from "@/api/system/system";
 import {
   addOssUrl,
   deleteOssUrl,
-  ossAccountsUrl, ossBatchSyncUrl, ossBucketListUrl,
+  ossAccountsUrl,
+  ossBatchSyncUrl,
+  ossBucketListUrl,
   ossChangeAccountUrl,
   ossDownloadObjectUrl,
-  ossGroupsUrl, ossIamStrategyUrl, ossListUrl,
-  ossLogUrl, ossObjectsUrl,
-  ossValidateUrl, updateOssUrl
+  ossGroupsUrl,
+  ossIamStrategyUrl,
+  ossListUrl,
+  ossLogUrl,
+  ossObjectsUrl,
+  ossValidateUrl,
+  updateOssUrl
 } from "@/api/cloud/oss/oss";
 import {ruleScanUrl} from "@/api/cloud/rule/rule";
 import {getAccountUrl} from "@/api/cloud/account/account";

@@ -60,7 +60,7 @@
 </template>
 <script>
 /* eslint-disable */
-  import {dashboardSeverityUrl} from "@/api/cloud/dashboard/dashboard";
+import {dashboardSeverityUrl} from "@/api/cloud/dashboard/dashboard";
 
 export default {
     name: "MdCardContentSeverity",

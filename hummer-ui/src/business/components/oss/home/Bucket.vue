@@ -232,11 +232,11 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import Container from "../../common/components/Container";
-import MainContainer from "../../common/components/MainContainer";
-import TableOperators from "../../common/components/TableOperators";
+import Container from "@/business/components/common/components/Container";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_BUCKET_CONFIGS} from "@/business/components/common/components/search/search-components";
@@ -245,10 +245,18 @@ import Upload from "@/business/components/oss/head/Upload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   bucketAddforOssIdUrl,
-  ossAllListUrl, ossBucketListUrl,
-  ossCreateDirUrl, ossCreateUrl, ossDeleteBucketUrl, ossDeleteByBatchUrl,
+  ossAllListUrl,
+  ossBucketListUrl,
+  ossCreateDirUrl,
+  ossCreateUrl,
+  ossDeleteBucketUrl,
+  ossDeleteByBatchUrl,
   ossDeleteObjectsUrl,
-  ossDeleteObjectUrl, ossDownloadObjectUrl, ossObjectsUrl, ossSupportRegionsUrl, ossSupportUrl,
+  ossDeleteObjectUrl,
+  ossDownloadObjectUrl,
+  ossObjectsUrl,
+  ossSupportRegionsUrl,
+  ossSupportUrl,
   ossUploadFileUrl
 } from "@/api/cloud/oss/oss";
 

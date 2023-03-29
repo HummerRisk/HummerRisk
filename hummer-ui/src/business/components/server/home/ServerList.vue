@@ -518,31 +518,32 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TableOperator from "../../common/components/TableOperator";
-import Container from "../../common/components/Container";
-import MainContainer from "../../common/components/MainContainer";
-import TableOperators from "../../common/components/TableOperators";
+import TableOperator from "@/business/components/common/components/TableOperator";
+import Container from "@/business/components/common/components/Container";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {SERVER_CONFIGS} from "../../common/components/search/search-components";
+import {SERVER_CONFIGS} from "@/business/components/common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {saveAs} from "@/common/js/FileSaver";
 import {proxyListAllUrl} from "@/api/system/system";
 import {
+  addServerUrl,
   allCertificateListUrl,
+  copyServerUrl,
+  deleteServerUrl,
+  editServerUrl,
+  serverDownloadExcelUrl,
+  serverExcelInsertExpertsUrl,
   serverGroupListUrl,
+  serverListUrl,
+  serverScanUrl,
   serverValidatesUrl,
   serverValidateUrl,
-  deleteServerUrl,
-  addServerUrl,
-  editServerUrl,
-  copyServerUrl,
-  serverExcelInsertExpertsUrl,
-  serverDownloadExcelUrl,
-  serverScanUrl, serverListUrl,
 } from "@/api/k8s/server/server";
 
 //列表展示与隐藏

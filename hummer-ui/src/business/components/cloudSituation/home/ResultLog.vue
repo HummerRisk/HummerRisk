@@ -87,7 +87,7 @@
 
 <script>
 /* eslint-disable */
-  import {cloudSyncLogItemListUrl} from "@/api/cloud/sync/sync";
+import {cloudSyncLogItemListUrl} from "@/api/cloud/sync/sync";
 import {resourceLogUrl} from "@/api/cloud/resource/resource";
 
 export default {

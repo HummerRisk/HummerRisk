@@ -87,7 +87,7 @@
 
 <script>
 /* eslint-disable */
-  import {cloudTaskLogByIdUrl} from "@/api/cloud/account/account";
+import {cloudTaskLogByIdUrl} from "@/api/cloud/account/account";
 import {resourceLogUrl} from "@/api/cloud/resource/resource";
 
 export default {

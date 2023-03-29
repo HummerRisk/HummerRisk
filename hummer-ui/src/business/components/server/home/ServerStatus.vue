@@ -13,10 +13,10 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  import {serverValidateUrl} from "@/api/k8s/server/server";
+/* eslint-disable */
+import {serverValidateUrl} from "@/api/k8s/server/server";
 
-  export default {
+export default {
     name: "ServerStatus",
     props: {
       row: Object

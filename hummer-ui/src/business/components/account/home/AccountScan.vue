@@ -95,16 +95,22 @@
 </template>
 
 <script>
-import TableOperators from "../../common/components/TableOperators";
-import MainContainer from "../../common/components/MainContainer";
-import Container from "../../common/components/Container";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import Container from "@/business/components/common/components/Container";
 import ScanHeader from "../head/ScanHeader";
-import TablePagination from "../../common/pagination/TablePagination";
-import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/DialogFooter";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import TableOperator from "@/business/components/common/components/TableOperator";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {_sort} from "@/common/js/utils";
-import { cleanParameterUrl, getAccountUrl, createManualTaskUrl, ruleListUrl, saveParameterUrl } from "@/api/cloud/account/account";
+import {
+  cleanParameterUrl,
+  createManualTaskUrl,
+  getAccountUrl,
+  ruleListUrl,
+  saveParameterUrl
+} from "@/api/cloud/account/account";
 
 /* eslint-disable */
   export default {

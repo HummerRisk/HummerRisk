@@ -48,7 +48,7 @@
 
 <script>
 /* eslint-disable */
-  import {cloudEventSyncLogRegionListUrl} from "@/api/cloud/event/event";
+import {cloudEventSyncLogRegionListUrl} from "@/api/cloud/event/event";
 
 export default {
     name: "ResultLog",

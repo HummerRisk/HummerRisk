@@ -26,7 +26,7 @@
 
 <script>
 /* eslint-disable */
-  import {string2PrettyFormatUrl} from "@/api/cloud/resource/resource";
+import {string2PrettyFormatUrl} from "@/api/cloud/resource/resource";
 
 export default {
     name: "ResultReadOnly",

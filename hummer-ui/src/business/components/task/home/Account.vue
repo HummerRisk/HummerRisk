@@ -32,13 +32,8 @@
 <script>
 import FavouriteTree from "@/business/components/task/head/FavouriteTree";
 import AccountTree from "@/business/components/task/head/AccountTree";
-import MainContainer from "../../common/components/MainContainer";
-import {
-  taskAccountListUrl,
-  taskAddFavoriteUrl,
-  taskDelFavoriteUrl,
-  taskFavoriteListUrl
-} from "@/api/system/task";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import {taskAccountListUrl, taskAddFavoriteUrl, taskDelFavoriteUrl, taskFavoriteListUrl} from "@/api/system/task";
 
 /* eslint-disable */
 export default {

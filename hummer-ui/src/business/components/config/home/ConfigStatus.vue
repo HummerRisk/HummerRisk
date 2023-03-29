@@ -13,10 +13,10 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  import {configValidateByIdUrl} from "@/api/k8s/config/config";
+/* eslint-disable */
+import {configValidateByIdUrl} from "@/api/k8s/config/config";
 
-  export default {
+export default {
     name: "ConfigStatus",
     props: {
       row: Object

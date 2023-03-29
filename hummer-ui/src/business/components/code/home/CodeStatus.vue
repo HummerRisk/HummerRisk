@@ -13,10 +13,10 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  import {codeValidateByIdUrl} from "@/api/k8s/code/code";
+/* eslint-disable */
+import {codeValidateByIdUrl} from "@/api/k8s/code/code";
 
-  export default {
+export default {
     name: "CodeStatus",
     inject:['search'],
     props: {

@@ -28,7 +28,7 @@
 
 <script>
 import {getCurrentAccountID, getCurrentAccountName, getCurrentUser} from "@/common/js/utils";
-import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME, ROLE_ADMIN} from "@/common/js/constants";
+import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {ossAllListUrl} from "@/api/cloud/oss/oss";
 import {userUpdateCurrentUrl} from "@/api/system/system";
 

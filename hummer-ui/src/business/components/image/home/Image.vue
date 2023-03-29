@@ -332,23 +332,24 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
-import TableHeader from "../../common/components/TableHeader";
-import TableOperators from "../../common/components/TableOperators";
-import DialogFooter from "../../common/components/DialogFooter";
-import TableOperatorButton from "../../common/components/TableOperatorButton";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import TableHeader from "@/business/components/common/components/TableHeader";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
+import TableOperatorButton from "@/business/components/common/components/TableOperatorButton";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import ImageUpload from "../head/ImageUpload";
 import ImageTarUpload from "../head/ImageTarUpload";
-import MainContainer from "../.././common/components/MainContainer";
+import MainContainer from "@/business/components/common/components/MainContainer";
 import {IMAGE_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {
   addImageUrl,
   allImageReposUrl,
   deleteImageUrl,
-  imageListUrl, repoItemListUrl,
+  imageListUrl,
+  repoItemListUrl,
   scanImageUrl,
   updateImageUrl
 } from "@/api/k8s/image/image";

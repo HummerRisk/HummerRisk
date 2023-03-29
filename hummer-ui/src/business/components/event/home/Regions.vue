@@ -31,10 +31,10 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  import {cloudEventSyncLogRegionListUrl} from "@/api/cloud/event/event";
+/* eslint-disable */
+import {cloudEventSyncLogRegionListUrl} from "@/api/cloud/event/event";
 
-  export default {
+export default {
     name: "Regions",
     props: {
       logId: Number,

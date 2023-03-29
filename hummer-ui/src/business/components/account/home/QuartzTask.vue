@@ -320,7 +320,7 @@
 
 <script>
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TableOperator from "../../common/components/TableOperator";
+import TableOperator from "@/business/components/common/components/TableOperator";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import Container from "@/business/components/common/components/Container";
 import MainContainer from "@/business/components/common/components/MainContainer";
@@ -332,13 +332,16 @@ import {DEFAULT_CRON_EXPRESSION} from 'vue-cron-generator/src/constant/filed';
 import QuartzTaskLog from "@/business/components/account/home/QuartzTaskLog";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {CLOUD_TASK_CONFIGS} from "../../common/components/search/search-components";
+import {CLOUD_TASK_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {
   allListUrl,
   quartzCreateUrl,
   quartzDeleteUrl,
-  quartzListUrl, quartzPauseUrl, quartzRelaLogUrl,
-  quartzResumeUrl, showAccountUrl
+  quartzListUrl,
+  quartzPauseUrl,
+  quartzRelaLogUrl,
+  quartzResumeUrl,
+  showAccountUrl
 } from "@/api/cloud/account/account";
 import {listByAccountId} from "@/api/cloud/rule/rule";
 

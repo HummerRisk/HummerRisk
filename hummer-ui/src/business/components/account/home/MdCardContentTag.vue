@@ -72,7 +72,7 @@
 </template>
 <script>
 /* eslint-disable */
-  import {dashboardTotalPolicyUrl} from "@/api/cloud/dashboard/dashboard";
+import {dashboardTotalPolicyUrl} from "@/api/cloud/dashboard/dashboard";
 
 export default {
     name: "MdCardContentTag",

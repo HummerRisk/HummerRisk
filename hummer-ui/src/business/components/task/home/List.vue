@@ -438,14 +438,19 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import Account from "@/business/components/task/home/Account";
 import UpdateRule from "@/business/components/task/home/UpdateRule";
 import AccountType from "@/business/components/task/home/AccountType";
-import MainContainer from "../.././common/components/MainContainer";
+import MainContainer from "@/business/components/common/components/MainContainer";
 import {TASK_CONFIGS} from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   deleteTaskUrl,
-  getTaskUrl, taskDetailGroupUrl,
-  taskDetailRuleUrl, taskDetailTagUrl, taskExecuteUrl,
-  taskItemListUrl, taskListUrl, taskLogListUrl,
+  getTaskUrl,
+  taskDetailGroupUrl,
+  taskDetailRuleUrl,
+  taskDetailTagUrl,
+  taskExecuteUrl,
+  taskItemListUrl,
+  taskListUrl,
+  taskLogListUrl,
   taskReExecuteUrl,
   updateTaskUrl
 } from "@/api/system/task";

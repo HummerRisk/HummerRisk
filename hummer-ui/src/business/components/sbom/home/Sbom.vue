@@ -465,11 +465,15 @@ import FsLogForm from "@/business/components/fs/home/LogForm";
 import htmlToPdf from "@/common/js/htmlToPdf";
 import {
   sbomApplicationsUrl,
-  sbomCodeLogUrl, sbomCodeResultUrl, sbomFsLogUrl,
+  sbomCodeLogUrl,
+  sbomCodeResultUrl,
+  sbomFsLogUrl,
   sbomFsResultUrl,
-  sbomGetCodeResultUrl, sbomGetFsResultUrl,
+  sbomGetCodeResultUrl,
+  sbomGetFsResultUrl,
   sbomGetImageResultUrl,
-  sbomImageLogUrl, sbomImageResultUrl
+  sbomImageLogUrl,
+  sbomImageResultUrl
 } from "@/api/k8s/sbom/sbom";
 
 /* eslint-disable */

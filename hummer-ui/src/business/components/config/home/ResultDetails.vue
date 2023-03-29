@@ -59,17 +59,17 @@
 </template>
 
 <script>
-import TableOperators from "../../common/components/TableOperators";
-import MainContainer from "../../common/components/MainContainer";
-import Container from "../../common/components/Container";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import Container from "@/business/components/common/components/Container";
 import TableHeader from "@/business/components/common/components/DetailTableHeader";
-import TablePagination from "../../common/pagination/TablePagination";
-import TableOperator from "../../common/components/TableOperator";
-import DialogFooter from "../../common/components/RuleDialogFooter";
-import CenterChart from "../../common/components/CenterChart";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import TableOperator from "@/business/components/common/components/TableOperator";
+import DialogFooter from "@/business/components/common/components/RuleDialogFooter";
+import CenterChart from "@/business/components/common/components/CenterChart";
 import {_filter, _sort} from "@/common/js/utils";
 import MetricChart from "@/business/components/common/chart/MetricChart";
-import { DETAIL_RESULT_CONFIGS } from "@/business/components/common/components/search/search-components";
+import {DETAIL_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {configMetricChartUrl, configResultItemListBySearchUrl} from "@/api/k8s/config/config";
 

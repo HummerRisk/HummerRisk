@@ -218,14 +218,15 @@
 <script>
 
 import {_filter, _sort} from "@/common/js/utils";
-import TablePagination from "../../common/pagination/TablePagination";
-import DialogFooter from "../../common/components/DialogFooter";
-import TableOperators from "../../common/components/TableOperators";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import LogForm from "@/business/components/code/home/LogForm";
 import CodeDiff from 'vue-code-diff';
 import {
   codeMetricChartUrl,
-  deleteHistoryCodeResultUrl, getCodeResultUrl,
+  deleteHistoryCodeResultUrl,
+  getCodeResultUrl,
   historyCodeUrl,
   historyResultItemListUrl,
   logCodeUrl

@@ -398,19 +398,19 @@
 </template>
 
 <script>
-import TableOperators from "../../common/components/TableOperators";
-import MainContainer from "../../common/components/MainContainer";
-import Container from "../../common/components/Container";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import Container from "@/business/components/common/components/Container";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TablePagination from "../../common/pagination/TablePagination";
-import TableOperator from "../../common/components/TableOperator";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import TableOperator from "@/business/components/common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import RuleType from "./RuleType";
-import {SERVER_RESULT_CONFIGS, SERVER_RESULT_CONFIGS2} from "../../common/components/search/search-components";
+import {SERVER_RESULT_CONFIGS, SERVER_RESULT_CONFIGS2} from "@/business/components/common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {getServerResultUrl, serverLogUrl, serverResultListUrl, resultServerListUrl} from "@/api/k8s/server/server";
+import {getServerResultUrl, resultServerListUrl, serverLogUrl, serverResultListUrl} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
