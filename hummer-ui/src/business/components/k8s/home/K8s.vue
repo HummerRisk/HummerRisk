@@ -309,9 +309,13 @@ import {
   deleteK8sUrl,
   k8sListUrl,
   k8sValidatesUrl,
+  k8sValidateUrl,
+  kubenchStatusValidateUrl,
   logK8sUrl,
+  operatorStatusValidateUrl,
   reinstallKubenchUrl,
   reinstallOperatorUrl,
+  scanK8sUrl,
   updateK8sUrl
 } from "@/api/k8s/k8s/k8s";
 

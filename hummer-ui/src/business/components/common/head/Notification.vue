@@ -59,7 +59,7 @@ export default {
       }
     },
     queryCount() {
-      this.$post(unReadCountUrl, null, response => {
+      this.$post(unReadCountUrl, {}, response => {
         this.count = response.data;
       });
     },
