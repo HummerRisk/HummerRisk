@@ -402,7 +402,7 @@ public class RuleGroupMappingExample implements Serializable {
      *
      * @mbg.generated do_not_delete_during_merge Tue Jan 19 17:40:09 CST 2022
      */
-    public static class Criteria extends GeneratedCriteria {
+    public static class Criteria extends GeneratedCriteria implements Serializable {
 
         protected Criteria() {
             super();
@@ -415,7 +415,7 @@ public class RuleGroupMappingExample implements Serializable {
      *
      * @mbg.generated Tue Jan 19 17:40:09 CST 2022
      */
-    public static class Criterion {
+    public static class Criterion implements Serializable {
         private String condition;
 
         private Object value;
