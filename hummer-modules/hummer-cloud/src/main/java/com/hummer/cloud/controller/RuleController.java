@@ -196,17 +196,17 @@ public class RuleController {
         ruleService.reScans(accountId);
     }
 
-//    @ApiIgnore
-//    @GetMapping("reScan/{taskId}/{accountId}")
-//    public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
-//        ruleService.reScan(taskId, accountId);
-//    }
+    @ApiIgnore
+    @GetMapping("reScan/{taskId}/{accountId}")
+    public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
+        ruleService.reScan(taskId, accountId);
+    }
 
-//    @ApiOperation(value = "执行检测")
-//    @PostMapping("scan")
-//    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
-//        ruleService.scan(request);
-//    }
+    @ApiOperation(value = "执行检测")
+    @PostMapping("scan")
+    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
+        ruleService.scan(request);
+    }
 
     @I18n
     @ApiOperation(value = "新增规则组")
@@ -263,10 +263,10 @@ public class RuleController {
         ruleService.bindRule(request);
     }
 
-//    @I18n
-//    @ApiOperation(value = "规则组检测云账号")
-//    @GetMapping("scanByGroup/{groupId}/{accountId}")
-//    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
-//        ruleService.scanByGroup(groupId, accountId);
-//    }
+    @I18n
+    @ApiOperation(value = "规则组检测云账号")
+    @GetMapping("scanByGroup/{groupId}/{accountId}")
+    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
+        ruleService.scanByGroup(groupId, accountId);
+    }
 }

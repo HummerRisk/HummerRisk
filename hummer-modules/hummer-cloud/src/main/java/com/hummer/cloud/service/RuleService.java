@@ -708,7 +708,7 @@ public class RuleService   {
         }
     }
 
-//    public void scanByGroup(String groupId, String accountId){
-//        scanGroups(accountId, null, groupId);
-//    }
+    public void scanByGroup(String groupId, String accountId){
+        scanGroups(accountId, null, groupId);
+    }
 }
