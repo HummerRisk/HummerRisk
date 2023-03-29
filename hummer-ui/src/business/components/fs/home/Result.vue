@@ -148,7 +148,14 @@ import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/fs/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {deleteFsResultUrl, fsDownloadUrl, fsResultListUrl, getFsResultUrl, logFsUrl} from "@/api/k8s/fs/fs";
+import {
+  deleteFsResultUrl,
+  fsDownloadUrl,
+  fsReScanUrl,
+  fsResultListUrl,
+  getFsResultUrl,
+  logFsUrl
+} from "@/api/k8s/fs/fs";
 
 //列表展示与隐藏
 const columnOptions = [

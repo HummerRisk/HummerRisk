@@ -69,7 +69,7 @@ import NodeTree from "@/business/components/common/components/NodeTree";
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
 import {addAccountUrl, allListUrl} from "@/api/cloud/account/account";
-import {cloudPluginUrl} from "@/api/system/system";
+import {cloudPluginUrl, pluginByIdUrl} from "@/api/system/system";
 /* eslint-disable */
   export default {
     name: 'ScenarioModule',
@@ -188,8 +188,7 @@ import {cloudPluginUrl} from "@/api/system/system";
       },
       //选择插件查询云账号信息
       async changePlugin (pluginId, type){
-        let url = "/plugin/";
-        this.result = await this.$get(url + pluginId, response => {
+        this.result = await this.$get(pluginByIdUrl + pluginId, response => {
           let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
           this.tmpList = fromJson.data;
           if (type === 'edit') {

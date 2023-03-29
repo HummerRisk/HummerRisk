@@ -310,7 +310,7 @@ import {
   historyResultConfigItemListUrl,
   historyResultItemListUrl,
   historyResultKubenchListUrl,
-  k8sHistoryUrl,
+  k8sHistoryUrl, k8sMetricChartUrl,
   logK8sUrl
 } from "@/api/k8s/k8s/k8s";
 /* eslint-disable */

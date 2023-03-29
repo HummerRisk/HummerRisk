@@ -217,7 +217,13 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
 import {CODE_RULE_CONFIGS} from "../../common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
-import {codeChangeStatusUrl, codeRuleListUrl, deleteCodeRuleUrl} from "@/api/k8s/code/code";
+import {
+  addCodeRuleUrl,
+  codeChangeStatusUrl,
+  codeRuleListUrl,
+  deleteCodeRuleUrl,
+  updateCodeRuleUrl
+} from "@/api/k8s/code/code";
 import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 
 /* eslint-disable */
@@ -388,10 +394,10 @@ export default {
       let url = '';
       let form = '';
       if (type === 'add') {
-        url = '/code/addCodeRule';
+        url = addCodeRuleUrl;
         form = 'createRuleForm';
       } else if (type === 'edit') {
-        url = '/code/updateCodeRule';
+        url = updateCodeRuleUrl;
         form = 'updateRuleForm';
         if (mdObj.flag == 1) {
           this.$warning(this.$t('rule.rule_flag'));

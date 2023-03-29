@@ -161,8 +161,9 @@ import LogForm from "@/business/components/k8s/home/LogForm";
 import {saveAs} from "@/common/js/FileSaver";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
+  deleteCloudNativeResultUrl,
   getCloudNativeResultUrl,
-  getCloudNativeResultWithBLOBsUrl,
+  getCloudNativeResultWithBLOBsUrl, k8sDownloadUrl, k8sReScanUrl,
   k8sResultListUrl,
   logK8sUrl
 } from "@/api/k8s/k8s/k8s";

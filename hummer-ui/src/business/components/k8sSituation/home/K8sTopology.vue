@@ -309,6 +309,7 @@ import {
   getK8sImageUrl,
   k8sLogTopoUrl,
   k8sRiskTopologyUrl,
+  k8sTopologyUrl,
   namespaceTopologyUrl,
   nodeTopologyUrl
 } from "@/api/k8s/k8s/k8s";

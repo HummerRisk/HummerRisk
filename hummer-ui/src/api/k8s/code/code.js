@@ -56,3 +56,8 @@ export const codeResultItemListUrl = "/k8s/code/resultItemList/";
 export const codeUnBindListUrl = "/k8s/code/unBindList";
 
 export const codeAllBindListUrl = "/k8s/code/allBindList/";
+
+export const addCodeRuleUrl = "/k8s/code/addCodeRule";
+
+export const updateCodeRuleUrl = "/k8s/code/updateCodeRule";
+

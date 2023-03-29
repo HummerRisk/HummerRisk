@@ -235,7 +235,7 @@ import TableOperators from "../../common/components/TableOperators";
 import LogForm from "@/business/components/fs/home/LogForm";
 import CodeDiff from 'vue-code-diff';
 import {
-  deleteHistoryFsResultUrl,
+  deleteHistoryFsResultUrl, fsMetricChartUrl,
   getFsResultUrl,
   historyFsUrl,
   historyResultItemListUrl,

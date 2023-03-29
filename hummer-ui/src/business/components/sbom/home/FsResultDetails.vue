@@ -46,6 +46,7 @@ import TablePagination from "../../common/pagination/TablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import {_filter, _sort} from "@/common/js/utils";
 import {fsResultItemListUrl} from "@/api/k8s/fs/fs";
+import {string2PrettyFormatUrl} from "@/api/cloud/resource/resource";
 /* eslint-disable */
   export default {
     name: "ResultDetails",
