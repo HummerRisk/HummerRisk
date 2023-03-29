@@ -327,7 +327,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  ossManualListUrl,
+  ossManualListUrl, resourceAccountDeleteUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
   resourceRuleDataUrl,
@@ -337,6 +337,7 @@ import {
 } from "@/api/cloud/resource/resource";
 import {ossResourceListUrl} from "@/api/cloud/oss/oss";
 import {tagRuleListUrl} from "@/api/cloud/rule/rule";
+import {cloudTaskDetailUrl, cloudTaskLogByIdUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [

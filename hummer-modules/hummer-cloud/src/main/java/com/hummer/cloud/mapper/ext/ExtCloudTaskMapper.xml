@@ -260,7 +260,29 @@
         </if>
     </sql>
 
-    <select id="selectManualTasks" resultType="com.hummer.common.core.domain.CloudTask">
+    <resultMap id="selectManualTasksBaseResultMap" type="com.hummer.common.core.domain.CloudTask">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_tags" jdbcType="VARCHAR" property="ruleTags" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="resource_types" jdbcType="VARCHAR" property="resourceTypes" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion" />
+    </resultMap>
+
+    <select id="selectManualTasks" resultMap="selectManualTasksBaseResultMap">
         select
         t.*
         from cloud_task as t
@@ -288,7 +310,7 @@
         order by FIELD(t.`status`, 'PROCESSING', 'APPROVED', 'FINISHED', 'WARNING', 'ERROR'), t.return_sum desc, t.create_time desc, FIELD(t.`severity`, 'HighRisk', 'MediumRisk', 'LowRisk')
     </select>
 
-    <select id="selectOssManualTasks" resultType="com.hummer.common.core.domain.CloudTask">
+    <select id="selectOssManualTasks" resultMap="selectManualTasksBaseResultMap">
         select
         t.*
         from cloud_task as t

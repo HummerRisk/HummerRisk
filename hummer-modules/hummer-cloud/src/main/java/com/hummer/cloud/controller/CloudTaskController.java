@@ -5,8 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudTaskService;
 import com.hummer.cloud.service.OrderService;
 import com.hummer.common.core.domain.CloudTask;
-import com.hummer.common.core.domain.CloudTaskItemLogWithBLOBs;
-import com.hummer.common.core.domain.CloudTaskItemWithBLOBs;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.CloudTaskCopyDTO;
 import com.hummer.common.core.dto.CloudTaskDTO;
@@ -48,20 +46,6 @@ public class CloudTaskController {
         return orderService.getTaskItemLogByTaskId(taskId);
     }
 
-    @I18n
-    @GetMapping(value = "quartz/log/taskId/{taskId}")
-    public List<CloudTaskItemLogDTO> getQuartzLogByTask(@PathVariable String taskId) {
-        return orderService.getQuartzLogByTask(taskId);
-    }
-
-    @I18n
-    @PostMapping("quartz/log/{taskItemId}/{goPage}/{pageSize}")
-    public Pager<List<CloudTaskItemLogWithBLOBs>> getquartzLogDetails(@PathVariable int goPage, @PathVariable int pageSize, @PathVariable String taskItemId) {
-        CloudTaskItemWithBLOBs taskItem = orderService.taskItemWithBLOBs(taskItemId);
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, orderService.getQuartzLogByTaskItemId(taskItem));
-    }
-
     @GetMapping(value = "extendinfo/{taskId}")
     public CloudTaskDTO getTaskExtendInfo(@PathVariable String taskId) {
         return orderService.getTaskExtendInfo(taskId);
@@ -74,7 +58,7 @@ public class CloudTaskController {
 
     @I18n
     @PostMapping("manual/list/{goPage}/{pageSize}")
-    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) throws Exception {
+    public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         request.setType("manual");
         return PageUtils.setPageInfo(page, cloudTaskService.selectManualTasks(request));

@@ -331,38 +331,8 @@ public class OrderService {
         return cloudTaskMapper.selectByExample(null);
     }
 
-    public List<CloudTaskItemLogDTO> getQuartzLogByTask(String taskId) {
-        List<CloudTaskItemLogDTO> result = new ArrayList<>();
-        try {
-            CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
-            cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
-            List<CloudTaskItemWithBLOBs> taskItems = cloudTaskItemMapper.selectByExampleWithBLOBs(cloudTaskItemExample);
-            for (CloudTaskItemWithBLOBs taskItem : taskItems) {
-                CloudTaskItemLogDTO cloudTaskItemLogDTO = new CloudTaskItemLogDTO();
-                taskItem.setDetails(null);
-                taskItem.setCustomData(null);
-                cloudTaskItemLogDTO.setCloudTaskItem(taskItem);
-                Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
-                rule.setScript(null);//没有用到暂时置空，以防止翻译总报错warn
-                cloudTaskItemLogDTO.setRule(rule);
-                result.add(cloudTaskItemLogDTO);
-            }
-        } catch (Exception e) {
-            LogUtil.error(e.getMessage());
-        }
-
-        return result;
-    }
-
     public CloudTaskItemWithBLOBs taskItemWithBLOBs(String taskItemId) {
         return cloudTaskItemMapper.selectByPrimaryKey(taskItemId);
-    }
-
-    public List<CloudTaskItemLogWithBLOBs> getQuartzLogByTaskItemId(CloudTaskItemWithBLOBs taskItemWithBLOBs) {
-        CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
-        cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItemWithBLOBs.getId());
-        cloudTaskItemLogExample.setOrderByClause("create_time desc");
-        return cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample);
     }
 
     public List<CloudTaskItemLogDTO> getTaskItemLogByTaskId(String taskId) {
@@ -495,7 +465,7 @@ public class OrderService {
             updateTaskStatus(cloudTask.getId(), cloudTask.getStatus(), CloudTaskConstants.TASK_STATUS.APPROVED.name());
         } catch (Exception e) {
             LogUtil.error("Failed to retry, TaskId: " + cloudTask.getId(), e);
-            throw e;
+            HRException.throwException(e.getMessage());
         }
     }
 

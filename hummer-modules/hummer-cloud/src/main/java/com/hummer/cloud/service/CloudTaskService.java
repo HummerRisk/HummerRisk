@@ -253,13 +253,13 @@ public class CloudTaskService {
         }
     }
 
-    public List<CloudTask> selectManualTasks(ManualRequest request) throws Exception {
+    public List<CloudTask> selectManualTasks(ManualRequest request) {
         try {
             return extCloudTaskMapper.selectManualTasks(request);
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            HRException.throwException(e.getMessage());
+            return null;
         }
-
     }
 
     public boolean checkRuleTaskStatus(String accountId, String ruleId, String[] status) {

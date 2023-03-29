@@ -34,6 +34,7 @@ public class OperationLogService implements IOperationLogService {
     public void log(UserDTO user, String resourceId, String resourceName, String resourceType, String operation, String message) {
         String ip;
         try {
+            //TODO dubbo 调用没有http请求获取不到用户信息
             ip = tokenService.getLoginUser()!=null?tokenService.getLoginUser().getIpAddr():"";
         } catch (Exception e) {
             //redis里获取

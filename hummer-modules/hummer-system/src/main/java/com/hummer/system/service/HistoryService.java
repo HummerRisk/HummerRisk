@@ -70,7 +70,8 @@ public class HistoryService {
         String accountType = map.get("accountType").toString();
 
         HistoryScan history = new HistoryScan();
-        history.setOperator(tokenService.getLoginUser().getUserId());
+        //TODO dubbo 调用没有http请求获取不到用户信息
+//        history.setOperator(tokenService.getLoginUser().getUserId());
         history.setAccountId(accountId);
         history.setAccountType(accountType);
         history.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());

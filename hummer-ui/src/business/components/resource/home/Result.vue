@@ -561,15 +561,20 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl,
-  resourceRegionDataUrl,
+  cloudResourceListUrl, resourceAccountDeleteUrl,
+  resourceRegionDataUrl, resourceRegulationUrl,
   resourceRuleDataUrl,
   resourceSeverityDataUrl,
   resourceSourceUrl,
-  resourceTypeDataUrl
+  resourceTypeDataUrl, string2PrettyFormatUrl
 } from "@/api/cloud/resource/resource";
-import {cloudTagRuleListUrl, cloudTaskManualListUrl} from "@/api/cloud/account/account";
-import {resourceTypesUrl} from "@/api/cloud/rule/rule";
+import {
+  cloudTagRuleListUrl,
+  cloudTaskDetailUrl,
+  cloudTaskLogByIdUrl,
+  cloudTaskManualListUrl
+} from "@/api/cloud/account/account";
+import {resourceTypesUrl, ruleReScansUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
