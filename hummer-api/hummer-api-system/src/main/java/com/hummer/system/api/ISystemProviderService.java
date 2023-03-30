@@ -1,7 +1,6 @@
 package com.hummer.system.api;
 
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
 import com.hummer.common.core.dto.*;
 import com.hummer.system.api.model.LoginUser;
 
@@ -19,8 +18,6 @@ public interface ISystemProviderService {
     void insertScanTaskHistory(Object obj, Integer scanId, String accountId, String accountType) throws Exception;
 
     void deleteScanTaskHistory(Integer scanId) throws Exception;
-
-    List<DashboardTarget> vulnTarget(Map<String, Object> params);
 
     List<Map<String, Object>> groupList(Map<String, Object> params);
 

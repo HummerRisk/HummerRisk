@@ -35,9 +35,6 @@ public class BucketMetric implements Serializable {
     @ApiModelProperty("文件数量")
     private Long objectNumber;
 
-    @ApiModelProperty("工作空间")
-    private String workspaceId;
-
     @ApiModelProperty("云账号ID")
     private String credentialId;
 
@@ -121,14 +118,6 @@ public class BucketMetric implements Serializable {
 
     public void setObjectNumber(Long objectNumber) {
         this.objectNumber = objectNumber;
-    }
-
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
     }
 
     public String getCredentialId() {
