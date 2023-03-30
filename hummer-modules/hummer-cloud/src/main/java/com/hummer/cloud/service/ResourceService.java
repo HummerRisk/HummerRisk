@@ -86,7 +86,6 @@ public class ResourceService {
     @DubboReference
     private IOperationLogService operationLogService;
 
-
     public SourceDTO source (String accountId) {
         return extResourceMapper.source(accountId);
     }
@@ -146,7 +145,7 @@ public class ResourceService {
 
             //任务条目和资源关联表
             taskItemResource.setResourceId(resourceWithBLOBs.getId());
-//            insertTaskItemResource(taskItemResource);
+            insertTaskItemResource(taskItemResource);
 
             //计算sum资源总数与检测的资源数到task
             int resourceSum = extCloudTaskMapper.getResourceSum(cloudTask.getId());
@@ -156,12 +155,23 @@ public class ResourceService {
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
         } catch (Exception e) {
+            e.printStackTrace();
             HRException.throwException(e.getMessage());
         }
 
         return resourceWithBLOBs;
     }
+    private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
+        if (taskItemResource.getId() != null) {
+            cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
 
+            systemProviderService.updateHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
+        } else {
+            cloudTaskItemResourceMapper.insertSelective(taskItemResource);
+
+            systemProviderService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
+        }
+    }
     private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, JSONObject jsonObject) throws Exception {
         ResourceItem resourceItem = new ResourceItem();
         try{
@@ -217,6 +227,7 @@ public class ResourceService {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.error("[{}] Generate updateResourceSum policy.yml file，and custodian run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
         }

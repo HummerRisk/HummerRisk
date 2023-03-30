@@ -232,8 +232,8 @@
             t.scan_type as scan_type,
             t1.regions
         FROM rule t
-        LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id AND t1.account_id = #{accountId}
-        WHERE t.id = #{ruleId}
+        LEFT JOIN rule_account_parameter t1 ON t.id = t1.rule_id AND t1.account_id = #{param2}
+        WHERE t.id = #{param1}
     </select>
 
 </mapper>
