@@ -1,6 +1,6 @@
 package com.hummer.common.core.dto;
 
-public class CloudEventSourceIpInsightDto {
+public class CloudEventSourceIpInsightDTO {
     private String sourceIpAddress;
     private Long earliestEventTime;
     private Long lastEventTime;

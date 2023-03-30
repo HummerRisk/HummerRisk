@@ -10,7 +10,7 @@ import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
 import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.CloudEventGroupDTO;
-import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
+import com.hummer.common.core.dto.CloudEventSourceIpInsightDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
@@ -85,7 +85,7 @@ public class CloudEventController {
 
     @ApiOperation(value = "源ip分析列表")
     @PostMapping("insight/list/{goPage}/{pageSize}")
-    public Pager<List<CloudEventSourceIpInsightDto>> listSourceIpInsight(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
+    public Pager<List<CloudEventSourceIpInsightDTO>> listSourceIpInsight(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudEventRequest cloudEventRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudEventService.getSourceIpInsight(cloudEventRequest));
     }

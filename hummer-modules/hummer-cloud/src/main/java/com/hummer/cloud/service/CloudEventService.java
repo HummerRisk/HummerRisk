@@ -38,7 +38,7 @@ import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
 import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.CloudEventGroupDTO;
-import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
+import com.hummer.common.core.dto.CloudEventSourceIpInsightDTO;
 import com.hummer.common.core.proxy.baidu.BaiduCredential;
 import com.hummer.common.core.proxy.baidu.BaiduRequest;
 import com.hummer.common.core.proxy.baidu.QueryEventResponse;
@@ -149,7 +149,7 @@ public class CloudEventService {
         return extCloudEventMapper.selectEventGroup(cloudEventRequest);
     }
 
-    public List<CloudEventSourceIpInsightDto> getSourceIpInsight(CloudEventRequest cloudEventRequest){
+    public List<CloudEventSourceIpInsightDTO> getSourceIpInsight(CloudEventRequest cloudEventRequest){
         return extCloudEventMapper.selectSourceIpInsight(cloudEventRequest);
     }
 

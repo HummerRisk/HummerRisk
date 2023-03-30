@@ -4,7 +4,7 @@ import com.hummer.common.core.domain.CloudEventWithBLOBs;
 import com.hummer.common.core.domain.request.cloudEvent.CloudEventRequest;
 import com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo;
 import com.hummer.common.core.dto.CloudEventGroupDTO;
-import com.hummer.common.core.dto.CloudEventSourceIpInsightDto;
+import com.hummer.common.core.dto.CloudEventSourceIpInsightDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,6 +30,6 @@ public interface ExtCloudEventMapper {
     List<Map<String, Object>> regionChart();
 
     List<Map<String, Object>> severityChart();
-    List<CloudEventSourceIpInsightDto> selectSourceIpInsight(@Param("request") CloudEventRequest request);
+    List<CloudEventSourceIpInsightDTO> selectSourceIpInsight(@Param("request") CloudEventRequest request);
     List<Map<String,Object>> selectIpAccessTimesGroupByDate(@Param("ip")String ip,@Param("startDate")String startDate,@Param("endDate")String endDate);
 }

@@ -21,9 +21,21 @@
                :destroy-on-close="true">
       <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
         <el-table-column type="index" min-width="10%"/>
-        <el-table-column prop="region" :label="$t('account.region_id')" min-width="45%"></el-table-column>
-        <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="45%"></el-table-column>
-        <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="45%"></el-table-column>
+        <el-table-column :label="$t('account.region_id')" min-width="45%">
+          <template v-slot:default="scope">
+            {{ scope.row.region }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('account.region_name')" min-width="45%">
+          <template v-slot:default="scope">
+            {{ scope.row.regionName?scope.row.regionName:"--" }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('event.data_count')" min-width="45%">
+          <template v-slot:default="scope">
+            {{ scope.row.dataCount?scope.row.dataCount:"0" }}
+          </template>
+        </el-table-column>
       </el-table>
     </el-drawer>
     <!--regions-->

@@ -100,7 +100,43 @@
     </if>
   </sql>
 
-  <select id="getCloudEventList" resultType="com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo">
+  <resultMap id="getCloudEventListBaseResultMap" type="com.hummer.common.core.domain.request.event.CloudEventWithBLOBsVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="event_id" jdbcType="VARCHAR" property="eventId" />
+    <result column="cloud_account_id" jdbcType="VARCHAR" property="cloudAccountId" />
+    <result column="sync_region" jdbcType="VARCHAR" property="syncRegion" />
+    <result column="acs_region" jdbcType="VARCHAR" property="acsRegion" />
+    <result column="event_name" jdbcType="VARCHAR" property="eventName" />
+    <result column="event_type" jdbcType="VARCHAR" property="eventType" />
+    <result column="event_category" jdbcType="VARCHAR" property="eventCategory" />
+    <result column="event_version" jdbcType="VARCHAR" property="eventVersion" />
+    <result column="event_rw" jdbcType="VARCHAR" property="eventRw" />
+    <result column="event_message" jdbcType="VARCHAR" property="eventMessage" />
+    <result column="event_source" jdbcType="VARCHAR" property="eventSource" />
+    <result column="event_time" jdbcType="BIGINT" property="eventTime" />
+    <result column="source_ip_address" jdbcType="VARCHAR" property="sourceIpAddress" />
+    <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
+    <result column="request_id" jdbcType="VARCHAR" property="requestId" />
+    <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+    <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+    <result column="api_version" jdbcType="VARCHAR" property="apiVersion" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="event_rating" jdbcType="INTEGER" property="eventRating" />
+    <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+    <result column="location_info" jdbcType="VARCHAR" property="locationInfo" />
+    <result column="endpoint" jdbcType="VARCHAR" property="endpoint" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
+    <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+    <result column="user_agent" jdbcType="LONGVARCHAR" property="userAgent" />
+    <result column="user_identity" jdbcType="LONGVARCHAR" property="userIdentity" />
+    <result column="additional_event_data" jdbcType="LONGVARCHAR" property="additionalEventData" />
+    <result column="request_parameters" jdbcType="LONGVARCHAR" property="requestParameters" />
+    <result column="referenced_resources" jdbcType="LONGVARCHAR" property="referencedResources" />
+    <result column="response_elements" jdbcType="LONGVARCHAR" property="responseElements" />
+    <result column="cloud_audit_event" jdbcType="LONGVARCHAR" property="cloudAuditEvent" />
+  </resultMap>
+
+  <select id="getCloudEventList" resultMap="getCloudEventListBaseResultMap">
     select t.*, t1.name as accountName, t1.plugin_icon as accountIcon
     from cloud_event t
     join cloud_account t1 on t.cloud_account_id = t1.id
@@ -178,7 +214,43 @@
          )
   </select>
 
-  <select id="selectEventGroup" resultType="com.hummer.common.core.dto.CloudEventGroupDTO">
+  <resultMap id="selectEventGroupBaseResultMap" type="com.hummer.common.core.dto.CloudEventGroupDTO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="event_id" jdbcType="VARCHAR" property="eventId" />
+    <result column="cloud_account_id" jdbcType="VARCHAR" property="cloudAccountId" />
+    <result column="sync_region" jdbcType="VARCHAR" property="syncRegion" />
+    <result column="acs_region" jdbcType="VARCHAR" property="acsRegion" />
+    <result column="event_name" jdbcType="VARCHAR" property="eventName" />
+    <result column="event_type" jdbcType="VARCHAR" property="eventType" />
+    <result column="event_category" jdbcType="VARCHAR" property="eventCategory" />
+    <result column="event_version" jdbcType="VARCHAR" property="eventVersion" />
+    <result column="event_rw" jdbcType="VARCHAR" property="eventRw" />
+    <result column="event_message" jdbcType="VARCHAR" property="eventMessage" />
+    <result column="event_source" jdbcType="VARCHAR" property="eventSource" />
+    <result column="event_time" jdbcType="BIGINT" property="eventTime" />
+    <result column="source_ip_address" jdbcType="VARCHAR" property="sourceIpAddress" />
+    <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
+    <result column="request_id" jdbcType="VARCHAR" property="requestId" />
+    <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+    <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+    <result column="api_version" jdbcType="VARCHAR" property="apiVersion" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="event_rating" jdbcType="INTEGER" property="eventRating" />
+    <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+    <result column="location_info" jdbcType="VARCHAR" property="locationInfo" />
+    <result column="endpoint" jdbcType="VARCHAR" property="endpoint" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
+    <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+    <result column="user_agent" jdbcType="LONGVARCHAR" property="userAgent" />
+    <result column="user_identity" jdbcType="LONGVARCHAR" property="userIdentity" />
+    <result column="additional_event_data" jdbcType="LONGVARCHAR" property="additionalEventData" />
+    <result column="request_parameters" jdbcType="LONGVARCHAR" property="requestParameters" />
+    <result column="referenced_resources" jdbcType="LONGVARCHAR" property="referencedResources" />
+    <result column="response_elements" jdbcType="LONGVARCHAR" property="responseElements" />
+    <result column="cloud_audit_event" jdbcType="LONGVARCHAR" property="cloudAuditEvent" />
+  </resultMap>
+
+  <select id="selectEventGroup" resultMap="selectEventGroupBaseResultMap">
     select event_group.*
     from (
     SELECT
@@ -250,7 +322,43 @@
     Limit 10;
   </select>
 
-  <select id="selectSourceIpInsight" resultType="com.hummer.common.core.dto.CloudEventSourceIpInsightDto">
+  <resultMap id="selectSourceIpInsightBaseResultMap" type="com.hummer.common.core.dto.CloudEventSourceIpInsightDTO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="event_id" jdbcType="VARCHAR" property="eventId" />
+    <result column="cloud_account_id" jdbcType="VARCHAR" property="cloudAccountId" />
+    <result column="sync_region" jdbcType="VARCHAR" property="syncRegion" />
+    <result column="acs_region" jdbcType="VARCHAR" property="acsRegion" />
+    <result column="event_name" jdbcType="VARCHAR" property="eventName" />
+    <result column="event_type" jdbcType="VARCHAR" property="eventType" />
+    <result column="event_category" jdbcType="VARCHAR" property="eventCategory" />
+    <result column="event_version" jdbcType="VARCHAR" property="eventVersion" />
+    <result column="event_rw" jdbcType="VARCHAR" property="eventRw" />
+    <result column="event_message" jdbcType="VARCHAR" property="eventMessage" />
+    <result column="event_source" jdbcType="VARCHAR" property="eventSource" />
+    <result column="event_time" jdbcType="BIGINT" property="eventTime" />
+    <result column="source_ip_address" jdbcType="VARCHAR" property="sourceIpAddress" />
+    <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
+    <result column="request_id" jdbcType="VARCHAR" property="requestId" />
+    <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+    <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+    <result column="api_version" jdbcType="VARCHAR" property="apiVersion" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="event_rating" jdbcType="INTEGER" property="eventRating" />
+    <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+    <result column="location_info" jdbcType="VARCHAR" property="locationInfo" />
+    <result column="endpoint" jdbcType="VARCHAR" property="endpoint" />
+    <result column="resource_url" jdbcType="VARCHAR" property="resourceUrl" />
+    <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+    <result column="user_agent" jdbcType="LONGVARCHAR" property="userAgent" />
+    <result column="user_identity" jdbcType="LONGVARCHAR" property="userIdentity" />
+    <result column="additional_event_data" jdbcType="LONGVARCHAR" property="additionalEventData" />
+    <result column="request_parameters" jdbcType="LONGVARCHAR" property="requestParameters" />
+    <result column="referenced_resources" jdbcType="LONGVARCHAR" property="referencedResources" />
+    <result column="response_elements" jdbcType="LONGVARCHAR" property="responseElements" />
+    <result column="cloud_audit_event" jdbcType="LONGVARCHAR" property="cloudAuditEvent" />
+  </resultMap>
+
+  <select id="selectSourceIpInsight" resultMap="selectSourceIpInsightBaseResultMap">
     select * from (
     select source_ip_address as sourceIpAddress,
     min(event_time) as earliest_eventTime,
