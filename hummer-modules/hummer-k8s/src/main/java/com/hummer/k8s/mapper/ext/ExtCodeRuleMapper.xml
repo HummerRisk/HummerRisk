@@ -75,8 +75,19 @@
     </if>
   </sql>
 
-  <select id="ruleList" parameterType="com.hummer.common.core.domain.request.code.CodeRuleRequest"
-          resultType="com.hummer.common.core.dto.CodeRuleDTO">
+  <resultMap id="ruleListBaseResultMap" type="com.hummer.common.core.dto.CodeRuleDTO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="severity" jdbcType="VARCHAR" property="severity" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="parameter" jdbcType="VARCHAR" property="parameter" />
+    <result column="last_modified" jdbcType="BIGINT" property="lastModified" />
+    <result column="flag" jdbcType="BIT" property="flag" />
+    <result column="script" jdbcType="LONGVARCHAR" property="script" />
+  </resultMap>
+
+  <select id="ruleList" parameterType="com.hummer.common.core.domain.request.code.CodeRuleRequest" resultMap="ruleListBaseResultMap">
     SELECT
     t.*,
     t1.tag_key as tagKey,

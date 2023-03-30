@@ -157,7 +157,18 @@
         </if>
     </sql>
 
-    <select id="syncList" resultType="com.hummer.common.core.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
+    <resultMap id="syncListBaseResultMap" type="com.hummer.common.core.dto.CloudNativeSourceSyncLogWithBLOBsDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="cloud_native_id" jdbcType="VARCHAR" property="cloudNativeId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="sum" jdbcType="BIGINT" property="sum" />
+        <result column="result" jdbcType="BIT" property="result" />
+        <result column="operation" jdbcType="LONGVARCHAR" property="operation" />
+        <result column="output" jdbcType="LONGVARCHAR" property="output" />
+    </resultMap>
+
+    <select id="syncList" resultMap="syncListBaseResultMap">
         SELECT
         t.*,
         t1.name as k8sName,
@@ -184,8 +195,7 @@
         ORDER BY t.create_time desc
     </select>
 
-    <resultMap id="ImageMap" type="com.hummer.common.core.dto.ImageDTO"
-               extends="com.hummer.k8s.mapper.ImageMapper.BaseResultMap">
+    <resultMap id="ImageMap" type="com.hummer.common.core.dto.ImageDTO" extends="com.hummer.k8s.mapper.ImageMapper.BaseResultMap">
         <result column="user" property="user"/>
         <result column="imageRepoName" property="imageRepoName"/>
     </resultMap>
