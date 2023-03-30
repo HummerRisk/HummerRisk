@@ -10,6 +10,8 @@ spring:
   profiles:
     # 环境配置
     active: prod
+  messages:
+    basename: i18n/messages
   cloud:
     bootstrap:
       enabled: true

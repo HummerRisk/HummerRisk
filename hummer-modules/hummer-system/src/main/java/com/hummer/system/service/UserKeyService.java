@@ -8,7 +8,7 @@ import com.hummer.common.core.domain.UserKeyExample;
 import com.hummer.common.core.domain.request.user.UserKeyRequest;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.system.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.UserKeyMapper;
 import com.hummer.system.mapper.ext.ExtUserKeyMapper;
 import org.apache.commons.lang3.RandomStringUtils;

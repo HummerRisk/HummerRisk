@@ -7,7 +7,7 @@ import com.hummer.common.core.domain.ProxyExample;
 import com.hummer.common.core.domain.request.proxy.ProxyRequest;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.system.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.ProxyMapper;
 import com.hummer.system.mapper.ext.ExtProxyMapper;
 import org.springframework.beans.factory.annotation.Autowired;

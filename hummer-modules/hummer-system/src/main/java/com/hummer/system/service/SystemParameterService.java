@@ -23,7 +23,7 @@ import com.hummer.common.core.utils.FileUploadUtils;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.system.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.mapper.WebhookMapper;
 import com.hummer.system.message.NotificationBasicResponse;

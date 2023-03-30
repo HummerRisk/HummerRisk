@@ -1,7 +1,7 @@
 package com.hummer.cloud.service;
 
 import com.google.gson.Gson;
-import com.hummer.cloud.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.oss.constants.OSSConstants;
 import com.hummer.common.core.constant.CloudTaskConstants;

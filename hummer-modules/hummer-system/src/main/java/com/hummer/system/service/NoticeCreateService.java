@@ -12,7 +12,7 @@ import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.CommonBeanFactory;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.k8s.api.IK8sProviderService;
-import com.hummer.system.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.MessageOrderItemMapper;
 import com.hummer.system.mapper.MessageOrderMapper;
 import com.hummer.system.mapper.WebMsgMapper;

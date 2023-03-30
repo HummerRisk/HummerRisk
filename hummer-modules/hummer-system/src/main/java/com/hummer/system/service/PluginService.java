@@ -8,7 +8,7 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.ReadFileUtils;
-import com.hummer.system.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.PluginMapper;
 import com.hummer.system.mapper.ext.ExtPluginMapper;
 import org.apache.commons.lang3.StringUtils;

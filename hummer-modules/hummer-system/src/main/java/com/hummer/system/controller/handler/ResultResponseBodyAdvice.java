@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.hummer.common.core.handler.ResultHolder;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.handler.annotation.NoResultHolder;
-import com.hummer.system.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;

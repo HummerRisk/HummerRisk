@@ -3,7 +3,7 @@ package com.hummer.cloud.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.cloud.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.common.core.constant.*;
@@ -11,10 +11,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.utils.CommandUtils;
-import com.hummer.common.core.utils.LogUtil;
-import com.hummer.common.core.utils.PlatformUtils;
-import com.hummer.common.core.utils.UUIDUtil;
+import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import org.apache.commons.lang3.StringUtils;
@@ -166,20 +163,39 @@ public class CloudTaskService {
         }
     }
 
-    public boolean dryRun(QuartzTaskDTO quartzTaskDTO) {
+    public boolean ruleDryRun(QuartzTaskDTO quartzTaskDTO) {
         //validate && dryrun
         String uuid = UUIDUtil.newUUID();
         try {
             String script = quartzTaskDTO.getScript();
             JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
-            String groupName = "xss";
             for (Object o : jsonArray) {
                 JSONObject jsonObject = (JSONObject) o;
                 String key = "${{" + jsonObject.getString("key") + "}}";
                 if (script.contains(key)) {
                     script = script.replace(key, jsonObject.getString("defaultValue"));
                 }
-                groupName = jsonObject.getString("defaultValue");
+            }
+            return YamlUtil.validateYaml(script);
+        } catch (Exception e) {
+            LogUtil.error("[{}] validate && dryrun generate policy.yml file failed:{}", uuid, e.getMessage());
+            HRException.throwException(e instanceof HRException ? e.getMessage() : Translator.get("i18n_compliance_rule_error"));
+        }
+        return false;
+    }
+
+    public boolean dryRun(QuartzTaskDTO quartzTaskDTO) {
+        //validate && dryrun
+        String uuid = UUIDUtil.newUUID();
+        try {
+            String script = quartzTaskDTO.getScript();
+            JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
+            for (Object o : jsonArray) {
+                JSONObject jsonObject = (JSONObject) o;
+                String key = "${{" + jsonObject.getString("key") + "}}";
+                if (script.contains(key)) {
+                    script = script.replace(key, jsonObject.getString("defaultValue"));
+                }
             }
             final String finalScript = script;
             String dirPath;

@@ -1,7 +1,7 @@
 package com.hummer.system.config;
 
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.CommonBeanFactory;
-import com.hummer.system.i18n.Translator;
 import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +42,7 @@ public class I18nConfig {
 
     @Bean
     public Validator validator(LocalValidatorFactoryBean localValidatorFactoryBean) {
-        return (Validator) localValidatorFactoryBean.getValidator();
+        return localValidatorFactoryBean.getValidator();
     }
 
 }

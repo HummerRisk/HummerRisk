@@ -1,7 +1,7 @@
 package com.hummer.cloud.controller.handler;
 
 import com.google.gson.Gson;
-import com.hummer.cloud.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.handler.ResultHolder;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.handler.annotation.NoResultHolder;

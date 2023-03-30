@@ -12,11 +12,11 @@ import com.hummer.common.core.domain.request.code.CodeResultRequest;
 import com.hummer.common.core.domain.request.code.CodeRuleRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.code.CodeCredential;
 import com.hummer.common.core.proxy.code.CodeCredentialRequest;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.k8s.i18n.Translator;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtCodeMapper;
 import com.hummer.k8s.mapper.ext.ExtCodeResultItemMapper;
@@ -437,34 +437,34 @@ public class CodeService {
             codeRequest.setCredential(code.getCredential());
             CodeCredential codeCredential = codeRequest.getCodeClient();
             String token = "", branch = "";
-            if (codeCredential != null && codeCredential.getToken() != null) {
+            if (codeCredential != null && StringUtils.isNotEmpty(codeCredential.getToken())) {
                 if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITHUB_TOKEN)) {
                     token = "export GITHUB_TOKEN='" + codeCredential.getToken() + "';" + "\n";
                 } else if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITLAB_TOKEN)) {
                     token = "export GITLAB_TOKEN='" + codeCredential.getToken() + "';" + "\n";
                 }
             }
-            if (codeCredential != null && codeCredential.getBranch() != null) {
+            if (codeCredential != null && StringUtils.isNotEmpty(codeCredential.getBranch())) {
                 branch = TrivyConstants.BRANCH + codeCredential.getBranch();
-            } else if (codeCredential != null && codeCredential.getTag() != null) {
+            } else if (codeCredential != null && StringUtils.isNotEmpty(codeCredential.getTag())) {
                 branch = TrivyConstants.TAG + codeCredential.getTag();
-            } else if (codeCredential != null && codeCredential.getCommit() != null) {
+            } else if (codeCredential != null && StringUtils.isNotEmpty(codeCredential.getCommit())) {
                 branch = TrivyConstants.COMMIT + codeCredential.getCommit();
             }
             ScanSetting scanSetting = (ScanSetting) obj[2];
             String str = "";
-            if(scanSetting.getSkipDbUpdate() != null && StringUtils.equalsIgnoreCase(scanSetting.getSkipDbUpdate(), "true")) {
+            if(StringUtils.isNotEmpty(scanSetting.getSkipDbUpdate()) && StringUtils.equalsIgnoreCase(scanSetting.getSkipDbUpdate(), "true")) {
                 str = str + TrivyConstants.SKIP_DB_UPDATE + TrivyConstants.SKIP_JAVA_DB_UPDATE;
             }
-            if(scanSetting.getIgnoreUnfixed() != null && StringUtils.equalsIgnoreCase(scanSetting.getIgnoreUnfixed(), "true")) {
+            if(StringUtils.isNotEmpty(scanSetting.getIgnoreUnfixed()) && StringUtils.equalsIgnoreCase(scanSetting.getIgnoreUnfixed(), "true")) {
                 str = str + TrivyConstants.UNFIXED;
             }
-            if(scanSetting.getSecurityChecks() != null) {
+            if(StringUtils.isNotEmpty(scanSetting.getSecurityChecks())) {
                 str = str + TrivyConstants.SECURITY_CHECKS + scanSetting.getSecurityChecks();
             } else {
                 str = str + TrivyConstants.SECURITY_CHECKS_DEFAULT;
             }
-            if(scanSetting.getOfflineScan() != null && StringUtils.equalsIgnoreCase(scanSetting.getOfflineScan(), "true")) {
+            if(StringUtils.isNotEmpty(scanSetting.getOfflineScan()) && StringUtils.equalsIgnoreCase(scanSetting.getOfflineScan(), "true")) {
                 str = str + TrivyConstants.OFFLINE_SCAN;
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);

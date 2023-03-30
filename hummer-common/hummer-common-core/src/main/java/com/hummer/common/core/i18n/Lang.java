@@ -1,4 +1,4 @@
-package com.hummer.k8s.i18n;
+package com.hummer.common.core.i18n;
 
 import org.apache.commons.lang3.StringUtils;
 

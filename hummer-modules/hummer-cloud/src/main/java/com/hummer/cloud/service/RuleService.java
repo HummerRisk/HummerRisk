@@ -2,7 +2,7 @@ package com.hummer.cloud.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.cloud.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.*;
 import com.hummer.common.core.constant.*;
@@ -304,7 +304,7 @@ public class RuleService   {
         QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
         BeanUtils.copyBean(quartzTaskDTO, ruleDTO);
         //validate && dryrun
-        return cloudTaskService.dryRun(quartzTaskDTO);
+        return cloudTaskService.ruleDryRun(quartzTaskDTO);
     }
 
     public void deleteRule(String id) {

@@ -1,6 +1,6 @@
 package com.hummer.cloud.config;
 
-import com.hummer.cloud.i18n.Translator;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.CommonBeanFactory;
 import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;
