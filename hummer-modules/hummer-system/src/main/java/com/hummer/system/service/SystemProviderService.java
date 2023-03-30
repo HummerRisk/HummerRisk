@@ -87,11 +87,6 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
-    public List<DashboardTarget> vulnTarget(Map<String, Object> params) {
-        return extVulnMapper.vulnTarget(params);
-    }
-
-    @Override
     public List<Map<String, Object>> groupList(Map<String, Object> params) {
         return extVulnMapper.groupList(params);
     }

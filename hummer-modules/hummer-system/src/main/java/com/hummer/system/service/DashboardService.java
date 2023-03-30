@@ -62,14 +62,6 @@ public class DashboardService {
                 return extVulnMapper.ruleList(params);
             case "accountList":
                 return extVulnMapper.accountList(params);
-            case "vulnList":
-                return extVulnMapper.vulnList(params);
-            case "vulnRuleList":
-                return extVulnMapper.vulnRuleList(params);
-            case "vulnOverall":
-                return extVulnMapper.vulnOverall(params);
-            case "vulnRuleGroup":
-                return extVulnMapper.vulnRuleGroup(params);
             case "regionsList":
                 return extVulnMapper.regionsList(params);
             case "countList":
@@ -85,10 +77,6 @@ public class DashboardService {
 
     public List<Map<String, Object>> totalPolicy(Map<String, Object> params) {
         return extVulnMapper.totalPolicy(params);
-    }
-
-    public List<Map<String, Object>> vulnTotalPolicy(Map<String, Object> params) {
-        return extVulnMapper.vulnTotalPolicy(params);
     }
 
     public List<DashboardTarget> target(Map<String, Object> params) {

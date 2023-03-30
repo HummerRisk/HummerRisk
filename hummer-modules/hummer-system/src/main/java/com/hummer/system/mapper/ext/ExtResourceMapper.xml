@@ -49,7 +49,31 @@
         </where>
     </select>
 
-    <select id="resource" resultType="com.hummer.common.core.domain.ResourceWithBLOBs" parameterType="com.hummer.common.core.domain.CloudTaskItem">
+    <resultMap id="resourceBaseResultMap" type="com.hummer.common.core.domain.ResourceWithBLOBs">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+        <result column="dir_name" jdbcType="VARCHAR" property="dirName" />
+        <result column="resource_status" jdbcType="VARCHAR" property="resourceStatus" />
+        <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="region_id" jdbcType="VARCHAR" property="regionId" />
+        <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="custodian_run_log" jdbcType="LONGVARCHAR" property="custodianRunLog" />
+        <result column="metadata" jdbcType="LONGVARCHAR" property="metadata" />
+        <result column="resources" jdbcType="LONGVARCHAR" property="resources" />
+        <result column="resource_command" jdbcType="LONGVARCHAR" property="resourceCommand" />
+        <result column="resource_command_action" jdbcType="LONGVARCHAR" property="resourceCommandAction" />
+    </resultMap>
+
+    <select id="resource" resultMap="resourceBaseResultMap" parameterType="com.hummer.common.core.domain.CloudTaskItem">
         SELECT t.*
         FROM resource t
         left join cloud_task_item_resource t1 on t.id = t1.resource_id

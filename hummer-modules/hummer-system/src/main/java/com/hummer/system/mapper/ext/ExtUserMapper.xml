@@ -105,19 +105,22 @@
 
     <!--修改密码-->
     <update id="updatePassword" parameterType="com.hummer.common.core.domain.User">
-    update user
-    set
-       password=#{password,jdbcType=VARCHAR},
-       update_time = #{updateTime,jdbcType=BIGINT}
-    where  id=#{id,jdbcType=VARCHAR}
-   </update>
+        update user
+        set password=#{password,jdbcType=VARCHAR},
+            update_time = #{updateTime,jdbcType=BIGINT}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
     <select id="getDefaultLanguage" parameterType="java.lang.String" resultType="java.lang.String">
-    select param_value from system_parameter
-    where param_key=#{paramKey,jdbcType=VARCHAR}
-   </select>
+        select param_value
+        from system_parameter
+        where param_key = #{paramKey,jdbcType=VARCHAR}
+    </select>
 
     <select id="searchUser" parameterType="java.lang.String" resultType="com.hummer.common.core.domain.User">
-        select id, name, email, last_account_id from `user` where id like CONCAT('%', #{condition},'%') or email like CONCAT('%', #{condition},'%') limit 100;
+        select id, name, email, last_account_id
+        from `user`
+        where id like CONCAT('%', #{condition}, '%')
+           or email like CONCAT('%', #{condition}, '%') limit 100;
     </select>
 
     <select id="queryTypeByIds" parameterType="java.lang.String" resultType="com.hummer.common.core.domain.UserDetail">

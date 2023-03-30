@@ -17,7 +17,6 @@
                   (SELECT IFNULL(count(t.id), 0) from file_system t)
                   as accounts) as accounts,
               (SELECT IFNULL(count(t.id), 0) as cloudAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudAccounts,
-              (SELECT IFNULL(count(t.id), 0) as vulnAccounts from cloud_account t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnAccounts,
               (SELECT IFNULL(count(t.id), 0) as serverAccounts from server t) as serverAccounts,
               (SELECT IFNULL(count(t.id), 0) as imageAccounts from image t) as imageAccounts,
               (SELECT IFNULL(count(t.id), 0) as codeAccounts from code t) as codeAccounts,
@@ -34,7 +33,6 @@
                   (SELECT IFNULL(count(t.id), 0) from file_system_rule t)
                   as rules) as rules,
               (SELECT IFNULL(count(t.id), 0) as cloudRules from rule t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudRules,
-              (SELECT IFNULL(count(t.id), 0) as vulnRules from rule t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnRules,
               (SELECT IFNULL(count(t.id), 0) as imageRules from image_rule t) as imageRules,
               (SELECT IFNULL(count(t.id), 0) as serverRules from server_rule t) as serverRules,
               (SELECT IFNULL(count(t.id), 0) as codeRules from code_rule t) as codeRules,
@@ -51,7 +49,6 @@
                   (SELECT IFNULL(count(t.id), 0) from file_system_result t)
                   as results) as results,
               (SELECT IFNULL(count(t.id), 0) as cloudResult from resource_item t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'cloud') as cloudResult,
-              (SELECT IFNULL(count(t.id), 0) as vulnResult from resource_item t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'vuln') as vulnResult,
               (SELECT IFNULL(count(t.id), 0) as imageResult from image_result t) as imageResult,
               (SELECT IFNULL(count(t.id), 0) as k8sResult from cloud_native_result t) as k8sResult,
               (SELECT IFNULL(count(t.id), 0) as configResult from cloud_native_config_result t) as configResult,
@@ -84,23 +81,6 @@
                     </if>
                 </where>
             ) as cloud,
-            (
-                SELECT IFNULL(count(t.id), 0) as vuln from cloud_task t LEFT JOIN plugin p on t.plugin_id = p.id and p.type = 'vuln'
-                <where>
-                    <if test="status == 'APPROVED'">
-                        and t.status in ('APPROVED', 'PROCESSING')
-                    </if>
-                    <if test="status == 'FINISHED'">
-                        and t.status in ('FINISHED')
-                    </if>
-                    <if test="status == 'ERROR'">
-                        and t.status in ('ERROR')
-                    </if>
-                    <if test="status == 'WARNING'">
-                        and t.status in ('WARNING')
-                    </if>
-                </where>
-            ) as vuln,
             (
                 SELECT IFNULL(count(t.id), 0) as image from image_result t
                 <where>
@@ -422,7 +402,20 @@
         </if>
     </sql>
 
-    <select id="historyScanVo" parameterType="com.hummer.common.core.domain.request.dashboard.HistoryScanVo" resultType="com.hummer.common.core.domain.request.dashboard.HistoryScanVo">
+    <resultMap id="historyScanVoBaseResultMap" type="com.hummer.common.core.domain.request.dashboard.HistoryScanVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="scan_score" jdbcType="INTEGER" property="scanScore" />
+        <result column="account_type" jdbcType="VARCHAR" property="accountType" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="output" jdbcType="LONGVARCHAR" property="output" />
+    </resultMap>
+
+    <select id="historyScanVo" parameterType="com.hummer.common.core.domain.request.dashboard.HistoryScanVo" resultMap="historyScanVoBaseResultMap">
         select * from (
         select
         t.*,

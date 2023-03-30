@@ -61,13 +61,6 @@ public class DashboardController {
     }
 
     @I18n
-    @ApiOperation(value = "漏洞合计统计")
-    @PostMapping("vulnTotalPolicy")
-    public List<Map<String, Object>> vulnTotalPolicy(@RequestBody Map<String, Object> params) {
-        return dashboardService.vulnTotalPolicy(params);
-    }
-
-    @I18n
     @ApiOperation(value = "云资源历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
     public Pager<List<HistoryScanDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
