@@ -133,11 +133,11 @@
         <el-divider><i class="el-icon-first-aid-kit"> {{ (index + 1) }}</i></el-divider>
         <div style="margin: 10px 10px 10px 50px;">
           <div style="color: red;">* {{ $t('commons.note') }}</div>
-          <div style="color: red;">* {{ $t('code.code_note') }}</div>
-          <div style="color: red;">* {{ $t('code.code_note2') }}</div>
-          <div style="color: red;">* {{ $t('code.code_note3') }}</div>
-          <div style="color: red;">* {{ $t('code.code_note4') }}</div>
-          <div style="color: red;">* {{ $t('code.code_note5') }}</div>
+          <div style="color: red;">1. {{ $t('code.code_note') }}</div>
+          <div style="color: red;">2. {{ $t('code.code_note2') }}</div>
+          <div style="color: red;">3. {{ $t('code.code_note3') }}</div>
+          <div style="color: red;">4. {{ $t('code.code_note4') }}</div>
+          <div style="color: red;">5. {{ $t('code.code_note5') }}</div>
         </div>
       </div>
       <proxy-dialog-create-footer
@@ -201,12 +201,12 @@
       </el-form>
       <div style="margin: 10px;">
         <div style="margin: 10px 10px 10px 50px;">
-          <div style="color: red;">{{ $t('commons.note') }}</div>
-          <div style="color: red;">{{ $t('code.code_note') }}</div>
-          <div style="color: red;">{{ $t('code.code_note2') }}</div>
-          <div style="color: red;">{{ $t('code.code_note3') }}</div>
-          <div style="color: red;">{{ $t('code.code_note4') }}</div>
-          <div style="color: red;">{{ $t('code.code_note5') }}</div>
+          <div style="color: red;">* {{ $t('commons.note') }}</div>
+          <div style="color: red;">1. {{ $t('code.code_note') }}</div>
+          <div style="color: red;">2. {{ $t('code.code_note2') }}</div>
+          <div style="color: red;">3. {{ $t('code.code_note3') }}</div>
+          <div style="color: red;">4. {{ $t('code.code_note4') }}</div>
+          <div style="color: red;">5. {{ $t('code.code_note5') }}</div>
         </div>
       </div>
       <proxy-dialog-footer

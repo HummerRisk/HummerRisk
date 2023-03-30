@@ -343,8 +343,8 @@ import {
           callback: (action) => {
             if (action === 'confirm') {
               this.result = this.$get(deleteHistoryCodeResultUrl + obj.id,  res => {
-                setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
+                this.search();
               });
             }
           }

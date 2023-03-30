@@ -425,6 +425,7 @@ import {
   ruleListUrl,
   ruleTagsUrl
 } from "@/api/cloud/rule/rule";
+import {pluginScanUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
