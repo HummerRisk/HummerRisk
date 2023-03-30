@@ -828,9 +828,9 @@ public class K8sRequest extends Request {
         List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
         try {
             ApiClient apiClient = getK8sClient(null);
-            BatchV1beta1Api apiInstance = new BatchV1beta1Api(apiClient);
-            V1beta1CronJobList result = apiInstance.listCronJobForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
-            for (V1beta1CronJob v1beta1CronJob : result.getItems()) {
+            BatchV1Api apiInstance = new BatchV1Api(apiClient);
+            V1CronJobList result = apiInstance.listCronJobForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            for (V1CronJob v1beta1CronJob : result.getItems()) {
                 CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
                 cloudNativeSource.setSourceNamespace(Objects.requireNonNull(v1beta1CronJob.getMetadata()).getNamespace() != null ? v1beta1CronJob.getMetadata().getNamespace() : "");
                 JSONObject jsonObject;
@@ -841,7 +841,7 @@ public class K8sRequest extends Request {
                 }
                 cloudNativeSource.setSourceJson(jsonObject.toJSONString());
                 cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
-                V1beta1CronJobSpec spec = v1beta1CronJob.getSpec();
+                V1CronJobSpec spec = v1beta1CronJob.getSpec();
                 List<V1Container> v1Containers = null;
                 if (spec != null) {
                     v1Containers = Objects.requireNonNull(Objects.requireNonNull(spec.getJobTemplate().getSpec()).getTemplate().getSpec()).getContainers();
