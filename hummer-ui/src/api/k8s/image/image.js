@@ -7,7 +7,7 @@ export const allImageReposUrl = "/k8s/image/allImageRepos";
 
 export const allImageUrl = "/k8s/image/allList";
 
-export const repoItemListUrl = "/k8s/image/repoItemList/";
+export const repoItemListUrl = "/k8s/image/repoItemList";
 
 export const imageListUrl = "/k8s/image/imageList/";
 
