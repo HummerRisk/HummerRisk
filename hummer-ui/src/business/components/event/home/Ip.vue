@@ -132,7 +132,7 @@ import ResultReadOnly from "@/business/components/common/components/ResultReadOn
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import IpChart from "@/business/components/event/head/IpChart";
-import {cloudEventInsightListUrl} from "@/api/cloud/event/event";
+import {cloudEventInsightListUrl, cloudEventListUrl} from "@/api/cloud/event/event";
 import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
@@ -370,7 +370,7 @@ export default {
       this.detailVisible = true;
     },
     searchDetail(){
-      let url = "/cloud/event/list/" + this.detailCurrentPage + "/" +this.detailPageSize;
+      let url = cloudEventListUrl + this.detailCurrentPage + "/" +this.detailPageSize;
       let condition = this.condition
       condition["sourceIpAddress"]=this.currentIp
       this.result = this.$post(url, condition, response => {
