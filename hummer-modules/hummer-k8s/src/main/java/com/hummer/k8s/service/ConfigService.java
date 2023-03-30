@@ -464,7 +464,7 @@ public class ConfigService {
         return cloudNativeConfigResultItemMapper.selectByExample(example);
     }
 
-    public List<CloudNativeConfigResultItem> resultItemListBySearch(ConfigResultItemRequest request) {
+    public List<CloudNativeConfigResultItemWithBLOBs> resultItemListBySearch(ConfigResultItemRequest request) {
         return extConfigResultItemMapper.resultItemListBySearch(request);
     }
 

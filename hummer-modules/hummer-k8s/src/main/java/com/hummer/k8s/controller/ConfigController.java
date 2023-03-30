@@ -115,7 +115,7 @@ public class ConfigController {
     @I18n
     @ApiOperation(value = "云原生部署配置检测结果详情列表")
     @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
-    public Pager<List<CloudNativeConfigResultItem>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultItemRequest request) {
+    public Pager<List<CloudNativeConfigResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, configService.resultItemListBySearch(request));
     }

@@ -88,7 +88,7 @@
         </if>
     </sql>
 
-    <resultMap id="resultItemListBySearchBaseResultMap" type="com.hummer.common.core.domain.CloudNativeConfigResultItem">
+    <resultMap id="resultItemListBySearchBaseResultMap" type="com.hummer.common.core.domain.CloudNativeConfigResultItemWithBLOBs">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="result_id" jdbcType="VARCHAR" property="resultId" />
         <result column="type" jdbcType="VARCHAR" property="type" />
