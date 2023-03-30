@@ -88,7 +88,26 @@
         </if>
     </sql>
 
-    <select id="resultItemListBySearch" resultType="com.hummer.common.core.domain.CloudNativeConfigResultItem">
+    <resultMap id="resultItemListBySearchBaseResultMap" type="com.hummer.common.core.domain.CloudNativeConfigResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="item_id" jdbcType="VARCHAR" property="itemId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="message" jdbcType="VARCHAR" property="message" />
+        <result column="namespace" jdbcType="VARCHAR" property="namespace" />
+        <result column="query" jdbcType="VARCHAR" property="query" />
+        <result column="resolution" jdbcType="VARCHAR" property="resolution" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="description" jdbcType="LONGVARCHAR" property="description" />
+        <result column="references" jdbcType="LONGVARCHAR" property="references" />
+        <result column="layer" jdbcType="LONGVARCHAR" property="layer" />
+        <result column="causemeta_data" jdbcType="LONGVARCHAR" property="causemetaData" />
+    </resultMap>
+
+    <select id="resultItemListBySearch" resultMap="resultItemListBySearchBaseResultMap">
         SELECT
         t.*
         FROM cloud_native_config_result_item t

@@ -105,7 +105,16 @@
         order by t.update_time desc
     </select>
 
-    <select id="sbomVersionList" resultType="com.hummer.common.core.domain.SbomVersion">
+    <resultMap id="sbomVersionListBaseResultMap" type="com.hummer.common.core.domain.SbomVersion">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+    </resultMap>
+
+    <select id="sbomVersionList" resultMap="sbomVersionListBaseResultMap">
         select
         t.*
         from sbom_version as t
@@ -145,7 +154,16 @@
         order by t.update_time desc
     </select>
 
-    <select id="getSbomVersionList" resultType="com.hummer.common.core.dto.SbomVersionDTO" parameterType="java.lang.String">
+    <resultMap id="getSbomVersionListBaseResultMap" type="com.hummer.common.core.dto.SbomVersionDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+    </resultMap>
+
+    <select id="getSbomVersionList" resultMap="getSbomVersionListBaseResultMap" parameterType="java.lang.String">
         SELECT t.*,
                t1.name as sbomName,
                t1.description as sbomDesc

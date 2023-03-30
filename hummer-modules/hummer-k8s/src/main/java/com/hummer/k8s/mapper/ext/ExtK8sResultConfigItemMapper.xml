@@ -76,7 +76,20 @@
         </if>
     </sql>
 
-    <select id="resultConfigItemListBySearch" resultType="com.hummer.common.core.domain.CloudNativeResultConfigItemWithBLOBs" parameterType="com.hummer.common.core.domain.request.k8s.K8sConfigResultItemRequest">
+    <resultMap id="resultConfigItemListBySearchBaseResultMap" type="com.hummer.common.core.domain.CloudNativeResultConfigItemWithBLOBs">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="category" jdbcType="VARCHAR" property="category" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="check_id" jdbcType="VARCHAR" property="checkId" />
+        <result column="success" jdbcType="VARCHAR" property="success" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="description" jdbcType="LONGVARCHAR" property="description" />
+        <result column="messages" jdbcType="LONGVARCHAR" property="messages" />
+    </resultMap>
+
+    <select id="resultConfigItemListBySearch" resultMap="resultConfigItemListBySearchBaseResultMap" parameterType="com.hummer.common.core.domain.request.k8s.K8sConfigResultItemRequest">
         SELECT
         t.*
         FROM cloud_native_result_config_item t

@@ -88,7 +88,28 @@
         </if>
     </sql>
 
-    <select id="resultItemListBySearch" resultType="com.hummer.common.core.domain.ImageResultItemWithBLOBs">
+    <resultMap id="resultItemListBySearchBaseResultMap" type="com.hummer.common.core.domain.ImageResultItemWithBLOBs">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="pkg_name" jdbcType="VARCHAR" property="pkgName" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="severity_source" jdbcType="VARCHAR" property="severitySource" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="published_date" jdbcType="VARCHAR" property="publishedDate" />
+        <result column="last_modified_date" jdbcType="VARCHAR" property="lastModifiedDate" />
+        <result column="title" jdbcType="LONGVARCHAR" property="title" />
+        <result column="description" jdbcType="LONGVARCHAR" property="description" />
+        <result column="layer" jdbcType="LONGVARCHAR" property="layer" />
+        <result column="data_source" jdbcType="LONGVARCHAR" property="dataSource" />
+        <result column="cwe_ids" jdbcType="LONGVARCHAR" property="cweIds" />
+        <result column="cvss" jdbcType="LONGVARCHAR" property="cvss" />
+        <result column="references" jdbcType="LONGVARCHAR" property="references" />
+    </resultMap>
+
+    <select id="resultItemListBySearch" resultMap="resultItemListBySearchBaseResultMap">
         SELECT
         t.*
         FROM image_result_item t

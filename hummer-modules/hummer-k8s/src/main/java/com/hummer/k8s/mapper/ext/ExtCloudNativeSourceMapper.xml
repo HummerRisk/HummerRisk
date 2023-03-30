@@ -809,13 +809,44 @@
         where t1.cloud_native_id = #{k8sId}
     </select>
 
-    <select id="fromCloudNativeSource" resultType="com.hummer.common.core.domain.CloudNativeSource">
+    <resultMap id="fromCloudNativeSourceBaseResultMap" type="com.hummer.common.core.domain.CloudNativeSource">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="cloud_native_id" jdbcType="VARCHAR" property="cloudNativeId" />
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName" />
+        <result column="source_namespace" jdbcType="VARCHAR" property="sourceNamespace" />
+        <result column="source_type" jdbcType="VARCHAR" property="sourceType" />
+        <result column="source_node" jdbcType="VARCHAR" property="sourceNode" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="source_yaml" jdbcType="LONGVARCHAR" property="sourceYaml" />
+        <result column="source_json" jdbcType="LONGVARCHAR" property="sourceJson" />
+    </resultMap>
+
+    <select id="fromCloudNativeSource" resultMap="fromCloudNativeSourceBaseResultMap">
         select t.*
         from cloud_native_source t
         where t.id = #{source_id}
     </select>
 
-    <select id="fromCloudNativeResultItem" resultType="com.hummer.common.core.domain.CloudNativeResultItem">
+    <resultMap id="fromCloudNativeResultItemBaseResultMap" type="com.hummer.common.core.domain.CloudNativeResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="score" jdbcType="VARCHAR" property="score" />
+        <result column="target" jdbcType="VARCHAR" property="target" />
+        <result column="primary_link" jdbcType="VARCHAR" property="primaryLink" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resource" jdbcType="VARCHAR" property="resource" />
+        <result column="image" jdbcType="VARCHAR" property="image" />
+        <result column="links" jdbcType="LONGVARCHAR" property="links" />
+    </resultMap>
+
+    <select id="fromCloudNativeResultItem" resultMap="fromCloudNativeResultItemBaseResultMap">
         select t.*
         from cloud_native_result_item t
         join cloud_native_result t1 on t.result_id = t1.id

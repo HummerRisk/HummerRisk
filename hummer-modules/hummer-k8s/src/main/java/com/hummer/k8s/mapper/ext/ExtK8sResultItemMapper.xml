@@ -94,7 +94,24 @@
         </if>
     </sql>
 
-    <select id="resultItemListBySearch" resultType="com.hummer.common.core.domain.CloudNativeResultItem" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultItemRequest">
+    <resultMap id="resultItemListBySearchBaseResultMap" type="com.hummer.common.core.domain.CloudNativeResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="score" jdbcType="VARCHAR" property="score" />
+        <result column="target" jdbcType="VARCHAR" property="target" />
+        <result column="primary_link" jdbcType="VARCHAR" property="primaryLink" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resource" jdbcType="VARCHAR" property="resource" />
+        <result column="image" jdbcType="VARCHAR" property="image" />
+        <result column="links" jdbcType="LONGVARCHAR" property="links" />
+    </resultMap>
+
+    <select id="resultItemListBySearch" resultMap="resultItemListBySearchBaseResultMap" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultItemRequest">
         SELECT
         t.*
         FROM cloud_native_result_item t
