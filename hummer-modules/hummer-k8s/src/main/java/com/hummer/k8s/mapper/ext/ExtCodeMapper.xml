@@ -125,8 +125,8 @@
 
     <select id="projectChart" resultType="java.util.Map">
         SELECT
-            concat(t.name, ' (', t.return_sum, ')') as 'name',
-            t.return_sum as 'value'
+            concat(t.name, ' (', t.return_sum, ')') as `name`,
+            t.return_sum as `value`
         FROM code_result as t
         ORDER BY t.update_time DESC
         Limit 10;
@@ -134,7 +134,7 @@
 
     <select id="severityChart" resultType="java.util.Map">
         SELECT
-            t.name as 'product',
+            t.name as `product`,
             (SELECT IFNULL(count(t1.id), 0) as Critical from code_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'critical') as Critical,
             (SELECT IFNULL(count(t1.id), 0) as High from code_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'high') as High,
             (SELECT IFNULL(count(t1.id), 0) as Medium from code_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'medium') as Medium,

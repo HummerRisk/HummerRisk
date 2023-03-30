@@ -294,8 +294,8 @@
 
   <select id="cloudChart" resultType="java.util.Map">
     SELECT
-    t1.name as 'name',
-    IFNULL(count(t.id), 0) as 'value'
+    t1.name as `name`,
+    IFNULL(count(t.id), 0) as `value`
     FROM cloud_event as t
     LEFT JOIN cloud_account t1 ON t.cloud_account_id = t1.id
     GROUP BY t.cloud_account_id
@@ -304,8 +304,8 @@
 
   <select id="regionChart" resultType="java.util.Map">
     SELECT
-    t.region_name as 'name',
-    IFNULL(count(t.id), 0) as 'value'
+    t.region_name as `name`,
+    IFNULL(count(t.id), 0) as `value`
     FROM cloud_event as t
     GROUP BY t.region_name
     Limit 10;
@@ -313,7 +313,7 @@
 
   <select id="severityChart" resultType="java.util.Map">
     SELECT
-      a.name as 'product',
+      a.name as `product`,
       (SELECT IFNULL(count(t1.id), 0) as High from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 2) as High,
       (SELECT IFNULL(count(t1.id), 0) as Medium from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 1) as Medium,
       (SELECT IFNULL(count(t1.id), 0) as Low from cloud_event t1 where t1.cloud_account_id = t.account_id and t1.event_rating = 0) as Low
@@ -403,7 +403,8 @@
   </select>
 
   <select id="selectIpAccessTimesGroupByDate" resultType="java.util.Map" >
-    select access_date as 'accessDate',count(*) as 'times' from (
+    select access_date as `accessDate`, count(*) as `times`
+    from (
         SELECT FROM_UNIXTIME(event_time/1000 ,'%Y-%m-%d') as access_date FROM cloud_event
         where
           source_ip_address = #{ip}

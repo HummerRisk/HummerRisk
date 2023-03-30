@@ -291,8 +291,8 @@
 
     <select id="serverChart" resultType="java.util.Map">
         SELECT
-            concat(t.server_name, ' (', count(t.id), ')') as 'name',
-            count(t.id) as 'value'
+            concat(t.server_name, ' (', count(t.id), ')') as `name`,
+            count(t.id) as `value`
         FROM server_result as t
         WHERE t.is_severity = 0
         GROUP BY t.server_name
@@ -301,7 +301,7 @@
 
     <select id="severityChart" resultType="java.util.Map">
         SELECT
-            t.server_name as 'product',
+            t.server_name as `product`,
             (SELECT IFNULL(count(t1.id), 0) as High from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'highrisk' and t1.is_severity = false) as High,
             (SELECT IFNULL(count(t1.id), 0) as Medium from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'mediumrisk' and t1.is_severity = false) as Medium,
             (SELECT IFNULL(count(t1.id), 0) as Low from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'lowrisk' and t1.is_severity = false) as Low

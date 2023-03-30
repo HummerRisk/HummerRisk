@@ -258,9 +258,9 @@
 
     <select id="taskCalendar" resultType="com.hummer.common.core.domain.request.dashboard.TaskCalendarVo">
         select
-            'current-month' as 'type',
-            true as 'isSelected',
-            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d') as 'day'
+            'current-month' as `type`,
+            true as `isSelected`,
+            from_unixtime(t.last_fire_time/1000, '%Y-%m-%d') as `day`
         from task t
         GROUP BY
             from_unixtime(t.last_fire_time/1000, '%Y-%m-%d')

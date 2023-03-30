@@ -29,8 +29,8 @@
             parameterType="String">
         select `id`,
                `sync_item_id` as syncItemId,
-               `account_id` as accountId,
-               `create_time` as createTime,
+               `account_id`   as accountId,
+               `create_time`  as createTime,
                `operator`,
                `operation`,
                `result`,
@@ -43,8 +43,8 @@
             parameterType="String">
         select t.`id`,
                t.`sync_item_id` as syncItemId,
-               t.`account_id` as accountId,
-               t.`create_time` as createTime,
+               t.`account_id`   as accountId,
+               t.`create_time`  as createTime,
                t.`operator`,
                t.`operation`,
                t.`result`,
@@ -56,7 +56,8 @@
     </select>
 
     <sql id="Base_Column_List">
-        id, sync_id, `status`, `count`, region_id, region_name, account_id, account_url, account_label, create_time, resource_type
+        id
+        , sync_id, `status`, `count`, region_id, region_name, account_id, account_url, account_label, create_time, resource_type
     </sql>
     <sql id="Blob_Column_List">
         details
@@ -71,7 +72,7 @@
     </select>
 
     <select id="selectResourceTypeBySyncId" resultType="java.util.Map" parameterType="String">
-        select resource_type "resourceType", sum(count) as "count"
+        select resource_type "resourceType", sum(count) as `count`
         FROM cloud_resource_sync_item
         where sync_id = #{syncId}
         group by resource_type

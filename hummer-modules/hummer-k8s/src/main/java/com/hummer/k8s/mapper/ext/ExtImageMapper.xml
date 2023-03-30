@@ -138,8 +138,8 @@
 
     <select id="imageRepoChart" resultType="java.util.Map">
         SELECT
-            concat(t.name, ' (', (SELECT IFNULL(count(t1.id), 0) from image_repo_item t1 where t1.repo_id = t.id), ')') as 'name',
-            (SELECT IFNULL(count(t1.id), 0) as 'value' from image_repo_item t1 where t1.repo_id = t.id) as 'value'
+            concat(t.name, ' (', (SELECT IFNULL(count(t1.id), 0) from image_repo_item t1 where t1.repo_id = t.id), ')') as `name`,
+            (SELECT IFNULL(count(t1.id), 0) as `value` from image_repo_item t1 where t1.repo_id = t.id) as `value`
         FROM image_repo as t
         ORDER BY t.update_time DESC
         Limit 10;
@@ -147,7 +147,7 @@
 
     <select id="severityChart" resultType="java.util.Map">
         SELECT
-            t.name as 'product',
+            t.name as `product`,
             (SELECT IFNULL(count(t1.id), 0) as Critical from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'critical') as Critical,
             (SELECT IFNULL(count(t1.id), 0) as High from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'high') as High,
             (SELECT IFNULL(count(t1.id), 0) as Medium from image_result_item t1 where t1.result_id = t.id and LOWER(t1.severity) = 'medium') as Medium,

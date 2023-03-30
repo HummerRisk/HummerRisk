@@ -494,8 +494,8 @@
 
     <select id="ossChart" resultType="java.util.Map">
         SELECT
-            concat(t.name, ' (', t.sum, ')') as 'name',
-            t.sum as 'value'
+            concat(t.name, ' (', t.sum, ')') as `name`,
+            t.sum as `value`
         FROM oss as t
         ORDER BY t.update_time DESC
         Limit 10;
@@ -503,8 +503,8 @@
 
     <select id="bucketChart" resultType="java.util.Map">
         SELECT
-            concat(t.bucket_name, '(', IFNULL(t.object_number, 0), ')') as 'name',
-            IFNULL(t.object_number, 0) as 'value'
+            concat(t.bucket_name, '(', IFNULL(t.object_number, 0), ')') as `name`,
+            IFNULL(t.object_number, 0) as `value`
         FROM oss_bucket as t
         ORDER BY t.create_time DESC
         Limit 10;
@@ -512,7 +512,7 @@
 
     <select id="severityChart" resultType="java.util.Map">
         SELECT
-            o.name as 'product',
+            o.name as `product`,
             (SELECT IFNULL(sum(t.return_sum), 0) as HighRisk
              from resource t
                   join cloud_task_item_resource t1 on t.id = t1.resource_id
