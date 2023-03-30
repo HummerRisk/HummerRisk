@@ -7,7 +7,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hummer.cloud.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
-import com.hummer.cloud.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.cloud.mapper.ext.ExtResourceMapper;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
@@ -77,8 +76,6 @@ public class ResourceService {
     private RuleMapper ruleMapper;
     @Autowired @Lazy
     private ResourceItemMapper resourceItemMapper;
-    @Autowired @Lazy
-    private ExtHistoryScanMapper extHistoryScanMapper;
     @Autowired @Lazy
     private ProxyMapper proxyMapper;
     @Autowired

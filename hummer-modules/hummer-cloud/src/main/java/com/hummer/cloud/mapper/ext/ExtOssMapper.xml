@@ -153,7 +153,25 @@
         </if>
     </sql>
 
-    <select id="ossBucketList" resultType="com.hummer.cloud.oss.dto.OssBucketDTO">
+    <resultMap id="ossBucketListBaseResultMap" type="com.hummer.cloud.oss.dto.OssBucketDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="bucket_name" jdbcType="VARCHAR" property="bucketName" />
+        <result column="storage_class" jdbcType="VARCHAR" property="storageClass" />
+        <result column="location" jdbcType="VARCHAR" property="location" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="intranet_endpoint" jdbcType="VARCHAR" property="intranetEndpoint" />
+        <result column="extranet_endpoint" jdbcType="VARCHAR" property="extranetEndpoint" />
+        <result column="oss_id" jdbcType="VARCHAR" property="ossId" />
+        <result column="owner_id" jdbcType="VARCHAR" property="ownerId" />
+        <result column="owner_name" jdbcType="VARCHAR" property="ownerName" />
+        <result column="domain_name" jdbcType="VARCHAR" property="domainName" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="object_number" jdbcType="BIGINT" property="objectNumber" />
+        <result column="canned_acl" jdbcType="VARCHAR" property="cannedAcl" />
+        <result column="sync_flag" jdbcType="BIT" property="syncFlag" />
+    </resultMap>
+
+    <select id="ossBucketList" resultMap="ossBucketListBaseResultMap">
         select
         t.*,
         t1.name as name,
@@ -203,7 +221,17 @@
         </if>
     </sql>
 
-    <select id="ruleGroupList" resultType="com.hummer.common.core.dto.RuleGroupDTO">
+    <resultMap id="ruleGroupListBaseResultMap" type="com.hummer.common.core.dto.RuleGroupDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="level" jdbcType="VARCHAR" property="level" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="flag" jdbcType="BIT" property="flag" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="ruleGroupList" resultMap="ruleGroupListBaseResultMap">
         select
         t.*,
         (SELECT count(g.id) from rule_group_mapping g where g.group_id = t.id) as ruleSum,

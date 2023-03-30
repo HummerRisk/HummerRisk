@@ -144,7 +144,12 @@
     </select>
 
     <select id="selectResourceRule" resultType="com.hummer.common.core.dto.ResourceRuleDTO" parameterType="String">
-        select a.hummer_id,a.resource_type, c.severity,b.rule_id,c.name as rule_name
+        select
+            a.hummer_id as hummerId,
+            a.resource_type as resourceType,
+            c.severity,
+            b.rule_id as ruleId,
+            c.name as ruleName
         from resource_item a
         inner join resource_rule b on a.resource_id = b.resource_id
         inner join rule c on b.rule_id = c.id
