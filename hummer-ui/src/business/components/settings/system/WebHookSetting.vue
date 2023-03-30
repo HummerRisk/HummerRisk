@@ -2,8 +2,10 @@
   <div v-loading="result.loading">
     <el-table :border="true" :stripe="true" :data="tableData" class="adjust-table table-content">
       <el-table-column type="index" min-width="40"/>
-      <el-table-column prop="name" :label="$t('system_parameter_setting.webhook.name')" min-width="130"></el-table-column>
-      <el-table-column prop="webhook" :label="$t('system_parameter_setting.webhook.webhook')" min-width="250"></el-table-column>
+      <el-table-column prop="name" :label="$t('system_parameter_setting.webhook.name')"
+                       min-width="130"></el-table-column>
+      <el-table-column prop="webhook" :label="$t('system_parameter_setting.webhook.webhook')"
+                       min-width="250"></el-table-column>
       <el-table-column :label="$t('rule.status')" width="80" show-overflow-tooltip>
         <template v-slot:default="scope">
           <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
@@ -35,16 +37,19 @@
     </div>
 
     <!--Create webhook-->
-    <el-drawer class="rtl" :title="$t('system_parameter_setting.webhook.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('system_parameter_setting.webhook.create')" :visible.sync="createVisible"
+               size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" ref="form">
         <el-form-item :label="$t('system_parameter_setting.webhook.name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('system_parameter_setting.webhook.name')"/>
         </el-form-item>
         <el-form-item :label="$t('system_parameter_setting.webhook.webhook')" ref="webhook" prop="webhook">
-          <el-input type="textarea" :rows="5" v-model="form.webhook" autocomplete="off" :placeholder="$t('system_parameter_setting.webhook.webhook')"/>
+          <el-input type="textarea" :rows="5" v-model="form.webhook" autocomplete="off"
+                    :placeholder="$t('system_parameter_setting.webhook.webhook')"/>
         </el-form-item>
-        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')"
+                      :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
@@ -55,7 +60,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item :label="$t('proxy.is_proxy')"
+                      :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-switch v-model="form.isProxy"></el-switch>
         </el-form-item>
       </el-form>
@@ -66,16 +72,19 @@
     <!--Create webhook-->
 
     <!--Update webhook-->
-    <el-drawer class="rtl" :title="$t('system_parameter_setting.webhook.update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('system_parameter_setting.webhook.update')" :visible.sync="updateVisible"
+               size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" ref="form">
         <el-form-item :label="$t('system_parameter_setting.webhook.name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('system_parameter_setting.webhook.name')"/>
         </el-form-item>
         <el-form-item :label="$t('system_parameter_setting.webhook.webhook')" ref="webhook" prop="webhook">
-          <el-input type="textarea" :rows="5" v-model="form.webhook" autocomplete="off" :placeholder="$t('system_parameter_setting.webhook.webhook')"/>
+          <el-input type="textarea" :rows="5" v-model="form.webhook" autocomplete="off"
+                    :placeholder="$t('system_parameter_setting.webhook.webhook')"/>
         </el-form-item>
-        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')"
+                      :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
@@ -86,7 +95,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+        <el-form-item :label="$t('proxy.is_proxy')"
+                      :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-switch v-model="form.isProxy"></el-switch>
         </el-form-item>
       </el-form>
@@ -107,7 +117,8 @@ import {
   changeStatusWebhookUrl,
   deleteWebhookUrl,
   editWebhookUrl,
-  proxyListAllUrl
+  proxyListAllUrl,
+  webhookListUrl
 } from "@/api/system/system";
 
 /* eslint-disable */
@@ -169,13 +180,13 @@ export default {
     this.init();
   },
   methods: {
-    init(){
+    init() {
       this.search();
       this.activeProxy();
     },
     handleClose() {
-      this.createVisible =  false;
-      this.updateVisible =  false;
+      this.createVisible = false;
+      this.updateVisible = false;
     },
     //查询代理
     activeProxy() {
@@ -183,7 +194,7 @@ export default {
         this.proxys = response.data;
       });
     },
-    search () {
+    search() {
       let url = webhookListUrl + this.currentPage + "/" + this.pageSize;
       this.result = this.$post(url, {}, response => {
         let data = response.data;
@@ -199,7 +210,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (type === 'add') {
-            this.result = this.$post(addWebhookUrl, form,response => {
+            this.result = this.$post(addWebhookUrl, form, response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.handleClose();
@@ -209,7 +220,7 @@ export default {
               }
             });
           } else {
-            this.result = this.$post(editWebhookUrl, form,response => {
+            this.result = this.$post(editWebhookUrl, form, response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();
@@ -242,8 +253,8 @@ export default {
         }
       });
     },
-    changeStatus (item) {
-      this.result = this.$post(changeStatusWebhookUrl, {id: item.id, status: item.status?1:0}, response => {
+    changeStatus(item) {
+      this.result = this.$post(changeStatusWebhookUrl, {id: item.id, status: item.status ? 1 : 0}, response => {
         if (item.status == 1) {
           this.$success(this.$t('rule.change_status_on'));
         } else if (item.status == 0) {
@@ -261,12 +272,15 @@ export default {
   overflow-y: auto;
   padding: 20px;
 }
+
 .rtl >>> input {
   width: 100%;
 }
+
 .rtl >>> .el-select {
   width: 80%;
 }
+
 .rtl >>> .el-form-item__content {
   width: 75%;
 }

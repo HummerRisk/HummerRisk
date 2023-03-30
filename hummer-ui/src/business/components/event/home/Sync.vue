@@ -158,7 +158,12 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import Regions from "@/business/components/event/home/Regions";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {cloudEventSyncLogDeleteUrl, cloudEventSyncLogListUrl, cloudEventSyncUrl} from "@/api/cloud/event/event";
+import {
+  cloudEventSyncLogDeleteUrl,
+  cloudEventSyncLogListUrl,
+  cloudEventSyncLogRegionListUrl,
+  cloudEventSyncUrl
+} from "@/api/cloud/event/event";
 import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
@@ -444,7 +449,7 @@ export default {
         return item.id === row.accountId
       })
       this.logForm.account = account
-      let url = "/cloud/event/sync/log/region/list/" + logId;
+      let url = cloudEventSyncLogRegionListUrl + logId;
       this.result = this.$post(url, {}, response => {
         this.logForm.regionLogs = response.data;
         this.logVisible = true
