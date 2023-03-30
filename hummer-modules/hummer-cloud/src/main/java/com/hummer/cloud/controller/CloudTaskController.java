@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudTaskService;
 import com.hummer.cloud.service.OrderService;
+import com.hummer.cloud.service.ResourceCreateService;
 import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.CloudTaskCopyDTO;
@@ -27,6 +28,15 @@ public class CloudTaskController {
     private CloudTaskService cloudTaskService;
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ResourceCreateService resourceCreateService;
+
+    @GetMapping("run")
+    public String cloudTask() throws Exception {
+        resourceCreateService.cloudTasksJobHandler();
+        return "success";
+    }
 
     @I18n
     @GetMapping(value = "detail/{taskId}")

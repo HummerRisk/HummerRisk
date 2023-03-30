@@ -97,6 +97,7 @@ public class ResourceCreateService {
                     try {
                         handleTask(cloudTaskToBeProceed);
                     } catch (Exception e) {
+                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudTaskToBeProceed.getId());
@@ -230,6 +231,7 @@ public class ResourceCreateService {
             systemProviderService.updateHistoryCloudTask(historyCloudTask);
 
         } catch (Exception e) {
+            e.printStackTrace();
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
 
             //更新历史数据状态
@@ -256,6 +258,7 @@ public class ResourceCreateService {
 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             orderService.updateTaskItemStatus(taskItem.getId(), CloudTaskConstants.TASK_STATUS.ERROR);
 
             //更新历史数据状态
