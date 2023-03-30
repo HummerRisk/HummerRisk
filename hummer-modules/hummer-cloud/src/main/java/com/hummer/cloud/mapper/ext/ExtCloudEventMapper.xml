@@ -402,7 +402,7 @@
     ) a order by eventSum desc
   </select>
 
-  <select id="selectIpAccessTimesGroupByDate" resultType="Map" >
+  <select id="selectIpAccessTimesGroupByDate" resultType="java.util.Map" >
     select access_date as 'accessDate',count(*) as 'times' from (
         SELECT FROM_UNIXTIME(event_time/1000 ,'%Y-%m-%d') as access_date FROM cloud_event
         where
