@@ -7,7 +7,7 @@ export const allImageReposUrl = "/k8s/image/allImageRepos";
 
 export const allImageUrl = "/k8s/image/allList";
 
-export const repoItemListUrl = "/k8s/image/repoItemList";
+export const repoItemListUrl = "/k8s/image/repoItemList/";
 
 export const imageListUrl = "/k8s/image/imageList/";
 
@@ -25,11 +25,11 @@ export const deleteImageRepoUrl = "/k8s/image/deleteImageRepo/";
 
 export const addImageRepoUrl = "/k8s/image/addImageRepo";
 
-export const editImageRepoUrl = "/k8s/image/editImageRepo/";
+export const editImageRepoUrl = "/k8s/image/editImageRepo";
 
-export const scanImageRepoUrl = "/k8s/image/scanImageRepo/";
+export const scanImageRepoUrl = "/k8s/image/scanImageRepo";
 
-export const scanImagesRepoUrl = "/k8s/image/scanImagesRepo/";
+export const scanImagesRepoUrl = "/k8s/image/scanImagesRepo";
 
 export const imageRepoSettingUrl = "/k8s/image/repo/setting/";
 

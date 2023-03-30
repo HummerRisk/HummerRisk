@@ -6,7 +6,8 @@
                       :title="$t('image.result_list')"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
+                      @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
       <hide-table
@@ -17,51 +18,67 @@
         @select="select"
       >
         <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('image.image_name')" min-width="120" show-overflow-tooltip>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('image.image_name')"
+                         min-width="120" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)"
+                     style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('imageUrl')" :label="$t('image.image_url')" min-width="200" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('imageUrl')"
+                         :label="$t('image.image_url')" min-width="200" show-overflow-tooltip>
           <el-row v-if="scope.row.type==='repo'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='image'">{{ scope.row.imageUrl }}:{{ scope.row.imageTag }}</el-row>
           <el-row v-if="scope.row.type==='tar'">{{ scope.row.path }}</el-row>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="200">
-          <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')"
+                         :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip
+                         min-width="200">
+          <el-tooltip effect="dark"
+                      :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown"
+                      placement="top">
             <div class="txt-click" @click="goResource(scope.row)">
               <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
-              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.high }}</span>
+              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' + scope.row.high }}</span>
               <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.medium }}</span>
               <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.low }}</span>
               <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.unknown }}</span>
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')"
+                         :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable
+                         show-overflow-tooltip>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary"
+                     v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary"
+                     v-else-if="scope.row.resultStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary"
+                     v-else-if="scope.row.resultStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="success"
+                     v-else-if="scope.row.resultStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger"
+                     v-else-if="scope.row.resultStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning"
+                     v-else-if="scope.row.resultStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="updateTime" min-width="150" v-if="checkedColumnNames.includes('updateTime')" :label="$t('image.last_modified')" sortable>
+        <el-table-column prop="updateTime" min-width="150" v-if="checkedColumnNames.includes('updateTime')"
+                         :label="$t('image.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
@@ -76,7 +93,8 @@
     </el-card>
 
     <!--Result log-->
-    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%"
+               :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -91,13 +109,16 @@
                   <i class="el-icon-document-copy" @click="copy(logForm)" style="display: none;"></i>
                 </span>
                 <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/platform/docker.png`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                  <img :src="require(`@/assets/img/platform/docker.png`)"
+                       style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ logForm.imageName }}
                 </span>
-                <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'"
+                      style="color: #579df8">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </span>
-                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'"
+                      style="color: #7ebf50">
                   <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                 </span>
                 <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
@@ -136,24 +157,26 @@
 </template>
 
 <script>
-import TableOperators from "../../common/components/TableOperators";
-import MainContainer from "../../common/components/MainContainer";
-import Container from "../../common/components/Container";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import Container from "@/business/components/common/components/Container";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TablePagination from "../../common/pagination/TablePagination";
-import TableOperator from "../../common/components/TableOperator";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import TableOperator from "@/business/components/common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import {IMAGE_RESULT_CONFIGS} from "../../common/components/search/search-components";
+import {IMAGE_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
 import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/image/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
+  deleteImageResultUrl,
   getImageResultUrl,
   getImageResultWithBLOBsUrl,
   imageDownloadUrl,
   imageLogUrl,
+  imageReScanUrl,
   imageResultListUrl
 } from "@/api/k8s/image/image";
 
@@ -280,7 +303,7 @@ export default {
     select(selection) {
     },
     handleVuln() {
-      window.open('http://www.cnnvd.org.cn/','_blank','');
+      window.open('http://www.cnnvd.org.cn/', '_blank', '');
     },
     //查询列表
     search() {
@@ -291,7 +314,7 @@ export default {
         this.tableData = data.listObject;
       });
     },
-    getStatus () {
+    getStatus() {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
@@ -302,18 +325,18 @@ export default {
             if (data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnSum = result.returnSum;
-              data.critical = result.critical?result.critical:0;
-              data.high = result.high?result.high:0;
-              data.medium = result.medium?result.medium:0;
-              data.low = result.low?result.low:0;
-              data.unknown = result.unknown?result.unknown:0;
+              data.critical = result.critical ? result.critical : 0;
+              data.high = result.high ? result.high : 0;
+              data.medium = result.medium ? result.medium : 0;
+              data.low = result.low ? result.low : 0;
+              data.unknown = result.unknown ? result.unknown : 0;
             }
           });
         }
       }
     },
     //是否是结束状态，返回false代表都在运行中，true代表已结束
-    checkStatus (tableData) {
+    checkStatus(tableData) {
       let sum = 0;
       for (let row of tableData) {
         if (row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
@@ -322,7 +345,7 @@ export default {
       }
       return sum == 0;
     },
-    severityOptionsFnc () {
+    severityOptionsFnc() {
       this.severityOptions = severityOptions;
     },
     init() {
@@ -337,7 +360,7 @@ export default {
       _filter(filters, this.condition);
       this.init();
     },
-    showResultLog (result) {
+    showResultLog(result) {
       this.result = this.$get(imageLogUrl + result.id, response => {
         this.logData = response.data;
       });
@@ -348,10 +371,10 @@ export default {
       this.logVisible = true;
     },
     handleClose() {
-      this.logVisible=false;
-      this.detailVisible=false;
+      this.logVisible = false;
+      this.detailVisible = false;
     },
-    handleScans (item) {
+    handleScans(item) {
       this.$alert(this.$t('resource.handle_scans'), '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
@@ -370,15 +393,15 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get(deleteImageResultUrl + obj.id,  res => {
-              setTimeout(function () {window.location.reload()}, 2000);
+            this.result = this.$get(deleteImageResultUrl + obj.id, res => {
               this.$success(this.$t('commons.delete_success'));
+              this.search();
             });
           }
         }
       });
     },
-    goResource (params) {
+    goResource(params) {
       if (params.returnSum == 0) {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
@@ -401,7 +424,7 @@ export default {
         id: item.id
       }, response => {
         if (response.success) {
-          let blob = new Blob([response.data], { type: "application/json" });
+          let blob = new Blob([response.data], {type: "application/json"});
           saveAs(blob, item.name + ".json");
         }
       }, error => {
@@ -443,53 +466,67 @@ export default {
 .table-content {
   width: 100%;
 }
-.el-form-item-dev  >>> .el-form-item__content {
+
+.el-form-item-dev >>> .el-form-item__content {
   margin-left: 0 !important;
 }
+
 .demo-table-expand {
   font-size: 0;
 }
+
 .demo-table-expand label {
   width: 90px;
   color: #99a9bf;
 }
+
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
   padding: 10px 10%;
   width: 47%;
 }
-.tag-v{
+
+.tag-v {
   margin: 10px;
-  cursor:pointer;
+  cursor: pointer;
 }
+
 .rtl >>> .el-drawer__body {
   overflow-y: auto;
   padding: 20px;
 }
+
 .rtl >>> input {
   width: 100%;
 }
+
 .rtl >>> .el-select {
   width: 80%;
 }
+
 .rtl >>> .el-form-item__content {
   width: 75%;
 }
+
 .bg-purple-dark {
   background: #99a9bf;
 }
+
 .bg-purple {
   background: #d3dce6;
 }
+
 .bg-purple-light {
   background: #f2f2f2;
 }
+
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
 }
-.el-form-item-dev  >>> .el-form-item__content {
+
+.el-form-item-dev >>> .el-form-item__content {
   margin-left: 0 !important;
 }
 
@@ -497,17 +534,19 @@ export default {
   width: 39%;
   float: left;
   vertical-align: middle;
-  display:table-cell;
+  display: table-cell;
   margin: 6px 0 6px 2px;
   color: #606266;
 }
 
 .grid-content-status-span {
-  width: 20%;float: left;
+  width: 20%;
+  float: left;
   vertical-align: middle;
-  display:table-cell;
+  display: table-cell;
   margin: 6px 0;
 }
+
 .pure-span {
   color: #606266;
   margin: 10px 0;
@@ -516,23 +555,33 @@ export default {
 .demo-table-expand {
   font-size: 0;
 }
+
 .demo-table-expand label {
   width: 90px;
   color: #99a9bf;
 }
+
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
   padding: 10px 2%;
   width: 46%;
 }
+
 .txt-click {
-  cursor:pointer;
+  cursor: pointer;
 }
+
 .txt-click:hover {
   color: aliceblue;
   text-shadow: 1px 1px 1px #000;
 }
-* { touch-action: pan-y; }
-/deep/ :focus{outline:0;}
+
+* {
+  touch-action: pan-y;
+}
+
+/deep/ :focus {
+  outline: 0;
+}
 </style>
