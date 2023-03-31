@@ -819,8 +819,6 @@
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="update_time" jdbcType="BIGINT" property="updateTime" />
         <result column="creator" jdbcType="VARCHAR" property="creator" />
-        <result column="source_yaml" jdbcType="LONGVARCHAR" property="sourceYaml" />
-        <result column="source_json" jdbcType="LONGVARCHAR" property="sourceJson" />
     </resultMap>
 
     <select id="fromCloudNativeSource" resultMap="fromCloudNativeSourceBaseResultMap">
