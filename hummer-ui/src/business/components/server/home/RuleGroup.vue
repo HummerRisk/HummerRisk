@@ -308,7 +308,7 @@ import {
   allServerListUrl,
   serverAllBindListUrl,
   serverBindRuleUrl,
-  serverRuleListUrl,
+  serverRuleListUrl, serverScanByGroupUrl,
   serverUnBindListUrl
 } from "@/api/k8s/server/server";
 import {ruleGroupDeleteUrl, ruleGroupListUrl, ruleGroupSaveUrl, ruleGroupUpdateUrl} from "@/api/cloud/rule/rule";
@@ -746,7 +746,7 @@ const columnOptions2 = [
         });
       },
       saveScan() {
-        let url = "/server/scanByGroup/" + this.groupId + "/" + this.scanForm.id;
+        let url = serverScanByGroupUrl + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));

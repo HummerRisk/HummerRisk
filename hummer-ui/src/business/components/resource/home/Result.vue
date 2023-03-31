@@ -561,12 +561,15 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl, resourceAccountDeleteUrl,
-  resourceRegionDataUrl, resourceRegulationUrl,
+  cloudResourceListUrl,
+  resourceAccountDeleteUrl,
+  resourceRegionDataUrl,
+  resourceRegulationUrl,
   resourceRuleDataUrl,
   resourceSeverityDataUrl,
   resourceSourceUrl,
-  resourceTypeDataUrl, string2PrettyFormatUrl
+  resourceTypeDataUrl,
+  string2PrettyFormatUrl
 } from "@/api/cloud/resource/resource";
 import {
   cloudTagRuleListUrl,

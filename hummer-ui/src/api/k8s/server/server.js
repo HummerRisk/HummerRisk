@@ -86,3 +86,5 @@ export const serverRuleGroupsUrl = "/k8s/server/ruleGroups";
 export const serverUnBindListUrl = "/k8s/server/unBindList/";
 
 export const serverAllBindListUrl = "/k8s/server/allBindList/";
+
+export const serverScanByGroupUrl = "/k8s/server/scanByGroup/";
