@@ -304,7 +304,13 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {SERVER_RULE_CONFIGS, SERVER_RULE_GROUP_CONFIGS} from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
-import {allServerListUrl, serverAllBindListUrl, serverBindRuleUrl, serverUnBindListUrl} from "@/api/k8s/server/server";
+import {
+  allServerListUrl,
+  serverAllBindListUrl,
+  serverBindRuleUrl,
+  serverRuleListUrl,
+  serverUnBindListUrl
+} from "@/api/k8s/server/server";
 import {ruleGroupDeleteUrl, ruleGroupListUrl, ruleGroupSaveUrl, ruleGroupUpdateUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
@@ -573,7 +579,7 @@ const columnOptions2 = [
       },
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-        let url = "/server/ruleList/" + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = serverRuleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
