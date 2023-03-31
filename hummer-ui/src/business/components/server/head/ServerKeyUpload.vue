@@ -6,7 +6,7 @@
                ref="path" :file-list="fileList" :limit="1">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
-      <div class="el-upload__tip" slot="tip">{{ $t('server.upload_tip', ['50M']) }}</div>
+      <div class="el-upload__tip" slot="tip">{{ $t('server.upload_tip', ['1M']) }}</div>
       <div class="el-upload__tip content" slot="tip">
         <span>{{ $t('commons.format') + ' (*.pem/*rsa)' }}</span>
       </div>
@@ -25,7 +25,7 @@ export default {
       // Tar archive format (*.pem);
       fileType: ['pem', ""],
       // 大小限制(MB)
-      fileSize: 50,
+      fileSize: 1,
       fileList: [],
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -51,7 +51,7 @@ export default {
       if (this.fileSize) {
         const isLt = file.size / 1024 / 1024 < this.fileSize;
         if (!isLt) {
-          this.$message.error(this.$t('common.file_size_warn') + this.fileSize + ' MB!');
+          this.$message.error(this.$t('commons.file_size_warn') + this.fileSize + ' MB!');
           return false;
         }
       }

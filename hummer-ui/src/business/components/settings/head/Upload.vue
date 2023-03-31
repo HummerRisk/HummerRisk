@@ -63,7 +63,7 @@ export default {
       if (this.fileSize) {
         const isLt = file.size / 1024 / 1024 < this.fileSize;
         if (!isLt) {
-          this.$message.error(this.$t('common.file_size_warn') + this.fileSize + ' MB!');
+          this.$message.error(this.$t('commons.file_size_warn') + this.fileSize + ' MB!');
           return false;
         }
       }
