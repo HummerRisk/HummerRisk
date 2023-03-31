@@ -132,13 +132,13 @@
                   <el-table-column :label="$t('commons.certificate')" min-width="15%" prop="password">
                     <template slot-scope="scope">
                       <el-tooltip v-if="scope.row.isPublicKey==='no'" class="item" effect="dark" :content="scope.row.password" placement="left-start">
-                        <el-button type="success" size="mini">{{ $t('server.no_public_key') }}</el-button>
+                        <el-button type="success" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.no_public_key') }}</el-button>
                       </el-tooltip>
                       <el-tooltip v-if="scope.row.isPublicKey==='str'" class="item" effect="dark" :content="scope.row.publicKey" placement="left-start">
-                        <el-button type="success" size="mini">{{ $t('server.str_public_key') }}</el-button>
+                        <el-button type="success" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.str_public_key') }}</el-button>
                       </el-tooltip>
                       <el-tooltip v-if="scope.row.isPublicKey==='file'" class="item" effect="dark" :content="scope.row.publicKeyPath" placement="left-start">
-                        <el-button type="success" size="mini">{{ $t('server.file_public_key') }}</el-button>
+                        <el-button type="success" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.file_public_key') }}</el-button>
                       </el-tooltip>
                       <el-button v-if="scope.row.isPublicKey==null|| scope.row.isPublicKey==undefined" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.to_be_set') }}</el-button>
                     </template>
@@ -1136,7 +1136,7 @@ const columnOptions = [
         let index_ = 0;
         for (let row of this.servers) {
           if(index_ === index) {
-            row.isCertificate = item.isCertificate ? item.isCertificate : '';
+            row.isCertificate = item.isCertificate ? item.isCertificate : false;
             if (item.isCertificate) {
               for (let certificate of this.certificates) {
                 if(item.certificateId === certificate.id) {
@@ -1169,7 +1169,7 @@ const columnOptions = [
       saveBatchBind(item) {
         if (this.servers.length > 0) {
           for (let row of this.servers) {
-            row.isCertificate = item.isCertificate?item.isCertificate:'';
+            row.isCertificate = item.isCertificate?item.isCertificate:false;
             row.certificateId = item.certificateId?item.certificateId:'';
             row.isPublicKey = item.isPublicKey?item.isPublicKey:'';
             row.password = item.password?item.password:'';
