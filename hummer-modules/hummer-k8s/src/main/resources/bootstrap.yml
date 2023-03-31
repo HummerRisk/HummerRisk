@@ -67,3 +67,10 @@ xxl:
       appName: hummer-k8s
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-k8s
       logretentiondays: 30
+
+#admin monitor
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

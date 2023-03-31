@@ -74,3 +74,9 @@ xxl:
       logpath: /opt/hummerrisk/logs/xxl-job/hummer-system
       logretentiondays: 30
 
+#admin monitor
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

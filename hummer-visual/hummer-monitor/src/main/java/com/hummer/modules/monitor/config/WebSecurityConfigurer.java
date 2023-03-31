@@ -42,6 +42,9 @@ public class WebSecurityConfigurer {
                 .and()
                 .httpBasic().and()
                 .csrf()
+                .ignoringRequestMatchers(
+                        "/instances",
+                        "/actuator/**")
                 .disable()
                 .build();
     }

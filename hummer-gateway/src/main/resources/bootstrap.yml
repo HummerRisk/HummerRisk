@@ -45,3 +45,10 @@ spring:
       host: ${HMR_REDIS_HOST}
       port: ${HMR_REDIS_PORT}
       password: ${HMR_REDIS_PASSWORD}
+
+#admin monitor
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -10,6 +10,10 @@ spring:
   profiles:
     # 环境配置
     active: prod
+  boot:
+    admin:
+      client:
+        url: http://${HMR_NACOS_SERVER_ADDR}:9100
   cloud:
     nacos:
       discovery:
