@@ -254,9 +254,17 @@
     select event_group.*
     from (
     SELECT
-        FROM_UNIXTIME(event_time/1000,'%Y-%m-%d') as event_date, cloud_account_id,region_name
-      ,event_name,user_name,service_name,source_ip_address,resource_name,
-      count(*) as event_sum
+        t.cloud_account_id,
+        t.region_name,
+        t.event_name,
+        t.user_name,
+        t.service_name,
+        t.source_ip_address,
+        t.resource_name,
+        FROM_UNIXTIME(t.event_time / 1000,'%Y-%m-%d') as eventDate,
+        count(t.id) as eventSum,
+        t1.name as accountName,
+        t1.plugin_icon as accountIcon
       FROM cloud_event t
       left join cloud_account t1 on t.cloud_account_id = t1.id
     <where>
@@ -287,9 +295,9 @@
         and t.resource_name like CONCAT('%', #{request.resourceName},'%')
       </if>
     </where>
-    group by region_name
-    ,event_name,user_name,service_name,source_ip_address,resource_name,cloud_account_id,FROM_UNIXTIME(event_time/1000,'%Y-%m-%d')
-    ) event_group order by event_group.event_date desc
+    group by region_name, event_name, user_name, service_name, source_ip_address, resource_name, cloud_account_id, FROM_UNIXTIME(event_time/1000,'%Y-%m-%d'), t1.name, t1.plugin_icon
+    ) event_group
+    order by eventDate desc
   </select>
 
   <select id="cloudChart" resultType="java.util.Map">
@@ -360,12 +368,15 @@
 
   <select id="selectSourceIpInsight" resultMap="selectSourceIpInsightBaseResultMap">
     select * from (
-    select source_ip_address as sourceIpAddress,
-    min(event_time) as earliest_eventTime,
-    max(event_time) last_eventTime,
-    group_CONCAT(DISTINCT region_name) AS region,
-    group_CONCAT( DISTINCT event_name) as eventName,
-    count(event_id) as eventSum
+    select
+        t.source_ip_address as source_ip_address,
+        min(t.event_time) as earliestEventTime,
+        max(t.event_time) lastEventTime,
+        group_CONCAT(DISTINCT t.region_name) AS region,
+        group_CONCAT( DISTINCT t.event_name) as event_name,
+        count(t.event_id) as eventSum,
+        t1.name as accountName,
+        t1.plugin_icon as accountIcon
     from cloud_event t
     join cloud_account t1 on t.cloud_account_id = t1.id
     <where>
@@ -397,19 +408,21 @@
         and LOWER(t.resource_name) like CONCAT('%', LOWER(#{request.resourceName}),'%')
       </if>
     </where>
-
-    group by source_ip_address
+    group by t.source_ip_address, t1.name, t1.plugin_icon
     ) a order by eventSum desc
   </select>
 
   <select id="selectIpAccessTimesGroupByDate" resultType="java.util.Map" >
-    select access_date as `accessDate`, count(*) as `times`
+    select
+         access_date as `accessDate`,
+         count(*) as `times`
     from (
-        SELECT FROM_UNIXTIME(event_time/1000 ,'%Y-%m-%d') as access_date FROM cloud_event
+        SELECT FROM_UNIXTIME(event_time/1000 ,'%Y-%m-%d') as `accessDate`
+        FROM cloud_event
         where
           source_ip_address = #{ip}
           and event_time between UNIX_TIMESTAMP(str_to_date(#{startDate},'%Y-%m-%d') )*1000 and UNIX_TIMESTAMP(str_to_date(#{endDate},'%Y-%m-%d') )*1000+24*60*1000
-        ) a group by access_date
+        ) a group by `accessDate`
   </select>
 
 </mapper>

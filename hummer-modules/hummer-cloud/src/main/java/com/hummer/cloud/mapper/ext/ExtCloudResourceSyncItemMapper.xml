@@ -55,17 +55,9 @@
         order by item.resource_type, item.region_id, t.create_time
     </select>
 
-    <sql id="Base_Column_List">
-        id
-        , sync_id, `status`, `count`, region_id, region_name, account_id, account_url, account_label, create_time, resource_type
-    </sql>
-    <sql id="Blob_Column_List">
-        details
-    </sql>
-
     <select id="selectBySyncId" resultMap="BaseResultMap" parameterType="String">
         select
-        <include refid="Base_Column_List"/>
+        *
         from cloud_resource_sync_item
         where sync_id = #{syncId,jdbcType=VARCHAR}
         order by resource_type,region_id

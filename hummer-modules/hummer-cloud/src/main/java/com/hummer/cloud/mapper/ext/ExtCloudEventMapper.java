@@ -30,6 +30,8 @@ public interface ExtCloudEventMapper {
     List<Map<String, Object>> regionChart();
 
     List<Map<String, Object>> severityChart();
+
     List<CloudEventSourceIpInsightDTO> selectSourceIpInsight(@Param("request") CloudEventRequest request);
+
     List<Map<String,Object>> selectIpAccessTimesGroupByDate(@Param("ip")String ip,@Param("startDate")String startDate,@Param("endDate")String endDate);
 }
