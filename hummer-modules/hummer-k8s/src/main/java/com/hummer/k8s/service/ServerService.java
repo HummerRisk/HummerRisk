@@ -493,24 +493,16 @@ public class ServerService {
         switch (server.getType()) {
             case "linux":
                 try {
-                    SshUtil.validateSsh2(server, proxy);
+                    SshUtil.validateSshd(server, proxy);
                     server.setStatus(CloudAccountConstants.Status.VALID.name());
-                    server.setAuthType("ssh2");
+                    server.setAuthType("sshd");
                     serverValidateDTO.setFlag(true);
                     serverValidateDTO.setMessage("Verification succeeded!");
-                } catch (Exception e) {
-                    try {
-                        SshUtil.validateSshd(server, proxy);
-                        server.setStatus(CloudAccountConstants.Status.VALID.name());
-                        server.setAuthType("sshd");
-                        serverValidateDTO.setFlag(true);
-                        serverValidateDTO.setMessage("Verification succeeded!");
-                    } catch (Exception ex) {
-                        server.setStatus(CloudAccountConstants.Status.INVALID.name());
-                        server.setAuthType("sshd");
-                        serverValidateDTO.setFlag(false);
-                        serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), ex.getMessage()));
-                    }
+                } catch (Exception ex) {
+                    server.setStatus(CloudAccountConstants.Status.INVALID.name());
+                    server.setAuthType("sshd");
+                    serverValidateDTO.setFlag(false);
+                    serverValidateDTO.setMessage(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), ex.getMessage()));
                 }
                 break;
             case "windows":
@@ -536,11 +528,7 @@ public class ServerService {
         try {
             switch (server.getType()) {
                 case "linux":
-                    if (StringUtils.equalsIgnoreCase(server.getAuthType(), "ssh2")) {
-                        return SshUtil.executeSsh2(SshUtil.loginSsh2(server, proxy), "sudo " + cmd);
-                    } else {
-                        return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), "sudo " + cmd);
-                    }
+                    return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), "sudo " + cmd);
                 case "windows":
                     String result = WinRMHelper.execute(server, cmd);
                     String hummerSuccess = "", hummerError = "";
