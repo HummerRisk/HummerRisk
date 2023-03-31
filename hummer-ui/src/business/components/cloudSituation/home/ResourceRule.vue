@@ -67,7 +67,7 @@
 import {getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {resourceTypesUrl, tagRuleListUrl} from "@/api/cloud/rule/rule";
-import {resourceRiskListUrl, taskDetailUrl} from "@/api/cloud/resource/resource";
+import {resourceRiskListUrl, resourceTaskCountUrl, taskDetailUrl} from "@/api/cloud/resource/resource";
 
 export default {
     name: "ResourceType",
