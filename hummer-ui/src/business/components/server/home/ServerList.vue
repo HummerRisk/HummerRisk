@@ -137,9 +137,7 @@
                       <el-tooltip v-if="scope.row.isPublicKey==='str'" class="item" effect="dark" :content="scope.row.publicKey" placement="left-start">
                         <el-button type="success" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.str_public_key') }}</el-button>
                       </el-tooltip>
-                      <el-tooltip v-if="scope.row.isPublicKey==='file'" class="item" effect="dark" :content="scope.row.publicKeyPath" placement="left-start">
-                        <el-button type="success" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.file_public_key') }}</el-button>
-                      </el-tooltip>
+                      <el-button v-if="scope.row.isPublicKey==='file'" type="success" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.file_public_key') }}</el-button>
                       <el-button v-if="scope.row.isPublicKey==null|| scope.row.isPublicKey==undefined" size="mini" @click="bindCertificate(scope.$index, scope.row)">{{ $t('server.to_be_set') }}</el-button>
                     </template>
                   </el-table-column>
@@ -193,10 +191,10 @@
                 <el-radio v-model="addCertificateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
               </el-form-item>
               <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
-                <el-input type="password" v-model="addCertificateForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+                <el-input type="password" v-model="addCertificateForm.password" @input="change($event)" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
               </el-form-item>
               <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
-                <el-input type="textarea" :rows="10" v-model="addCertificateForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
+                <el-input type="textarea" :rows="10" v-model="addCertificateForm.publicKey" @input="change($event)" autocomplete="off" :placeholder="$t('server.public_key')"/>
               </el-form-item>
               <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'file'" :label="$t('server.public_key')" ref="password">
                 <server-key-upload v-on:append="append" v-model="addCertificateForm.publicKeyPath" :param="addCertificateForm.publicKeyPath"/>
@@ -1026,46 +1024,78 @@ const columnOptions = [
         this.innerAddCertificate = true;
       },
       saveServer(servers) {
+        //校验列表
         for (let server of servers) {
-          if(!server.name || !server.ip || !server.userName || !server.serverGroupId) {
-            this.$warning('Value will not be null');
+          if (!server.name) {
+            this.$warning(this.$t('server.server_name_none'));
+            return;
+          } else if (!server.ip) {
+            this.$warning(this.$t('server.server_ip_none'));
+            return;
+          } else if (!server.userName) {
+            this.$warning(this.$t('server.server_username_none'));
+            return;
+          } else if (!server.port) {
+            this.$warning(this.$t('server.server_port_none'));
             return;
           } else {
-            if (!server.isCertificate && server.isPublicKey !== "no") {
-              if (!server.password) {
-                this.$warning('Password will not be null');
+            //绑定手动凭证
+            if (!server.isCertificate) {
+              if (server.isPublicKey === "no" || !server.isPublicKey) {
+                //密码不能为空
+                if (!server.password) {
+                  this.$warning(this.$t('server.server_password_none'));
+                  return;
+                }
+              } else if (server.isPublicKey === "str") {
+                //密钥文本不能为空
+                if (!server.publicKey) {
+                  this.$warning(this.$t('server.server_publickey_none'));
+                  return;
+                }
+              } else if (server.isPublicKey === "file") {
+                //密钥文件不能为空
+                if (!server.publicKeyPath) {
+                  this.$warning(this.$t('server.server_publickey_file_none'));
+                  return;
+                }
+              }
+            } else { //绑定统一凭证
+              //绑定的统一凭证不能为空
+              if (!server.certificateId) {
+                this.$warning(this.$t('server.server_certificateId_none'));
                 return;
               }
-              if (server.isPublicKey === null && server.password) {
-                server.isPublicKey = "no";
-              }
             }
-            // if (this.proxyForm.isProxy) {
-            //   server.isProxy = true;
-            //   server.proxyId = this.proxyForm.proxyId;
-            // } else {
-            //   server.isProxy = false;
-            //   server.proxyId = null;
-            // }
-            let formData = new FormData();
-            if (server.keyFile) {
-              formData.append("keyFile", server.keyFile);
-            }
-            formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
-            let axiosRequestConfig = {
-              method: "POST",
-              url: addServerUrl,
-              data: formData,
-              headers: {
-                "Content-Type": 'multipart/form-data'
-              }
-            };
-            this.rstResult = this.$request(axiosRequestConfig, () => {
-              this.$success(this.$t('commons.save_success'));
-              this.search();
-              this.createVisible = false;
-            });
           }
+        }
+        //保存列表
+        let num = 0;
+        for (let server of servers) {
+          if (server.isPublicKey === null && server.password) {
+            server.isPublicKey = "no";
+          }
+          let formData = new FormData();
+          if (server.keyFile) {
+            formData.append("keyFile", server.keyFile);
+          }
+          formData.append("request", new Blob([JSON.stringify(server)], {type: "application/json"}));
+          let axiosRequestConfig = {
+            method: "POST",
+            url: addServerUrl,
+            data: formData,
+            headers: {
+              "Content-Type": 'multipart/form-data'
+            }
+          };
+          this.rstResult = this.$request(axiosRequestConfig, () => {
+            this.$success(this.$t('commons.save_success'));
+            this.search();
+            num++;
+            if(servers.length === num) {
+              this.createVisible = false;
+            }
+          });
         }
       },
       editServer(server) {
