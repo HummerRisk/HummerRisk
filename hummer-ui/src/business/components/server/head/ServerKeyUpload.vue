@@ -8,7 +8,7 @@
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
       <div class="el-upload__tip" slot="tip">{{ $t('server.upload_tip', ['50M']) }}</div>
       <div class="el-upload__tip content" slot="tip">
-        <span>{{ $t('commons.format') + ' (*.gem/*rsa)' }}</span>
+        <span>{{ $t('commons.format') + ' (*.pem/*rsa)' }}</span>
       </div>
     </el-upload>
 
@@ -22,8 +22,8 @@ export default {
       loading:false,
       result: {},
       // 文件类型, 例如
-      // Tar archive format (*.gem);
-      fileType: ['gem', ""],
+      // Tar archive format (*.pem);
+      fileType: ['pem', ""],
       // 大小限制(MB)
       fileSize: 50,
       fileList: [],
@@ -47,24 +47,6 @@ export default {
       this.uploadValidate(file);
     },
     uploadValidate(file) {
-      // 校检文件类型
-      if (this.fileType) {
-        this.result.loading = true;
-        let fileExtension = "";
-        if (file.name.lastIndexOf(".") > -1) {
-          fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1);
-        }
-
-        const isTypeOk = this.fileType.some((type) => {
-          if (file.type?file.type.indexOf(type):file.name.indexOf(type) > -1) return true;
-          if (fileExtension && fileExtension.indexOf(type) > -1) return true;
-          return false;
-        });
-        if (!isTypeOk) {
-          this.$message.error(this.$t('commons.adv_search.file_type_warn') + this.fileType.join("/") + this.$t('commons.adv_search.file_type_warn2'));
-          return false;
-        }
-      }
       // 校检文件大小
       if (this.fileSize) {
         const isLt = file.size / 1024 / 1024 < this.fileSize;
