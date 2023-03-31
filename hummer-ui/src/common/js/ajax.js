@@ -121,13 +121,6 @@ export default {
     };
 
     Vue.prototype.$request = function (axiosRequestConfig, success, failure) {
-      // 是否需要设置 token
-      const isToken = (axiosRequestConfig.headers || {}).isToken === false;
-      // 是否需要防止数据重复提交
-      const isRepeatSubmit = (axiosRequestConfig.headers || {}).repeatSubmit === false;
-      if (getToken() && !isToken) {
-        axiosRequestConfig.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
-      }
       let result = {loading: true};
       if (!success) {
         return axios.request(axiosRequestConfig);
