@@ -3,7 +3,7 @@
 <mapper namespace="com.hummer.k8s.mapper.ext.ExtCloudNativeSourceMapper">
 
     <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudNativeSourceDTO"
-               extends="com.hummer.k8s.mapper.CloudNativeSourceMapper.BaseResultMap">
+               extends="com.hummer.k8s.mapper.CloudNativeSourceMapper.ResultMapWithBLOBs">
         <result column="userName" property="userName"/>
         <result column="cloudNativeName" jdbcType="VARCHAR" property="cloudNativeName" />
         <result column="pluginIcon" jdbcType="VARCHAR" property="pluginIcon" />
