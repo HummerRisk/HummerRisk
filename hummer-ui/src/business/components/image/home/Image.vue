@@ -347,9 +347,9 @@ import {IMAGE_CONFIGS} from "@/business/components/common/components/search/sear
 import {
   addImageUrl,
   allImageReposUrl,
+  changeImageUrl,
   deleteImageUrl,
   imageListUrl,
-  repoItemListUrl,
   scanImageUrl,
   updateImageUrl
 } from "@/api/k8s/image/image";
@@ -702,7 +702,7 @@ export default {
       this.tarFile = file;
     },
     changeImage(id) {
-      this.$post(repoItemListUrl, {repoId: id}, response => {
+      this.$post(changeImageUrl, {repoId: id}, response => {
         this.images = response.data;
       });
     },
