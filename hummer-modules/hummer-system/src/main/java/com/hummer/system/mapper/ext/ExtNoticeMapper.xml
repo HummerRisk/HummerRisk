@@ -51,7 +51,21 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopImageTasksForEmail" resultType="com.hummer.common.core.domain.ImageResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <resultMap id="getTopImageTasksForEmailBaseResultMap" type="com.hummer.common.core.domain.ImageResultItem">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="pkg_name" jdbcType="VARCHAR" property="pkgName" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="severity_source" jdbcType="VARCHAR" property="severitySource" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="published_date" jdbcType="VARCHAR" property="publishedDate" />
+        <result column="last_modified_date" jdbcType="VARCHAR" property="lastModifiedDate" />
+    </resultMap>
+
+    <select id="getTopImageTasksForEmail" resultMap="getTopImageTasksForEmailBaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
         SELECT t.*
         FROM image_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -59,7 +73,22 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopCodeTasksForEmail" resultType="com.hummer.common.core.domain.CodeResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <resultMap id="getTopCodeTasksForEmailBaseResultMap" type="com.hummer.common.core.domain.CodeResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="pkg_name" jdbcType="VARCHAR" property="pkgName" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="severity_source" jdbcType="VARCHAR" property="severitySource" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="published_date" jdbcType="VARCHAR" property="publishedDate" />
+        <result column="last_modified_date" jdbcType="VARCHAR" property="lastModifiedDate" />
+    </resultMap>
+
+    <select id="getTopCodeTasksForEmail" resultMap="getTopCodeTasksForEmailBaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
         SELECT t.*
         FROM code_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -67,7 +96,22 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopConfigTasksForEmail" resultType="com.hummer.common.core.domain.CloudNativeConfigResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <resultMap id="getTopConfigTasksForEmailBaseResultMap" type="com.hummer.common.core.domain.CloudNativeConfigResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="item_id" jdbcType="VARCHAR" property="itemId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="message" jdbcType="VARCHAR" property="message" />
+        <result column="namespace" jdbcType="VARCHAR" property="namespace" />
+        <result column="query" jdbcType="VARCHAR" property="query" />
+        <result column="resolution" jdbcType="VARCHAR" property="resolution" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+    </resultMap>
+
+    <select id="getTopConfigTasksForEmail" resultMap="getTopConfigTasksForEmailBaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
         SELECT t.*
         FROM cloud_native_config_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -75,7 +119,23 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopK8sTasksForEmail" resultType="com.hummer.common.core.domain.CloudNativeResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <resultMap id="getTopK8sTasksForEmailBaseResultMap" type="com.hummer.common.core.domain.CloudNativeResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="score" jdbcType="VARCHAR" property="score" />
+        <result column="target" jdbcType="VARCHAR" property="target" />
+        <result column="primary_link" jdbcType="VARCHAR" property="primaryLink" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resource" jdbcType="VARCHAR" property="resource" />
+        <result column="image" jdbcType="VARCHAR" property="image" />
+    </resultMap>
+
+    <select id="getTopK8sTasksForEmail" resultMap="getTopK8sTasksForEmailBaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
         SELECT t.*
         FROM cloud_native_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -83,7 +143,22 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopFsTasksForEmail" resultType="com.hummer.common.core.domain.FileSystemResultItem" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <resultMap id="getTopFsTasksForEmailBaseResultMap" type="com.hummer.common.core.domain.FileSystemResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="pkg_name" jdbcType="VARCHAR" property="pkgName" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="severity_source" jdbcType="VARCHAR" property="severitySource" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="published_date" jdbcType="VARCHAR" property="publishedDate" />
+        <result column="last_modified_date" jdbcType="VARCHAR" property="lastModifiedDate" />
+    </resultMap>
+
+    <select id="getTopFsTasksForEmail" resultMap="getTopFsTasksForEmailBaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
         SELECT t.*
         FROM file_system_result_item t
         JOIN message_order_item t1 ON t.result_id = t1.task_id
@@ -91,7 +166,31 @@
         WHERE t2.id = #{request.id}
     </select>
 
-    <select id="getTopServerTasksForEmail" resultType="com.hummer.common.core.dto.ServerResultDTO" parameterType="com.hummer.common.core.domain.MessageOrder">
+    <resultMap id="getTopServerTasksForEmailBaseResultMap" type="com.hummer.common.core.dto.ServerResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="server_id" jdbcType="VARCHAR" property="serverId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="server_group_id" jdbcType="VARCHAR" property="serverGroupId" />
+        <result column="server_group_name" jdbcType="VARCHAR" property="serverGroupName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="port" jdbcType="VARCHAR" property="port" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="getTopServerTasksForEmail" resultMap="getTopServerTasksForEmailBaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
         SELECT t.*, g.name as groupName
         FROM server_result t
         JOIN server_group g on t.server_group_id = g.id
