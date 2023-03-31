@@ -1,9 +1,9 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummer.common.core.domain.CloudNativeResult;
+import com.hummer.common.core.domain.CloudNativeResultWithBLOBs;
 
-public class CloudNativeResultDTO extends CloudNativeResult {
+public class CloudNativeResultDTO extends CloudNativeResultWithBLOBs {
 
     private String critical;
 

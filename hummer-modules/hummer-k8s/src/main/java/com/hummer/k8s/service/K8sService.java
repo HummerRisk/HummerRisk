@@ -399,7 +399,7 @@ public class K8sService {
         record.setOperation("i18n_sync_k8s_start");
         record.setCloudNativeId(cloudNative.getId());
         record.setCreateTime(System.currentTimeMillis());
-        String creator = tokenService.getLoginUser().getUser().getName();
+        String creator = tokenService.getLoginUser().getUserName();
         record.setOperator(creator);
         record.setOutput("i18n_in_process");
         record.setId(UUIDUtil.newUUID());
@@ -599,7 +599,7 @@ public class K8sService {
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-                result.setUserName(tokenService.getLoginUser().getUser().getName());
+                result.setUserName(tokenService.getLoginUser().getUserName());
                 result.setRuleId(rule.getId());
                 result.setRuleName(rule.getName());
                 result.setRuleDesc(rule.getDescription());
@@ -621,7 +621,7 @@ public class K8sService {
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUser().getName());
+        result.setUserName(tokenService.getLoginUser().getUserName());
         cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
         saveCloudNativeResultLog(result.getId(), "i18n_restart_k8s_result", "", true);
