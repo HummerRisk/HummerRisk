@@ -815,6 +815,7 @@ const columnOptions = [
         this.uploadExcelForm.serverGroupId = this.groups.length > 0 ? this.groups[0].id : this.serverGroupId;
         this.uploadExcel = true;
         this.excelFile = null;
+        this.fileList = [];
       },
       //校验虚拟机ssh连接
       validate() {
