@@ -269,18 +269,6 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
-//    private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
-//        if (taskItemResource.getId() != null) {
-//            cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
-//
-//            historyService.updateHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
-//        } else {
-//            cloudTaskItemResourceMapper.insertSelective(taskItemResource);
-//
-//            historyService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
-//        }
-//    }
-
     public ResourceDetailDTO getResource(String id) throws Exception {
         ResourceDetailDTO dto = new ResourceDetailDTO();
         ResourceWithBLOBs resource = resourceMapper.selectByPrimaryKey(id);

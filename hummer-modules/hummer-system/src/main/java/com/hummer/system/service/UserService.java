@@ -156,7 +156,7 @@ public class UserService {
             throw new Exception();
         }
         UserDTO userDTO = new UserDTO();
-        BeanUtils.copyBean(user, userDTO);
+        BeanUtils.copyBean(userDTO, user);
         UserRoleDTO userRole = getUserRole(userId);
         userDTO.setUserRoles(Optional.ofNullable(userRole.getUserRoles()).orElse(new ArrayList()));
         userDTO.setRoles(Optional.ofNullable(userRole.getRoles()).orElse(new ArrayList()));
