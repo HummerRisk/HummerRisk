@@ -1,12 +1,12 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummer.common.core.domain.HistoryCloudNativeResult;
+import com.hummer.common.core.domain.HistoryCloudNativeResultWithBLOBs;
 
 /**
  * @author harris
  */
-public class HistoryCloudNativeResultDTO extends HistoryCloudNativeResult {
+public class HistoryCloudNativeResultDTO extends HistoryCloudNativeResultWithBLOBs {
 
     private String critical;
 
