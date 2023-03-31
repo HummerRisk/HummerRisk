@@ -410,7 +410,14 @@ import RuleType from "./RuleType";
 import {SERVER_RESULT_CONFIGS, SERVER_RESULT_CONFIGS2} from "@/business/components/common/components/search/search-components";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {getServerResultUrl, resultServerListUrl, serverLogUrl, serverResultListUrl} from "@/api/k8s/server/server";
+import {
+  deleteServerResultUrl,
+  getServerResultUrl,
+  resultServerListUrl,
+  serverLogUrl,
+  serverReScanUrl,
+  serverResultListUrl
+} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
