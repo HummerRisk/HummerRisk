@@ -2,7 +2,7 @@
   <main-container class="card">
 
     <el-card class="table-card el-row-card">
-      <k8s-switch @k8sSwitch="k8sSwitch" @selectAccount="selectAccount"/>
+      <k8s-switch @k8sSwitch="k8sSwitch" @selectAccount="selectAccount" :currentAccount="currentAccount"/>
     </el-card>
 
     <el-card class="table-card" v-loading="result.loading">
