@@ -14,5 +14,7 @@ public interface ExtRuleMapper {
 
     List<RuleDTO> cloudList(CreateRuleRequest Rule);
 
+    List<RuleDTO> k8sList(CreateRuleRequest Rule);
+
     RuleDTO selectByPrimaryKey(@Param("ruleId") String ruleId, @Param("accountId") String accountId);
 }

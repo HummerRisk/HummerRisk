@@ -118,7 +118,7 @@
             <if test="accountId != null and accountId != ''">
                 AND t.id = #{accountId}
             </if>
-            and p.type in ('cloud', 'native')
+            and p.type in ('cloud')
         </where>
         ORDER BY t.create_time DESC
     </select>

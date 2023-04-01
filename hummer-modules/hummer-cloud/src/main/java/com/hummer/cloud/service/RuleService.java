@@ -114,6 +114,9 @@ public class RuleService   {
         return extRuleMapper.cloudList(ruleRequest);
     }
 
+    public List<RuleDTO> k8sList(CreateRuleRequest ruleRequest) {
+        return extRuleMapper.k8sList(ruleRequest);
+    }
     public List<Rule> getRulesByAccountId(String accountId) {
         RuleExample example = new RuleExample();
         example.createCriteria().andPluginIdEqualTo(accountMapper.selectByPrimaryKey(accountId).getPluginId());

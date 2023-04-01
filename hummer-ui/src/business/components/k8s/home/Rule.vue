@@ -412,12 +412,12 @@ import TablePagination from "@/business/components/common/pagination/TablePagina
 import TableOperator from "@/business/components/common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/RuleDialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import {RULE_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {K8S_RULE_CONFIGS} from "@/business/components/common/components/search/search-components";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  getRuleByNameUrl,
+  getRuleByNameUrl, k8sRuleListUrl,
   ruleAddUrl,
   ruleChangeStatusUrl,
   ruleCopyUrl,
@@ -482,7 +482,7 @@ const columnOptions = [
         tagKey:"all",
         result: {},
         condition: {
-          components: RULE_CONFIGS
+          components: K8S_RULE_CONFIGS
         },
         tableData: [],
         currentPage: 1,
@@ -666,7 +666,7 @@ const columnOptions = [
       //查询列表
       search() {
         this.filterRules(this.tagKey);
-        let url = ruleListUrl + this.currentPage + "/" + this.pageSize;
+        let url = k8sRuleListUrl + this.currentPage + "/" + this.pageSize;
         this.result = this.$post(url, this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;

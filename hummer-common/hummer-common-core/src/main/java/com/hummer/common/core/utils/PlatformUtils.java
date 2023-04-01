@@ -153,7 +153,14 @@ public class PlatformUtils {
      * 支持云平台插件
      */
     public final static List<String> getCloudPlugin() {
-        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s, jdcloud, ksyun);
+        return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, jdcloud, ksyun);
+    }
+
+    /**
+     * 支持云原生插件
+     */
+    public final static List<String> getK8sPlugin() {
+        return Arrays.asList(k8s);
     }
 
     /**
@@ -161,7 +168,7 @@ public class PlatformUtils {
      */
     public static boolean isSupportCloudAccount(String source) {
         // 云平台插件
-        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, k8s, jdcloud, ksyun);
+        List<String> tempList = Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, jdcloud, ksyun);
 
         // 利用list的包含方法,进行判断
         return tempList.contains(source);

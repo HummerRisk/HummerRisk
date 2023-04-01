@@ -23,11 +23,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountScan'),
     },
     {
-      path: 'quartztask',
-      name: 'cloudQuartzTask',
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/QuartzTask'),
-    },
-    {
       path: "rule",
       name: "cloudRule",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),

@@ -318,7 +318,8 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   bindRuleUrl,
-  ruleAllBindListUrl, ruleGroupDeleteUrl,
+  ruleAllBindListUrl,
+  ruleGroupDeleteUrl,
   ruleGroupListUrl,
   ruleGroupSaveUrl,
   ruleGroupUpdateUrl,
@@ -326,7 +327,7 @@ import {
   ruleUnBindListUrl,
   scanByGroupUrl
 } from "@/api/cloud/rule/rule";
-import {cloudPluginUrl} from "@/api/system/system";
+import {cloudPluginUrl, nativePluginUrl} from "@/api/system/system";
 import {cloudListByGroupUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
@@ -634,13 +635,13 @@ const columnOptions2 = [
         })
       },
       getPlugins () {
-        this.result = this.$get(cloudPluginUrl, response => {
+        this.result = this.$get(nativePluginUrl, response => {
           this.plugins = response.data;
         });
       },
       //查询列表
       search() {
-        this.condition.type = "cloud";
+        this.condition.type = "k8s";
         if (this.listStatus === 1) {
           let url = ruleGroupListUrl + this.currentPage + "/" + this.pageSize;
           this.result = this.$post(url, this.condition, response => {
@@ -766,7 +767,7 @@ const columnOptions2 = [
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
           this.$router.push({
-            path: '/account/result',
+            path: '/k8s/result',
           }).catch(error => error);
         });
       },

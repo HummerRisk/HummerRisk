@@ -13,8 +13,6 @@ export const ruleScanUrl = "/cloud/rule/scan";
 
 export const groupsByAccountId = "/cloud/rule/groupsByAccountId/";
 
-export const listByAccountId = "/cloud/rule/listByAccountId/";
-
 export const tagRuleListUrl = "/cloud/tag/rule/list";
 
 export const resourceTypesUrl = "/cloud/rule/all/resourceTypes";
@@ -24,6 +22,8 @@ export const getRuleByTaskIdUrl = "/cloud/rule/getRuleByTaskId/";
 export const ruleInspectionReportUrl = "/cloud/rule/all/ruleInspectionReport";
 
 export const ruleListUrl = "/cloud/rule/list/";
+
+export const k8sRuleListUrl = "/cloud/rule/k8sList/";
 
 export const ruleReScanUrl = "/cloud/rule/reScan/";
 

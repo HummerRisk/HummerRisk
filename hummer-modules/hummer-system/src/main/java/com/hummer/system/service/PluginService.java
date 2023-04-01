@@ -50,7 +50,7 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
-        criteria.andIdIn(PlatformUtils.getCloudPlugin());
+        criteria.andTypeEqualTo("cloud");
         return pluginMapper.selectByExample(example);
     }
 
@@ -58,7 +58,7 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
-        criteria.andTypeEqualTo(PlatformUtils.native_);
+        criteria.andTypeEqualTo("k8s");
         return pluginMapper.selectByExample(example);
     }
 

@@ -335,7 +335,8 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   bindRuleUrl,
-  ruleAllBindListUrl, ruleGroupDeleteUrl,
+  ruleAllBindListUrl,
+  ruleGroupDeleteUrl,
   ruleGroupListUrl,
   ruleListUrl,
   ruleUnBindListUrl,

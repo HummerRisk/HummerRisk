@@ -40,6 +40,14 @@ public class RuleController {
     }
 
     @I18n
+    @ApiOperation(value = "云原生规则列表")
+    @PostMapping(value = "k8sList/{goPage}/{pageSize}")
+    public Pager<List<RuleDTO>> k8sList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CreateRuleRequest rule) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, ruleService.k8sList(rule));
+    }
+
+    @I18n
     @ApiIgnore
     @GetMapping(value = "listByAccountId/{accountId}")
     public List<Rule> listByAccountId(@PathVariable String accountId) {

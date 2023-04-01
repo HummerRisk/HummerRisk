@@ -35,21 +35,7 @@ export const accountHistoryListUrl = "/cloud/account/historyList/";
 
 export const accountHistoryDiffListUrl = "/cloud/account/historyDiffList/";
 
-export const quartzListUrl = "/cloud/cloud/task/quartz/list/";
-
 export const allListUrl = "/cloud/account/allList";
-
-export const quartzCreateUrl = "/cloud/cloud/task/quartz/create";
-
-export const quartzDeleteUrl = "/cloud/cloud/task/quartz/delete/";
-
-export const quartzResumeUrl = "/cloud/cloud/task/quartz/resume/";
-
-export const quartzPauseUrl = "/cloud/cloud/task/quartz/pause/";
-
-export const quartzRelaLogUrl = "/cloud/cloud/task/quartz/rela/log/";
-
-export const showAccountUrl = "/cloud/cloud/task/show/account/";
 
 export const cloudTaskLogByIdUrl = "/cloud/cloud/task/log/taskId/";
 

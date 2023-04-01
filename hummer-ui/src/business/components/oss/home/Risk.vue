@@ -327,7 +327,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {ACCOUNT_ID} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  ossManualListUrl, resourceAccountDeleteUrl,
+  resourceAccountDeleteUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
   resourceRuleDataUrl,
@@ -335,7 +335,7 @@ import {
   resourceTypeDataUrl,
   string2PrettyFormatUrl
 } from "@/api/cloud/resource/resource";
-import {ossResourceListUrl} from "@/api/cloud/oss/oss";
+import {ossManualListUrl, ossResourceListUrl} from "@/api/cloud/oss/oss";
 import {tagRuleListUrl} from "@/api/cloud/rule/rule";
 import {cloudTaskDetailUrl, cloudTaskLogByIdUrl} from "@/api/cloud/account/account";
 

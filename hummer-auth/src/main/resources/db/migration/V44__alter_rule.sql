@@ -9,11 +9,11 @@ UPDATE `rule_group` SET `type` = 'cloud';
 
 ALTER TABLE `cloud_task_item` modify `command` mediumtext DEFAULT NULL COMMENT 'command';
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 内存限制检测', '检测 K8s 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-k8s-plugin', 1, 'cloud');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 内存限制检测', '检测 K8s 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-k8s-plugin', 1, 'k8s');
 
 SELECT @groupId := LAST_INSERT_ID();
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 容器的文件系统检测', '检测 K8s 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-k8s-plugin', 1, 'cloud');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 容器的文件系统检测', '检测 K8s 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-k8s-plugin', 1, 'k8s');
 
 SELECT @groupId1 := LAST_INSERT_ID();
 

@@ -42,5 +42,15 @@ export default {
       name: "K8sHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/History"),
     },
+    {
+      path: "ruleGroup",
+      name: "K8sRuleGroup",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/RuleGroup"),
+    },
+    {
+      path: "rule",
+      name: "K8sRule",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Rule"),
+    },
   ]
 }

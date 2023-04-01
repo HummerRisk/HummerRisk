@@ -437,6 +437,26 @@ export const RULE_PLUGIN_NAME = {
   }
 }
 
+export const K8S_RULE_PLUGIN_NAME = {
+  key: "pluginId",
+  name: 'TableSearchSelect',
+  label: 'commons.adv_search.plugin',
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+  },
+  options: { // 异步获取候选项
+    url: nativePluginUrl,
+    labelKey: "name",
+    valueKey: "id",
+    showLabel: option => {
+      return option.label + " (" + option.value + ") ";
+    }
+  },
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const RULE_GROUP = {
   key: "groupId",
   name: 'TableSearchSelect',
@@ -1101,4 +1121,5 @@ export const FS_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, K8S_RESULT_STA
 export const RULE_INSPECTION_REPORT_CONFIGS = [ITEM_SORT_FIRST_LEVEL, ITEM_SORT_SECOND_LEVEL, PROJECT, IMPROVEMENT];
 export const DETAIL_RESULT_CONFIGS = [PKGNAME, RESOURCE, VULNERABILITYID, SEVERITY];
 export const K8S_KUBENCH_RESULT_CONFIGS = [TITLE, NUMBER, DESCRIPTION, KUBENCH_SEVERITY];
+export const K8S_RULE_CONFIGS = [RULE_NAME, K8S_RULE_PLUGIN_NAME, RULE_SEVERITY, RULE_RESOURCE_TYPE, RULE_GROUP];
 
