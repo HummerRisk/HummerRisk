@@ -156,7 +156,7 @@ public class CloudTaskService {
 
             });
             cloudTaskMapper.deleteByPrimaryKey(cloudTask.getId());
-            operationLogService.log(tokenService.getLoginUser().getUser(), taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "i18n_delete_cloud_task");
+            operationLogService.log(tokenService.getLoginUser(), taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "i18n_delete_cloud_task");
         } catch (Exception e) {
             LogUtil.error("Delete manual cloudTask error{} " + e.getMessage());
             HRException.throwException(e.getMessage());

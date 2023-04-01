@@ -2,7 +2,6 @@ package com.hummer.cloud.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.*;
 import com.hummer.common.core.constant.*;
@@ -10,6 +9,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.rule.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.PlatformUtils;
@@ -150,7 +150,7 @@ public class RuleService   {
                 ruleRequest.setPluginIcon(plugin.getIcon());
                 ruleRequest.setFlag(false);
                 ruleMapper.insertSelective(ruleRequest);
-                operationLogService.log(tokenService.getLoginUser().getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
+                operationLogService.log(tokenService.getLoginUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
             } else {
                 Plugin plugin = pluginMapper.selectByPrimaryKey(ruleRequest.getPluginId());
                 ruleRequest.setPluginId(plugin.getId());
@@ -159,7 +159,7 @@ public class RuleService   {
                 ruleRequest.setFlag(false);
                 ruleRequest.setLastModified(System.currentTimeMillis());
                 ruleMapper.updateByPrimaryKeySelective(ruleRequest);
-                operationLogService.log(tokenService.getLoginUser().getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.UPDATE, "i18n_update_rule");
+                operationLogService.log(tokenService.getLoginUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.UPDATE, "i18n_update_rule");
             }
 
             saveRuleTagMapping(ruleRequest.getId(), ruleRequest.getTagKey());
@@ -245,7 +245,7 @@ public class RuleService   {
             if (!flag) {
                 HRException.throwException(Translator.get("i18n_compliance_rule_code_error"));
             }
-            operationLogService.log(tokenService.getLoginUser().getUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_copy_rule");
+            operationLogService.log(tokenService.getLoginUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_copy_rule");
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -322,7 +322,7 @@ public class RuleService   {
             ruleTypeMapper.deleteByExample(ruleTypeExample);
             deleteRuleInspectionReportMapping(id);
             deleteRuleGroupMapping(id);
-            operationLogService.log(tokenService.getLoginUser().getUser(), id, rule.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.DELETE, "i18n_delete_rule");
+            operationLogService.log(tokenService.getLoginUser(), id, rule.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.DELETE, "i18n_delete_rule");
         } else {
             HRException.throwException(Translator.get("i18n_compliance_rule_useage_error"));
         }
@@ -456,13 +456,13 @@ public class RuleService   {
 
     public RuleTag saveRuleTag(RuleTag ruleTag) {
         ruleTagMapper.insertSelective(ruleTag);
-        operationLogService.log(tokenService.getLoginUser().getUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.CREATE, "i18n_create_rule_tag");
+        operationLogService.log(tokenService.getLoginUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.CREATE, "i18n_create_rule_tag");
         return ruleTag;
     }
 
     public RuleTag updateRuleTag(RuleTag ruleTag) {
         ruleTagMapper.updateByPrimaryKey(ruleTag);
-        operationLogService.log(tokenService.getLoginUser().getUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.UPDATE, "i18n_update_rule_tag");
+        operationLogService.log(tokenService.getLoginUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.UPDATE, "i18n_update_rule_tag");
         return ruleTag;
     }
 
@@ -498,7 +498,7 @@ public class RuleService   {
         example.createCriteria().andTagKeyEqualTo(tagkey);
         List<RuleTagMapping> list = ruleTagMappingMapper.selectByExample(example);
         if (!list.isEmpty()) HRException.throwException(Translator.get("i18n_not_allowed"));
-        operationLogService.log(tokenService.getLoginUser().getUser(), tagkey, tagkey, ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.DELETE, "i18n_delete_rule_tag");
+        operationLogService.log(tokenService.getLoginUser(), tagkey, tagkey, ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.DELETE, "i18n_delete_rule_tag");
         return ruleTagMapper.deleteByPrimaryKey(tagkey);
     }
 

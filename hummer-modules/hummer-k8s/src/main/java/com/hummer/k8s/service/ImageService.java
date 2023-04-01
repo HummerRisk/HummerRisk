@@ -115,7 +115,7 @@ public class ImageService {
             imageRepo.setStatus("INVALID");
         }
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
+        operationLogService.log(tokenService.getLoginUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
         imageRepoMapper.insertSelective(imageRepo);
 
         return imageRepo;
@@ -224,7 +224,7 @@ public class ImageService {
             }
             imageRepoSyncLog.setRepoId(imageRepo.getId());
             imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
-            imageRepoSyncLog.setOperator(tokenService.getLoginUser().getUser().getName());
+            imageRepoSyncLog.setOperator(tokenService.getLoginUser().getUserName());
             imageRepoSyncLog.setOperation("i18n_sync_image");
             imageRepoSyncLog.setOutput("i18n_sync_image_success");
             imageRepoSyncLog.setResult(true);
@@ -234,7 +234,7 @@ public class ImageService {
             LogUtil.error(e.getMessage());
             imageRepoSyncLog.setRepoId(imageRepo.getId());
             imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
-            imageRepoSyncLog.setOperator(tokenService.getLoginUser().getUser().getName());
+            imageRepoSyncLog.setOperator(tokenService.getLoginUser().getUserName());
             imageRepoSyncLog.setOperation("i18n_sync_image");
             imageRepoSyncLog.setOutput("i18n_sync_image_error: " + e.getMessage());
             imageRepoSyncLog.setResult(false);
@@ -257,7 +257,7 @@ public class ImageService {
             imageRepo.setStatus("INVALID");
         }
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_repo");
+        operationLogService.log(tokenService.getLoginUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_repo");
         imageRepoMapper.updateByPrimaryKeySelective(imageRepo);
 
         return imageRepo;
@@ -265,7 +265,7 @@ public class ImageService {
 
     public void deleteImageRepo(String id) throws Exception {
         imageRepoMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_repo");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_repo");
     }
 
     public List<ImageDTO> imageList(ImageRequest request) {
@@ -309,7 +309,7 @@ public class ImageService {
 
             imageMapper.insertSelective(request);
 
-            operationLogService.log(tokenService.getLoginUser().getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
+            operationLogService.log(tokenService.getLoginUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
 
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -343,7 +343,7 @@ public class ImageService {
 
             imageMapper.updateByPrimaryKeySelective(request);
 
-            operationLogService.log(tokenService.getLoginUser().getUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image");
+            operationLogService.log(tokenService.getLoginUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image");
 
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -354,7 +354,7 @@ public class ImageService {
     public void deleteImage(String id) throws Exception {
         imageMapper.deleteByPrimaryKey(id);
         deleteResultByImageId(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image");
     }
 
     /**
@@ -384,7 +384,7 @@ public class ImageService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser().getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_rule");
+        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_rule");
         return imageRuleMapper.insertSelective(record);
     }
 
@@ -414,14 +414,14 @@ public class ImageService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser().getUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
+        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
         return imageRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deleteImageRule(String id) throws Exception {
         deleteRuleTag(null, id);
         imageRuleMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_rule");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_rule");
     }
 
     public int changeStatus(ImageRule rule) throws Exception {
@@ -449,11 +449,11 @@ public class ImageService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(tokenService.getLoginUser().getUser().getName());
+                result.setUserName(tokenService.getLoginUser().getUserName());
                 imageResultMapper.insertSelective(result);
 
                 saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
-                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.SCAN, "i18n_start_image_result");
+                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.SCAN, "i18n_start_image_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, image.getId(), TaskEnum.imageAccount.getType());
 
@@ -554,14 +554,14 @@ public class ImageService {
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUser().getName());
+        result.setUserName(tokenService.getLoginUser().getUserName());
         imageResultMapper.updateByPrimaryKeySelective(result);
 
         this.reScanDeleteImageResult(id);
 
         saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.RESCAN, "i18n_restart_image_result");
+        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.RESCAN, "i18n_restart_image_result");
 
         systemProviderService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
 
@@ -587,7 +587,7 @@ public class ImageService {
 
         systemProviderService.deleteHistoryImageResult(id);
         imageResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
     }
 
     public void deleteRescanResultByImageId(String id) throws Exception {
@@ -614,7 +614,7 @@ public class ImageService {
             systemProviderService.deleteHistoryImageResult(result.getId());
         }
         imageResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
 
     }
 
@@ -739,8 +739,8 @@ public class ImageService {
         ImageResultLogWithBLOBs imageResultLog = new ImageResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser().getUser() != null) {
-                operator = tokenService.getLoginUser().getUser().getId();
+            if (tokenService.getLoginUser() != null) {
+                operator = tokenService.getLoginUser().getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -859,12 +859,12 @@ public class ImageService {
             if (list.size() == 0) {
                 image.setId(UUIDUtil.newUUID());
                 imageMapper.insertSelective(image);
-                operationLogService.log(tokenService.getLoginUser().getUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
+                operationLogService.log(tokenService.getLoginUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
 
             } else {
                 image.setId(list.get(0).getId());
                 imageMapper.updateByPrimaryKeySelective(image);
-                operationLogService.log(tokenService.getLoginUser().getUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
+                operationLogService.log(tokenService.getLoginUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
 
             }
             ImageResultExample imageResultExample = new ImageResultExample();

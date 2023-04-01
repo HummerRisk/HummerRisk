@@ -43,7 +43,7 @@ public class UserKeyService {
     private OperationLogService operationLogService;
 
     public List<UserKey> getUserKeysInfo(UserKeyRequest request) {
-        String userId = Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId();
+        String userId = Objects.requireNonNull(tokenService.getLoginUser()).getUserId();
         if (!StringUtils.equals(userId, "admin")) request.setUserId(userId);
         return extUserKeyMapper.getUserKeysInfo(request);
     }
@@ -68,7 +68,7 @@ public class UserKeyService {
         userKeys.setSecretKey(RandomStringUtils.randomAlphanumeric(16));
         userKeys.setCreateTime(System.currentTimeMillis());
         userKeyMapper.insert(userKeys);
-        operationLogService.log(tokenService.getLoginUser().getUser(), userKeys.getAccessKey(), ApiKeyConstants.ACTIVE.name(), ResourceConstants.SystemConstants, ResourceOperation.CREATE, "创建API Keys");
+        operationLogService.log(tokenService.getLoginUser(), userKeys.getAccessKey(), ApiKeyConstants.ACTIVE.name(), ResourceConstants.SystemConstants, ResourceOperation.CREATE, "创建API Keys");
         return userKeyMapper.selectByPrimaryKey(userKeys.getId());
     }
 

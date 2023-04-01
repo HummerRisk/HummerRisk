@@ -540,7 +540,7 @@ public class ResourceService {
                     });
                 }};
             }).collect(Collectors.toList());
-            operationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(tokenService.getLoginUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -611,7 +611,7 @@ public class ResourceService {
                     });
                 }};
             }).collect(Collectors.toList());
-            operationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(tokenService.getLoginUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -636,7 +636,7 @@ public class ResourceService {
         HistoryScanExample historyScanExample = new HistoryScanExample();
         historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
+        operationLogService.log(tokenService.getLoginUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
 
     }
 

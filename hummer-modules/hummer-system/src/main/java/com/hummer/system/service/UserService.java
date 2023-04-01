@@ -133,7 +133,7 @@ public class UserService {
         user.setPassword(CodingUtil.md5(user.getPassword()));
         checkEmailIsExist(user.getEmail());
         userMapper.insertSelective(user);
-        operationLogService.log(tokenService.getLoginUser().getUser(), userRequest.getId(), userRequest.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.CREATE, "创建用户");
+        operationLogService.log(tokenService.getLoginUser(), userRequest.getId(), userRequest.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.CREATE, "创建用户");
     }
 
     private void checkEmailIsExist(String email) {
@@ -247,7 +247,7 @@ public class UserService {
 
     public void deleteUser(String userId) throws Exception {
         User user = new User();
-        BeanUtils.copyBean(user, tokenService.getLoginUser().getUser());
+        BeanUtils.copyBean(user, tokenService.getLoginUser());
         if (user == null) return;
         if (StringUtils.equals(user.getId(), userId)) {
             HRException.throwException(Translator.get("cannot_delete_current_user"));
@@ -258,7 +258,7 @@ public class UserService {
         userRoleMapper.deleteByExample(example);
 
         userMapper.deleteByPrimaryKey(userId);
-        operationLogService.log(tokenService.getLoginUser().getUser(), tokenService.getLoginUser().getUser().getId(), tokenService.getLoginUser().getUser().getName(), ResourceTypeConstants.USER.name(), ResourceOperation.DELETE, "删除用户");
+        operationLogService.log(tokenService.getLoginUser(), tokenService.getLoginUser().getUserId(), tokenService.getLoginUser().getUserName(), ResourceTypeConstants.USER.name(), ResourceOperation.DELETE, "删除用户");
     }
 
     public void updateUserRole(UserRequest user) {
@@ -306,9 +306,9 @@ public class UserService {
     }
 
     public void setLanguage(String lang) {
-        if (tokenService.getLoginUser().getUser() != null) {
+        if (tokenService.getLoginUser() != null) {
             User user = new User();
-            user.setId(tokenService.getLoginUser().getUser().getId());
+            user.setId(tokenService.getLoginUser().getUserId());
             user.setLanguage(lang);
             updateUser(user);
             tokenService.getLoginUser().getUser().setLanguage(lang);
@@ -320,7 +320,7 @@ public class UserService {
         String oldPassword = CodingUtil.md5(request.getPassword(), "utf-8");
         String newPassword = request.getNewpassword();
         UserExample userExample = new UserExample();
-        userExample.createCriteria().andIdEqualTo(Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId()).andPasswordEqualTo(oldPassword);
+        userExample.createCriteria().andIdEqualTo(Objects.requireNonNull(tokenService.getLoginUser()).getUserId()).andPasswordEqualTo(oldPassword);
         List<User> users = userMapper.selectByExample(userExample);
         if (!CollectionUtils.isEmpty(users)) {
             User user = users.get(0);
@@ -343,7 +343,7 @@ public class UserService {
         String newped = request.getNewpassword();
         user.setPassword(CodingUtil.md5(newped));
         user.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser().getUser(), Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId(), tokenService.getLoginUser().getUser().getName(), ResourceTypeConstants.USER.name(), ResourceOperation.UPDATE, "修改密码");
+        operationLogService.log(tokenService.getLoginUser(), Objects.requireNonNull(tokenService.getLoginUser()).getUserId(), tokenService.getLoginUser().getUserName(), ResourceTypeConstants.USER.name(), ResourceOperation.UPDATE, "修改密码");
         return user;
     }
 

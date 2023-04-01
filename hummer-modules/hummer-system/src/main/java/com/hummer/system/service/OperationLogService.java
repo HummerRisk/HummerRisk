@@ -8,6 +8,7 @@ import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.domain.User;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.OperationLogMapper;
 import com.hummer.system.mapper.ext.ExtOperationLogMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -27,19 +28,9 @@ public class OperationLogService implements IOperationLogService {
     @Autowired
     private ExtOperationLogMapper extOperationLogMapper;
 
-    @Autowired
-    private TokenService tokenService;
-
     @Override
-    public void log(UserDTO user, String resourceId, String resourceName, String resourceType, String operation, String message) {
-        String ip;
-        try {
-            //TODO dubbo 调用没有http请求获取不到用户信息
-            ip = tokenService.getLoginUser()!=null?tokenService.getLoginUser().getIpAddr():"";
-        } catch (Exception e) {
-            //redis里获取
-            ip = "";
-        }
+    public void log(LoginUser user, String resourceId, String resourceName, String resourceType, String operation, String message) {
+        String ip = user!=null?user.getIpAddr():"";
         OperationLog operationLog = createOperationLog(user, resourceId, resourceName, resourceType, operation, message, ip);
         operationLogMapper.insertSelective(operationLog);
     }
@@ -53,7 +44,7 @@ public class OperationLogService implements IOperationLogService {
     }
 
     @Override
-    public OperationLog createOperationLog(UserDTO user, String resourceId, String resourceName, String resourceType, String operation, String message, String ip) {
+    public OperationLog createOperationLog(LoginUser user, String resourceId, String resourceName, String resourceType, String operation, String message, String ip) {
         OperationLog operationLog = new OperationLog();
         operationLog.setId(UUIDUtil.newUUID());
         operationLog.setResourceId(resourceId);
@@ -62,8 +53,8 @@ public class OperationLogService implements IOperationLogService {
             operationLog.setResourceUserId(SystemUserConstants.getUserId());
             operationLog.setResourceUserName(SystemUserConstants.getUser().getName());
         } else {
-            operationLog.setResourceUserId(user.getId());
-            operationLog.setResourceUserName(user.getName() + " [" + user.getEmail() + "]");
+            operationLog.setResourceUserId(user.getUserId());
+            operationLog.setResourceUserName(user.getUserName() + " [" + user.getUser().getEmail() + "]");
         }
         operationLog.setResourceType(resourceType);
         operationLog.setOperation(operation);

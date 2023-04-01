@@ -105,7 +105,7 @@ public class FileSystemService {
             fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
         }
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs");
+        operationLogService.log(tokenService.getLoginUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs");
         fileSystemMapper.insertSelective(fileSystem);
         return fileSystem;
     }
@@ -119,7 +119,7 @@ public class FileSystemService {
             fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
         }
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs");
+        operationLogService.log(tokenService.getLoginUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs");
         fileSystemMapper.updateByPrimaryKeySelective(fileSystem);
         return fileSystem;
     }
@@ -161,7 +161,7 @@ public class FileSystemService {
         fileSystemMapper.deleteByPrimaryKey(id);
 
         deleteResultByFsId(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs");
+        operationLogService.log(tokenService.getLoginUser(), id, fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs");
 
     }
 
@@ -201,7 +201,7 @@ public class FileSystemService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser().getUser(), record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs_rule");
+        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs_rule");
         return fileSystemRuleMapper.insertSelective(record);
     }
 
@@ -231,14 +231,14 @@ public class FileSystemService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser().getUser(), record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs_rule");
+        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs_rule");
         return fileSystemRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deleteFsRule(String id) throws Exception {
         deleteRuleTag(null, id);
         fileSystemRuleMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_rule");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_rule");
     }
 
     public int changeStatus(FileSystemRule rule) throws Exception {
@@ -277,7 +277,7 @@ public class FileSystemService {
         systemProviderService.deleteHistoryFsResult(id);
         fileSystemResultMapper.deleteByPrimaryKey(id);
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
 
     }
 
@@ -316,11 +316,11 @@ public class FileSystemService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(tokenService.getLoginUser().getUser().getName());
+                result.setUserName(tokenService.getLoginUser().getUserName());
                 fileSystemResultMapper.insertSelective(result);
 
                 saveFsResultLog(result.getId(), "i18n_start_fs_result", "", true);
-                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.SCAN, "i18n_start_fs_result");
+                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.SCAN, "i18n_start_fs_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, fileSystem.getId(), TaskEnum.fsAccount.getType());
 
@@ -334,14 +334,14 @@ public class FileSystemService {
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUser().getName());
+        result.setUserName(tokenService.getLoginUser().getUserName());
         fileSystemResultMapper.updateByPrimaryKeySelective(result);
 
         reScanDeleteFileSystemResult(id);
 
         saveFsResultLog(result.getId(), "i18n_restart_fs_result", "", true);
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.RESCAN, "i18n_restart_fs_result");
+        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.RESCAN, "i18n_restart_fs_result");
 
         systemProviderService.updateHistoryFileSystemResult(BeanUtils.copyBean(new HistoryFileSystemResult(), result));
 
@@ -379,15 +379,15 @@ public class FileSystemService {
         }
         fileSystemResultMapper.deleteByPrimaryKey(id);
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
     }
 
     public void saveFsResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         FileSystemResultLog log = new FileSystemResultLog();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser().getUser() != null) {
-                operator = tokenService.getLoginUser().getUser().getId();
+            if (tokenService.getLoginUser() != null) {
+                operator = tokenService.getLoginUser().getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session

@@ -89,7 +89,7 @@ public class SbomService {
         sbom.setCreateTime(System.currentTimeMillis());
         sbom.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.CREATE, "i18n_create_sbom");
+        operationLogService.log(tokenService.getLoginUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.CREATE, "i18n_create_sbom");
         sbomMapper.insertSelective(sbom);
         return sbom;
     }
@@ -97,14 +97,14 @@ public class SbomService {
     public Sbom updateSbom(Sbom sbom) throws Exception {
         sbom.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.UPDATE, "i18n_update_sbom");
+        operationLogService.log(tokenService.getLoginUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.UPDATE, "i18n_update_sbom");
         sbomMapper.updateByPrimaryKeySelective(sbom);
         return sbom;
     }
 
     public void deleteSbom(String id) throws Exception {
         sbomMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.SBOM.name(), ResourceOperation.DELETE, "i18n_delete_sbom");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SBOM.name(), ResourceOperation.DELETE, "i18n_delete_sbom");
     }
 
     public List<SbomVersion> sbomVersionList(SbomVersionRequest request) {
@@ -120,7 +120,7 @@ public class SbomService {
         sbomVersion.setCreateTime(System.currentTimeMillis());
         sbomVersion.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.CREATE, "i18n_create_sbom_version");
+        operationLogService.log(tokenService.getLoginUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.CREATE, "i18n_create_sbom_version");
         sbomVersionMapper.insertSelective(sbomVersion);
         return sbomVersion;
     }
@@ -128,14 +128,14 @@ public class SbomService {
     public SbomVersion updateSbomVersion(SbomVersion sbomVersion) throws Exception {
         sbomVersion.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.UPDATE, "i18n_update_sbom_version");
+        operationLogService.log(tokenService.getLoginUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.UPDATE, "i18n_update_sbom_version");
         sbomVersionMapper.updateByPrimaryKeySelective(sbomVersion);
         return sbomVersion;
     }
 
     public void deleteSbomVersion(String id) throws Exception {
         sbomVersionMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.DELETE, "i18n_delete_sbom_version");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.DELETE, "i18n_delete_sbom_version");
     }
 
     public void scan(String id) throws Exception {

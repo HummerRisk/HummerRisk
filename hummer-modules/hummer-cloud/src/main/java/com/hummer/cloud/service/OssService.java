@@ -337,8 +337,8 @@ public class OssService {
         OssLogWithBLOBs ossLog = new OssLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser().getUser() != null) {
-                operator = tokenService.getLoginUser().getUser().getId();
+            if (tokenService.getLoginUser() != null) {
+                operator = tokenService.getLoginUser().getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -405,7 +405,7 @@ public class OssService {
         int count = 0;
         StringBuilder message = new StringBuilder();
         for (final OssBucket bucket : buckets) {
-            operationLogService.log(tokenService.getLoginUser().getUser(), bucket.getId(), bucket.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.DELETE, "i18n_delete_bucket");
+            operationLogService.log(tokenService.getLoginUser(), bucket.getId(), bucket.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.DELETE, "i18n_delete_bucket");
             try {
                 OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
                 if (null != account && !OSSConstants.ACCOUNT_STATUS.VALID.equals(account.getStatus())) {
@@ -444,7 +444,7 @@ public class OssService {
             }
             result.setId(UUIDUtil.newUUID());
             ossBucketMapper.insertSelective(result);
-            operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
+            operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
             return result;
         } catch (Exception e) {
             LogUtil.error("Failed to create the bucket: " + params.getBucketName(), e);
@@ -644,7 +644,7 @@ public class OssService {
                     });
                 }};
             }).collect(Collectors.toList());
-            operationLogService.log(tokenService.getLoginUser().getUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(tokenService.getLoginUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -690,7 +690,7 @@ public class OssService {
             try {
                 fis = new FileInputStream(basePath + objectId);
                 ossProvider.uploadFile(bucket, account, objectId, fis, size);
-                operationLogService.log(tokenService.getLoginUser().getUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
+                operationLogService.log(tokenService.getLoginUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
             } catch (Exception e) {
                 LogUtil.error(String.format("Failed to upload file %s to %s, %s", objectId, bucket.getBucketName(), e.getMessage()));
                 throw new RuntimeException("Failed to upload file");

@@ -4,8 +4,6 @@ package com.hummer.cloud.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.common.core.dto.UserDTO;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncItemMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncMapper;
@@ -18,16 +16,21 @@ import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequ
 import com.hummer.common.core.domain.request.sync.CloudTopology;
 import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -96,7 +99,7 @@ public class CloudSyncService {
     }
 
     public void sync(String accountId) throws Exception {
-        UserDTO user = tokenService.getLoginUser().getUser();
+        LoginUser user = tokenService.getLoginUser();
         //先清理后插入
         deleteResourceSync(accountId);
 
@@ -123,7 +126,7 @@ public class CloudSyncService {
         cloudResourceSync.setPluginName(account.getPluginName());
         cloudResourceSync.setAccountId(accountId);
         cloudResourceSync.setCreateTime(System.currentTimeMillis());
-        cloudResourceSync.setApplyUser(user.getId());
+        cloudResourceSync.setApplyUser(user.getUserId());
         cloudResourceSync.setResourceTypes(StringUtils.join(resourceTypes, ","));
         cloudResourceSync.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
         //云资源同步主表
@@ -146,7 +149,7 @@ public class CloudSyncService {
                 //云资源同步子表（区分区域与资源类型）
                 cloudResourceSyncItemMapper.insertSelective(cloudResourceSyncItem);
 
-                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true, accountId,user.getId());
+                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true, accountId, user.getUserId());
 
                 final String finalScript = CloudTaskConstants.policy.replace("{resourceType}", resourceType);
 
@@ -155,7 +158,7 @@ public class CloudSyncService {
                         cloudResourceSyncItem.setCount(0);
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "不支持该区域", true, accountId,user.getId());
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "不支持该区域", true, accountId, user.getUserId());
                         return;
                     }
                     String dirPath = "", resultStr = "", fileName = "policy.yml";
@@ -229,13 +232,13 @@ public class CloudSyncService {
                         cloudResourceSyncItem.setCount(resourcesArr.size());
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:" + resourcesArr.size(), true, accountId,user.getId());
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:" + resourcesArr.size(), true, accountId, user.getUserId());
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false, accountId,user.getId());
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false, accountId, user.getUserId());
                         LogUtil.error("Sync Resources error :{}", uuid + "/" + region, e.getMessage());
                     }
 

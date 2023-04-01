@@ -97,7 +97,7 @@ public class CodeService {
         code.setUpdateTime(System.currentTimeMillis());
         code.setStatus("VALID");
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code");
+        operationLogService.log(tokenService.getLoginUser(), code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code");
         codeMapper.insertSelective(code);
         return code;
     }
@@ -106,7 +106,7 @@ public class CodeService {
         code.setUpdateTime(System.currentTimeMillis());
         code.setStatus("VALID");
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code");
+        operationLogService.log(tokenService.getLoginUser(), code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code");
         codeMapper.updateByPrimaryKeySelective(code);
         return code;
     }
@@ -115,7 +115,7 @@ public class CodeService {
         Code code = codeMapper.selectByPrimaryKey(id);
         codeMapper.deleteByPrimaryKey(id);
         deleteResultByCodeId(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code");
+        operationLogService.log(tokenService.getLoginUser(), id, code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code");
     }
 
     public boolean validate(List<String> ids) {
@@ -154,7 +154,7 @@ public class CodeService {
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser().getUser(), record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code_rule");
+        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code_rule");
         return codeRuleMapper.insertSelective(record);
     }
 
@@ -184,14 +184,14 @@ public class CodeService {
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser().getUser(), record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code_rule");
+        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code_rule");
         return codeRuleMapper.updateByPrimaryKeySelective(record);
     }
 
     public void deleteCodeRule(String id) throws Exception {
         deleteRuleTag(null, id);
         codeRuleMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_rule");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_rule");
     }
 
     public int changeStatus(CodeRule rule) throws Exception {
@@ -230,7 +230,7 @@ public class CodeService {
 
         systemProviderService.deleteHistoryCodeResult(id);
         codeResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
     }
 
     public List<CodeResultItemWithBLOBs> resultItemList(CodeResultItem codeResultItem) {
@@ -269,11 +269,11 @@ public class CodeService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(tokenService.getLoginUser().getUser().getName());
+                result.setUserName(tokenService.getLoginUser().getUserName());
                 codeResultMapper.insertSelective(result);
 
                 saveCodeResultLog(result.getId(), "i18n_start_code_result", "", true);
-                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.SCAN, "i18n_start_code_result");
+                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.SCAN, "i18n_start_code_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, code.getId(), TaskEnum.codeAccount.getType());
 
@@ -287,14 +287,14 @@ public class CodeService {
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUser().getName());
+        result.setUserName(tokenService.getLoginUser().getUserName());
         codeResultMapper.updateByPrimaryKeySelective(result);
 
         reScanDeleteCodeResult(id);
 
         saveCodeResultLog(result.getId(), "i18n_restart_code_result", "", true);
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.RESCAN, "i18n_restart_code_result");
+        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.RESCAN, "i18n_restart_code_result");
 
         systemProviderService.updateHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
 
@@ -332,15 +332,15 @@ public class CodeService {
             systemProviderService.deleteHistoryCodeResult(codeResult.getId());
         }
         codeResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
     }
 
     public void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
         CodeResultLogWithBLOBs codeResultLog = new CodeResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser().getUser() != null) {
-                operator = tokenService.getLoginUser().getUser().getId();
+            if (tokenService.getLoginUser() != null) {
+                operator = tokenService.getLoginUser().getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session

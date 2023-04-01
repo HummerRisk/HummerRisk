@@ -392,20 +392,20 @@ public class SystemParameterService {
         webhook.setCreator(tokenService.getLoginUser().getUserId());
         webhook.setCreateTime(System.currentTimeMillis());
         webhook.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser().getUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.CREATE, "i18n_create_webhook");
+        operationLogService.log(tokenService.getLoginUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.CREATE, "i18n_create_webhook");
 
         return webhookMapper.insertSelective(webhook);
     }
 
     public int editWebhook(Webhook webhook) {
         webhook.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser().getUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.UPDATE, "i18n_update_webhook");
+        operationLogService.log(tokenService.getLoginUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.UPDATE, "i18n_update_webhook");
         return webhookMapper.updateByPrimaryKeySelective(webhook);
     }
 
     public void deleteWebhook(String id) {
         webhookMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.DELETE, "i18n_delete_webhook");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.DELETE, "i18n_delete_webhook");
     }
 
     public int changeStatus(Webhook webhook) {

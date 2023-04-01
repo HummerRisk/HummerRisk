@@ -156,7 +156,7 @@ public class ProwlerService {
             }
         }
         //向首页活动添加操作信息
-        operationLogService.log(tokenService.getLoginUser().getUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        operationLogService.log(tokenService.getLoginUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -172,7 +172,7 @@ public class ProwlerService {
         cloudTask.setRuleTags(quartzTaskDTO.getTags().toString());
         cloudTask.setDescription(quartzTaskDTO.getDescription());
         cloudTask.setAccountId(quartzTaskDTO.getAccountId());
-        cloudTask.setApplyUser(Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId());
+        cloudTask.setApplyUser(Objects.requireNonNull(tokenService.getLoginUser()).getUserId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.prowler.name());
 
@@ -193,7 +193,7 @@ public class ProwlerService {
             }
 
         } else {
-            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, tokenService.getLoginUser().getUser().getId());
+            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, tokenService.getLoginUser().getUserId());
             cloudTask.setId(taskId);
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.insertSelective(cloudTask);

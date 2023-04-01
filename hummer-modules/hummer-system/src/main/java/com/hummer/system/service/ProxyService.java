@@ -53,7 +53,7 @@ public class ProxyService {
         // 密码使用 MD5
         proxy.setProxyPassword(proxy.getProxyPassword());
         proxyMapper.insertSelective(proxy);
-        operationLogService.log(tokenService.getLoginUser().getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.CREATE, "i18n_create_proxy");
+        operationLogService.log(tokenService.getLoginUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.CREATE, "i18n_create_proxy");
     }
 
     public List<Proxy> getProxyList() {
@@ -69,13 +69,13 @@ public class ProxyService {
     public void deleteProxy(int proxyId) {
         Proxy proxy = proxyMapper.selectByPrimaryKey(proxyId);
         proxyMapper.deleteByPrimaryKey(proxyId);
-        operationLogService.log(tokenService.getLoginUser().getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.DELETE, "i18n_delete_proxy");
+        operationLogService.log(tokenService.getLoginUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.DELETE, "i18n_delete_proxy");
     }
 
     public void updateProxy(Proxy proxy) {
         proxy.setUpdateTime(System.currentTimeMillis());
         proxyMapper.updateByPrimaryKeySelective(proxy);
-        operationLogService.log(tokenService.getLoginUser().getUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.UPDATE, "i18n_update_proxy");
+        operationLogService.log(tokenService.getLoginUser(), proxy.getProxyIp(), proxy.getProxyIp(), ResourceTypeConstants.PROXY.name(), ResourceOperation.UPDATE, "i18n_update_proxy");
     }
 
 }

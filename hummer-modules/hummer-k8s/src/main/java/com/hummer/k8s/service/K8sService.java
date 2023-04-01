@@ -283,7 +283,7 @@ public class K8sService {
                 account.setPluginName(plugin.getName());
                 account.setCreateTime(System.currentTimeMillis());
                 account.setUpdateTime(System.currentTimeMillis());
-                account.setCreator(Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId());
+                account.setCreator(Objects.requireNonNull(tokenService.getLoginUser()).getUserId());
                 account.setId(UUIDUtil.newUUID());
                 //检验账号的有效性
                 ValidateDTO valid = validateAccount(account);
@@ -310,7 +310,7 @@ public class K8sService {
                 cloudNativeMapper.insertSelective(account);
                 reinstallOperator(account.getId());
                 reinstallKubench(account.getId());
-                operationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
+                operationLogService.log(tokenService.getLoginUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return valid;
             }
         } catch (Exception e) {
@@ -374,7 +374,7 @@ public class K8sService {
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
                 //检验账号已更新状态
-                operationLogService.log(tokenService.getLoginUser().getUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
+                operationLogService.log(tokenService.getLoginUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
                 return valid;
             }
 
@@ -390,7 +390,7 @@ public class K8sService {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
         cloudNativeMapper.deleteByPrimaryKey(accountId);
         deleteResultByCloudNativeId(accountId);
-        operationLogService.log(tokenService.getLoginUser().getUser(), accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
+        operationLogService.log(tokenService.getLoginUser(), accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
     }
 
     public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
@@ -607,7 +607,7 @@ public class K8sService {
                 cloudNativeResultMapper.insertSelective(result);
 
                 saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true);
-                operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
 
@@ -626,7 +626,7 @@ public class K8sService {
 
         saveCloudNativeResultLog(result.getId(), "i18n_restart_k8s_result", "", true);
 
-        operationLogService.log(tokenService.getLoginUser().getUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result");
+        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result");
 
         systemProviderService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
 
@@ -888,7 +888,7 @@ public class K8sService {
             systemProviderService.deleteHistoryK8sResult(result.getId());
         }
         cloudNativeResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_k8s_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_k8s_result");
 
     }
 
@@ -896,8 +896,8 @@ public class K8sService {
         CloudNativeResultLogWithBLOBs cloudNativeResultLog = new CloudNativeResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser().getUser() != null) {
-                operator = tokenService.getLoginUser().getUser().getId();
+            if (tokenService.getLoginUser() != null) {
+                operator = tokenService.getLoginUser().getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -1047,7 +1047,7 @@ public class K8sService {
 
         systemProviderService.deleteHistoryK8sResult(id);
         cloudNativeResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser().getUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
 
     }
 
