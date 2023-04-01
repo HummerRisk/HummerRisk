@@ -38,6 +38,12 @@ public class CloudTaskController {
         return "success";
     }
 
+    @GetMapping("sync/resource")
+    public String syncResourceTasks() throws Exception{
+        resourceCreateService.syncResourceTasksJobHandler();
+        return "success";
+    }
+
     @I18n
     @GetMapping(value = "detail/{taskId}")
     public CloudTaskDTO getTaskDetail(@PathVariable String taskId) {
