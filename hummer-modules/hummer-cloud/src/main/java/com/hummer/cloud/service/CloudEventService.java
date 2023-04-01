@@ -611,6 +611,8 @@ public class CloudEventService {
             cloudEvent.setUserName(event.getUsername());
             cloudEvent.setEventTime(Long.parseLong(event.getEventTime()) * 1000);
             cloudEvent.setResourceType(event.getResourceTypeCn());
+            cloudEvent.setResourceName(resource.getResourceName());
+            cloudEvent.setResourceType(resource.getResourceType());
             cloudEvent.setEventName(event.getEventNameCn());
             cloudEvent.setEventSource(event.getEventSource());
             cloudEvent.setRequestId(event.getRequestID());
