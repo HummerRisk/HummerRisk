@@ -145,13 +145,15 @@ import {setToken} from '@/common/js/auth';
       },
       doLogin() {
         this.result = this.$post(this.loginUrl, this.form, response => {
-          let responseUser = {
-            data : response.data.user
-          };
-          saveLocalStorage(responseUser);
-          sessionStorage.setItem('loginSuccess', 'true');
-          setToken(response.data.token);
-          this.getLanguage(response.data.language, response.data.token);
+          if (response.success) {
+            let responseUser = {
+              data : response.data.user
+            };
+            saveLocalStorage(responseUser);
+            sessionStorage.setItem('loginSuccess', 'true');
+            setToken(response.data.token);
+            this.getLanguage(response.data.language, response.data.token);
+          }
         });
       },
       getLanguage(language, token) {

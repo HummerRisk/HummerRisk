@@ -50,10 +50,10 @@ public class UserService {
         UserExample example = new UserExample();
         example.createCriteria().andIdEqualTo(userName);
         List<User> users = userMapper.selectByExample(example);
-        User exuser = users.get(0);
-        if (users.size() == 0 || exuser == null) {
+        if (users.size() == 0) {
             return null;
         }
+        User exuser = users.get(0);
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyBean(userDTO, exuser);
         UserRoleDTO userRole = getUserRole(exuser.getId());

@@ -3,9 +3,7 @@ package com.hummer.system.service;
 import com.hummer.common.core.domain.OperationLog;
 import com.hummer.common.core.domain.OperationLogExample;
 import com.hummer.common.core.domain.request.log.OperatorLogRequest;
-import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
@@ -54,7 +52,7 @@ public class OperationLogService implements IOperationLogService {
             operationLog.setResourceUserName(SystemUserConstants.getUser().getName());
         } else {
             operationLog.setResourceUserId(user.getUserId());
-            operationLog.setResourceUserName(user.getUserName() + " [" + user.getUser().getEmail() + "]");
+            operationLog.setResourceUserName(user.getUserName() + " [" + user.getUser()!=null?user.getUser().getEmail():"" + "]");
         }
         operationLog.setResourceType(resourceType);
         operationLog.setOperation(operation);
