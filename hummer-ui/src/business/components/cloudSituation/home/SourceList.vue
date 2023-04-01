@@ -198,6 +198,11 @@ export default {
           let data = response.data;
           this.resourceSummary = data;
         });
+      }else{
+        this.result = this.$get("/cloud/cloud/resource/summary", response => {
+          let data = response.data;
+          this.resourceSummary = data;
+        });
       }
       if(!!accountId){
         this.condition["combine"] = {"accountId":{"value":accountId}}
