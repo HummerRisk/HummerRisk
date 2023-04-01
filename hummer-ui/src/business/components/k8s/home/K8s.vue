@@ -77,7 +77,7 @@
     </el-card>
 
     <!--Create k8s-->
-    <el-drawer class="rtl" :title="$t('k8s.k8s_create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('k8s.k8s_create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div v-loading="k8sResult.loading">
         <div v-for="(form, index) in addAccountForm" :key="index">
@@ -143,7 +143,7 @@
     <!--Create k8s-->
 
     <!--Update k8s-->
-    <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div v-loading="k8sResult.loading">
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">

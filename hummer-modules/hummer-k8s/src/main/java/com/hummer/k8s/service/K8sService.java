@@ -255,7 +255,7 @@ public class K8sService {
         }
     }
 
-    public ValidateDTO addCloudNative(CreateCloudNativeRequest request) {
+    public ValidateDTO addCloudNative(CreateCloudNativeRequest request) throws HRException {
         try {
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
@@ -314,6 +314,7 @@ public class K8sService {
                 return valid;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             HRException.throwException(e.getMessage());
         }
         return null;
