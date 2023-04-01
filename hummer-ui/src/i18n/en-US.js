@@ -1393,6 +1393,7 @@ export default {
     reinstall_kubench: 'Install CIS Benchmark',
     rule_group: 'K8s detection rule group',
     k8s_rule: 'K8s detection rule',
+    please_choose_plugin: 'Please choose cloud native plugin',
   },
   config: {
     config_settings: 'Deployment configuration',

@@ -92,7 +92,7 @@
           <el-table-column type="index" min-width="40"/>
           <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('rule.rule_set_name')" min-width="180" show-overflow-tooltip></el-table-column>
           <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('commons.description')" min-width="600" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="180" show-overflow-tooltip>
+          <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="180" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -135,8 +135,8 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="createForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
+          <el-form-item :label="$t('k8s.platform')" prop="pluginId" :rules="{required: true, message: $t('k8s.platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -167,8 +167,8 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.pluginId" :disabled="infoForm.flag" :placeholder="$t('account.please_choose_plugin')">
+          <el-form-item :label="$t('k8s.platform')" prop="pluginId" :rules="{required: true, message: $t('k8s.platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="infoForm.pluginId" :disabled="infoForm.flag" :placeholder="$t('k8s.please_choose_plugin')">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -199,7 +199,7 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             {{ infoForm.level }}
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')">
+          <el-form-item :label="$t('k8s.platform')">
          &nbsp;&nbsp; {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
@@ -228,7 +228,7 @@
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
+          <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -278,8 +278,8 @@
       <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
-          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('account.please_choose_account')">
+          <el-form-item :label="$t('k8s.k8s_platform')" :rules="{required: true, message: $t('k8s.k8s_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('k8s.k8s_platform')">
               <el-option
                 v-for="item in accounts"
                 :key="item.id"
@@ -329,6 +329,7 @@ import {
 } from "@/api/cloud/rule/rule";
 import {cloudPluginUrl, nativePluginUrl} from "@/api/system/system";
 import {cloudListByGroupUrl} from "@/api/cloud/account/account";
+import {k8sListByGroupUrl} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -343,7 +344,7 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'account.cloud_platform',
+    label: 'k8s.platform',
     props: 'pluginName',
     disabled: false
   },
@@ -371,7 +372,7 @@ const columnOptions2 = [
     disabled: false
   },
   {
-    label: 'account.cloud_platform',
+    label: 'k8s.platform',
     props: 'pluginName',
     disabled: false
   },
@@ -675,7 +676,7 @@ const columnOptions2 = [
             if (valid) {
               let params = item;
               params.flag = item.flag ? item.flag : false;
-              params.type = "cloud";
+              params.type = "k8s";
               let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
               this.result = this.$post(url, params, response => {
                 this.search();
@@ -752,7 +753,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        let url = cloudListByGroupUrl + item.pluginId;
+        let url = k8sListByGroupUrl + item.pluginId;
         this.result = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;

@@ -37,10 +37,17 @@ public class PluginController {
     }
 
     @I18n
-    @ApiOperation(value = "检测引擎类型过滤插件")
+    @ApiOperation(value = "云检测引擎类型过滤插件")
     @GetMapping("scan/{scanType}")
     public List<Plugin> getPlugins(@PathVariable String scanType) {
         return pluginService.getAllPlugin(scanType);
+    }
+
+    @I18n
+    @ApiOperation(value = "K8s检测引擎类型过滤插件")
+    @GetMapping("k8sScan/{scanType}")
+    public List<Plugin> getK8sPlugin(@PathVariable String scanType) {
+        return pluginService.getNativePlugin();
     }
 
     @ApiOperation(value = "插件详情")

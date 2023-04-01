@@ -60,7 +60,7 @@
               <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="140" show-overflow-tooltip>
+          <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="140" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -93,25 +93,14 @@
       <el-drawer class="rtl" :title="$t('rule.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="createRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createRuleForm">
-          <el-form-item :label="$t('account.scan_type')" :rules="{required: true, message: $t('account.scan_type'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createRuleForm.scanType" :placeholder="$t('account.please_choose_scan_type')" @change="changeScanType(createRuleForm.scanType)">
-              <el-option
-                v-for="item in scanTypes"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item :label="$t('rule.rule_name')" prop="name">
             <el-input v-model="createRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
           </el-form-item>
           <el-form-item :label="$t('rule.rule_description')" prop="description">
             <el-input v-model="createRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createRuleForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(createRuleForm.pluginId)">
+          <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="createRuleForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(createRuleForm.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -202,17 +191,14 @@
       <el-drawer class="rtl" :title="$t('rule.update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="updateRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateRuleForm">
-          <el-form-item :label="$t('account.scan_type')" prop="scanType">
-            <el-input v-model="updateRuleForm.scanType" autocomplete="off" :placeholder="$t('account.scan_type')" disabled/>
-          </el-form-item>
           <el-form-item :label="$t('rule.rule_name')" prop="name">
             <el-input v-model="updateRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
           </el-form-item>
           <el-form-item :label="$t('rule.rule_description')" prop="description">
             <el-input v-model="updateRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="updateRuleForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(updateRuleForm.pluginId)">
+          <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="updateRuleForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(updateRuleForm.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -303,17 +289,14 @@
       <el-drawer class="rtl" :title="$t('rule.copy')" :visible.sync="copyVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form :model="copyRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="copyRuleForm">
-          <el-form-item :label="$t('account.scan_type')" prop="scanType">
-            <el-input v-model="copyRuleForm.scanType" autocomplete="off" :placeholder="$t('account.scan_type')" disabled/>
-          </el-form-item>
           <el-form-item :label="$t('rule.rule_name')" prop="name">
             <el-input v-model="copyRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
           </el-form-item>
           <el-form-item :label="$t('rule.rule_description')" prop="description">
             <el-input v-model="copyRuleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="copyRuleForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(copyRuleForm.pluginId)">
+          <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="copyRuleForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(copyRuleForm.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -417,18 +400,18 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  getRuleByNameUrl, k8sRuleListUrl,
+  getRuleByNameUrl,
+  k8sRuleListUrl,
   ruleAddUrl,
   ruleChangeStatusUrl,
   ruleCopyUrl,
   ruleDryRunUrl,
   ruleGroupsUrl,
   ruleInspectionReport,
-  ruleListUrl,
   ruleTagsUrl,
   ruleUpdateUrl
 } from "@/api/cloud/rule/rule";
-import {pluginScanUrl} from "@/api/system/system";
+import {pluginK8sScanUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -443,7 +426,7 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'account.cloud_platform',
+    label: 'k8s.platform',
     props: 'pluginName',
     disabled: false
   },
@@ -491,8 +474,8 @@ const columnOptions = [
         loading: false,
         selectIds: new Set(),
         plugins: [],
-        createRuleForm: { parameter: [] },
-        updateRuleForm: { parameter: [] },
+        createRuleForm: { parameter: [], scanType: "custodian" },
+        updateRuleForm: { parameter: [], scanType: "custodian" },
         copyRuleForm: { parameter: [] },
         createVisible: false,
         updateVisible: false,
@@ -557,10 +540,6 @@ const columnOptions = [
           line: true,
           indentWithTabs: true,
         },
-        scanTypes: [
-          {id: 'custodian', name: 'Cloud Custodian'},
-          {id: 'prowler', name: 'Prowler'},
-        ],
         checkedColumnNames: columnOptions.map((ele) => ele.props),
         columnNames: columnOptions,
         //名称搜索
@@ -570,7 +549,7 @@ const columnOptions = [
             id: 'name'
           },
           {
-            name: 'account.cloud_platform',
+            name: 'k8s.platform',
             id: 'pluginName'
           },
           {
@@ -657,7 +636,7 @@ const columnOptions = [
       },
       //查询插件
       activePlugin(scanType) {
-        let url = pluginScanUrl + scanType;
+        let url = pluginK8sScanUrl + scanType;
         this.result = this.$get(url, response => {
           let data = response.data;
           this.plugins =  data;

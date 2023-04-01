@@ -96,3 +96,5 @@ export const k8sSituationUrl = "/k8s/k8s/situation";
 export const cloudNativeSourceListUrl = "/k8s/k8s/cloudNativeSourceList/";
 
 export const k8sSourceImagesUrl = "/k8s/k8s/sourceImages/";
+
+export const k8sListByGroupUrl = "/k8s/k8s/listByGroup/";

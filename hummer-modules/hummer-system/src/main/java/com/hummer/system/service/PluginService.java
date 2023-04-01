@@ -58,7 +58,7 @@ public class PluginService {
         PluginExample example = new PluginExample();
         example.setOrderByClause("order_");
         PluginExample.Criteria criteria = example.createCriteria();
-        criteria.andTypeEqualTo("k8s");
+        criteria.andTypeEqualTo("native");
         return pluginMapper.selectByExample(example);
     }
 

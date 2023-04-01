@@ -113,6 +113,8 @@ export const taskAccountListUrl = "/system/task/account/list";
 
 export const pluginScanUrl = "/system/plugin/scan/";
 
+export const pluginK8sScanUrl = "/system/plugin/k8sScan/";
+
 export const unReadCountUrl = "/system/webmsg/unReadCount";
 
 

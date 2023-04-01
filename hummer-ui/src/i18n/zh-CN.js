@@ -1393,6 +1393,7 @@ export default {
     reinstall_kubench: '安装 CIS Benchmark',
     rule_group: 'K8s 检测规则组',
     k8s_rule: 'K8s 检测规则',
+    please_choose_plugin: '请选择云原生插件',
   },
   config: {
     config_settings: '部署配置',

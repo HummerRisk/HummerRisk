@@ -402,4 +402,11 @@ public class K8sController {
         return k8sService.rbacChart(k8sId);
     }
 
+    @I18n
+    @ApiOperation(value = "规则组获取云原生账号")
+    @GetMapping("listByGroup/{pluginId}")
+    public List<CloudNative> listByGroup(@PathVariable String pluginId) {
+        return k8sService.listByGroup(pluginId);
+    }
+
 }

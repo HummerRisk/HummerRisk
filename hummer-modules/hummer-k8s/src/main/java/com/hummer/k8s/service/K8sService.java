@@ -1691,5 +1691,11 @@ public class K8sService {
         systemProviderService.deleteHistoryK8sResult(id);
     }
 
+    public List<CloudNative> listByGroup(String pluginId) {
+        CloudNativeExample example = new CloudNativeExample();
+        example.createCriteria().andPluginIdEqualTo(pluginId).andStatusEqualTo("VALID");
+        List<CloudNative> cloudNatives = cloudNativeMapper.selectByExample(example);
+        return cloudNatives;
+    }
 
 }
