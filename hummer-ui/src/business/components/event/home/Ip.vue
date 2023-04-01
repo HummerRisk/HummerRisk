@@ -49,7 +49,7 @@
       </div>
       <el-tabs v-model="activeName" @tab-click="showCodemirror" style="margin: 20px;">
         <el-tab-pane :label="$t('event.event_audit')" name="first">
-          <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.id" :title="detail.eventName"  style="margin-top: 20px;" :column="2" border>
+          <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.id" :title="detail.eventName"  style="margin-top: 20px;" :column="2" :labelStyle="labelStyle" :contentStyle="contentStyle" border>
             <el-descriptions-item>
               <template slot="label">
                 <i class="el-icon-s-grid"></i>
@@ -242,6 +242,12 @@ export default {
       },
       script: '',
       activeName: 'first',
+      labelStyle: {
+        'min-width': '130px',
+      },
+      contentStyle: {
+        'min-width': '250px',
+      },
     }
   },
   created() {
