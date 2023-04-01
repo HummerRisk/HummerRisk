@@ -318,12 +318,12 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   bindRuleUrl,
+  k8sRuleListUrl,
   ruleAllBindListUrl,
   ruleGroupDeleteUrl,
   ruleGroupListUrl,
   ruleGroupSaveUrl,
   ruleGroupUpdateUrl,
-  ruleListUrl,
   ruleUnBindListUrl,
   scanByGroupUrl
 } from "@/api/cloud/rule/rule";
@@ -592,7 +592,7 @@ const columnOptions2 = [
       },
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-        let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
+        let url = k8sRuleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
         this.result = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
