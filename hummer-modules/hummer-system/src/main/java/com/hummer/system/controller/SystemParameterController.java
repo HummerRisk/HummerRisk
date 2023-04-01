@@ -120,13 +120,6 @@ public class SystemParameterController {
     }
 
     @I18n
-    @ApiOperation(value = "在线更新漏洞库")
-    @GetMapping("/updateVulnDb")
-    public void updateVulnDb() throws Exception {
-        systemParameterService.updateVulnDb();
-    }
-
-    @I18n
     @ApiOperation(value = "webhook列表")
     @PostMapping("webhookList/{goPage}/{pageSize}")
     public Pager<List<Webhook>> getWebhookList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Webhook webhook) {

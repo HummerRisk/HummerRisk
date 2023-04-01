@@ -12,18 +12,15 @@ import com.dingtalk.api.response.OapiUserGetByMobileResponse;
 import com.hummer.common.core.constant.ParamConstants;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
-import com.hummer.common.core.constant.TrivyConstants;
 import com.hummer.common.core.domain.SystemParameter;
 import com.hummer.common.core.domain.SystemParameterExample;
 import com.hummer.common.core.domain.Webhook;
 import com.hummer.common.core.domain.WebhookExample;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.utils.CommandUtils;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.FileUploadUtils;
-import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.common.security.service.TokenService;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.mapper.WebhookMapper;
 import com.hummer.system.message.NotificationBasicResponse;
@@ -356,29 +353,6 @@ public class SystemParameterService {
                 example.clear();
             }
         });
-    }
-
-    public void updateVulnDb() throws Exception {
-        String command = "trivy image --download-db-only";
-        LogUtil.info(" {updateVulnDbOnline}[command]: " + command);
-        CommandUtils.commonExecCmdWithResult(command, TrivyConstants.DEFAULT_BASE_DIR);
-    }
-
-    /**
-     * 以默认配置进行文件上传
-     *
-     * @param file 上传的文件
-     * @return 文件名称
-     * @throws Exception
-     */
-    public static final String uploadVulnDb(MultipartFile file, String dir) throws IOException {
-        try {
-            //png、html等小文件存放路径，页面需要显示，项目内目录
-            //jar包等大文件存放路径，项目外目录
-            return FileUploadUtils.uploadVulnDb(dir, file);
-        } catch (Exception e) {
-            throw new IOException(e.getMessage(), e);
-        }
     }
 
     public List<Webhook> getWebhookList(Webhook webhook) {

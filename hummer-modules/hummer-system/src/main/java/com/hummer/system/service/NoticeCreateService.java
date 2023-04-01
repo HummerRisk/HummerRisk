@@ -297,12 +297,12 @@ public class NoticeCreateService {
 
         String successContext = "success";
         String failedContext = "failed";
-        String subject = Translator.get("i18n_cloud_messageorder");
+        String subject = "i18n_cloud_messageorder";
         String details = "", name = "";
         int returnSum = 0, resourcesSum = 0;
 
         if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
-            subject = Translator.get("i18n_cloud_messageorder");
+            subject = "i18n_cloud_messageorder";
             List<CloudTask> cloudTasks = cloudProviderService.getTopTasksForEmail(messageOrder);
             if (cloudTasks.size() != 0) {
                 MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCloud(messageOrder);
@@ -346,7 +346,7 @@ public class NoticeCreateService {
             if (serverResults.size() != 0) {
                 MetricChartDTO metricChartDTO = extNoticeMapper.metricChartServer(messageOrder);
 
-                subject = Translator.get("i18n_server_messageorder");
+                subject = "i18n_server_messageorder";
                 returnSum = extNoticeMapper.serverSum(messageOrder);
                 details = "i18n_resource_manage " + returnSum;
                 Server server = k8sProviderService.server(serverResults.get(0).getServerId());
@@ -381,7 +381,7 @@ public class NoticeCreateService {
                 example.createCriteria().andIdEqualTo(imageResultItems.get(0).getResultId());
                 List<ImageResult> imageResults = k8sProviderService.imageResults(example);
                 if (imageResults.size() != 0) {
-                    subject = Translator.get("i18n_image_messageorder");
+                    subject = "i18n_image_messageorder";
                     returnSum = extNoticeMapper.imageSum(messageOrder);
                     details = "i18n_resource_manage " + returnSum;
                     name = k8sProviderService.image(imageResults.get(0).getImageId()).getName();
@@ -418,7 +418,7 @@ public class NoticeCreateService {
                 List<CodeResult> codeResults = k8sProviderService.codeResults(example);
 
                 if (codeResults.size() != 0) {
-                    subject = Translator.get("i18n_code_messageorder");
+                    subject = "i18n_code_messageorder";
                     returnSum = extNoticeMapper.codeSum(messageOrder);
                     details = "i18n_resource_manage " + returnSum;
                     name = k8sProviderService.code(codeResults.get(0).getCodeId()).getName();
@@ -456,7 +456,7 @@ public class NoticeCreateService {
                 List<CloudNativeConfigResult> cloudNativeConfigResults = k8sProviderService.cloudNativeConfigResults(example);
 
                 if (cloudNativeConfigResults.size() != 0) {
-                    subject = Translator.get("i18n_config_messageorder");
+                    subject = "i18n_config_messageorder";
                     returnSum = extNoticeMapper.configSum(messageOrder);
                     details = "i18n_resource_manage " + returnSum;
                     name = k8sProviderService.cloudNativeConfig(cloudNativeConfigResults.get(0).getConfigId()).getName();
@@ -493,7 +493,7 @@ public class NoticeCreateService {
                 example.createCriteria().andIdEqualTo(k8sResultItems.get(0).getResultId());
                 List<CloudNativeResult> cloudNativeResults = k8sProviderService.cloudNativeResults(example);
                 if (cloudNativeResults.size() != 0) {
-                    subject = Translator.get("i18n_k8s_messageorder");
+                    subject = "i18n_k8s_messageorder";
                     returnSum = extNoticeMapper.k8sSum(messageOrder);
                     details = "i18n_resource_manage " + returnSum;
                     name = k8sProviderService.cloudNative(cloudNativeResults.get(0).getCloudNativeId()).getName();
@@ -529,7 +529,7 @@ public class NoticeCreateService {
                 example.createCriteria().andIdEqualTo(fsResultItems.get(0).getResultId());
                 List<FileSystemResult> fileSystemResults = k8sProviderService.fileSystemResults(example);
                 if (fileSystemResults.size() != 0) {
-                    subject = Translator.get("i18n_fs_messageorder");
+                    subject = "i18n_fs_messageorder";
                     returnSum = extNoticeMapper.fsSum(messageOrder);
                     details = "i18n_resource_manage " + returnSum;
                     name = k8sProviderService.fileSystem(fileSystemResults.get(0).getFsId()).getName();
