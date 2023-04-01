@@ -581,7 +581,7 @@ const columnOptions = [
       create() {
         this.createRuleForm = { parameter: [], script : "", scanType: 'custodian' };
         this.createVisible = true;
-        this.activePlugin(this.createRuleForm.scanType);
+        this.activePlugin();
         this.ruleSetOptionsFnc(null);
       },
       handleEdit(item) {
@@ -590,7 +590,7 @@ const columnOptions = [
         this.updateRuleForm = Object.assign({}, item);
         this.updateVisible = true;
         this.ruleSetOptionsFnc(item.pluginId);
-        this.activePlugin(item.scanType);
+        this.activePlugin();
       },
       handleCopy(item) {
         if (typeof(item.parameter) == 'string') item.parameter = JSON.parse(item.parameter);
@@ -598,13 +598,10 @@ const columnOptions = [
         this.copyRuleForm = Object.assign({}, item);
         this.copyVisible = true;
         this.ruleSetOptionsFnc(item.pluginId);
-        this.activePlugin(item.scanType);
+        this.activePlugin();
       },
       changePlugin(pluginId){
         this.ruleSetOptionsFnc(pluginId);
-      },
-      changeScanType(scanType) {
-        this.activePlugin(scanType);
       },
       handleClose() {
         this.createVisible =  false;
@@ -635,9 +632,8 @@ const columnOptions = [
         })
       },
       //查询插件
-      activePlugin(scanType) {
-        let url = pluginK8sScanUrl + scanType;
-        this.result = this.$get(url, response => {
+      activePlugin() {
+        this.result = this.$get(pluginK8sScanUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });
