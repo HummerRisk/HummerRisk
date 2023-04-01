@@ -91,11 +91,13 @@ public class ResourceService {
     }
 
     public List<ResourceDTO> search(ResourceRequest request) {
-        List<ResourceDTO> resourceDTOListTmp = new ArrayList<>();
+        List<ResourceDTO> resourceDTOListTmp ;
         try {
             resourceDTOListTmp = getComplianceResult(request);
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.error(e.getMessage());
+            throw new RuntimeException("查询失败");
         }
         return resourceDTOListTmp;
     }

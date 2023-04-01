@@ -177,6 +177,7 @@ public class AccountService {
                 return getCloudAccountById(account.getId());
             }
         } catch (Exception e) {
+            e.printStackTrace();
             HRException.throwException(e.getMessage());
         }
         return null;
@@ -237,6 +238,7 @@ public class AccountService {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             HRException.throwException(e.getMessage());
         }
         return null;

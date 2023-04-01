@@ -4,6 +4,7 @@ package com.hummer.cloud.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncItemMapper;
@@ -95,7 +96,7 @@ public class CloudSyncService {
     }
 
     public void sync(String accountId) throws Exception {
-
+        UserDTO user = tokenService.getLoginUser().getUser();
         //先清理后插入
         deleteResourceSync(accountId);
 
@@ -122,7 +123,7 @@ public class CloudSyncService {
         cloudResourceSync.setPluginName(account.getPluginName());
         cloudResourceSync.setAccountId(accountId);
         cloudResourceSync.setCreateTime(System.currentTimeMillis());
-        cloudResourceSync.setApplyUser(Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId());
+        cloudResourceSync.setApplyUser(user.getId());
         cloudResourceSync.setResourceTypes(StringUtils.join(resourceTypes, ","));
         cloudResourceSync.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
         //云资源同步主表
@@ -145,7 +146,7 @@ public class CloudSyncService {
                 //云资源同步子表（区分区域与资源类型）
                 cloudResourceSyncItemMapper.insertSelective(cloudResourceSyncItem);
 
-                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true, accountId);
+                saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_start_sync_resource", "", true, accountId,user.getId());
 
                 final String finalScript = CloudTaskConstants.policy.replace("{resourceType}", resourceType);
 
@@ -154,7 +155,7 @@ public class CloudSyncService {
                         cloudResourceSyncItem.setCount(0);
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "不支持该区域", true, accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "不支持该区域", true, accountId,user.getId());
                         return;
                     }
                     String dirPath = "", resultStr = "", fileName = "policy.yml";
@@ -228,35 +229,26 @@ public class CloudSyncService {
                         cloudResourceSyncItem.setCount(resourcesArr.size());
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:" + resourcesArr.size(), true, accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:" + resourcesArr.size(), true, accountId,user.getId());
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
-                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false, accountId);
+                        saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false, accountId,user.getId());
                         LogUtil.error("Sync Resources error :{}", uuid + "/" + region, e.getMessage());
                     }
 
                 });
                 //向首页活动添加操作信息
-                operationLogService.log(tokenService.getLoginUser().getUser(), id, account.getName(), ResourceTypeConstants.SYNC.name(), ResourceOperation.SYNC, "i18n_start_sync_resource");
+                operationLogService.log(user, id, account.getName(), ResourceTypeConstants.SYNC.name(), ResourceOperation.SYNC, "i18n_start_sync_resource");
             }
         }
     }
 
-    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result, String accountId) {
+    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result, String accountId,String operator) {
         CloudResourceSyncItemLog log = new CloudResourceSyncItemLog();
-        String operator = "system";
-        try {
-            if (tokenService.getLoginUser().getUser() != null) {
-                operator = tokenService.getLoginUser().getUser().getId();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            //防止单元测试无session
-        }
-        log.setOperator(operator);
+        log.setOperator(operator==null?"system":operator);
         log.setSyncItemId(syncItemId);
         log.setCreateTime(System.currentTimeMillis());
         log.setOperation(operation);
