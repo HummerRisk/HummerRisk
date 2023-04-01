@@ -575,7 +575,7 @@ public class NoticeCreateService {
         msg.setStatus(false);
         msg.setType(subject);
         msg.setCreateTime(System.currentTimeMillis());
-        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" + messageOrder.getStatus() + details);
+        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" + messageOrder.getStatus() + " " + details);
         msg.setScanType(messageOrder.getScanType());
         webMsgMapper.insertSelective(msg);
         LogUtil.warn(Translator.get("i18n_end_msg") + messageOrder.getAccountName());
