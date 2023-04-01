@@ -496,7 +496,7 @@ public class FileSystemService {
                 str = str + TrivyConstants.OFFLINE_SCAN;
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, fileSystem.getDir());
-            String command = _proxy + TrivyConstants.TRIVY_FS + str + FileSystemConstants.DEFAULT_BASE_DIR + fileSystem.getPath() + TrivyConstants.TRIVY_TYPE + fileSystem.getDir() + TrivyConstants.TRIVY_JSON + TrivyConstants.TRIVY_SERVER;
+            String command = _proxy + TrivyConstants.TRIVY_FS + str + FileSystemConstants.DEFAULT_BASE_DIR + fileSystem.getPath() + TrivyConstants.TRIVY_TYPE + fileSystem.getDir() + TrivyConstants.TRIVY_JSON  + TrivyConstants.TRIVY_SERVER;
             LogUtil.info(fileSystem.getId() + " {fileSystem scan}[command]: " + fileSystem.getName() + "   " + command);
             String resultStr = CommandUtils.commonExecCmdWithResult(command, fileSystem.getDir());
             ResultDTO dto = new ResultDTO();
