@@ -182,11 +182,11 @@ public class CloudEventService {
             cloudEventRegionLog.setCreateTime(DateUtils.getNowDate());
             cloudEventRegionLogMapper.insertSelective(cloudEventRegionLog);
         }
+        CloudEventRegionLogExample cloudEventRegionLogExample = new CloudEventRegionLogExample();
+        cloudEventRegionLogExample.createCriteria().andLogIdEqualTo(cloudEventSyncLog.getId());
+        List<CloudEventRegionLog> cloudEventRegionLogs = cloudEventRegionLogMapper.selectByExample(cloudEventRegionLogExample);
         commonThreadPool.addTask(() -> {
             try {
-                CloudEventRegionLogExample cloudEventRegionLogExample = new CloudEventRegionLogExample();
-                cloudEventRegionLogExample.createCriteria().andLogIdEqualTo(cloudEventSyncLog.getId());
-                List<CloudEventRegionLog> cloudEventRegionLogs = cloudEventRegionLogMapper.selectByExample(cloudEventRegionLogExample);
                 int dataCount = 0;
                 int errorCount = 0;
                 for (CloudEventRegionLog cloudEventRegionLog : cloudEventRegionLogs) {
