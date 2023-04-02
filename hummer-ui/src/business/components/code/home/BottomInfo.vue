@@ -35,7 +35,7 @@
 import Container from "../.././common/components/Container";
 import LeftChart from "@/business/components/code/head/LeftChart";
 import RightChart from "@/business/components/code/head/RightChart";
-import CodeChart from "@/business/components/dashboard/head/CodeChart";
+import CodeChart from "@/business/components/code/head/CodeChart";
 
 /* eslint-disable */
 export default {

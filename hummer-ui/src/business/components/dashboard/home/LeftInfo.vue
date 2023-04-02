@@ -12,9 +12,9 @@
       <el-row>
         <el-card class="table-card" v-loading="result.loading">
           <template v-slot:header>
-            <span class="title">{{ $t('dashboard.vuln_statistics') }}</span>
+            <span class="title">{{ $t('dashboard.code_statistics') }}</span>
           </template>
-          <vuln-chart ref="vulnChart" :width="vulnChart"/>
+          <code-chart ref="codeChart" :width="codeChart"/>
         </el-card>
       </el-row>
       <el-row>
@@ -55,7 +55,7 @@
 <script>
 import Container from "../.././common/components/Container";
 import CloudChart from "@/business/components/dashboard/head/CloudChart";
-import VulnChart from "@/business/components/dashboard/head/VulnChart";
+import CodeChart from "@/business/components/dashboard/head/CodeChart.vue";
 import ServerChart from "@/business/components/dashboard/head/ServerChart";
 import CloudNativeChart from "@/business/components/dashboard/head/CloudNativeChart";
 import {taskCalendarUrl} from "@/api/cloud/dashboard/dashboard";
@@ -65,7 +65,7 @@ export default {
   components: {
     Container,
     CloudChart,
-    VulnChart,
+    CodeChart,
     ServerChart,
     CloudNativeChart,
   },
@@ -73,7 +73,7 @@ export default {
     return {
       result: {},
       cloudChart: 390,
-      vulnChart: 390,
+      codeChart: 400,
       taskCalendar: [],
     }
   },

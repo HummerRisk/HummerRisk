@@ -1,12 +1,12 @@
 <template>
-  <div align="middle">
-    <hr-chart :options="options" :width="1335" :height="280"></hr-chart>
+  <div>
+    <hr-chart :options="options" :width="width" :height="256"></hr-chart>
   </div>
 </template>
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {codeChartUrl} from "@/api/cloud/dashboard/dashboard";
+import {projectChartUrl} from "@/api/k8s/code/code";
 /* eslint-disable */
 export default {
   name: "CodeChart",
@@ -15,6 +15,11 @@ export default {
   },
   props: {
     data: {},
+    width: [Number, String],
+  },
+  watch: {
+    width() {
+    },
   },
   data() {
     return {
@@ -23,32 +28,37 @@ export default {
   },
   methods: {
     init() {
-      this.$post(codeChartUrl, {}, response => {
+      this.$get(projectChartUrl, response => {
         let data = response.data;
         this.options = {
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: data.xAxis
+          title: {
+            text: this.$t('code.code_project_chart'),
+            subtext: this.$t('code.code_project_chart_vuln'),
+            left: 'center'
           },
-          yAxis: {
-            type: 'value'
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left'
           },
           series: [
             {
-              data: data.yAxis,
-              type: 'line',
-              areaStyle: {}
+              name: 'Code',
+              type: 'pie',
+              radius: '50%',
+              data: data,
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
             }
           ],
-          grid: {
-            top: '10%',
-            left: '1%',
-            right: '2%',
-            bottom: '2%',
-            containLabel: true
-          },
-          color: ['#0051a4']
+          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });
     },
@@ -61,5 +71,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
