@@ -10,8 +10,8 @@
         </el-card>
       </el-col>
     </container>
-    <container class="container">
-      <el-col :span="24">
+    <container class="container" >
+      <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
             <span class="title">{{ $t('dashboard.config_statistics') }}</span>
@@ -19,9 +19,7 @@
           <config-chart/>
         </el-card>
       </el-col>
-    </container>
-    <container class="container">
-      <el-col :span="24">
+      <el-col :span="12">
         <el-card class="table-card">
           <template v-slot:header>
             <span class="title">{{ $t('dashboard.fs_statistics') }}</span>
@@ -35,9 +33,9 @@
 
 <script>
 import ImageChart from "@/business/components/dashboard/head/ImageChart";
-import ConfigChart from "@/business/components/dashboard/head/ConfigChart";
-import FsChart from "@/business/components/fs/head/FsChart";
-import Container from "../.././common/components/Container";
+import FsChart from "@/business/components/fs/head/LeftChart";
+import Container from "@/business/components/common/components/Container";
+import ConfigChart from "@/business/components/config/head/LeftChart";
 
 /* eslint-disable */
 export default {
