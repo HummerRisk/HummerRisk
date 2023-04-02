@@ -12,6 +12,16 @@ spring:
     active: prod
   messages:
     basename: i18n/messages
+  http:
+    multipart:
+      maxFileSize: 500MB
+      maxRequestSize: 1000MB
+  servlet:
+    multipart:
+      enabled: true #是否启用http上传处理
+      max-request-size: 1000MB #设置总上传的数据大小，最大请求文件的大小
+      max-file-size: 500MB #设置单个文件最大长度
+      file-size-threshold: 1MB #当文件达到多少时进行磁盘写入
   cloud:
     bootstrap:
       enabled: true
