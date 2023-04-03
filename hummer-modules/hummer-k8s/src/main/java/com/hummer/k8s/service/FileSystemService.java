@@ -14,7 +14,6 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtFileSystemMapper;
 import com.hummer.k8s.mapper.ext.ExtFileSystemResultItemMapper;
@@ -22,6 +21,7 @@ import com.hummer.k8s.mapper.ext.ExtFileSystemResultMapper;
 import com.hummer.k8s.mapper.ext.ExtFileSystemRuleMapper;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -65,8 +65,6 @@ public class FileSystemService {
     private ExtFileSystemResultItemMapper extFileSystemResultItemMapper;
     @Autowired
     private ProxyMapper proxyMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -93,10 +91,10 @@ public class FileSystemService {
         return fileSystemMapper.selectByExample(null);
     }
 
-    public FileSystem addFs(MultipartFile multipartFile, FileSystem fileSystem) throws Exception {
+    public FileSystem addFs(MultipartFile multipartFile, FileSystem fileSystem, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         fileSystem.setId(id);
-        fileSystem.setCreator(tokenService.getLoginUser().getUserId());
+        fileSystem.setCreator(loginUser.getUserId());
         fileSystem.setCreateTime(System.currentTimeMillis());
         fileSystem.setUpdateTime(System.currentTimeMillis());
         fileSystem.setStatus("VALID");
@@ -105,21 +103,21 @@ public class FileSystemService {
             fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
         }
 
-        operationLogService.log(tokenService.getLoginUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs");
+        operationLogService.log(loginUser, fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs");
         fileSystemMapper.insertSelective(fileSystem);
         return fileSystem;
     }
 
-    public FileSystem updateFs(MultipartFile multipartFile, FileSystem fileSystem) throws Exception {
+    public FileSystem updateFs(MultipartFile multipartFile, FileSystem fileSystem, LoginUser loginUser) throws Exception {
         fileSystem.setUpdateTime(System.currentTimeMillis());
-        fileSystem.setCreator(tokenService.getLoginUser().getUserId());
+        fileSystem.setCreator(loginUser.getUserId());
         fileSystem.setStatus("VALID");
         if (multipartFile != null) {
             fileSystem = upload(fileSystem, multipartFile, FileSystemConstants.DEFAULT_BASE_DIR);
             fileSystem.setSize(changeFlowFormat(multipartFile.getSize()));
         }
 
-        operationLogService.log(tokenService.getLoginUser(), fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs");
+        operationLogService.log(loginUser, fileSystem.getId(), fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs");
         fileSystemMapper.updateByPrimaryKeySelective(fileSystem);
         return fileSystem;
     }
@@ -156,12 +154,12 @@ public class FileSystemService {
         }
     }
 
-    public void deleteFs(String id) throws Exception {
+    public void deleteFs(String id, LoginUser loginUser) throws Exception {
         FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(id);
         fileSystemMapper.deleteByPrimaryKey(id);
 
-        deleteResultByFsId(id);
-        operationLogService.log(tokenService.getLoginUser(), id, fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs");
+        deleteResultByFsId(id, loginUser);
+        operationLogService.log(loginUser, id, fileSystem.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs");
 
     }
 
@@ -195,13 +193,13 @@ public class FileSystemService {
         return extFileSystemRuleMapper.ruleList(request);
     }
 
-    public int addFsRule(FsRuleRequest request) throws Exception {
+    public int addFsRule(FsRuleRequest request, LoginUser loginUser) throws Exception {
         FileSystemRule record = new FileSystemRule();
         BeanUtils.copyBean(record, request);
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs_rule");
+        operationLogService.log(loginUser, record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.CREATE, "i18n_create_fs_rule");
         return fileSystemRuleMapper.insertSelective(record);
     }
 
@@ -226,19 +224,19 @@ public class FileSystemService {
         }
     }
 
-    public int updateFsRule(FsRuleRequest request) throws Exception {
+    public int updateFsRule(FsRuleRequest request, LoginUser loginUser) throws Exception {
         FileSystemRule record = new FileSystemRule();
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs_rule");
+        operationLogService.log(loginUser, record.getId(), record.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.UPDATE, "i18n_update_fs_rule");
         return fileSystemRuleMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void deleteFsRule(String id) throws Exception {
+    public void deleteFsRule(String id, LoginUser loginUser) throws Exception {
         deleteRuleTag(null, id);
         fileSystemRuleMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_rule");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_rule");
     }
 
     public int changeStatus(FileSystemRule rule) throws Exception {
@@ -265,7 +263,7 @@ public class FileSystemService {
         fileSystemResultMapper.deleteByPrimaryKey(id);
     }
 
-    public void deleteFsResult(String id) throws Exception {
+    public void deleteFsResult(String id, LoginUser loginUser) throws Exception {
         FileSystemResultLogExample logExample = new FileSystemResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
         fileSystemResultLogMapper.deleteByExample(logExample);
@@ -277,7 +275,7 @@ public class FileSystemService {
         systemProviderService.deleteHistoryFsResult(id);
         fileSystemResultMapper.deleteByPrimaryKey(id);
 
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
 
     }
 
@@ -295,7 +293,7 @@ public class FileSystemService {
         return extFileSystemResultItemMapper.resultItemListBySearch(request);
     }
 
-    public void scan(String id) throws Exception {
+    public void scan(String id, LoginUser loginUser) throws Exception {
         FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(id);
         Integer scanId = systemProviderService.insertScanHistory(fileSystem);
         if(StringUtils.equalsIgnoreCase(fileSystem.getStatus(), CloudAccountConstants.Status.VALID.name())) {
@@ -308,7 +306,7 @@ public class FileSystemService {
                 BeanUtils.copyBean(result, fileSystem);
                 result.setId(UUIDUtil.newUUID());
                 result.setFsId(id);
-                result.setApplyUser(tokenService.getLoginUser().getUserId());
+                result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
                 result.setRuleId(dto.getId());
@@ -316,11 +314,11 @@ public class FileSystemService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(tokenService.getLoginUser().getUserName());
+                result.setUserName(loginUser.getUserName());
                 fileSystemResultMapper.insertSelective(result);
 
-                saveFsResultLog(result.getId(), "i18n_start_fs_result", "", true);
-                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.SCAN, "i18n_start_fs_result");
+                saveFsResultLog(result.getId(), "i18n_start_fs_result", "", true, loginUser);
+                operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.SCAN, "i18n_start_fs_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, fileSystem.getId(), TaskEnum.fsAccount.getType());
 
@@ -329,19 +327,19 @@ public class FileSystemService {
         }
     }
 
-    public String reScan(String id) throws Exception {
+    public String reScan(String id, LoginUser loginUser) throws Exception {
         FileSystemResult result = fileSystemResultMapper.selectByPrimaryKey(id);
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUserName());
+        result.setUserName(loginUser.getUserName());
         fileSystemResultMapper.updateByPrimaryKeySelective(result);
 
         reScanDeleteFileSystemResult(id);
 
-        saveFsResultLog(result.getId(), "i18n_restart_fs_result", "", true);
+        saveFsResultLog(result.getId(), "i18n_restart_fs_result", "", true, loginUser);
 
-        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.RESCAN, "i18n_restart_fs_result");
+        operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.RESCAN, "i18n_restart_fs_result");
 
         systemProviderService.updateHistoryFileSystemResult(BeanUtils.copyBean(new HistoryFileSystemResult(), result));
 
@@ -362,7 +360,7 @@ public class FileSystemService {
         fileSystemResultMapper.deleteByExample(example);
     }
 
-    public void deleteResultByFsId(String id) throws Exception {
+    public void deleteResultByFsId(String id, LoginUser loginUser) throws Exception {
         FileSystemResultExample example = new FileSystemResultExample();
         example.createCriteria().andFsIdEqualTo(id);
         List<FileSystemResult> list = fileSystemResultMapper.selectByExample(example);
@@ -379,15 +377,15 @@ public class FileSystemService {
         }
         fileSystemResultMapper.deleteByPrimaryKey(id);
 
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.FILE_SYSTEM.name(), ResourceOperation.DELETE, "i18n_delete_fs_result");
     }
 
-    public void saveFsResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveFsResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
         FileSystemResultLog log = new FileSystemResultLog();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -402,7 +400,7 @@ public class FileSystemService {
 
     }
 
-    public void createScan (FileSystemResult result) throws Exception {
+    public void createScan (FileSystemResult result, LoginUser loginUser) throws Exception {
         try {
             FsRuleRequest request = new FsRuleRequest();
             request.setId(result.getRuleId());
@@ -431,7 +429,7 @@ public class FileSystemService {
             fileSystemResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createFsMessageOrder(result);
-            saveFsResultLog(result.getId(), "i18n_end_fs_result", "", true);
+            saveFsResultLog(result.getId(), "i18n_end_fs_result", "", true, loginUser);
 
             systemProviderService.updateHistoryFileSystemResult(BeanUtils.copyBean(new HistoryFileSystemResult(), result));
         } catch (Exception e) {
@@ -440,7 +438,7 @@ public class FileSystemService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             fileSystemResultMapper.updateByPrimaryKeySelective(result);
             systemProviderService.updateHistoryFileSystemResult(BeanUtils.copyBean(new HistoryFileSystemResult(), result));
-            saveFsResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveFsResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
     }
 

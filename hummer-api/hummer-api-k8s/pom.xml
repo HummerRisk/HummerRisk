@@ -23,6 +23,12 @@
             <artifactId>hummer-common-core</artifactId>
             <version>${hummerrisk.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.hummerrisk</groupId>
+            <artifactId>hummer-api-system</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

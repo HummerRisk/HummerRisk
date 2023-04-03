@@ -1,6 +1,7 @@
 package com.hummer.k8s.api;
 
 import com.hummer.common.core.domain.*;
+import com.hummer.system.api.model.LoginUser;
 
 import java.util.List;
 
@@ -54,17 +55,17 @@ public interface IK8sProviderService {
 
     FileSystem fileSystem(String id);
 
-    String serverRescan(String id) throws Exception;
+    String serverRescan(String id, LoginUser loginUser) throws Exception;
 
-    String codeRescan(String id) throws Exception;
+    String codeRescan(String id, LoginUser loginUser) throws Exception;
 
-    String imageRescan(String id) throws Exception;
+    String imageRescan(String id, LoginUser logiUser) throws Exception;
 
-    String k8sRescan(String id) throws Exception;
+    String k8sRescan(String id, LoginUser loginUser) throws Exception;
 
-    String configRescan(String id) throws Exception;
+    String configRescan(String id, LoginUser loginUser) throws Exception;
 
-    String fileSystemRescan(String id) throws Exception;
+    String fileSystemRescan(String id, LoginUser loginUser) throws Exception;
 
     String serverGroupName(String id);
 
@@ -72,37 +73,37 @@ public interface IK8sProviderService {
 
     void insertServerResult(ServerResult result);
 
-    void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception;
+    void saveServerResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception;
 
     void deleteK8sResult(CloudNativeResultExample example);
 
     void insertk8sResult(CloudNativeResultWithBLOBs result);
 
-    void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception;
+    void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception;
 
     void deleteConfigResult(CloudNativeConfigResultExample example);
 
     void insertConfigResult(CloudNativeConfigResult result);
 
-    void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception;
+    void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception;
 
     void deleteCodeResult(CodeResultExample example);
 
     void insertCodeResult(CodeResult result);
 
-    void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception;
+    void saveCodeResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception;
 
     void deleteFileSystemResult(FileSystemResultExample example);
 
     void insertFileSystemResult(FileSystemResult result);
 
-    void saveFsResultLog(String resultId, String operation, String output, boolean result) throws Exception;
+    void saveFsResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception;
 
     void deleteImageResult(ImageResultExample example);
 
     void insertImageResult(ImageResultWithBLOBs result);
 
-    void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception;
+    void saveImageResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception;
 
 
 }

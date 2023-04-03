@@ -16,6 +16,7 @@ import com.hummer.common.core.dto.MetricChartDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.ConfigService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
@@ -35,6 +36,8 @@ import java.util.Map;
 public class ConfigController {
     @Autowired
     private ConfigService configService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "云原生部署配置列表")
@@ -61,20 +64,20 @@ public class ConfigController {
     @ApiOperation(value = "添加云原生部署配置")
     @PostMapping("add")
     public CloudNativeConfig addCloudNative(@RequestBody CloudNativeConfig request) {
-        return configService.addCloudNativeConfig(request);
+        return configService.addCloudNativeConfig(request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "更新云原生部署配置")
     @PostMapping("update")
     public CloudNativeConfig editCloudNativeConfig(@RequestBody CloudNativeConfig request) throws Exception {
-        return configService.editCloudNativeConfig(request);
+        return configService.editCloudNativeConfig(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除云原生部署配置")
     @GetMapping(value = "delete/{accountId}")
     public void deleteAccount(@PathVariable String accountId) throws Exception {
-        configService.delete(accountId);
+        configService.delete(accountId, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "上传YAML文件")
@@ -87,13 +90,13 @@ public class ConfigController {
     @ApiOperation(value = "云原生部署配置检测")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
-        configService.scan(id);
+        configService.scan(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "重新云原生部署配置检测")
     @GetMapping("reScan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
-        configService.reScan(id);
+        configService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -137,7 +140,7 @@ public class ConfigController {
     @ApiOperation(value = "删除云原生部署配置检测记录")
     @GetMapping("deleteCloudNativeConfigResult/{id}")
     public void deleteCloudNativeConfigResult(@PathVariable String id) throws Exception {
-        configService.deleteCloudNativeConfigResult(id);
+        configService.deleteCloudNativeConfigResult(id, tokenService.getLoginUser());
     }
 
     @I18n

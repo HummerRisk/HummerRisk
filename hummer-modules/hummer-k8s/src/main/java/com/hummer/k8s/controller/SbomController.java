@@ -11,6 +11,7 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.SbomService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,8 @@ public class SbomController {
 
     @Autowired
     private SbomService sbomService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "SBOM项目列表")
@@ -40,26 +43,26 @@ public class SbomController {
     @ApiOperation(value = "添加SBOM项目")
     @PostMapping(value = "addSbom")
     public Sbom addSbom(@RequestBody Sbom request) throws Exception {
-        return sbomService.addSbom(request);
+        return sbomService.addSbom(request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "修改SBOM项目")
     @PostMapping(value = "updateSbom")
     public Sbom updateSbom(@RequestBody Sbom request) throws Exception {
-        return sbomService.updateSbom(request);
+        return sbomService.updateSbom(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除SBOM项目")
     @GetMapping("deleteSbom/{id}")
     public void deleteSbom(@PathVariable String id) throws Exception {
-        sbomService.deleteSbom(id);
+        sbomService.deleteSbom(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "执行SBOM检测")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
-        sbomService.scan(id);
+        sbomService.scan(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -75,20 +78,20 @@ public class SbomController {
     @ApiOperation(value = "添加SBOM项目版本")
     @PostMapping(value = "addSbomVersion")
     public SbomVersion addSbomVersion(@RequestBody SbomVersion request) throws Exception {
-        return sbomService.addSbomVersion(request);
+        return sbomService.addSbomVersion(request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "修改SBOM项目版本")
     @PostMapping(value = "updateSbomVersion")
     public SbomVersion updateSbomVersion(@RequestBody SbomVersion request) throws Exception {
-        return sbomService.updateSbomVersion(request);
+        return sbomService.updateSbomVersion(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除SBOM项目版本")
     @GetMapping("deleteSbomVersion/{id}")
     public void deleteSbomVersion(@PathVariable String id) throws Exception {
-        sbomService.deleteSbomVersion(id);
+        sbomService.deleteSbomVersion(id, tokenService.getLoginUser());
     }
 
     @I18n

@@ -20,11 +20,11 @@ import com.hummer.common.core.proxy.k8s.K8sSource;
 import com.hummer.common.core.proxy.kubesphere.KubeSphereRequest;
 import com.hummer.common.core.proxy.rancher.RancherRequest;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.*;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -90,8 +90,6 @@ public class K8sService {
     private ProxyMapper proxyMapper;
     @Autowired
     private PluginMapper pluginMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -133,13 +131,13 @@ public class K8sService {
     }
 
 
-    public ValidateDTO validate(String id) throws IOException, ApiException {
+    public ValidateDTO validate(String id, LoginUser loginUser) throws IOException, ApiException {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         //检验账号的有效性
         ValidateDTO valid = validateAccount(cloudNative);
         if (valid.isFlag()) {
             cloudNative.setStatus(CloudAccountConstants.Status.VALID.name());
-            addCloudNativeSource(cloudNative);
+            addCloudNativeSource(cloudNative, loginUser);
         } else {
             cloudNative.setStatus(CloudAccountConstants.Status.INVALID.name());
         }
@@ -255,7 +253,7 @@ public class K8sService {
         }
     }
 
-    public ValidateDTO addCloudNative(CreateCloudNativeRequest request) throws HRException {
+    public ValidateDTO addCloudNative(CreateCloudNativeRequest request, LoginUser loginUser) throws HRException {
         try {
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
@@ -283,13 +281,13 @@ public class K8sService {
                 account.setPluginName(plugin.getName());
                 account.setCreateTime(System.currentTimeMillis());
                 account.setUpdateTime(System.currentTimeMillis());
-                account.setCreator(Objects.requireNonNull(tokenService.getLoginUser()).getUserId());
+                account.setCreator(Objects.requireNonNull(loginUser).getUserId());
                 account.setId(UUIDUtil.newUUID());
                 //检验账号的有效性
                 ValidateDTO valid = validateAccount(account);
                 if (valid.isFlag()) {
                     account.setStatus(CloudAccountConstants.Status.VALID.name());
-                    addCloudNativeSource(account);
+                    addCloudNativeSource(account, loginUser);
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
@@ -308,9 +306,9 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.insertSelective(account);
-                reinstallOperator(account.getId());
-                reinstallKubench(account.getId());
-                operationLogService.log(tokenService.getLoginUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
+                reinstallOperator(account.getId(), loginUser);
+                reinstallKubench(account.getId(), loginUser);
+                operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return valid;
             }
         } catch (Exception e) {
@@ -320,7 +318,7 @@ public class K8sService {
         return null;
     }
 
-    public ValidateDTO editCloudNative(UpdateCloudNativeRequest request) throws Exception {
+    public ValidateDTO editCloudNative(UpdateCloudNativeRequest request, LoginUser loginUser) throws Exception {
         try {
             //参数校验
             if (StringUtils.isEmpty(request.getCredential())
@@ -354,7 +352,7 @@ public class K8sService {
                 ValidateDTO valid = validateAccount(account);
                 if (valid.isFlag()) {
                     account.setStatus(CloudAccountConstants.Status.VALID.name());
-                    addCloudNativeSource(account);
+                    addCloudNativeSource(account, loginUser);
                 } else {
                     account.setStatus(CloudAccountConstants.Status.INVALID.name());
                 }
@@ -375,7 +373,7 @@ public class K8sService {
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
                 //检验账号已更新状态
-                operationLogService.log(tokenService.getLoginUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
+                operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
                 return valid;
             }
 
@@ -387,20 +385,20 @@ public class K8sService {
         return null;
     }
 
-    public void delete(String accountId) throws Exception {
+    public void delete(String accountId, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
         cloudNativeMapper.deleteByPrimaryKey(accountId);
-        deleteResultByCloudNativeId(accountId);
-        operationLogService.log(tokenService.getLoginUser(), accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
+        deleteResultByCloudNativeId(accountId, loginUser);
+        operationLogService.log(loginUser, accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
     }
 
-    public void addCloudNativeSource(CloudNative cloudNative) throws IOException, ApiException {
+    public void addCloudNativeSource(CloudNative cloudNative, LoginUser loginUser) throws IOException, ApiException {
         CloudNativeSourceSyncLogWithBLOBs record = new CloudNativeSourceSyncLogWithBLOBs();
         record.setSum(0L);
         record.setOperation("i18n_sync_k8s_start");
         record.setCloudNativeId(cloudNative.getId());
         record.setCreateTime(System.currentTimeMillis());
-        String creator = tokenService.getLoginUser().getUserName();
+        String creator = loginUser.getUserName();
         record.setOperator(creator);
         record.setOutput("i18n_in_process");
         record.setId(UUIDUtil.newUUID());
@@ -583,7 +581,7 @@ public class K8sService {
         return extCloudNativeSourceMapper.situationInfo(params);
     }
 
-    public void scan(String id) throws Exception {
+    public void scan(String id, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         Integer scanId = systemProviderService.insertScanHistory(cloudNative);
         if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
@@ -596,19 +594,19 @@ public class K8sService {
                 BeanUtils.copyBean(result, cloudNative);
                 result.setId(UUIDUtil.newUUID());
                 result.setCloudNativeId(id);
-                result.setApplyUser(tokenService.getLoginUser().getUserId());
+                result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-                result.setUserName(tokenService.getLoginUser().getUserName());
+                result.setUserName(loginUser.getUserName());
                 result.setRuleId(rule.getId());
                 result.setRuleName(rule.getName());
                 result.setRuleDesc(rule.getDescription());
                 result.setSeverity(rule.getSeverity());
                 cloudNativeResultMapper.insertSelective(result);
 
-                saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true);
-                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+                saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
+                operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
 
@@ -617,24 +615,24 @@ public class K8sService {
         }
     }
 
-    public String reScan(String id) throws Exception {
+    public String reScan(String id, LoginUser loginUser) throws Exception {
         CloudNativeResultWithBLOBs result = cloudNativeResultMapper.selectByPrimaryKey(id);
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUserName());
+        result.setUserName(loginUser.getUserName());
         cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
-        saveCloudNativeResultLog(result.getId(), "i18n_restart_k8s_result", "", true);
+        saveCloudNativeResultLog(result.getId(), "i18n_restart_k8s_result", "", true, loginUser);
 
-        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result");
+        operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result");
 
         systemProviderService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
 
         return result.getId();
     }
 
-    public void createScan(CloudNativeResultWithBLOBs result) throws Exception {
+    public void createScan(CloudNativeResultWithBLOBs result, LoginUser loginUser) throws Exception {
         try {
             CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(result.getCloudNativeId());
             if (StringUtils.equalsIgnoreCase(PlatformUtils.k8s, cloudNative.getPluginId())) {
@@ -720,7 +718,7 @@ public class K8sService {
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createCloudNativeMessageOrder(result);
-            saveCloudNativeResultLog(result.getId(), "i18n_end_k8s_result", "", true);
+            saveCloudNativeResultLog(result.getId(), "i18n_end_k8s_result", "", true, loginUser);
 
             systemProviderService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
         } catch (Exception e) {
@@ -729,7 +727,7 @@ public class K8sService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
             systemProviderService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
-            saveCloudNativeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
     }
 
@@ -871,7 +869,7 @@ public class K8sService {
         cloudNativeResultMapper.deleteByExample(example);
     }
 
-    public void deleteResultByCloudNativeId(String id) throws Exception {
+    public void deleteResultByCloudNativeId(String id, LoginUser loginUser) throws Exception {
 
         CloudNativeResultExample example = new CloudNativeResultExample();
         example.createCriteria().andCloudNativeIdEqualTo(id);
@@ -889,16 +887,16 @@ public class K8sService {
             systemProviderService.deleteHistoryK8sResult(result.getId());
         }
         cloudNativeResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_k8s_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_k8s_result");
 
     }
 
-    public void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
         CloudNativeResultLogWithBLOBs cloudNativeResultLog = new CloudNativeResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -1037,7 +1035,7 @@ public class K8sService {
         return extCloudNativeResultMapper.imageList(request);
     }
 
-    public void deleteCloudNativeResult(String id) throws Exception {
+    public void deleteCloudNativeResult(String id, LoginUser loginUser) throws Exception {
         CloudNativeResultLogExample logExample = new CloudNativeResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
         cloudNativeResultLogMapper.deleteByExample(logExample);
@@ -1048,7 +1046,7 @@ public class K8sService {
 
         systemProviderService.deleteHistoryK8sResult(id);
         cloudNativeResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
 
     }
 
@@ -1090,9 +1088,9 @@ public class K8sService {
         return extCloudNativeResultMapper.syncList(request);
     }
 
-    public void syncSource(String id) throws Exception {
+    public void syncSource(String id, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
-        addCloudNativeSource(cloudNative);
+        addCloudNativeSource(cloudNative, loginUser);
     }
 
     public void deleteSyncLog(String id) throws Exception {
@@ -1208,14 +1206,14 @@ public class K8sService {
         return sourceImages;
     }
 
-    public void reinstallOperator(String id) throws Exception {
+    public void reinstallOperator(String id, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         try {
-            saveCloudNativeResultLog(id, "i18n_start_k8s_operator", "", true);
+            saveCloudNativeResultLog(id, "i18n_start_k8s_operator", "", true, loginUser);
 
             ValidateDTO operatorIsInstall = validateOperatorStatus(cloudNative);
             if (operatorIsInstall.isFlag()) {
-                saveCloudNativeResultLog(id, "i18n_already_k8s_operator", "", true);
+                saveCloudNativeResultLog(id, "i18n_already_k8s_operator", "", true, loginUser);
                 return;
             }
 
@@ -1236,25 +1234,25 @@ public class K8sService {
             }
             cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
 
-            saveCloudNativeResultLog(id, "i18n_end_k8s_operator", "", true);
+            saveCloudNativeResultLog(id, "i18n_end_k8s_operator", "", true, loginUser);
         } catch (Exception e) {
             cloudNative.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
             cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
-            saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
 
         //检验operator
         operatorStatusValidate(cloudNative.getId());
     }
 
-    public void reinstallKubench(String id) throws Exception {
+    public void reinstallKubench(String id, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         try {
-            saveCloudNativeResultLog(id, "i18n_start_k8s_kubench", "", true);
+            saveCloudNativeResultLog(id, "i18n_start_k8s_kubench", "", true, loginUser);
 
             ValidateDTO kubenchIsInstall = validateKubenchStatus(cloudNative);
             if (kubenchIsInstall.isFlag()) {
-                saveCloudNativeResultLog(id, "i18n_already_k8s_kubench", "", true);
+                saveCloudNativeResultLog(id, "i18n_already_k8s_kubench", "", true, loginUser);
                 return;
             }
 
@@ -1266,11 +1264,11 @@ public class K8sService {
 
             createKubench(k8sRequest, example, cloudNative);
 
-            saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true);
+            saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true, loginUser);
         } catch (Exception e) {
             cloudNative.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
             cloudNativeMapper.updateByPrimaryKeySelective(cloudNative);
-            saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeResultLog(id, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
 
         //检验kube-bench

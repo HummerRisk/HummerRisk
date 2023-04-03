@@ -14,7 +14,6 @@ import com.hummer.common.core.domain.request.sbom.SettingVersionRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtCodeResultMapper;
 import com.hummer.k8s.mapper.ext.ExtFileSystemResultMapper;
@@ -22,6 +21,7 @@ import com.hummer.k8s.mapper.ext.ExtImageResultMapper;
 import com.hummer.k8s.mapper.ext.ExtSbomMapper;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,12 +64,6 @@ public class SbomService {
     private ExtCodeResultMapper extCodeResultMapper;
     @Autowired
     private ExtImageResultMapper extImageResultMapper;
-    @Autowired
-    private ProxyMapper proxyMapper;
-    @Autowired
-    private PluginMapper pluginMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -82,29 +76,29 @@ public class SbomService {
         return extSbomMapper.sbomList(request);
     }
 
-    public Sbom addSbom(Sbom sbom) throws Exception {
+    public Sbom addSbom(Sbom sbom, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         sbom.setId(id);
-        sbom.setCreator(tokenService.getLoginUser().getUserId());
+        sbom.setCreator(loginUser.getUserId());
         sbom.setCreateTime(System.currentTimeMillis());
         sbom.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.CREATE, "i18n_create_sbom");
+        operationLogService.log(loginUser, sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.CREATE, "i18n_create_sbom");
         sbomMapper.insertSelective(sbom);
         return sbom;
     }
 
-    public Sbom updateSbom(Sbom sbom) throws Exception {
+    public Sbom updateSbom(Sbom sbom, LoginUser loginUser) throws Exception {
         sbom.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser(), sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.UPDATE, "i18n_update_sbom");
+        operationLogService.log(loginUser, sbom.getId(), sbom.getName(), ResourceTypeConstants.SBOM.name(), ResourceOperation.UPDATE, "i18n_update_sbom");
         sbomMapper.updateByPrimaryKeySelective(sbom);
         return sbom;
     }
 
-    public void deleteSbom(String id) throws Exception {
+    public void deleteSbom(String id, LoginUser loginUser) throws Exception {
         sbomMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SBOM.name(), ResourceOperation.DELETE, "i18n_delete_sbom");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.SBOM.name(), ResourceOperation.DELETE, "i18n_delete_sbom");
     }
 
     public List<SbomVersion> sbomVersionList(SbomVersionRequest request) {
@@ -114,37 +108,37 @@ public class SbomService {
         return sbomVersionMapper.selectByExample(example);
     }
 
-    public SbomVersion addSbomVersion(SbomVersion sbomVersion) throws Exception {
+    public SbomVersion addSbomVersion(SbomVersion sbomVersion, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         sbomVersion.setId(id);
         sbomVersion.setCreateTime(System.currentTimeMillis());
         sbomVersion.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.CREATE, "i18n_create_sbom_version");
+        operationLogService.log(loginUser, sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.CREATE, "i18n_create_sbom_version");
         sbomVersionMapper.insertSelective(sbomVersion);
         return sbomVersion;
     }
 
-    public SbomVersion updateSbomVersion(SbomVersion sbomVersion) throws Exception {
+    public SbomVersion updateSbomVersion(SbomVersion sbomVersion, LoginUser loginUser) throws Exception {
         sbomVersion.setUpdateTime(System.currentTimeMillis());
 
-        operationLogService.log(tokenService.getLoginUser(), sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.UPDATE, "i18n_update_sbom_version");
+        operationLogService.log(loginUser, sbomVersion.getId(), sbomVersion.getName(), ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.UPDATE, "i18n_update_sbom_version");
         sbomVersionMapper.updateByPrimaryKeySelective(sbomVersion);
         return sbomVersion;
     }
 
-    public void deleteSbomVersion(String id) throws Exception {
+    public void deleteSbomVersion(String id, LoginUser loginUser) throws Exception {
         sbomVersionMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.DELETE, "i18n_delete_sbom_version");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.SBOM_VERSION.name(), ResourceOperation.DELETE, "i18n_delete_sbom_version");
     }
 
-    public void scan(String id) throws Exception {
+    public void scan(String id, LoginUser loginUser) throws Exception {
         CodeExample codeExample = new CodeExample();
         codeExample.createCriteria().andSbomVersionIdEqualTo(id);
         List<Code> codes = codeMapper.selectByExample(codeExample);
         codes.forEach(code -> {
             try {
-                codeService.scan(code.getId());
+                codeService.scan(code.getId(), loginUser);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -154,7 +148,7 @@ public class SbomService {
         List<Image> images = imageMapper.selectByExample(imageExample);
         images.forEach(image -> {
             try {
-                imageService.scan(image.getId());
+                imageService.scan(image.getId(), loginUser);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

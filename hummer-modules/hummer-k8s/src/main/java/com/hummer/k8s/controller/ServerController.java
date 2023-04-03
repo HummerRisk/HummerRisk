@@ -13,6 +13,7 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.ServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +38,8 @@ import java.util.Map;
 public class ServerController {
     @Autowired
     private ServerService serverService;
+    @Autowired
+    private TokenService tokenService;
 
     @ApiOperation(value = "所有主机分组")
     @GetMapping("serverGroupList")
@@ -80,52 +83,52 @@ public class ServerController {
     @ApiOperation(value = "一键检测主机规则")
     @PostMapping("scan")
     public void scan(@RequestBody ScanGroupRequest request) throws Exception {
-        serverService.scan(request);
+        serverService.scan(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "添加主机分组")
     @PostMapping("addServerGroup")
     public int addServerGroup(@RequestBody ServerGroup serverGroup) {
-        return serverService.addServerGroup(serverGroup);
+        return serverService.addServerGroup(serverGroup, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "修改主机分组")
     @PostMapping("editServerGroup")
     public int editServerGroup(@RequestBody ServerGroup serverGroup) throws Exception {
-        return serverService.editServerGroup(serverGroup);
+        return serverService.editServerGroup(serverGroup, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除主机分组")
     @PostMapping("deleteServerGroup")
     public void deleteServerGroup(@RequestBody ServerGroup serverGroup) throws Exception {
-        serverService.deleteServerGroup(serverGroup);
+        serverService.deleteServerGroup(serverGroup, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "添加主机")
     @PostMapping(value = "addServer", consumes = {"multipart/form-data"})
     public ServerValidateDTO addServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                        @RequestPart("request") Server request) throws Exception {
-        return serverService.addServer(keyFile, request);
+        return serverService.addServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "编辑主机")
     @PostMapping(value = "editServer", consumes = {"multipart/form-data"})
     public ServerValidateDTO editServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                         @RequestPart("request") Server request) throws Exception {
-        return serverService.editServer(keyFile, request);
+        return serverService.editServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "复制主机")
     @PostMapping(value = "copyServer", consumes = {"multipart/form-data"})
     public ServerValidateDTO copyServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                         @RequestPart("request") Server request) throws Exception {
-        return serverService.copyServer(keyFile, request);
+        return serverService.copyServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除主机")
     @GetMapping("deleteServer/{id}")
     public void deleteServer(@PathVariable String id) throws Exception {
-        serverService.deleteServer(id);
+        serverService.deleteServer(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -194,13 +197,13 @@ public class ServerController {
     @ApiOperation(value = "重新检测主机规则")
     @GetMapping("rescan/{id}")
     public void rescan(@PathVariable String id) throws Exception {
-        serverService.rescan(id);
+        serverService.rescan(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除主机检测记录")
     @GetMapping("deleteServerResult/{id}")
     public void deleteServerResult(@PathVariable String id) throws Exception {
-        serverService.deleteServerResult(id);
+        serverService.deleteServerResult(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "所有主机凭据")
@@ -222,20 +225,20 @@ public class ServerController {
     @PostMapping(value = "addCertificate", consumes = {"multipart/form-data"})
     public int addCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                               @RequestPart("request") ServerCertificate request) throws Exception {
-        return serverService.addCertificate(keyFile, request);
+        return serverService.addCertificate(keyFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "编辑主机凭据")
     @PostMapping(value = "editCertificate", consumes = {"multipart/form-data"})
     public int editCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                @RequestPart("request") ServerCertificate request) throws Exception {
-        return serverService.editCertificate(keyFile, request);
+        return serverService.editCertificate(keyFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除主机凭据")
     @GetMapping("deleteCertificate/{id}")
     public void deleteCertificate(@PathVariable String id) throws Exception {
-        serverService.deleteCertificate(id);
+        serverService.deleteCertificate(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -285,7 +288,7 @@ public class ServerController {
     @ApiOperation("通过Excel导入专家数据")
     @PostMapping(value = "/ExcelInsertExperts", consumes = {"multipart/form-data"})
     public void insertExperts(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("request") Server server) throws Exception {
-        serverService.insertExperts(file, server);
+        serverService.insertExperts(file, server, tokenService.getLoginUser());
     }
 
     @I18n
@@ -354,7 +357,7 @@ public class ServerController {
     @ApiOperation(value = "按规则组检测主机规则")
     @GetMapping("scanByGroup/{groupId}/{serverId}")
     public void scanByGroup(@PathVariable String groupId, @PathVariable String serverId) throws Exception {
-        serverService.scanByGroup(groupId, serverId);
+        serverService.scanByGroup(groupId, serverId, tokenService.getLoginUser());
     }
 
 

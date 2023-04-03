@@ -14,6 +14,7 @@ import com.hummer.common.core.dto.HistoryFsResultDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.FileSystemService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
@@ -34,6 +35,8 @@ public class FileSystemController {
 
     @Autowired
     private FileSystemService fileSystemService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "文件系统列表")
@@ -70,7 +73,7 @@ public class FileSystemController {
     @PostMapping(value = "addFs", consumes = {"multipart/form-data"})
     public FileSystem addFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
                             @RequestPart("request") FileSystem request) throws Exception {
-        return fileSystemService.addFs(multipartFile, request);
+        return fileSystemService.addFs(multipartFile, request, tokenService.getLoginUser());
     }
 
     @I18n
@@ -78,13 +81,13 @@ public class FileSystemController {
     @PostMapping(value = "updateFs", consumes = {"multipart/form-data"})
     public FileSystem updateFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
                                @RequestPart("request") FileSystem request) throws Exception {
-        return fileSystemService.updateFs(multipartFile, request);
+        return fileSystemService.updateFs(multipartFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除文件系统")
     @GetMapping("deleteFs/{id}")
     public void deleteFs(@PathVariable String id) throws Exception {
-        fileSystemService.deleteFs(id);
+        fileSystemService.deleteFs(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "批量校验文件系统")
@@ -110,19 +113,19 @@ public class FileSystemController {
     @ApiOperation(value = "添加文件系统检测规则")
     @PostMapping(value = "addFsRule")
     public int addFsRule(@RequestBody FsRuleRequest request) throws Exception {
-        return fileSystemService.addFsRule(request);
+        return fileSystemService.addFsRule(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "修改文件系统检测规则")
     @PostMapping(value = "updateFsRule")
     public int updateFsRule(@RequestBody FsRuleRequest request) throws Exception {
-        return fileSystemService.updateFsRule(request);
+        return fileSystemService.updateFsRule(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除文件系统检测规则")
     @GetMapping(value = "deleteFsRule/{id}")
     public void deleteFsRule(@PathVariable String id) throws Exception  {
-        fileSystemService.deleteFsRule(id);
+        fileSystemService.deleteFsRule(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "文件系统检测规则启用")
@@ -134,13 +137,13 @@ public class FileSystemController {
     @ApiOperation(value = "文件系统检测规则")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
-        fileSystemService.scan(id);
+        fileSystemService.scan(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "重新检测文件系统规则")
     @GetMapping("reScan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
-        fileSystemService.reScan(id);
+        fileSystemService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -168,7 +171,7 @@ public class FileSystemController {
     @ApiOperation(value = "删除文件系统检测记录")
     @GetMapping("deleteFsResult/{id}")
     public void deleteFsResult(@PathVariable String id) throws Exception {
-        fileSystemService.deleteFsResult(id);
+        fileSystemService.deleteFsResult(id, tokenService.getLoginUser());
     }
 
     @I18n

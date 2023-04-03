@@ -8,6 +8,7 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.ImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,8 @@ public class ImageController {
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "镜像仓库列表")
@@ -40,20 +43,20 @@ public class ImageController {
     @ApiOperation(value = "添加镜像仓库")
     @PostMapping("addImageRepo")
     public ImageRepo addImageRepo(@RequestBody ImageRepo imageRepo) throws Exception {
-        return imageService.addImageRepo(imageRepo);
+        return imageService.addImageRepo(imageRepo, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "编辑镜像仓库")
     @PostMapping("editImageRepo")
     public ImageRepo editImageRepo(@RequestBody ImageRepo imageRepo) throws Exception {
-        return imageService.editImageRepo(imageRepo);
+        return imageService.editImageRepo(imageRepo, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除镜像仓库")
     @GetMapping("deleteImageRepo/{id}")
     public void deleteImageRepo(@PathVariable String id) throws Exception {
-        imageService.deleteImageRepo(id);
+        imageService.deleteImageRepo(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -107,7 +110,7 @@ public class ImageController {
     public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
                           @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
-        return imageService.addImage(iconFile, tarFile, request);
+        return imageService.addImage(iconFile, tarFile, request, tokenService.getLoginUser());
     }
 
     @I18n
@@ -116,13 +119,13 @@ public class ImageController {
     public Image updateImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
                           @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
-        return imageService.updateImage(iconFile, tarFile, request);
+        return imageService.updateImage(iconFile, tarFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除镜像")
     @GetMapping("deleteImage/{id}")
     public void deleteImage(@PathVariable String id) throws Exception {
-        imageService.deleteImage(id);
+        imageService.deleteImage(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -136,19 +139,19 @@ public class ImageController {
     @ApiOperation(value = "添加镜像检测规则")
     @PostMapping(value = "addImageRule")
     public int addImageRule(@RequestBody ImageRuleRequest request) throws Exception {
-        return imageService.addImageRule(request);
+        return imageService.addImageRule(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "修改镜像检测规则")
     @PostMapping(value = "updateImageRule")
     public int updateImageRule(@RequestBody ImageRuleRequest request) throws Exception {
-        return imageService.updateImageRule(request);
+        return imageService.updateImageRule(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除镜像检测规则")
     @GetMapping(value = "deleteImageRule/{id}")
     public void deleteImageRule(@PathVariable String id) throws Exception  {
-        imageService.deleteImageRule(id);
+        imageService.deleteImageRule(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "镜像检测规则启用")
@@ -160,13 +163,13 @@ public class ImageController {
     @ApiOperation(value = "镜像检测规则")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
-        imageService.scan(id);
+        imageService.scan(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "重新检测镜像规则")
     @GetMapping("reScan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
-        imageService.reScan(id);
+        imageService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -217,7 +220,7 @@ public class ImageController {
     @ApiOperation(value = "删除镜像检测记录")
     @GetMapping("deleteImageResult/{id}")
     public void deleteImageResult(@PathVariable String id) throws Exception {
-        imageService.deleteImageResult(id);
+        imageService.deleteImageResult(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -247,20 +250,20 @@ public class ImageController {
     @ApiOperation(value = "同步镜像")
     @GetMapping("syncImage/{id}")
     public void syncImage(@PathVariable String id) throws Exception {
-        imageService.syncImage(id);
+        imageService.syncImage(id, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "执行镜像仓库中的镜像")
     @PostMapping("scanImageRepo")
     public void scanImageRepo(@RequestBody ScanImageRepoRequest request) throws Exception {
-        imageService.scanImageRepo(request);
+        imageService.scanImageRepo(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "批量执行镜像仓库中的镜像")
     @PostMapping("scanImagesRepo")
     public void scanImagesRepo(@RequestBody List<String> selectIds) {
-        imageService.scanImagesRepo(selectIds);
+        imageService.scanImagesRepo(selectIds, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "下载检测报告")

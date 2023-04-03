@@ -10,6 +10,7 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.K8sService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
@@ -28,6 +29,8 @@ import java.util.Map;
 public class K8sController {
     @Autowired
     private K8sService k8sService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "云原生账号列表")
@@ -61,7 +64,7 @@ public class K8sController {
     @ApiOperation(value = "校验云原生账号")
     @PostMapping("validate/{id}")
     public ValidateDTO validate(@PathVariable String id) throws IOException, ApiException {
-        return k8sService.validate(id);
+        return k8sService.validate(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "校验云原生Operator状态")
@@ -80,20 +83,20 @@ public class K8sController {
     @ApiOperation(value = "添加云原生账号")
     @PostMapping("add")
     public ValidateDTO addCloudNative(@RequestBody CreateCloudNativeRequest request) {
-        return k8sService.addCloudNative(request);
+        return k8sService.addCloudNative(request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "更新云原生账号")
     @PostMapping("update")
     public ValidateDTO editCloudNative(@RequestBody UpdateCloudNativeRequest request) throws Exception {
-        return k8sService.editCloudNative(request);
+        return k8sService.editCloudNative(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除云原生账号")
     @PostMapping(value = "delete/{accountId}")
     public void deleteAccount(@PathVariable String accountId) throws Exception {
-        k8sService.delete(accountId);
+        k8sService.delete(accountId, tokenService.getLoginUser());
     }
 
     @I18n
@@ -116,13 +119,13 @@ public class K8sController {
     @ApiOperation(value = "云原生检测")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
-        k8sService.scan(id);
+        k8sService.scan(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "重新云原生检测")
     @GetMapping("reScan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
-        k8sService.reScan(id);
+        k8sService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -136,7 +139,7 @@ public class K8sController {
     @ApiOperation(value = "删除镜像检测记录")
     @GetMapping("deleteCloudNativeResult/{id}")
     public void deleteCloudNativeResult(@PathVariable String id) throws Exception {
-        k8sService.deleteCloudNativeResult(id);
+        k8sService.deleteCloudNativeResult(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -242,7 +245,7 @@ public class K8sController {
     @ApiOperation(value = "同步资源态势资源")
     @GetMapping("syncSource/{id}")
     public void syncSource(@PathVariable String id) throws Exception {
-        k8sService.syncSource(id);
+        k8sService.syncSource(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除资源态势同步日志")
@@ -386,13 +389,13 @@ public class K8sController {
     @ApiOperation(value = "重新安装 Operator")
     @PostMapping("reinstallOperator/{id}")
     public void reinstallOperator(@PathVariable String id) throws Exception {
-        k8sService.reinstallOperator(id);
+        k8sService.reinstallOperator(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "重新安装 CIS Benchmark")
     @PostMapping("reinstallKubench/{id}")
     public void reinstallKubench(@PathVariable String id) throws Exception {
-        k8sService.reinstallKubench(id);
+        k8sService.reinstallKubench(id, tokenService.getLoginUser());
     }
 
     @I18n

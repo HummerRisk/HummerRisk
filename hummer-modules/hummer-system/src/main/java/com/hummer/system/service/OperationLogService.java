@@ -49,7 +49,7 @@ public class OperationLogService implements IOperationLogService {
         operationLog.setResourceName(resourceName);
         if (user == null) {
             operationLog.setResourceUserId(SystemUserConstants.getUserId());
-            operationLog.setResourceUserName(SystemUserConstants.getUser().getName());
+            operationLog.setResourceUserName(SystemUserConstants.getUser().getName() + " [" + SystemUserConstants.getUser().getEmail() + "]");
         } else {
             operationLog.setResourceUserId(user.getUserId());
             operationLog.setResourceUserName(user.getUserName() + " [" + user.getUser()!=null?user.getUser().getEmail():"" + "]");

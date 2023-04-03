@@ -18,7 +18,6 @@ import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.server.SshUtil;
 import com.hummer.common.core.proxy.server.WinRMHelper;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtServerCertificateMapper;
 import com.hummer.k8s.mapper.ext.ExtServerMapper;
@@ -26,6 +25,7 @@ import com.hummer.k8s.mapper.ext.ExtServerResultMapper;
 import com.hummer.k8s.mapper.ext.ExtServerRuleMapper;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -78,10 +78,6 @@ public class ServerService {
     private ExtServerCertificateMapper extServerCertificateMapper;
     @Autowired
     private ProxyMapper proxyMapper;
-    @Autowired
-    private PluginMapper pluginMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -119,15 +115,15 @@ public class ServerService {
         return valid;
     }
 
-    public void scan(ScanGroupRequest request) throws Exception {
+    public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
         Server server = serverMapper.selectByPrimaryKey(request.getAccountId());
         Integer scanId = systemProviderService.insertScanHistory(server);
         for (Integer groupId : request.getGroups()) {
-            this.scanGroups(server, scanId, groupId.toString());
+            this.scanGroups(server, scanId, groupId.toString(), loginUser);
         }
     }
 
-    public Boolean scan(String id) throws Exception {
+    public Boolean scan(String id, LoginUser loginUser) throws Exception {
         ServerRequest request = new ServerRequest();
         request.setId(id);//serverId
         Server server = BeanUtils.copyBean(new Server(), getServerList(request).get(0));
@@ -154,7 +150,7 @@ public class ServerService {
                 result.setServerId(id);
                 result.setServerGroupId(server.getServerGroupId());
                 result.setServerGroupName(serverGroupName);
-                result.setApplyUser(tokenService.getLoginUser().getUserId());
+                result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
                 result.setServerName(server.getName());
@@ -166,9 +162,9 @@ public class ServerService {
                 result.setType(dto.getType());
                 serverResultMapper.insertSelective(result);
 
-                saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+                saveServerResultLog(result.getId(), "i18n_start_server_result", "", true, loginUser);
 
-                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
+                operationLogService.log(loginUser, result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
 
@@ -178,7 +174,7 @@ public class ServerService {
         return true;
     }
 
-    public void createScan(ServerResult result) throws Exception {
+    public void createScan(ServerResult result, LoginUser loginUser) throws Exception {
         ServerRuleRequest request = new ServerRuleRequest();
         request.setId(result.getRuleId());
         ServerRuleDTO dto = ruleList(request).get(0);
@@ -214,7 +210,7 @@ public class ServerService {
 
             systemProviderService.createServerMessageOrderItem(result, this.messageOrderId);
 
-            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, result.getIsSeverity());
+            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, result.getIsSeverity(), loginUser);
 
             systemProviderService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
         } catch (Exception e) {
@@ -225,17 +221,17 @@ public class ServerService {
             serverResultMapper.updateByPrimaryKeySelective(result);
             systemProviderService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
             systemProviderService.createServerMessageOrderItem(result, this.messageOrderId);
-            saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveServerResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
     }
 
-    public String rescan(String id) throws Exception {
+    public String rescan(String id, LoginUser loginUser) throws Exception {
         ServerResult result = serverResultMapper.selectByPrimaryKey(id);
-        saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true);
+        saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true, loginUser);
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         serverResultMapper.updateByPrimaryKeySelective(result);
-        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.RESCAN, "i18n_restart_server_result");
+        operationLogService.log(loginUser, result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.RESCAN, "i18n_restart_server_result");
         return result.getId();
     }
 
@@ -245,7 +241,7 @@ public class ServerService {
         serverResultMapper.deleteByExample(example);
     }
 
-    public void deleteServerResultById(String id) throws Exception {
+    public void deleteServerResultById(String id, LoginUser loginUser) throws Exception {
 
         ServerResultExample example = new ServerResultExample();
         example.createCriteria().andServerIdEqualTo(id);//serverId
@@ -259,26 +255,26 @@ public class ServerService {
             systemProviderService.deleteHistoryServerResult(result.getId());
         }
         serverResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_result");
 
     }
 
-    public void deleteServerResult(String id) throws Exception {
+    public void deleteServerResult(String id, LoginUser loginUser) throws Exception {
         ServerResultLogExample logExample = new ServerResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
         serverResultLogMapper.deleteByExample(logExample);
 
         systemProviderService.deleteHistoryServerResult(id);
         serverResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_result");
     }
 
-    public void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveServerResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
         ServerResultLogWithBLOBs serverResultLog = new ServerResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -327,23 +323,23 @@ public class ServerService {
         return serverMapper.selectByPrimaryKey(id);
     }
 
-    public int addServerGroup(ServerGroup serverGroup) {
+    public int addServerGroup(ServerGroup serverGroup, LoginUser loginUser) {
         serverGroup.setId(UUIDUtil.newUUID());
-        serverGroup.setCreator(tokenService.getLoginUser().getUserId());
+        serverGroup.setCreator(loginUser.getUserId());
         serverGroup.setCreateTime(System.currentTimeMillis());
         serverGroup.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server_group");
+        operationLogService.log(loginUser, serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server_group");
 
         return serverGroupMapper.insertSelective(serverGroup);
     }
 
-    public int editServerGroup(ServerGroup serverGroup) {
+    public int editServerGroup(ServerGroup serverGroup, LoginUser loginUser) {
         serverGroup.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server_group");
+        operationLogService.log(loginUser, serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server_group");
         return serverGroupMapper.updateByPrimaryKeySelective(serverGroup);
     }
 
-    public void deleteServerGroup(ServerGroup serverGroup) {
+    public void deleteServerGroup(ServerGroup serverGroup, LoginUser loginUser) {
 
         ServerExample example = new ServerExample();
         example.createCriteria().andServerGroupIdEqualTo(serverGroup.getId());
@@ -353,14 +349,14 @@ public class ServerService {
         } else {
             serverGroupMapper.deleteByPrimaryKey(serverGroup.getId());
         }
-        operationLogService.log(tokenService.getLoginUser(), serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_group");
+        operationLogService.log(loginUser, serverGroup.getId(), serverGroup.getId(), ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_group");
 
     }
 
-    public ServerValidateDTO addServer(MultipartFile keyFile, Server server) throws Exception {
+    public ServerValidateDTO addServer(MultipartFile keyFile, Server server, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         server.setId(id);
-        server.setCreator(tokenService.getLoginUser().getUserId());
+        server.setCreator(loginUser.getUserId());
         server.setCreateTime(System.currentTimeMillis());
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
@@ -395,12 +391,12 @@ public class ServerService {
 
         ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
-        operationLogService.log(tokenService.getLoginUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
+        operationLogService.log(loginUser, server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server");
         serverMapper.insertSelective(serverValidateDTO.getServer());
         return serverValidateDTO;
     }
 
-    public ServerValidateDTO editServer(MultipartFile keyFile, Server server) throws Exception {
+    public ServerValidateDTO editServer(MultipartFile keyFile, Server server, LoginUser loginUser) throws Exception {
         server.setUpdateTime(System.currentTimeMillis());
         Proxy proxy = new Proxy();
         if (server.getIsProxy() != null && server.getIsProxy()) {
@@ -435,12 +431,12 @@ public class ServerService {
 
         ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
-        operationLogService.log(tokenService.getLoginUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
+        operationLogService.log(loginUser, server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server");
         serverMapper.updateByPrimaryKeySelective(serverValidateDTO.getServer());
         return serverValidateDTO;
     }
 
-    public ServerValidateDTO copyServer(MultipartFile keyFile, Server server) throws Exception {
+    public ServerValidateDTO copyServer(MultipartFile keyFile, Server server, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         server.setId(id);
         server.setUpdateTime(System.currentTimeMillis());
@@ -477,15 +473,15 @@ public class ServerService {
 
         ServerValidateDTO serverValidateDTO = validateAccount(server, proxy);
 
-        operationLogService.log(tokenService.getLoginUser(), server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.COPY, "i18n_copy_server");
+        operationLogService.log(loginUser, server.getId(), server.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.COPY, "i18n_copy_server");
         serverMapper.insertSelective(serverValidateDTO.getServer());
         return serverValidateDTO;
     }
 
-    public void deleteServer(String id) throws Exception {
+    public void deleteServer(String id, LoginUser loginUser) throws Exception {
         serverMapper.deleteByPrimaryKey(id);
-        deleteServerResultById(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
+        deleteServerResultById(id, loginUser);
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server");
     }
 
     public ServerValidateDTO validateAccount(Server server, Proxy proxy) throws Exception {
@@ -655,10 +651,10 @@ public class ServerService {
         return extServerCertificateMapper.certificateList(request);
     }
 
-    public int addCertificate(MultipartFile keyFile, ServerCertificate certificate) throws Exception {
+    public int addCertificate(MultipartFile keyFile, ServerCertificate certificate, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         certificate.setId(id);
-        certificate.setCreator(tokenService.getLoginUser().getUserId());
+        certificate.setCreator(loginUser.getUserId());
         certificate.setLastModified(System.currentTimeMillis());
 
         if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
@@ -672,11 +668,11 @@ public class ServerService {
             certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
         }
 
-        operationLogService.log(tokenService.getLoginUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server_certificate");
+        operationLogService.log(loginUser, certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.CREATE, "i18n_create_server_certificate");
         return serverCertificateMapper.insertSelective(certificate);
     }
 
-    public int editCertificate(MultipartFile keyFile, ServerCertificate certificate) throws Exception {
+    public int editCertificate(MultipartFile keyFile, ServerCertificate certificate, LoginUser loginUser) throws Exception {
         certificate.setLastModified(System.currentTimeMillis());
         if (StringUtils.equalsIgnoreCase(certificate.getIsPublicKey(), "file")) {
             String keyFilePath = upload(keyFile, ServerConstants.DEFAULT_BASE_DIR);
@@ -689,13 +685,13 @@ public class ServerService {
             certificate.setPublicKeyPath(ServerConstants.DEFAULT_BASE_DIR_KEY + uuid + "/" + ServerConstants.HUMMER_RSA);
         }
 
-        operationLogService.log(tokenService.getLoginUser(), certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server_certificate");
+        operationLogService.log(loginUser, certificate.getId(), certificate.getName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.UPDATE, "i18n_update_server_certificate");
         return serverCertificateMapper.updateByPrimaryKeySelective(certificate);
     }
 
-    public void deleteCertificate(String id) throws Exception {
+    public void deleteCertificate(String id, LoginUser loginUser) throws Exception {
         serverCertificateMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_certificate");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.SERVER.name(), ResourceOperation.DELETE, "i18n_delete_server_certificate");
     }
 
     /**
@@ -743,7 +739,7 @@ public class ServerService {
         return historyList;
     }
 
-    public void insertExperts(MultipartFile excelFile, Server request) throws Exception {
+    public void insertExperts(MultipartFile excelFile, Server request, LoginUser loginUser) throws Exception {
         if (excelFile==null|| excelFile.getSize()==0){
             LogUtil.error("文件上传错误，重新上传");
         }
@@ -783,7 +779,7 @@ public class ServerService {
                 server.setId(UUIDUtil.newUUID());
                 server.setCreateTime(System.currentTimeMillis());
                 server.setUpdateTime(System.currentTimeMillis());
-                server.setCreator(tokenService.getLoginUser().getUserId());
+                server.setCreator(loginUser.getUserId());
                 server.setIsCertificate(false);
                 server.setIsPublicKey("no");
                 server.setIsProxy(false);
@@ -925,7 +921,7 @@ public class ServerService {
         }
     }
 
-    private void scanGroups(Server server, Integer scanId, String groupId) {
+    private void scanGroups(Server server, Integer scanId, String groupId, LoginUser loginUser) {
         try {
             this.messageOrderId = systemProviderService.createServerMessageOrder(server);
 
@@ -951,7 +947,7 @@ public class ServerService {
                     result.setServerId(server.getId());
                     result.setServerGroupId(server.getServerGroupId());
                     result.setServerGroupName(serverGroupName);
-                    result.setApplyUser(tokenService.getLoginUser().getUserId());
+                    result.setApplyUser(loginUser.getUserId());
                     result.setCreateTime(System.currentTimeMillis());
                     result.setUpdateTime(System.currentTimeMillis());
                     result.setServerName(server.getName());
@@ -963,9 +959,9 @@ public class ServerService {
                     result.setType(dto.getType());
                     serverResultMapper.insertSelective(result);
 
-                    saveServerResultLog(result.getId(), "i18n_start_server_result", "", true);
+                    saveServerResultLog(result.getId(), "i18n_start_server_result", "", true, loginUser);
 
-                    operationLogService.createOperationLog(tokenService.getLoginUser(), result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result", tokenService.getLoginUser().getIpAddr());
+                    operationLogService.createOperationLog(loginUser, result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.SCAN, "i18n_start_server_result", loginUser.getIpAddr());
 
                     systemProviderService.insertScanTaskHistory(result, scanId, server.getId(), TaskEnum.serverAccount.getType());
 
@@ -983,10 +979,10 @@ public class ServerService {
         return cloudProviderService.ruleGroupList(example);
     }
 
-    public void scanByGroup(String groupId, String serverId) throws Exception {
+    public void scanByGroup(String groupId, String serverId, LoginUser loginUser) throws Exception {
         Server server = serverMapper.selectByPrimaryKey(serverId);
         Integer scanId = systemProviderService.insertScanHistory(server);
-        this.scanGroups(server, scanId, groupId);
+        this.scanGroups(server, scanId, groupId, loginUser);
     }
 
 

@@ -3,6 +3,7 @@ package com.hummer.k8s.service;
 import com.hummer.common.core.domain.*;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.k8s.mapper.*;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -189,33 +190,33 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public String serverRescan(String id) throws Exception {
-        return serverService.rescan(id);
+    public String serverRescan(String id, LoginUser loginUser) throws Exception {
+        return serverService.rescan(id, loginUser);
     }
 
     @Override
-    public String codeRescan(String id) throws Exception {
-        return codeService.reScan(id);
+    public String codeRescan(String id, LoginUser loginUser) throws Exception {
+        return codeService.reScan(id, loginUser);
     }
 
     @Override
-    public String imageRescan(String id) throws Exception {
-        return imageService.reScan(id);
+    public String imageRescan(String id, LoginUser logiUser) throws Exception {
+        return imageService.reScan(id, logiUser);
     }
 
     @Override
-    public String k8sRescan(String id) throws Exception {
-        return k8sService.reScan(id);
+    public String k8sRescan(String id, LoginUser loginUser) throws Exception {
+        return k8sService.reScan(id, loginUser);
     }
 
     @Override
-    public String configRescan(String id) throws Exception {
-        return configService.reScan(id);
+    public String configRescan(String id, LoginUser loginUser) throws Exception {
+        return configService.reScan(id, loginUser);
     }
 
     @Override
-    public String fileSystemRescan(String id) throws Exception {
-        return fileSystemService.reScan(id);
+    public String fileSystemRescan(String id, LoginUser loginUser) throws Exception {
+        return fileSystemService.reScan(id, loginUser);
     }
 
     @Override
@@ -234,8 +235,8 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public void saveServerResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        serverService.saveServerResultLog(resultId, operation, output, result);
+    public void saveServerResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        serverService.saveServerResultLog(resultId, operation, output, result, loginUser);
     }
 
     @Override
@@ -249,8 +250,8 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        k8sService.saveCloudNativeResultLog(resultId, operation, output, result);
+    public void saveCloudNativeResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        k8sService.saveCloudNativeResultLog(resultId, operation, output, result, loginUser);
     }
 
     @Override
@@ -264,8 +265,8 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        configService.saveCloudNativeConfigResultLog(resultId, operation, output, result);
+    public void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        configService.saveCloudNativeConfigResultLog(resultId, operation, output, result, loginUser);
     }
 
     @Override
@@ -279,8 +280,8 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        codeService.saveCodeResultLog(resultId, operation, output, result);
+    public void saveCodeResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        codeService.saveCodeResultLog(resultId, operation, output, result, loginUser);
     }
 
     @Override
@@ -294,8 +295,8 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public void saveFsResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        fileSystemService.saveFsResultLog(resultId, operation, output, result);
+    public void saveFsResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        fileSystemService.saveFsResultLog(resultId, operation, output, result, loginUser);
     }
 
     @Override
@@ -309,8 +310,8 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
-        imageService.saveImageResultLog(resultId, operation, output, result);
+    public void saveImageResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception {
+        imageService.saveImageResultLog(resultId, operation, output, result, logiUser);
     }
 
 

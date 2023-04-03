@@ -10,11 +10,11 @@ import com.hummer.common.core.domain.request.image.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.*;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -76,15 +75,12 @@ public class ImageService {
     private ProxyMapper proxyMapper;
     @Autowired
     private PluginMapper pluginMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
     private IOperationLogService operationLogService;
     @DubboReference
     private ICloudProviderService cloudProviderService;
-
 
     public List<ImageRepo> imageRepoList(ImageRepoRequest request) {
         return extImageRepoMapper.imageRepoList(request);
@@ -101,21 +97,21 @@ public class ImageService {
         return repoItemList;
     }
 
-    public ImageRepo addImageRepo(ImageRepo imageRepo) throws Exception {
+    public ImageRepo addImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         imageRepo.setId(id);
-        imageRepo.setCreator(tokenService.getLoginUser().getUserId());
+        imageRepo.setCreator(loginUser.getUserId());
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
 
-        boolean result = syncImages(imageRepo);
+        boolean result = syncImages(imageRepo, loginUser);
         if (result) {
             imageRepo.setStatus("VALID");
         } else {
             imageRepo.setStatus("INVALID");
         }
 
-        operationLogService.log(tokenService.getLoginUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
+        operationLogService.log(loginUser, imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
         imageRepoMapper.insertSelective(imageRepo);
 
         return imageRepo;
@@ -125,7 +121,7 @@ public class ImageService {
      * @return 同步是否成功
      * @throws Exception
      */
-    public boolean syncImages(ImageRepo imageRepo) throws Exception {
+    public boolean syncImages(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
         long i = 0;
         ImageRepoSyncLogWithBLOBs imageRepoSyncLog = new ImageRepoSyncLogWithBLOBs();
         try {
@@ -224,7 +220,7 @@ public class ImageService {
             }
             imageRepoSyncLog.setRepoId(imageRepo.getId());
             imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
-            imageRepoSyncLog.setOperator(tokenService.getLoginUser().getUserName());
+            imageRepoSyncLog.setOperator(loginUser.getUserName());
             imageRepoSyncLog.setOperation("i18n_sync_image");
             imageRepoSyncLog.setOutput("i18n_sync_image_success");
             imageRepoSyncLog.setResult(true);
@@ -234,7 +230,7 @@ public class ImageService {
             LogUtil.error(e.getMessage());
             imageRepoSyncLog.setRepoId(imageRepo.getId());
             imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
-            imageRepoSyncLog.setOperator(tokenService.getLoginUser().getUserName());
+            imageRepoSyncLog.setOperator(loginUser.getUserName());
             imageRepoSyncLog.setOperation("i18n_sync_image");
             imageRepoSyncLog.setOutput("i18n_sync_image_error: " + e.getMessage());
             imageRepoSyncLog.setResult(false);
@@ -246,10 +242,10 @@ public class ImageService {
         return true;
     }
 
-    public ImageRepo editImageRepo(ImageRepo imageRepo) throws Exception {
+    public ImageRepo editImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
         imageRepo.setUpdateTime(System.currentTimeMillis());
 
-        boolean result = syncImages(imageRepo);
+        boolean result = syncImages(imageRepo, loginUser);
 
         if (result) {
             imageRepo.setStatus("VALID");
@@ -257,15 +253,15 @@ public class ImageService {
             imageRepo.setStatus("INVALID");
         }
 
-        operationLogService.log(tokenService.getLoginUser(), imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_repo");
+        operationLogService.log(loginUser, imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_repo");
         imageRepoMapper.updateByPrimaryKeySelective(imageRepo);
 
         return imageRepo;
     }
 
-    public void deleteImageRepo(String id) throws Exception {
+    public void deleteImageRepo(String id, LoginUser loginUser) throws Exception {
         imageRepoMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_repo");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_repo");
     }
 
     public List<ImageDTO> imageList(ImageRequest request) {
@@ -282,7 +278,7 @@ public class ImageService {
         return imageMapper.selectByExample(null);
     }
 
-    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request) throws Exception {
+    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request, LoginUser loginUser) throws Exception {
 
         try {
             String id = UUIDUtil.newUUID();
@@ -290,7 +286,7 @@ public class ImageService {
             request.setStatus("VALID");
             request.setCreateTime(System.currentTimeMillis());
             request.setUpdateTime(System.currentTimeMillis());
-            request.setCreator(tokenService.getLoginUser().getUserId());
+            request.setCreator(loginUser.getUserId());
             if (iconFile != null) {
                 String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPluginIcon("images/" + iconFilePath);
@@ -309,7 +305,7 @@ public class ImageService {
 
             imageMapper.insertSelective(request);
 
-            operationLogService.log(tokenService.getLoginUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
+            operationLogService.log(loginUser, request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
 
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -317,12 +313,12 @@ public class ImageService {
         return request;
     }
 
-    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request) throws Exception {
+    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request, LoginUser loginUser) throws Exception {
 
         try {
             request.setStatus("VALID");
             request.setUpdateTime(System.currentTimeMillis());
-            request.setCreator(tokenService.getLoginUser().getUserId());
+            request.setCreator(loginUser.getUserId());
             if (iconFile != null) {
                 String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPluginIcon("images/" + iconFilePath);
@@ -343,7 +339,7 @@ public class ImageService {
 
             imageMapper.updateByPrimaryKeySelective(request);
 
-            operationLogService.log(tokenService.getLoginUser(), request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image");
+            operationLogService.log(loginUser, request.getId(), request.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image");
 
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -351,10 +347,10 @@ public class ImageService {
         return request;
     }
 
-    public void deleteImage(String id) throws Exception {
+    public void deleteImage(String id, LoginUser loginUser) throws Exception {
         imageMapper.deleteByPrimaryKey(id);
-        deleteResultByImageId(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image");
+        deleteResultByImageId(id, loginUser);
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image");
     }
 
     /**
@@ -378,13 +374,13 @@ public class ImageService {
         return extImageRuleMapper.ruleList(request);
     }
 
-    public int addImageRule(ImageRuleRequest request) throws Exception {
+    public int addImageRule(ImageRuleRequest request, LoginUser loginUser) throws Exception {
         ImageRule record = new ImageRule();
         BeanUtils.copyBean(record, request);
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_rule");
+        operationLogService.log(loginUser, record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_rule");
         return imageRuleMapper.insertSelective(record);
     }
 
@@ -409,26 +405,26 @@ public class ImageService {
         }
     }
 
-    public int updateImageRule(ImageRuleRequest request) throws Exception {
+    public int updateImageRule(ImageRuleRequest request, LoginUser loginUser) throws Exception {
         ImageRule record = new ImageRule();
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
+        operationLogService.log(loginUser, record.getId(), record.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
         return imageRuleMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void deleteImageRule(String id) throws Exception {
+    public void deleteImageRule(String id, LoginUser loginUser) throws Exception {
         deleteRuleTag(null, id);
         imageRuleMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_rule");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_rule");
     }
 
     public int changeStatus(ImageRule rule) throws Exception {
         return imageRuleMapper.updateByPrimaryKeySelective(rule);
     }
 
-    public void scan(String id) throws Exception {
+    public void scan(String id, LoginUser loginUser) throws Exception {
         Image image = imageMapper.selectByPrimaryKey(id);
         Integer scanId = systemProviderService.insertScanHistory(image);
         if (StringUtils.equalsIgnoreCase(image.getStatus(), CloudAccountConstants.Status.VALID.name())) {
@@ -441,7 +437,7 @@ public class ImageService {
                 BeanUtils.copyBean(result, image);
                 result.setId(UUIDUtil.newUUID());
                 result.setImageId(id);
-                result.setApplyUser(tokenService.getLoginUser().getUserId());
+                result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
                 result.setRuleId(dto.getId());
@@ -449,11 +445,11 @@ public class ImageService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(tokenService.getLoginUser().getUserName());
+                result.setUserName(loginUser.getUserName());
                 imageResultMapper.insertSelective(result);
 
-                saveImageResultLog(result.getId(), "i18n_start_image_result", "", true);
-                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.SCAN, "i18n_start_image_result");
+                saveImageResultLog(result.getId(), "i18n_start_image_result", "", true, loginUser);
+                operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.SCAN, "i18n_start_image_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, image.getId(), TaskEnum.imageAccount.getType());
 
@@ -463,7 +459,7 @@ public class ImageService {
 
     }
 
-    public void createScan(ImageResultWithBLOBs result) throws Exception {
+    public void createScan(ImageResultWithBLOBs result, LoginUser loginUser) throws Exception {
         try {
             ImageRuleRequest request = new ImageRuleRequest();
             request.setId(result.getRuleId());
@@ -494,7 +490,7 @@ public class ImageService {
             imageResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createImageMessageOrder(result);
-            saveImageResultLog(result.getId(), "i18n_end_image_result", "", true);
+            saveImageResultLog(result.getId(), "i18n_end_image_result", "", true, loginUser);
 
             systemProviderService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
         } catch (Exception e) {
@@ -503,7 +499,7 @@ public class ImageService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             imageResultMapper.updateByPrimaryKeySelective(result);
             systemProviderService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
-            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveImageResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
     }
 
@@ -549,19 +545,19 @@ public class ImageService {
         return i;
     }
 
-    public String reScan(String id) throws Exception {
+    public String reScan(String id, LoginUser loginUser) throws Exception {
         ImageResultWithBLOBs result = imageResultMapper.selectByPrimaryKey(id);
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUserName());
+        result.setUserName(loginUser.getUserName());
         imageResultMapper.updateByPrimaryKeySelective(result);
 
         this.reScanDeleteImageResult(id);
 
-        saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true);
+        saveImageResultLog(result.getId(), "i18n_restart_image_result", "", true, loginUser);
 
-        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.RESCAN, "i18n_restart_image_result");
+        operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.RESCAN, "i18n_restart_image_result");
 
         systemProviderService.updateHistoryImageResult(BeanUtils.copyBean(new HistoryImageResultWithBLOBs(), result));
 
@@ -576,7 +572,7 @@ public class ImageService {
 
     }
 
-    public void deleteImageResult(String id) throws Exception {
+    public void deleteImageResult(String id, LoginUser loginUser) throws Exception {
         ImageResultLogExample logExample = new ImageResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
         imageResultLogMapper.deleteByExample(logExample);
@@ -587,7 +583,7 @@ public class ImageService {
 
         systemProviderService.deleteHistoryImageResult(id);
         imageResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
     }
 
     public void deleteRescanResultByImageId(String id) throws Exception {
@@ -596,7 +592,7 @@ public class ImageService {
         imageResultMapper.deleteByExample(example);
     }
 
-    public void deleteResultByImageId(String id) throws Exception {
+    public void deleteResultByImageId(String id, LoginUser loginUser) throws Exception {
 
         ImageResultExample example = new ImageResultExample();
         example.createCriteria().andImageIdEqualTo(id);
@@ -614,7 +610,7 @@ public class ImageService {
             systemProviderService.deleteHistoryImageResult(result.getId());
         }
         imageResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_result");
 
     }
 
@@ -735,12 +731,12 @@ public class ImageService {
         return imageResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public void saveImageResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveImageResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
         ImageResultLogWithBLOBs imageResultLog = new ImageResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -776,9 +772,9 @@ public class ImageService {
         return imageRepoSyncLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public void syncImage(@PathVariable String id) throws Exception {
+    public void syncImage(String id, LoginUser loginUser) throws Exception {
         ImageRepo imageRepo = imageRepoMapper.selectByPrimaryKey(id);
-        syncImages(imageRepo);
+        syncImages(imageRepo, loginUser);
     }
 
     /**
@@ -820,7 +816,7 @@ public class ImageService {
         return "i18n_no_data";
     }
 
-    public void scanImagesRepo(List<String> ids) {
+    public void scanImagesRepo(List<String> ids, LoginUser loginUser) {
         ids.forEach(id -> {
             try {
                 ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(id);
@@ -832,20 +828,21 @@ public class ImageService {
                 SbomVersion sbomVersion = sbomVersionMapper.selectByExample(example).get(0);
                 request.setSbomVersionId(sbomVersion.getId());
                 request.setName(imageRepoItem.getPath());
-                scanImageRepo(request);
+                scanImageRepo(request, loginUser);
             } catch (Exception e) {
                 throw new HRException(e.getMessage());
             }
         });
     }
 
-    public void scanImageRepo(ScanImageRepoRequest request) throws Exception {
+    public void scanImageRepo(ScanImageRepoRequest request, LoginUser loginUser) throws Exception {
         try {
+
             Image image = BeanUtils.copyBean(new Image(), request);
             image.setStatus("VALID");
             image.setCreateTime(System.currentTimeMillis());
             image.setUpdateTime(System.currentTimeMillis());
-            image.setCreator(tokenService.getLoginUser().getUserId());
+            image.setCreator(loginUser.getUserId());
             image.setType("repo");
             image.setImageUrl(request.getPath().split(":")[0]);
             image.setImageTag(request.getTag());
@@ -859,21 +856,21 @@ public class ImageService {
             if (list.size() == 0) {
                 image.setId(UUIDUtil.newUUID());
                 imageMapper.insertSelective(image);
-                operationLogService.log(tokenService.getLoginUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
+                operationLogService.log(loginUser, image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image");
 
             } else {
                 image.setId(list.get(0).getId());
                 imageMapper.updateByPrimaryKeySelective(image);
-                operationLogService.log(tokenService.getLoginUser(), image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
+                operationLogService.log(loginUser, image.getId(), image.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_rule");
 
             }
             ImageResultExample imageResultExample = new ImageResultExample();
             imageResultExample.createCriteria().andImageIdEqualTo(image.getId());
             List<ImageResult> results = imageResultMapper.selectByExample(imageResultExample);
             if (results.size() > 0) {
-                this.reScan(results.get(0).getId());
+                this.reScan(results.get(0).getId(), loginUser);
             } else {
-                this.scan(image.getId());
+                this.scan(image.getId(), loginUser);
             }
 
         } catch (Exception e) {

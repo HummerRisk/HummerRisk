@@ -13,13 +13,13 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtCloudNativeConfigMapper;
 import com.hummer.k8s.mapper.ext.ExtCloudNativeConfigResultMapper;
 import com.hummer.k8s.mapper.ext.ExtConfigResultItemMapper;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -61,8 +61,6 @@ public class ConfigService {
     private ProxyMapper proxyMapper;
     @Autowired
     private PluginMapper pluginMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -110,7 +108,7 @@ public class ConfigService {
         }
     }
 
-    public CloudNativeConfig addCloudNativeConfig(CloudNativeConfig request) {
+    public CloudNativeConfig addCloudNativeConfig(CloudNativeConfig request, LoginUser loginUser) {
         try{
             //部署配置名称不能重复
             CloudNativeConfigExample cloudNativeConfigExample = new CloudNativeConfigExample();
@@ -125,7 +123,7 @@ public class ConfigService {
             BeanUtils.copyBean(account, request);
             account.setCreateTime(System.currentTimeMillis());
             account.setUpdateTime(System.currentTimeMillis());
-            account.setCreator(Objects.requireNonNull(tokenService.getLoginUser()).getUserId());
+            account.setCreator(Objects.requireNonNull(loginUser).getUserId());
             account.setId(UUIDUtil.newUUID());
             //检验账号的有效性
             boolean valid = validateAccount(account);
@@ -135,7 +133,7 @@ public class ConfigService {
                 account.setStatus(CloudAccountConstants.Status.INVALID.name());
             }
             cloudNativeConfigMapper.insertSelective(account);
-            operationLogService.log(tokenService.getLoginUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_create_cloud_native_config");
+            operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_create_cloud_native_config");
             return account;
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
@@ -143,7 +141,7 @@ public class ConfigService {
         return null;
     }
 
-    public CloudNativeConfig editCloudNativeConfig(CloudNativeConfig request) throws Exception {
+    public CloudNativeConfig editCloudNativeConfig(CloudNativeConfig request, LoginUser loginUser) throws Exception {
         try {
             //部署配置名称不能重复
             CloudNativeConfigExample cloudNativeConfigExample = new CloudNativeConfigExample();
@@ -171,7 +169,7 @@ public class ConfigService {
             cloudNativeConfigMapper.updateByPrimaryKeySelective(account);
             account = cloudNativeConfigMapper.selectByPrimaryKey(account.getId());
             //检验账号已更新状态
-            operationLogService.log(tokenService.getLoginUser(), account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native_config");
+            operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native_config");
             return account;
 
         } catch (HRException | ClientException e) {
@@ -182,12 +180,12 @@ public class ConfigService {
         return null;
     }
 
-    public void delete(String accountId) throws Exception {
+    public void delete(String accountId, LoginUser loginUser) throws Exception {
         CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(accountId);
         cloudNativeConfigMapper.deleteByPrimaryKey(accountId);
 
-        deleteResultByCloudNativeConfigId(accountId);
-        operationLogService.log(tokenService.getLoginUser(), accountId, cloudNativeConfig.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native_config");
+        deleteResultByCloudNativeConfigId(accountId, loginUser);
+        operationLogService.log(loginUser, accountId, cloudNativeConfig.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native_config");
     }
 
     public String uploadYaml(MultipartFile file) throws Exception {
@@ -207,7 +205,7 @@ public class ConfigService {
         }
     }
 
-    public void scan(String id) throws Exception {
+    public void scan(String id, LoginUser loginUser) throws Exception {
         CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(id);
         Integer scanId = systemProviderService.insertScanHistory(cloudNativeConfig);
         if(StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.VALID.name())) {
@@ -220,19 +218,19 @@ public class ConfigService {
                 BeanUtils.copyBean(result, cloudNativeConfig);
                 result.setId(UUIDUtil.newUUID());
                 result.setConfigId(id);
-                result.setApplyUser(tokenService.getLoginUser().getUserId());
+                result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-                result.setUserName(tokenService.getLoginUser().getUserName());
+                result.setUserName(loginUser.getUserName());
                 result.setRuleId(rule.getId());
                 result.setRuleName(rule.getName());
                 result.setRuleDesc(rule.getDescription());
                 result.setSeverity(rule.getSeverity());
                 cloudNativeConfigResultMapper.insertSelective(result);
 
-                saveCloudNativeConfigResultLog(result.getId(), "i18n_start_config_result", "", true);
-                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
+                saveCloudNativeConfigResultLog(result.getId(), "i18n_start_config_result", "", true, loginUser);
+                operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_start_config_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, cloudNativeConfig.getId(), TaskEnum.configAccount.getType());
 
@@ -241,19 +239,19 @@ public class ConfigService {
         }
     }
 
-    public String reScan(String id) throws Exception {
+    public String reScan(String id, LoginUser loginUser) throws Exception {
         CloudNativeConfigResult result = cloudNativeConfigResultMapper.selectByPrimaryKey(id);
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUserName());
+        result.setUserName(loginUser.getUserName());
         cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
 
         reScanDeleteCloudNativeConfigResult(id);
 
-        saveCloudNativeConfigResultLog(result.getId(), "i18n_restart_config_result", "", true);
+        saveCloudNativeConfigResultLog(result.getId(), "i18n_restart_config_result", "", true, loginUser);
 
-        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_restart_config_result");
+        operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.CREATE, "i18n_restart_config_result");
 
         systemProviderService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
 
@@ -266,7 +264,7 @@ public class ConfigService {
         cloudNativeConfigResultMapper.deleteByExample(example);
     }
 
-    public void deleteResultByCloudNativeConfigId(String id) throws Exception {
+    public void deleteResultByCloudNativeConfigId(String id, LoginUser loginUser) throws Exception {
         CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
         example.createCriteria().andConfigIdEqualTo(id);
         List<CloudNativeConfigResult> list = cloudNativeConfigResultMapper.selectByExample(example);
@@ -283,15 +281,15 @@ public class ConfigService {
             systemProviderService.deleteHistoryCloudNativeConfigResult(configResult.getId());
         }
         cloudNativeConfigResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_config_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_config_result");
     }
 
-    public void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveCloudNativeConfigResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
         CloudNativeConfigResultLogWithBLOBs cloudNativeConfigResultLog = new CloudNativeConfigResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -312,7 +310,7 @@ public class ConfigService {
         cloudNativeConfigResultItemMapper.deleteByExample(cloudNativeConfigResultItemExample);
     }
 
-    public void createScan (CloudNativeConfigResult result) throws Exception {
+    public void createScan (CloudNativeConfigResult result, LoginUser loginUser) throws Exception {
         try {
             CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(result.getConfigId());
             String resultJson = "";
@@ -330,7 +328,7 @@ public class ConfigService {
             cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createCloudNativeConfigMessageOrder(result);
-            saveCloudNativeConfigResultLog(result.getId(), "i18n_end_config_result", "", true);
+            saveCloudNativeConfigResultLog(result.getId(), "i18n_end_config_result", "", true, loginUser);
 
             systemProviderService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
         } catch (Exception e) {
@@ -339,7 +337,7 @@ public class ConfigService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             cloudNativeConfigResultMapper.updateByPrimaryKeySelective(result);
             systemProviderService.updateHistoryCloudNativeConfigResult(BeanUtils.copyBean(new HistoryCloudNativeConfigResult(), result));
-            saveCloudNativeConfigResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCloudNativeConfigResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
     }
 
@@ -479,7 +477,7 @@ public class ConfigService {
         return cloudNativeConfigResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public void deleteCloudNativeConfigResult(String id) throws Exception {
+    public void deleteCloudNativeConfigResult(String id, LoginUser loginUser) throws Exception {
 
         CloudNativeConfigResultLogExample logExample = new CloudNativeConfigResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
@@ -492,7 +490,7 @@ public class ConfigService {
         systemProviderService.deleteHistoryCloudNativeConfigResult(id);
 
         cloudNativeConfigResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_config_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.CLOUD_NATIVE_CONFIG.name(), ResourceOperation.DELETE, "i18n_delete_config_result");
 
     }
 

@@ -14,6 +14,7 @@ import com.hummer.common.core.dto.HistoryCodeResultDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.CodeService;
 import io.kubernetes.client.openapi.ApiException;
 import io.swagger.annotations.Api;
@@ -33,6 +34,8 @@ public class CodeController {
 
     @Autowired
     private CodeService codeService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "源码项目列表")
@@ -68,20 +71,20 @@ public class CodeController {
     @ApiOperation(value = "添加源码项目")
     @PostMapping(value = "addCode")
     public Code addCode(@RequestBody Code request) throws Exception {
-        return codeService.addCode(request);
+        return codeService.addCode(request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "修改源码项目")
     @PostMapping(value = "updateCode")
     public Code updateCode(@RequestBody Code request) throws Exception {
-        return codeService.updateCode(request);
+        return codeService.updateCode(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除源码项目")
     @GetMapping("deleteCode/{id}")
     public void deleteCode(@PathVariable String id) throws Exception {
-        codeService.deleteCode(id);
+        codeService.deleteCode(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "批量校验源码账号")
@@ -107,19 +110,19 @@ public class CodeController {
     @ApiOperation(value = "添加源码检测规则")
     @PostMapping(value = "addCodeRule")
     public int addCodeRule(@RequestBody CodeRuleRequest request) throws Exception {
-        return codeService.addCodeRule(request);
+        return codeService.addCodeRule(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "修改源码检测规则")
     @PostMapping(value = "updateCodeRule")
     public int updateCodeRule(@RequestBody CodeRuleRequest request) throws Exception {
-        return codeService.updateCodeRule(request);
+        return codeService.updateCodeRule(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除源码检测规则")
     @GetMapping(value = "deleteCodeRule/{id}")
     public void deleteCodeRule(@PathVariable String id) throws Exception  {
-        codeService.deleteCodeRule(id);
+        codeService.deleteCodeRule(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "源码检测规则启用")
@@ -131,13 +134,13 @@ public class CodeController {
     @ApiOperation(value = "源码检测规则")
     @GetMapping("scan/{id}")
     public void scan(@PathVariable String id) throws Exception {
-        codeService.scan(id);
+        codeService.scan(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "重新检测源码规则")
     @GetMapping("reScan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
-        codeService.reScan(id);
+        codeService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -173,7 +176,7 @@ public class CodeController {
     @ApiOperation(value = "删除源码检测记录")
     @GetMapping("deleteCodeResult/{id}")
     public void deleteCodeResult(@PathVariable String id) throws Exception {
-        codeService.deleteCodeResult(id);
+        codeService.deleteCodeResult(id, tokenService.getLoginUser());
     }
 
     @I18n

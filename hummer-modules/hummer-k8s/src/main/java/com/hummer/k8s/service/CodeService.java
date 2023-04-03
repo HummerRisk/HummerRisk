@@ -16,7 +16,6 @@ import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.code.CodeCredential;
 import com.hummer.common.core.proxy.code.CodeCredentialRequest;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.ExtCodeMapper;
 import com.hummer.k8s.mapper.ext.ExtCodeResultItemMapper;
@@ -24,6 +23,7 @@ import com.hummer.k8s.mapper.ext.ExtCodeResultMapper;
 import com.hummer.k8s.mapper.ext.ExtCodeRuleMapper;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import io.kubernetes.client.openapi.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -62,8 +62,6 @@ public class CodeService {
     private ExtCodeResultItemMapper extCodeResultItemMapper;
     @Autowired
     private ProxyMapper proxyMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -89,33 +87,33 @@ public class CodeService {
         return codeMapper.selectByExample(null);
     }
 
-    public Code addCode(Code code) throws Exception {
+    public Code addCode(Code code, LoginUser loginUser) throws Exception {
         String id = UUIDUtil.newUUID();
         code.setId(id);
-        code.setCreator(tokenService.getLoginUser().getUserId());
+        code.setCreator(loginUser.getUserId());
         code.setCreateTime(System.currentTimeMillis());
         code.setUpdateTime(System.currentTimeMillis());
         code.setStatus("VALID");
 
-        operationLogService.log(tokenService.getLoginUser(), code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code");
+        operationLogService.log(loginUser, code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code");
         codeMapper.insertSelective(code);
         return code;
     }
 
-    public Code updateCode(Code code) throws Exception {
+    public Code updateCode(Code code, LoginUser loginUser) throws Exception {
         code.setUpdateTime(System.currentTimeMillis());
         code.setStatus("VALID");
 
-        operationLogService.log(tokenService.getLoginUser(), code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code");
+        operationLogService.log(loginUser, code.getId(), code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code");
         codeMapper.updateByPrimaryKeySelective(code);
         return code;
     }
 
-    public void deleteCode(String id) throws Exception {
+    public void deleteCode(String id, LoginUser loginUser) throws Exception {
         Code code = codeMapper.selectByPrimaryKey(id);
         codeMapper.deleteByPrimaryKey(id);
-        deleteResultByCodeId(id);
-        operationLogService.log(tokenService.getLoginUser(), id, code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code");
+        deleteResultByCodeId(id, loginUser);
+        operationLogService.log(loginUser, id, code.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code");
     }
 
     public boolean validate(List<String> ids) {
@@ -148,13 +146,13 @@ public class CodeService {
         return extCodeRuleMapper.ruleList(request);
     }
 
-    public int addCodeRule(CodeRuleRequest request) throws Exception {
+    public int addCodeRule(CodeRuleRequest request, LoginUser loginUser) throws Exception {
         CodeRule record = new CodeRule();
         BeanUtils.copyBean(record, request);
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code_rule");
+        operationLogService.log(loginUser, record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.CREATE, "i18n_create_code_rule");
         return codeRuleMapper.insertSelective(record);
     }
 
@@ -179,19 +177,19 @@ public class CodeService {
         }
     }
 
-    public int updateCodeRule(CodeRuleRequest request) throws Exception {
+    public int updateCodeRule(CodeRuleRequest request, LoginUser loginUser) throws Exception {
         CodeRule record = new CodeRule();
         BeanUtils.copyBean(record, request);
         record.setLastModified(System.currentTimeMillis());
         saveRuleTagMapping(record.getId(), request.getTagKey());
-        operationLogService.log(tokenService.getLoginUser(), record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code_rule");
+        operationLogService.log(loginUser, record.getId(), record.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.UPDATE, "i18n_update_code_rule");
         return codeRuleMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void deleteCodeRule(String id) throws Exception {
+    public void deleteCodeRule(String id, LoginUser loginUser) throws Exception {
         deleteRuleTag(null, id);
         codeRuleMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_rule");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_rule");
     }
 
     public int changeStatus(CodeRule rule) throws Exception {
@@ -219,7 +217,7 @@ public class CodeService {
         return codeResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public void deleteCodeResult(String id) throws Exception {
+    public void deleteCodeResult(String id, LoginUser loginUser) throws Exception {
         CodeResultLogExample logExample = new CodeResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
         codeResultLogMapper.deleteByExample(logExample);
@@ -230,7 +228,7 @@ public class CodeService {
 
         systemProviderService.deleteHistoryCodeResult(id);
         codeResultMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
     }
 
     public List<CodeResultItemWithBLOBs> resultItemList(CodeResultItem codeResultItem) {
@@ -248,7 +246,7 @@ public class CodeService {
         return extCodeResultItemMapper.resultItemListBySearch(request);
     }
 
-    public void scan(String id) throws Exception {
+    public void scan(String id, LoginUser loginUser) throws Exception {
         Code code = codeMapper.selectByPrimaryKey(id);
         Integer scanId = systemProviderService.insertScanHistory(code);
         if(StringUtils.equalsIgnoreCase(code.getStatus(), CloudAccountConstants.Status.VALID.name())) {
@@ -261,7 +259,7 @@ public class CodeService {
                 BeanUtils.copyBean(result, code);
                 result.setId(UUIDUtil.newUUID());
                 result.setCodeId(id);
-                result.setApplyUser(tokenService.getLoginUser().getUserId());
+                result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
                 result.setRuleId(dto.getId());
@@ -269,11 +267,11 @@ public class CodeService {
                 result.setRuleDesc(dto.getDescription());
                 result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                 result.setSeverity(dto.getSeverity());
-                result.setUserName(tokenService.getLoginUser().getUserName());
+                result.setUserName(loginUser.getUserName());
                 codeResultMapper.insertSelective(result);
 
-                saveCodeResultLog(result.getId(), "i18n_start_code_result", "", true);
-                operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.SCAN, "i18n_start_code_result");
+                saveCodeResultLog(result.getId(), "i18n_start_code_result", "", true, loginUser);
+                operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.SCAN, "i18n_start_code_result");
 
                 systemProviderService.insertScanTaskHistory(result, scanId, code.getId(), TaskEnum.codeAccount.getType());
 
@@ -282,19 +280,19 @@ public class CodeService {
         }
     }
 
-    public String reScan(String id) throws Exception {
+    public String reScan(String id, LoginUser loginUser) throws Exception {
         CodeResult result = codeResultMapper.selectByPrimaryKey(id);
 
         result.setUpdateTime(System.currentTimeMillis());
         result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-        result.setUserName(tokenService.getLoginUser().getUserName());
+        result.setUserName(loginUser.getUserName());
         codeResultMapper.updateByPrimaryKeySelective(result);
 
         reScanDeleteCodeResult(id);
 
-        saveCodeResultLog(result.getId(), "i18n_restart_code_result", "", true);
+        saveCodeResultLog(result.getId(), "i18n_restart_code_result", "", true, loginUser);
 
-        operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.RESCAN, "i18n_restart_code_result");
+        operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CODE.name(), ResourceOperation.RESCAN, "i18n_restart_code_result");
 
         systemProviderService.updateHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
 
@@ -315,7 +313,7 @@ public class CodeService {
         codeResultMapper.deleteByExample(example);
     }
 
-    public void deleteResultByCodeId(String id) throws Exception {
+    public void deleteResultByCodeId(String id, LoginUser loginUser) throws Exception {
         CodeResultExample example = new CodeResultExample();
         example.createCriteria().andCodeIdEqualTo(id);
         List<CodeResult> list = codeResultMapper.selectByExample(example);
@@ -332,15 +330,15 @@ public class CodeService {
             systemProviderService.deleteHistoryCodeResult(codeResult.getId());
         }
         codeResultMapper.deleteByExample(example);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.CODE.name(), ResourceOperation.DELETE, "i18n_delete_code_result");
     }
 
-    public void saveCodeResultLog(String resultId, String operation, String output, boolean result) throws Exception {
+    public void saveCodeResultLog(String resultId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
         CodeResultLogWithBLOBs codeResultLog = new CodeResultLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -355,7 +353,7 @@ public class CodeService {
 
     }
 
-    public void createScan (CodeResult result) throws Exception {
+    public void createScan (CodeResult result, LoginUser loginUser) throws Exception {
         try {
             CodeRuleRequest request = new CodeRuleRequest();
             request.setId(result.getRuleId());
@@ -385,7 +383,7 @@ public class CodeService {
             codeResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createCodeMessageOrder(result);
-            saveCodeResultLog(result.getId(), "i18n_end_code_result", "", true);
+            saveCodeResultLog(result.getId(), "i18n_end_code_result", "", true, loginUser);
 
             systemProviderService.updateHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
         } catch (Exception e) {
@@ -394,7 +392,7 @@ public class CodeService {
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
             codeResultMapper.updateByPrimaryKeySelective(result);
             systemProviderService.updateHistoryCodeResult(BeanUtils.copyBean(new HistoryCodeResult(), result));
-            saveCodeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false);
+            saveCodeResultLog(result.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
         }
     }
 
