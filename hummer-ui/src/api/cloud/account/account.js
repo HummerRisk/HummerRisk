@@ -54,3 +54,9 @@ export const cloudTagRuleSaveUrl = "/cloud/tag/rule/save";
 export const cloudTagRuleUpdateUrl = "/cloud/tag/rule/update";
 
 export const cloudListByGroupUrl = "/cloud/account/listByGroup/";
+
+export const resourceSummaryReport = "/cloud/cloud/resource/summary/";
+
+export const resourceTaskCountUrl = "/cloud/cloud/resource/task/count/";
+
+export const resourceRiskListUrl = "/cloud/cloud/resource/risk/list/";

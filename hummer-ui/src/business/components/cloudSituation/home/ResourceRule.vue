@@ -67,7 +67,7 @@
 import {getCurrentAccountID} from "@/common/js/utils";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {resourceTypesUrl, tagRuleListUrl} from "@/api/cloud/rule/rule";
-import {resourceRiskListUrl, resourceTaskCountUrl, taskDetailUrl} from "@/api/cloud/resource/resource";
+import {cloudTaskDetailUrl, resourceRiskListUrl, resourceTaskCountUrl} from "@/api/cloud/account/account";
 
 export default {
     name: "ResourceType",
@@ -133,7 +133,7 @@ export default {
           path: '/account/result',
         }).catch(error => error);
         this.detailForm = {};
-        this.$get(taskDetailUrl + item.id, response => {
+        this.$get(cloudTaskDetailUrl + item.id, response => {
           if (response.success) {
             this.detailForm = response.data;
             this.detailVisible = true;

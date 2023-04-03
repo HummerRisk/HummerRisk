@@ -76,8 +76,8 @@ import {SITUATION_CONFIGS} from "../../common/components/search/search-component
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import ResourceRule from "@/business/components/cloudSituation/home/ResourceRule";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {cloudResourceListUrl, resourceSummaryReport} from "@/api/cloud/resource/resource";
-import {allListUrl} from "@/api/cloud/account/account";
+import {cloudResourceListUrl} from "@/api/cloud/resource/resource";
+import {allListUrl, resourceSummaryReport} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
