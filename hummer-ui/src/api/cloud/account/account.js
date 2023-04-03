@@ -11,6 +11,8 @@ export const ruleListUrl = "/cloud/account/rule/list/";
 
 export const validateUrl = "/cloud/account/validate/";
 
+export const selectIdsValidateUrl = "/cloud/account/validate";
+
 export const groupListUrl = "/cloud/account/group/list/";
 
 export const reportListUrl = "/cloud/account/report/list/";

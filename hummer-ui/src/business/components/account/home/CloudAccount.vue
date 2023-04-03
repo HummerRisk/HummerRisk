@@ -331,8 +331,8 @@ import {
   addAccountUrl,
   deleteAccountUrl,
   iamStrategyUrl,
-  updateAccountUrl,
-  validateUrl
+  selectIdsValidateUrl,
+  updateAccountUrl
 } from "@/api/cloud/account/account";
 import {addProxyUrl, cloudPluginUrl, pluginByIdUrl, proxyListAllUrl, updateProxyUrl} from "@/api/system/system";
 import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
@@ -549,7 +549,7 @@ const columnOptions = [
             if (action === 'confirm') {
               this.result = this.$request({
                 method: 'POST',
-                url: validateUrl,
+                url: selectIdsValidateUrl,
                 data: Array.from(this.selectIds),
                 headers: {
                   'Content-Type': undefined

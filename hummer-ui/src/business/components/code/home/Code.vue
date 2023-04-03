@@ -232,7 +232,15 @@ import ProxyDialogFooter from "@/business/components/common/components/ProxyDial
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {addCodeUrl, codeListUrl, codePluginUrl, codeValidateUrl, scanCodeUrl, updateCodeUrl} from "@/api/k8s/code/code";
+import {
+  addCodeUrl,
+  codeListUrl,
+  codePluginUrl,
+  codeValidateUrl,
+  deleteCodeUrl,
+  scanCodeUrl,
+  updateCodeUrl
+} from "@/api/k8s/code/code";
 import {proxyListAllUrl} from "@/api/system/system";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 
