@@ -751,7 +751,6 @@ export default {
         let data = {}, key = {};
         for (let tmp of item.tmpList) {
           if(!tmp.input) {
-            console.log(111, tmp)
             this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
             return;
           }

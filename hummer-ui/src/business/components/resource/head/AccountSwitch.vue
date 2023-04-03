@@ -52,6 +52,7 @@ export default {
       this.$emit("cloudAccountSwitch", accountId);
     },
     selectAccount(accountId, accountName) {
+      this.currentAccount = accountName;
       this.$emit('selectAccount', accountId, accountName);
     },
     goReport() {

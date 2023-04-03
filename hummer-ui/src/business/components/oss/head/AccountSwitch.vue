@@ -54,6 +54,7 @@ export default {
       this.$emit('openDownload');
     },
     selectAccount(accountId, accountName) {
+      this.currentAccount = accountName;
       this.$emit('selectAccount', accountId, accountName);
     },
     //下载pdf
