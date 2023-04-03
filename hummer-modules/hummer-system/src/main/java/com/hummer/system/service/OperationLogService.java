@@ -9,7 +9,6 @@ import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.OperationLogMapper;
 import com.hummer.system.mapper.ext.ExtOperationLogMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,14 +33,6 @@ public class OperationLogService implements IOperationLogService {
     }
 
     @Override
-    public void log(OperationLog operationLog) {
-        if (StringUtils.isBlank(operationLog.getId())) {
-            operationLog.setId(UUIDUtil.newUUID());
-        }
-        operationLogMapper.insertSelective(operationLog);
-    }
-
-    @Override
     public OperationLog createOperationLog(LoginUser user, String resourceId, String resourceName, String resourceType, String operation, String message, String ip) {
         OperationLog operationLog = new OperationLog();
         operationLog.setId(UUIDUtil.newUUID());
@@ -52,7 +43,7 @@ public class OperationLogService implements IOperationLogService {
             operationLog.setResourceUserName(SystemUserConstants.getUser().getName() + " [" + SystemUserConstants.getUser().getEmail() + "]");
         } else {
             operationLog.setResourceUserId(user.getUserId());
-            operationLog.setResourceUserName(user.getUserName() + " [" + user.getUser()!=null?user.getUser().getEmail():"" + "]");
+            operationLog.setResourceUserName(user.getUserName() + " [" + user.getUser().getEmail() + "]");
         }
         operationLog.setResourceType(resourceType);
         operationLog.setOperation(operation);

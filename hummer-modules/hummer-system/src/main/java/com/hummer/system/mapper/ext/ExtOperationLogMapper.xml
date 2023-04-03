@@ -2,7 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.system.mapper.ext.ExtOperationLogMapper">
     <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.OperationLog"
-               extends="com.hummer.system.mapper.OperationLogMapper.BaseResultMap">
+               extends="com.hummer.system.mapper.OperationLogMapper.ResultMapWithBLOBs">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="resource_user_id" jdbcType="VARCHAR" property="resourceUserId" />
+        <result column="resource_user_name" jdbcType="VARCHAR" property="resourceUserName" />
+        <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+        <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
+        <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+        <result column="operation" jdbcType="VARCHAR" property="operation" />
+        <result column="time" jdbcType="BIGINT" property="time" />
+        <result column="source_ip" jdbcType="VARCHAR" property="sourceIp" />
+        <result column="message" jdbcType="LONGVARCHAR" property="message" />
     </resultMap>
 
     <sql id="condition">

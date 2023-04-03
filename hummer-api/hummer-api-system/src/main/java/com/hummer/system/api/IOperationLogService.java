@@ -15,8 +15,6 @@ public interface IOperationLogService {
 
     void log(LoginUser user, String resourceId, String resourceName, String resourceType, String operation, String message);
 
-    void log(OperationLog operationLog);
-
     OperationLog createOperationLog(LoginUser user, String resourceId, String resourceName, String resourceType, String operation, String message, String ip);
 
 }

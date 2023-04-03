@@ -6,11 +6,11 @@ import com.hummer.auth.mapper.UserMapper;
 import com.hummer.auth.mapper.UserRoleMapper;
 import com.hummer.auth.mapper.ext.ExtUserMapper;
 import com.hummer.common.core.domain.*;
-import com.hummer.system.api.domain.User;
 import com.hummer.common.core.dto.UserDTO;
 import com.hummer.common.core.dto.UserRoleDTO;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.UUIDUtil;
+import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,8 +94,8 @@ public class UserService {
         operationLog.setResourceId(resourceId);
         operationLog.setResourceName(resourceName);
         if (user == null) {
-            operationLog.setResourceUserId(SysLoginService.SystemUserConstants.getUserId());
-            operationLog.setResourceUserName(SysLoginService.SystemUserConstants.getUser().getName());
+            operationLog.setResourceUserId(SystemUserConstants.getUserId());
+            operationLog.setResourceUserName(SystemUserConstants.getUser().getName() + " [" + SystemUserConstants.getUser().getEmail() + "]");
         } else {
             operationLog.setResourceUserId(user.getId());
             operationLog.setResourceUserName(user.getName() + " [" + user.getEmail() + "]");
@@ -112,6 +112,25 @@ public class UserService {
     public String getDefaultLanguage() {
         final String key = "default.language";
         return extUserMapper.getDefaultLanguage(key);
+    }
+
+    class SystemUserConstants extends User {
+
+        private static User user = new User();
+
+        static {
+            user.setId("system");
+            user.setName("SYSTEM");
+        }
+
+        public static User getUser() {
+            return user;
+        }
+
+        public static String getUserId() {
+            return user.getId();
+        }
+
     }
 
 }

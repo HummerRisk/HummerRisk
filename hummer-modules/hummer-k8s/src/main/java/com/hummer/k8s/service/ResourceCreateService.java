@@ -4,7 +4,6 @@ import com.hummer.common.core.constant.CloudTaskConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.LogUtil;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.mapper.*;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.collections4.CollectionUtils;
@@ -48,8 +47,6 @@ public class ResourceCreateService {
     private FileSystemResultMapper fileSystemResultMapper;
     @Autowired
     private FileSystemService fileSystemService;
-    @Autowired
-    private TokenService tokenService;
 
     //主机检测
     @XxlJob("serverTasksJobHandler")
@@ -77,7 +74,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(serverToBeProceed.getId(), serverToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        serverService.createScan(serverToBeProceed, tokenService.getLoginUser());
+                        serverService.createScan(serverToBeProceed, null);
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     } finally {
@@ -114,7 +111,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(cloudNativeToBeProceed.getId(), cloudNativeToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        k8sService.createScan(cloudNativeToBeProceed, tokenService.getLoginUser());
+                        k8sService.createScan(cloudNativeToBeProceed, null);
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     } finally {
@@ -151,7 +148,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(cloudNativeConfigToBeProceed.getId(), cloudNativeConfigToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        configService.createScan(cloudNativeConfigToBeProceed, tokenService.getLoginUser());
+                        configService.createScan(cloudNativeConfigToBeProceed, null);
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     } finally {
@@ -188,7 +185,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(codeToBeProceed.getId(), codeToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        codeService.createScan(codeToBeProceed, tokenService.getLoginUser());
+                        codeService.createScan(codeToBeProceed, null);
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     } finally {
@@ -225,7 +222,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(fsToBeProceed.getId(), fsToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        fileSystemService.createScan(fsToBeProceed, tokenService.getLoginUser());
+                        fileSystemService.createScan(fsToBeProceed, null);
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     } finally {
@@ -262,7 +259,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(imageToBeProceed.getId(), imageToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        imageService.createScan(imageToBeProceed, tokenService.getLoginUser());
+                        imageService.createScan(imageToBeProceed, null);
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
                     } finally {

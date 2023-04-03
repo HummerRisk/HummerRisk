@@ -10,7 +10,6 @@ import com.hummer.common.core.text.Convert;
 import com.hummer.common.core.utils.StringUtils;
 import com.hummer.common.core.utils.ip.IpUtils;
 import com.hummer.common.redis.service.RedisService;
-import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -75,25 +74,6 @@ public class SysLoginService {
         LoginUser userInfo = userService.getLoginUserByName(userId);
         UserDTO user = userInfo.getUser();
         userService.createOperationLog(user, Objects.requireNonNull(user).getId(), user.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.LOGOUT, "用户登出", userInfo.getIpAddr());
-
-    }
-
-    class SystemUserConstants extends User {
-
-        private static User user = new User();
-
-        static {
-            user.setId("system");
-            user.setName("SYSTEM");
-        }
-
-        public static User getUser() {
-            return user;
-        }
-
-        public static String getUserId() {
-            return user.getId();
-        }
 
     }
 
