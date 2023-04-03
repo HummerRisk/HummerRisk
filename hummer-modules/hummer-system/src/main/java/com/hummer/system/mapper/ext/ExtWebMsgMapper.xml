@@ -92,7 +92,7 @@
         </if>
     </sql>
 
-    <select id="queryGrid" resultMap="BaseResultMap">
+    <select id="queryGrid" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.request.webMsg.WebMsgRequest">
         select
         t.*
         from web_msg as t
@@ -112,7 +112,10 @@
             <if test="request.scanType != null and request.scanType != ''">
                 and LOWER(t.scan_type) like CONCAT('%', LOWER(#{request.scanType}),'%')
             </if>
-            <if test="request.status != null and request.status != ''">
+            <if test="request.status == true">
+                and t.status = #{request.status}
+            </if>
+            <if test="request.status == false">
                 and t.status = #{request.status}
             </if>
         </where>
