@@ -98,7 +98,7 @@
                 <el-table :data="servers" class="tb-edit" border :cell-style="rowClass" :header-cell-style="headClass" :key="itemKey">
                   <el-table-column :label="$t('server.server_name')" min-width="18%" prop="serverName">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.name"></el-input>
+                      <el-input v-model="scope.row.name" maxlength="100"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column :label="$t('server.server_type')" min-width="12%" prop="type">
@@ -116,17 +116,17 @@
                   </el-table-column>
                   <el-table-column :label="'IP'" prop="ip" min-width="18%">
                     <template v-slot:default="{row}">
-                      <el-input v-model="row.ip"></el-input>
+                      <el-input v-model="row.ip" maxlength="50"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column :label="$t('server.port')" min-width="10%" prop="port">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.port"></el-input>
+                      <el-input v-model="scope.row.port" maxlength="8"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column :label="$t('server.server_user_name')" min-width="15%" prop="userName">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.userName"></el-input>
+                      <el-input v-model="scope.row.userName" maxlength="50"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column :label="$t('commons.certificate')" min-width="15%" prop="password">
@@ -165,10 +165,10 @@
             :visible.sync="innerAddCertificate">
             <el-form :model="addCertificateForm" label-position="right" label-width="150px" size="small" ref="addCertificateForm" :rules="rule" style="padding: 5px 5% 5px 5px;">
               <el-form-item :label="$t('server.port')" ref="port" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-input v-model="addCertificateForm.port"></el-input>
+                <el-input v-model="addCertificateForm.port" maxlength="8"></el-input>
               </el-form-item>
               <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-input v-model="addCertificateForm.userName"></el-input>
+                <el-input v-model="addCertificateForm.userName" maxlength="50"></el-input>
               </el-form-item>
               <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                 <el-radio v-model="addCertificateForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
@@ -191,7 +191,7 @@
                 <el-radio v-model="addCertificateForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
               </el-form-item>
               <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
-                <el-input type="password" v-model="addCertificateForm.password" @input="change($event)" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+                <el-input type="password" v-model="addCertificateForm.password" maxlength="100" @input="change($event)" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
               </el-form-item>
               <el-form-item v-if="!addCertificateForm.isCertificate && addCertificateForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
                 <el-input type="textarea" :rows="10" v-model="addCertificateForm.publicKey" @input="change($event)" autocomplete="off" :placeholder="$t('server.public_key')"/>
@@ -229,10 +229,10 @@
                 </el-select>
               </el-form-item>
               <el-form-item :label="$t('server.port')" ref="type" prop="port" :rules="{required: true, message: $t('server.port') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-input v-model="batchBindForm.port"></el-input>
+                <el-input v-model="batchBindForm.port" maxlength="8"></el-input>
               </el-form-item>
               <el-form-item :label="$t('server.server_user_name')" ref="type" prop="userName" :rules="{required: true, message: $t('server.server_user_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                <el-input v-model="batchBindForm.userName"></el-input>
+                <el-input v-model="batchBindForm.userName" maxlength="50"></el-input>
               </el-form-item>
               <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="isCertificate" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                 <el-radio v-model="batchBindForm.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
@@ -255,7 +255,7 @@
                 <el-radio v-model="batchBindForm.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
               </el-form-item>
               <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
-                <el-input type="password" v-model="batchBindForm.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+                <el-input type="password" v-model="batchBindForm.password" maxlength="100" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
               </el-form-item>
               <el-form-item v-if="!batchBindForm.isCertificate && batchBindForm.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
                 <el-input type="textarea" :rows="10" v-model="batchBindForm.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
@@ -297,7 +297,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('server.server_name')" ref="name" prop="name">
-              <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_name')"/>
+              <el-input v-model="form.name" autocomplete="off" maxlength="100" :placeholder="$t('server.server_name')"/>
             </el-form-item>
             <el-form-item :label="$t('server.server_type')" ref="type" prop="type">
               <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('server.server_type')" @change="changeType(form)">
@@ -311,13 +311,13 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="'IP'" ref="ip" prop="ip">
-              <el-input v-model="form.ip" autocomplete="off" :placeholder="'IP'"/>
+              <el-input v-model="form.ip" maxlength="50" autocomplete="off" :placeholder="'IP'"/>
             </el-form-item>
             <el-form-item :label="$t('server.port')" ref="port" prop="port">
-              <el-input type="number" v-model="form.port" autocomplete="off" :placeholder="$t('server.port')"/>
+              <el-input type="number" v-model="form.port" maxlength="8" autocomplete="off" :placeholder="$t('server.port')"/>
             </el-form-item>
             <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName">
-              <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
+              <el-input v-model="form.userName" maxlength="50" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
             </el-form-item>
             <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
               <el-radio v-model="form.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
@@ -340,7 +340,7 @@
               <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
             </el-form-item>
             <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
-              <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+              <el-input type="password" v-model="form.password" maxlength="100" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
             </el-form-item>
             <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
               <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
@@ -386,7 +386,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('server.server_name')" ref="name" prop="name">
-              <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_name')"/>
+              <el-input v-model="form.name" maxlength="100" autocomplete="off" :placeholder="$t('server.server_name')"/>
             </el-form-item>
             <el-form-item :label="$t('server.server_type')" ref="type" prop="type">
               <el-select style="width: 100%;" filterable :clearable="true" v-model="form.type" :placeholder="$t('server.server_type')" @change="changeType(form)">
@@ -400,13 +400,13 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="'IP'" ref="ip" prop="ip">
-              <el-input v-model="form.ip" autocomplete="off" :placeholder="'IP'"/>
+              <el-input v-model="form.ip" maxlength="50" autocomplete="off" :placeholder="'IP'"/>
             </el-form-item>
             <el-form-item :label="$t('server.port')" ref="port" prop="port">
-              <el-input type="number" v-model="form.port" autocomplete="off" :placeholder="$t('server.port')"/>
+              <el-input type="number" v-model="form.port" maxlength="8" autocomplete="off" :placeholder="$t('server.port')"/>
             </el-form-item>
             <el-form-item :label="$t('server.server_user_name')" ref="userName" prop="userName">
-              <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
+              <el-input v-model="form.userName" maxlength="50" autocomplete="off" :placeholder="$t('server.server_user_name')"/>
             </el-form-item>
             <el-form-item :label="$t('server.bind_certificate')" ref="type" prop="type" :rules="{required: true, message: $t('server.bind_certificate') + $t('commons.cannot_be_empty'), trigger: 'change'}">
               <el-radio v-model="form.isCertificate" :label="false">{{ $t('server.menu_certificate') }}</el-radio>
@@ -429,7 +429,7 @@
               <el-radio v-model="form.isPublicKey" label="file">{{ $t('server.file_public_key') }}</el-radio>
             </el-form-item>
             <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'no'" :label="$t('commons.password')" ref="password" prop="password">
-              <el-input type="password" v-model="form.password" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
+              <el-input type="password" v-model="form.password" maxlength="100" autocomplete="off" :placeholder="$t('commons.password')" show-password/>
             </el-form-item>
             <el-form-item v-if="!form.isCertificate && form.isPublicKey === 'str'" :label="$t('server.public_key')" ref="password">
               <el-input type="textarea" :rows="10" v-model="form.publicKey" autocomplete="off" :placeholder="$t('server.public_key')"/>
