@@ -780,6 +780,10 @@ const columnOptions2 = [
         });
       },
       saveScan() {
+        if (!this.scanForm.id){
+          this.$warning(this.$t('commons.please_select') + this.$t('dashboard.accounts'));
+          return;
+        }
         let url = scanByGroupUrl + this.groupId + "/" + this.scanForm.id;
         this.result = this.$get(url, response => {
           this.scanVisible = false;
