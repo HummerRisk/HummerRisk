@@ -540,7 +540,7 @@ import {ruleInspectionReport, ruleListUrl, ruleReScanUrl, ruleTagsUrl} from "@/a
 import {cloudPluginUrl} from "@/api/system/system";
 import {
   resourceExportUrl,
-  resourceGroupExportUrl,
+  resourceGroupExportUrl, resourceListUrl,
   resourceRegulationUrl, resourceReportIsoUrl, resourceReportListUrl,
   resourceRuleGroupListUrl,
   resourceRuleGroupsUrl
@@ -964,7 +964,7 @@ const columnOptions3 = [
         });
       },
       async searchResource() {
-        let url = resourceReportListUrl + this.resourceCurrentPage + "/" + this.resourcePageSize;
+        let url = resourceListUrl + this.resourceCurrentPage + "/" + this.resourcePageSize;
         //在这里实现事件
         this.resourceCondition.accountId = this.accountId;
         this.resourceCondition.groupId = this.groupId;
