@@ -170,7 +170,7 @@
             IFNULL( sum( t2.return_sum ), 0 ) AS yAxis,
             IFNULL( sum( t2.resources_sum ), 0 ) AS yAxis2,
             t.name AS groupName,
-            (select sum(resources_sum) from resource) AS xAxis
+            (select IFNULL( sum(resources_sum), 0 ) from resource) AS xAxis
         FROM
             rule t
             LEFT JOIN resource_rule t1 ON t.id = t1.rule_id

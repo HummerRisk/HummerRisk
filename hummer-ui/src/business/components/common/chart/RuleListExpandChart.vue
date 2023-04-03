@@ -299,8 +299,8 @@ export default {
 
 .echarts {
   margin: 0 auto;
-  min-width: 750px;
-  min-height: 500px;
+  max-width: 900px;
+  max-height: 425px;
 }
 
 </style>
