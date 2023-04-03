@@ -182,7 +182,7 @@ export default {
     package_scan: 'Software dependencies',
     sbom_dependency: 'SBOM Management',
     conf_setting: 'Detection management',
-    no_plugin_param: 'Please fill in the parameters:',
+    no_plugin_param: 'Please fill in the complete parameters, the required fields are not allowed to be empty',
     create_success: 'Create success',
     update_success: 'Edit success',
     success: 'Success',

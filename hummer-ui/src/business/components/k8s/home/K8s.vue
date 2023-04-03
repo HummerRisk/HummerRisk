@@ -751,7 +751,8 @@ export default {
         let data = {}, key = {};
         for (let tmp of item.tmpList) {
           if(!tmp.input) {
-            this.$warning(this.$t('commons.no_plugin_param') + tmp.label);
+            console.log(111, tmp)
+            this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
             return;
           }
           key[tmp.name] = tmp.input.trim();

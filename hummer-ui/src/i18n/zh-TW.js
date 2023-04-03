@@ -182,7 +182,7 @@ export default {
     package_scan: '軟件依賴',
     sbom_dependency: 'SBOM 管理',
     conf_setting: '檢測管理',
-    no_plugin_param: '請填寫參數:',
+    no_plugin_param: '請填寫完整參數，必填字段不允許為空',
     create_success: '創建成功',
     update_success: '編輯成功',
     success: '成功',

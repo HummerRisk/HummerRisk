@@ -12,10 +12,6 @@
             {{ $t("dashboard.overview") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/dashboard/analysis'">
-            {{ $t("dashboard.analysis") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/dashboard/active'">
             {{ $t("dashboard.active") }}
           </el-menu-item>

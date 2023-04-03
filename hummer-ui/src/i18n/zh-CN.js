@@ -182,7 +182,7 @@ export default {
     package_scan: '软件依赖',
     sbom_dependency: 'SBOM 管理',
     conf_setting: '检测管理',
-    no_plugin_param: '请填写参数:',
+    no_plugin_param: '请填写完整参数，必填字段不允许为空',
     create_success: '创建成功',
     update_success: '编辑成功',
     success: '成功',
