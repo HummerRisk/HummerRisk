@@ -4,17 +4,17 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -64,15 +64,13 @@ public class ProwlerService {
     private ResourceItemMapper resourceItemMapper;
     @Autowired @Lazy
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
     private IOperationLogService operationLogService;
 
-    public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
-        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
+    public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
+        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId, loginUser);
         String taskId = cloudTask.getId();
 
         String script = quartzTaskDTO.getScript();
@@ -156,11 +154,11 @@ public class ProwlerService {
             }
         }
         //向首页活动添加操作信息
-        operationLogService.log(tokenService.getLoginUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        operationLogService.log(loginUser, taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 
-    private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
+    private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
         CloudTask cloudTask = new CloudTask();
         cloudTask.setTaskName(quartzTaskDTO.getTaskName() != null ?quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
         cloudTask.setRuleId(quartzTaskDTO.getId());
@@ -172,7 +170,7 @@ public class ProwlerService {
         cloudTask.setRuleTags(quartzTaskDTO.getTags().toString());
         cloudTask.setDescription(quartzTaskDTO.getDescription());
         cloudTask.setAccountId(quartzTaskDTO.getAccountId());
-        cloudTask.setApplyUser(Objects.requireNonNull(tokenService.getLoginUser()).getUserId());
+        cloudTask.setApplyUser(Objects.requireNonNull(loginUser).getUserId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.prowler.name());
 
@@ -193,7 +191,7 @@ public class ProwlerService {
             }
 
         } else {
-            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, tokenService.getLoginUser().getUserId());
+            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, loginUser.getUserId());
             cloudTask.setId(taskId);
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.insertSelective(cloudTask);
@@ -230,7 +228,7 @@ public class ProwlerService {
         cloudTaskItemMapper.deleteByExample(cloudTaskItemExample);
     }
 
-    public void createProwlerResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
+    public void createProwlerResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, LoginUser loginUser) throws Exception {
         LogUtil.info("createResource for taskItem: {}", toJSONString(taskItem));
         String operation = "i18n_create_resource";
         String resultStr = "";
@@ -259,10 +257,10 @@ public class ProwlerService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist", false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
                     HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String prowlerRun = ReadFileUtils.readToBuffer(dirPath + "/" + CloudTaskConstants.PROWLER_RUN_RESULT_FILE);
@@ -289,11 +287,11 @@ public class ProwlerService {
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
                 orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
                         + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
-                        true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                        true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
             }
 
         } catch (Exception e) {
-            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }

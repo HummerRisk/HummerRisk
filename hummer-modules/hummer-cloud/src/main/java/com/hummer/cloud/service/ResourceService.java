@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.cloud.mapper.ext.ExtResourceMapper;
@@ -15,10 +14,11 @@ import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.domain.request.rule.RuleGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -78,8 +78,6 @@ public class ResourceService {
     private ResourceItemMapper resourceItemMapper;
     @Autowired @Lazy
     private ProxyMapper proxyMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
 
@@ -318,11 +316,11 @@ public class ResourceService {
     /**
      * 执行actions(修复动作)
      */
-    public ResourceWithBLOBs operatingResource(String id, String operating) {
+    public ResourceWithBLOBs operatingResource(String id, String operating, LoginUser loginUser) {
         ResourceWithBLOBs resourceWithBLOBs = resourceMapper.selectByPrimaryKey(id);
         try {
-            operatingDetail(resourceWithBLOBs, operating);
-            resourceWithBLOBs = operatingDetail(resourceWithBLOBs, "restart");//执行完actions 操作后获取的数据并未更新
+            operatingDetail(resourceWithBLOBs, operating, loginUser);
+            resourceWithBLOBs = operatingDetail(resourceWithBLOBs, "restart", loginUser);//执行完actions 操作后获取的数据并未更新
             if (resourceWithBLOBs.getReturnSum() > 0) {
                 resourceWithBLOBs.setResourceStatus(ResourceConstants.RESOURCE_STATUS.AlreadyFixed.name());
             } else {
@@ -338,7 +336,7 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
-    public ResourceWithBLOBs operatingDetail(ResourceWithBLOBs resourceWithBLOBs, String operating) {
+    public ResourceWithBLOBs operatingDetail(ResourceWithBLOBs resourceWithBLOBs, String operating, LoginUser loginUser) {
         try {
             String operation = "";
             String finalScript = "";
@@ -361,15 +359,15 @@ public class ResourceService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, region, proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
 
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
 
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
             switch (cloudTask.getScanType()) {
                 case "custodian":
-                    createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation);
+                    createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation, loginUser);
                     break;
                 case "prowler":
-                    createProwlerResource(resourceWithBLOBs, taskItem, cloudTask, operation);
+                    createProwlerResource(resourceWithBLOBs, taskItem, cloudTask, operation, loginUser);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: scantype");
@@ -382,7 +380,8 @@ public class ResourceService {
     }
 
     private void createCustodianResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
-                                          CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource, String operation) {
+                                          CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource,
+                                          String operation, LoginUser loginUser) {
         try {
             String dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + resourceWithBLOBs.getId(), "policy.yml", false);
             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
@@ -406,14 +405,13 @@ public class ResourceService {
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
                     + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
     }
 
-    private void createProwlerResource (ResourceWithBLOBs resourceWithBLOBs,
-                                        CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, String operation) {
+    private void createProwlerResource (ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, String operation, LoginUser loginUser) {
         try {
             String dirPath = CloudTaskConstants.PROWLER_RESULT_FILE_PATH;
             String fileName = cloudTask.getResourceTypes() == null ? "" : cloudTask.getResourceTypes().replace("[", "").replace("]", "");
@@ -442,7 +440,7 @@ public class ResourceService {
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
                     + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -480,7 +478,7 @@ public class ResourceService {
      * 导出excel
      */
     @SuppressWarnings(value={"unchecked","deprecation", "serial"})
-    public byte[] export(ExcelExportRequest request) throws Exception {
+    public byte[] export(ExcelExportRequest request, LoginUser loginUser) throws Exception {
         try{
             Map<String, Object> params = request.getParams();
             ResourceRequest resourceRequest = new ResourceRequest();
@@ -540,7 +538,7 @@ public class ResourceService {
                     });
                 }};
             }).collect(Collectors.toList());
-            operationLogService.log(tokenService.getLoginUser(), request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(loginUser, request.getAccountIds().get(0), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -551,7 +549,7 @@ public class ResourceService {
      * 导出excel
      */
     @SuppressWarnings(value={"unchecked","deprecation", "serial"})
-    public byte[] exportGroupReport(ExcelExportRequest request) throws Exception {
+    public byte[] exportGroupReport(ExcelExportRequest request, LoginUser loginUser) throws Exception {
         try{
             Map<String, Object> params = request.getParams();
             ResourceRequest resourceRequest = new ResourceRequest();
@@ -611,7 +609,7 @@ public class ResourceService {
                     });
                 }};
             }).collect(Collectors.toList());
-            operationLogService.log(tokenService.getLoginUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(loginUser, request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -620,12 +618,12 @@ public class ResourceService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void deleteResourceByAccountId (String accountId) throws Exception {
+    public void deleteResourceByAccountId (String accountId, LoginUser loginUser) throws Exception {
         CloudTaskExample example = new CloudTaskExample();
         example.createCriteria().andAccountIdEqualTo(accountId);
         List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(example);
         cloudTasks.forEach(task -> {
-            cloudTaskService.deleteManualTask(task.getId());
+            cloudTaskService.deleteManualTask(task.getId(), loginUser);
             HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
             historyScanTaskExample.createCriteria().andTaskIdEqualTo(task.getId());
             systemProviderService.deleteHistoryScanTask(historyScanTaskExample);
@@ -636,7 +634,7 @@ public class ResourceService {
         HistoryScanExample historyScanExample = new HistoryScanExample();
         historyScanExample.createCriteria().andAccountIdEqualTo(accountId).andCreateTimeEqualTo(zero);
 
-        operationLogService.log(tokenService.getLoginUser(), accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
+        operationLogService.log(loginUser, accountId, "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.DELETE, "i18n_delete_scan_resource");
 
     }
 

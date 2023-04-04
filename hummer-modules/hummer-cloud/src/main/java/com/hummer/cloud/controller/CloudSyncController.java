@@ -10,6 +10,7 @@ import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,14 @@ import java.util.Map;
 public class CloudSyncController {
     @Autowired
     private CloudSyncService cloudSyncService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "云账号同步")
     @GetMapping(value = "sync/{accountId}")
     public void sync(@PathVariable String accountId) throws Exception {
-        cloudSyncService.sync(accountId);
+        cloudSyncService.sync(accountId, tokenService.getLoginUser());
     }
 
     @I18n

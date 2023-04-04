@@ -1,7 +1,6 @@
 package com.hummer.cloud.service;
 
 import com.google.gson.Gson;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.oss.constants.OSSConstants;
 import com.hummer.common.core.constant.CloudTaskConstants;
@@ -10,6 +9,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.dto.ResourceDTO;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.ISystemProviderService;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -133,7 +133,7 @@ public class ResourceCreateService {
                 processingGroupIdMap.put(ossToBeProceed.getId(), ossToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        ossService.syncBatch(ossToBeProceed.getId());
+                        ossService.syncBatch(ossToBeProceed.getId(), null);
                     } catch (Exception e) {
                         e.printStackTrace();
                         LogUtil.error(e.getMessage());
@@ -278,7 +278,7 @@ public class ResourceCreateService {
                 createCustodianResource(taskItem, cloudTask);//云账号检测
                 break;
             case "prowler":
-                prowlerService.createProwlerResource(taskItem, cloudTask);//云账号检测
+                prowlerService.createProwlerResource(taskItem, cloudTask, null);//云账号检测
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: scantype");
@@ -323,11 +323,11 @@ public class ResourceCreateService {
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
                     orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
-                            true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                            true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
                     orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
-                            false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                            false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                     HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String custodianRun = ReadFileUtils.readToBuffer(dirPath + "/" + taskItemResource.getDirName() + "/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
@@ -356,7 +356,7 @@ public class ResourceCreateService {
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
                 orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
                         + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
-                        true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                        true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                 //执行完删除返回目录文件，以便于下一次操作覆盖
                 String deleteResourceDir = "rm -rf " + dirPath;
                 CommandUtils.commonExecCmdWithResult(deleteResourceDir, dirPath);
@@ -364,7 +364,7 @@ public class ResourceCreateService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }

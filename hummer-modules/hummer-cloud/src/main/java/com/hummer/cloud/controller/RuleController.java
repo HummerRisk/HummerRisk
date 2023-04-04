@@ -12,6 +12,7 @@ import com.hummer.common.core.dto.RuleTagDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,8 @@ import java.util.Map;
 public class RuleController {
     @Autowired
     private RuleService ruleService;
-
+    @Autowired
+    private TokenService tokenService;
     @I18n
     @ApiOperation(value = "云账号规则列表")
     @PostMapping(value = "list/{goPage}/{pageSize}")
@@ -96,28 +98,28 @@ public class RuleController {
     @PostMapping(value = "add")
     public Rule addRule(@RequestBody CreateRuleRequest createRuleRequest) {
         createRuleRequest.setId(null);
-        return ruleService.saveRules(createRuleRequest);
+        return ruleService.saveRules(createRuleRequest, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "修改规则")
     @PostMapping(value = "update")
     public Rule updateRule(@RequestBody CreateRuleRequest createRuleRequest) {
-        return ruleService.saveRules(createRuleRequest);
+        return ruleService.saveRules(createRuleRequest, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "复制规则")
     @PostMapping(value = "copy")
     public Rule copyRule(@RequestBody CreateRuleRequest createRuleRequest) {
-        return ruleService.copyRule(createRuleRequest);
+        return ruleService.copyRule(createRuleRequest, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "运行规则")
     @PostMapping(value = "run")
     public CloudTask runRule(@RequestBody RuleDTO ruleDTO) {
-        return ruleService.runRules(ruleDTO);
+        return ruleService.runRules(ruleDTO, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "测试运行规则")
@@ -129,7 +131,7 @@ public class RuleController {
     @ApiOperation(value = "删除规则")
     @GetMapping(value = "delete/{id}")
     public void deleteRule(@PathVariable String id) {
-        ruleService.deleteRule(id);
+        ruleService.deleteRule(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -207,13 +209,13 @@ public class RuleController {
     @ApiIgnore
     @GetMapping("reScan/{taskId}/{accountId}")
     public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
-        ruleService.reScan(taskId, accountId);
+        ruleService.reScan(taskId, accountId, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "执行检测")
     @PostMapping("scan")
     public void scan(@RequestBody ScanGroupRequest request) throws Exception {
-        ruleService.scan(request);
+        ruleService.scan(request, tokenService.getLoginUser());
     }
 
     @I18n
@@ -275,6 +277,6 @@ public class RuleController {
     @ApiOperation(value = "规则组检测云账号")
     @GetMapping("scanByGroup/{groupId}/{accountId}")
     public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
-        ruleService.scanByGroup(groupId, accountId);
+        ruleService.scanByGroup(groupId, accountId, tokenService.getLoginUser());
     }
 }

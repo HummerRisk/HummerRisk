@@ -14,6 +14,7 @@ import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -28,7 +29,8 @@ public class CloudTaskController {
     private CloudTaskService cloudTaskService;
     @Autowired
     private OrderService orderService;
-
+    @Autowired
+    private TokenService tokenService;
     @Autowired
     private ResourceCreateService resourceCreateService;
 
@@ -75,7 +77,7 @@ public class CloudTaskController {
 
     @PostMapping(value = "retry/{taskId}")
     public void retryTask(@PathVariable String taskId) throws Exception {
-        orderService.retry(taskId);
+        orderService.retry(taskId, tokenService.getLoginUser());
     }
 
     @I18n
@@ -95,12 +97,12 @@ public class CloudTaskController {
     @PostMapping("manual/create")
     public CloudTask saveManualTask(@RequestBody QuartzTaskDTO quartzTaskDTO) {
         quartzTaskDTO.setType("manual");
-        return cloudTaskService.saveManualTask(quartzTaskDTO, null);
+        return cloudTaskService.saveManualTask(quartzTaskDTO, null, tokenService.getLoginUser());
     }
 
     @PostMapping("manual/delete")
     public void deleteManualTask(@RequestBody String quartzTaskId) {
-        cloudTaskService.deleteManualTask(quartzTaskId);
+        cloudTaskService.deleteManualTask(quartzTaskId, tokenService.getLoginUser());
     }
 
     @PostMapping(value = "manual/dryRun")

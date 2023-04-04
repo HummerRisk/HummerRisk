@@ -18,6 +18,7 @@ import com.hummer.common.core.handler.ResultHolder;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,6 +44,8 @@ import java.util.Map;
 public class OssController {
     @Autowired
     private OssService ossService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "对象存储账号列表")
@@ -96,14 +99,14 @@ public class OssController {
     @ApiOperation(value = "添加对象存储")
     @PostMapping("add")
     public OssWithBLOBs addOss(@RequestBody OssWithBLOBs request) throws Exception {
-        return ossService.addOss(request);
+        return ossService.addOss(request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "更新对象存储")
     @PostMapping("update")
     public OssWithBLOBs editOss(@RequestBody OssWithBLOBs request) throws Exception {
-        return ossService.editOss(request);
+        return ossService.editOss(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除对象存储")
@@ -116,7 +119,7 @@ public class OssController {
     @ApiOperation(value = "同步对象存储")
     @GetMapping("batch/sync/{id}")
     public void sync(@PathVariable String id) throws Exception {
-        ossService.batch(id);
+        ossService.batch(id, tokenService.getLoginUser());
     }
 
     @I18n
@@ -176,21 +179,21 @@ public class OssController {
     @ApiOperation("创建存储桶")
     @PostMapping("create")
     public void create(@RequestBody OssBucket bucket) throws Exception {
-        ossService.create(bucket);
+        ossService.create(bucket, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation("批量删除存储桶")
     @PostMapping("deleteByBatch")
     public ResultHolder deleteByBatch(@RequestBody List<String> ids) {
-        return ossService.delete(ids);
+        return ossService.delete(ids, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation("删除存储桶")
     @GetMapping("deleteBucket/{bucketId}")
     public ResultHolder deleteBucket(@PathVariable String bucketId) {
-        return ossService.delete(Arrays.asList(bucketId));
+        return ossService.delete(Arrays.asList(bucketId), tokenService.getLoginUser());
     }
 
     @I18n
@@ -253,7 +256,7 @@ public class OssController {
     @ApiOperation(value = "导出规则组检测报告")
     @PostMapping("groupExport")
     public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
-        byte[] bytes = ossService.exportGroupReport(request);
+        byte[] bytes = ossService.exportGroupReport(request, tokenService.getLoginUser());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "对象存储不合规资源检测报告.xlsx");
@@ -291,7 +294,7 @@ public class OssController {
         }else {
             objectId = path.endsWith("/") ? path + objectFile.getOriginalFilename() : path + "/" + objectFile.getOriginalFilename();
         }
-        ossService.uploadObject(bucketId , objectId, objectFile);
+        ossService.uploadObject(bucketId , objectId, objectFile, tokenService.getLoginUser());
     }
 
     @I18n

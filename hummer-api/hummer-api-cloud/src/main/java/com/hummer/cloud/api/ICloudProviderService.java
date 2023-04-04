@@ -3,6 +3,7 @@ package com.hummer.cloud.api;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
+import com.hummer.system.api.model.LoginUser;
 
 import java.util.List;
 
@@ -18,9 +19,9 @@ public interface ICloudProviderService {
 
     Rule selectRule(String id);
 
-    String reScan(String resourceId, String accountId) throws Exception;
+    String reScan(String resourceId, String accountId, LoginUser loginUser) throws Exception;
 
-    CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId);
+    CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId, LoginUser loginUser);
 
     List<RuleTagMapping> ruleTagMappings(RuleTagMappingExample example);
 

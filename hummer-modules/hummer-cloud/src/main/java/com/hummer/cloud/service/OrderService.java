@@ -3,7 +3,6 @@ package com.hummer.cloud.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.common.core.constant.CloudTaskConstants;
@@ -16,10 +15,11 @@ import com.hummer.common.core.dto.CloudTaskDTO;
 import com.hummer.common.core.dto.CloudTaskItemLogDTO;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -67,15 +67,13 @@ public class OrderService {
     private ResourceRuleMapper resourceRuleMapper;
     @Autowired @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
     private IOperationLogService operationLogService;
 
-    public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
-        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId);
+    public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
+        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId, loginUser);
         String taskId = cloudTask.getId();
 
         String script = quartzTaskDTO.getScript();
@@ -194,7 +192,7 @@ public class OrderService {
             }
         }
         //向首页活动添加操作信息
-        operationLogService.log(tokenService.getLoginUser(), taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        operationLogService.log(loginUser, taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
         return cloudTask;
     }
 
@@ -220,7 +218,7 @@ public class OrderService {
         cloudTaskItemMapper.deleteByExample(cloudTaskItemExample);
     }
 
-    private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId) throws Exception {
+    private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
         CloudTask cloudTask = new CloudTask();
         cloudTask.setTaskName(quartzTaskDTO.getTaskName() != null ?quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
         cloudTask.setRuleId(quartzTaskDTO.getId());
@@ -232,7 +230,7 @@ public class OrderService {
         cloudTask.setRuleTags(quartzTaskDTO.getTags().toString());
         cloudTask.setDescription(quartzTaskDTO.getDescription());
         cloudTask.setAccountId(quartzTaskDTO.getAccountId());
-        cloudTask.setApplyUser(Objects.requireNonNull(tokenService.getLoginUser()).getUserId());
+        cloudTask.setApplyUser(Objects.requireNonNull(loginUser).getUserId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.custodian.name());
 
@@ -253,7 +251,7 @@ public class OrderService {
             }
 
         } else {
-            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, tokenService.getLoginUser().getUserId());
+            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, loginUser.getUserId());
             cloudTask.setId(taskId);
             cloudTask.setCreateTime(System.currentTimeMillis());
             cloudTaskMapper.insertSelective(cloudTask);
@@ -276,12 +274,12 @@ public class OrderService {
         return extCloudTaskMapper.getTaskExtendInfo(taskId);
     }
 
-    public void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success, String historyType) throws Exception {
+    public void saveTaskItemLog(String taskItemId, String resourcePrimaryKey, String operation, String output, boolean success, String historyType, LoginUser loginUser) throws Exception {
         CloudTaskItemLogWithBLOBs cloudTaskItemLog = new CloudTaskItemLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -408,7 +406,7 @@ public class OrderService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void retry(String taskId) throws Exception {
+    public void retry(String taskId, LoginUser loginUser) throws Exception {
         CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
         if (cloudTask == null) {
             HRException.throwException(Translator.get("i18n_ex_task_not_found") + taskId);
@@ -448,7 +446,7 @@ public class OrderService {
                     }
 
                     if (item.getCount() > Optional.ofNullable(this.getResourceByTaskItemId(item.getId())).orElse(new ArrayList<>()).size()) {
-                        saveTaskItemLog(item.getId(), null, "i18n_retry_create_resource", "", true, CloudTaskConstants.HISTORY_TYPE.Cloud.name());
+                        saveTaskItemLog(item.getId(), null, "i18n_retry_create_resource", "", true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
                         item.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
                     } else {
                         item.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());

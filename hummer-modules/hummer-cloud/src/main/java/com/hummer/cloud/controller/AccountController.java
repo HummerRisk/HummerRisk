@@ -17,6 +17,7 @@ import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ import java.util.Map;
 public class AccountController {
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "云账号列表")
@@ -92,20 +95,20 @@ public class AccountController {
     @ApiOperation(value = "添加云账号")
     @PostMapping("add")
     public AccountWithBLOBs addAccount(@RequestBody CreateCloudAccountRequest request) throws Exception {
-        return accountService.addAccount(request);
+        return accountService.addAccount(request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "更新云账号")
     @PostMapping("update")
     public AccountWithBLOBs editAccount(@RequestBody UpdateCloudAccountRequest request) throws Exception {
-        return accountService.editAccount(request);
+        return accountService.editAccount(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除云账号")
     @PostMapping(value = "delete/{accountId}")
     public void deleteAccount(@PathVariable String accountId) {
-        accountService.delete(accountId);
+        accountService.delete(accountId, tokenService.getLoginUser());
     }
 
     @I18n
@@ -125,13 +128,13 @@ public class AccountController {
     @ApiOperation(value = "清除参数")
     @PostMapping("clean/parameter")
     public boolean cleanParameter(@RequestBody List<RuleAccountParameter> list) {
-        return accountService.cleanParameter(list);
+        return accountService.cleanParameter(list, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "保存参数")
     @PostMapping("save/parameter")
     public boolean saveParameter(@RequestBody List<QuartzTaskDTO> list) {
-        return accountService.saveParameter(list);
+        return accountService.saveParameter(list, tokenService.getLoginUser());
     }
 
     @I18n

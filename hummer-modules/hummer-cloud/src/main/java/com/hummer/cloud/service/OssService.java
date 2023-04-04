@@ -2,7 +2,6 @@ package com.hummer.cloud.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.cloud.mapper.ext.ExtOssMapper;
@@ -27,9 +26,10 @@ import com.hummer.common.core.dto.RuleGroupDTO;
 import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.handler.ResultHolder;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -80,8 +80,6 @@ public class OssService {
     private CloudTaskMapper cloudTaskMapper;
     @Autowired
     private ExtCloudTaskMapper extCloudTaskMapper;
-    @Autowired
-    private TokenService tokenService;
 
     @DubboReference
     private IOperationLogService operationLogService;
@@ -184,14 +182,14 @@ public class OssService {
         return Translator.get("i18n_ex_plugin_get");
     }
 
-    public OssWithBLOBs addOss(OssWithBLOBs request) throws Exception {
+    public OssWithBLOBs addOss(OssWithBLOBs request, LoginUser loginUser) throws Exception {
         OssWithBLOBs oss = ossMapper.selectByPrimaryKey(request.getId());
         if (oss != null) {
-            editOss(request);
+            editOss(request, loginUser);
         } else {
             request.setCreateTime(System.currentTimeMillis());
             request.setUpdateTime(System.currentTimeMillis());
-            request.setCreator(tokenService.getLoginUser().getUserId());
+            request.setCreator(loginUser.getUserId());
             request.setSyncStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
             ossMapper.insertSelective(request);
             validate(request.getId());
@@ -199,9 +197,9 @@ public class OssService {
         return request;
     }
 
-    public OssWithBLOBs editOss(OssWithBLOBs request) throws Exception {
+    public OssWithBLOBs editOss(OssWithBLOBs request, LoginUser loginUser) throws Exception {
         request.setUpdateTime(System.currentTimeMillis());
-        request.setCreator(tokenService.getLoginUser().getUserId());
+        request.setCreator(loginUser.getUserId());
         request.setSyncStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
         ossMapper.updateByPrimaryKeySelective(request);
         validate(request.getId());
@@ -221,62 +219,62 @@ public class OssService {
         return ossLogMapper.selectByExampleWithBLOBs(example);
     }
 
-    public void batch(String id) throws Exception {
+    public void batch(String id, LoginUser loginUser) throws Exception {
         OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
         oss.setSyncStatus(OSSConstants.SYNC_STATUS.APPROVED.name());
         ossMapper.updateByPrimaryKeySelective(oss);
         OssLogExample example = new OssLogExample();
         example.createCriteria().andOssIdEqualTo(id);
         ossLogMapper.deleteByExample(example);
-        saveLog(id, "i18n_start_oss_sync", "", true, 0);
+        saveLog(id, "i18n_start_oss_sync", "", true, 0, loginUser);
     }
 
-    public void syncBatch(String id) throws Exception {
+    public void syncBatch(String id, LoginUser loginUser) throws Exception {
         OssWithBLOBs oss = ossMapper.selectByPrimaryKey(id);
         try {
-            syncResource(oss);
+            syncResource(oss, loginUser);
         } catch (Exception e) {
             e.printStackTrace();
             oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
-            saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
+            saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0, loginUser);
             LogUtil.error(String.format("Failed to synchronize cloud account: %s", oss.getName()), e);
         }
     }
 
-    private void syncResource(OssWithBLOBs oss) throws Exception {
+    private void syncResource(OssWithBLOBs oss, LoginUser loginUser) throws Exception {
         if (!accountService.validate(oss.getId()).isFlag()) {
             oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
-            saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", false, 0);
+            saveLog(oss.getId(), "i18n_operation_ex" + ": " + "failed_oss", "failed_oss", false, 0, loginUser);
             return;
         }
         operationLogService.log(null, oss.getId(), oss.getName(), ResourceTypeConstants.OSS.name(), ResourceOperation.SYNC, "i18n_start_oss_sync");
         ossMapper.updateByPrimaryKeySelective(oss);
-        syncBucketInfo(oss);
+        syncBucketInfo(oss, loginUser);
     }
 
-    public void syncBucketInfo(final OssWithBLOBs oss) throws Exception {
+    public void syncBucketInfo(final OssWithBLOBs oss, LoginUser loginUser) throws Exception {
         commonThreadPool.addTask(() -> {
             try {
-                doSyncBucketInfo(oss);
+                doSyncBucketInfo(oss, loginUser);
             } catch (Exception e) {
                 e.printStackTrace();
                 oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
                 oss.setUpdateTime(System.currentTimeMillis());
                 ossMapper.updateByPrimaryKeySelective(oss);
-                saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0);
+                saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0, loginUser);
             }
         });
     }
 
-    public void doSyncBucketInfo(OssWithBLOBs oss) throws Exception {
+    public void doSyncBucketInfo(OssWithBLOBs oss, LoginUser loginUser) throws Exception {
         Integer sum = fetchOssBucketList(oss);
         oss.setSyncStatus(OSSConstants.SYNC_STATUS.FINISHED.name());
         oss.setUpdateTime(System.currentTimeMillis());
         oss.setSum(sum);
         ossMapper.updateByPrimaryKeySelective(oss);
-        saveLog(oss.getId(), "i18n_end_oss_sync", "", true, sum);
+        saveLog(oss.getId(), "i18n_end_oss_sync", "", true, sum, loginUser);
     }
 
     public Integer fetchOssBucketList(OssWithBLOBs oss) throws Exception {
@@ -337,12 +335,12 @@ public class OssService {
 
     }
 
-    void saveLog(String ossId, String operation, String output, boolean result, Integer sum) {
+    void saveLog(String ossId, String operation, String output, boolean result, Integer sum, LoginUser loginUser) {
         OssLogWithBLOBs ossLog = new OssLogWithBLOBs();
         String operator = "system";
         try {
-            if (tokenService.getLoginUser() != null) {
-                operator = tokenService.getLoginUser().getUserId();
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
             }
         } catch (Exception e) {
             //防止单元测试无session
@@ -387,16 +385,16 @@ public class OssService {
         return ossProvider.downloadObject(bucket, oss, objectId);
     }
 
-    public void create(OssBucket params) throws Exception {
+    public void create(OssBucket params, LoginUser loginUser) throws Exception {
         if (null == params || StringUtils.isBlank(params.getOssId()) || StringUtils.isBlank(params.getBucketName())) {
             HRException.throwException("Parameter is null.");
         }
         OssWithBLOBs account = getAccountByPrimaryKey(params.getOssId());
         OssProvider ossProvider = getOssProvider(account.getPluginId());
-        createBucket(ossProvider, account, params);
+        createBucket(ossProvider, account, params, loginUser);
     }
 
-    public ResultHolder delete(List<String> ids) {
+    public ResultHolder delete(List<String> ids, LoginUser loginUser) {
         ResultHolder resultHolder = new ResultHolder();
         if (CollectionUtils.isEmpty(ids)) {
             resultHolder.setSuccess(false);
@@ -409,7 +407,7 @@ public class OssService {
         int count = 0;
         StringBuilder message = new StringBuilder();
         for (final OssBucket bucket : buckets) {
-            operationLogService.log(tokenService.getLoginUser(), bucket.getId(), bucket.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.DELETE, "i18n_delete_bucket");
+            operationLogService.log(loginUser, bucket.getId(), bucket.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.DELETE, "i18n_delete_bucket");
             try {
                 OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
                 if (null != account && !OSSConstants.ACCOUNT_STATUS.VALID.equals(account.getStatus())) {
@@ -436,7 +434,7 @@ public class OssService {
         return resultHolder;
     }
 
-    public OssBucket createBucket(OssProvider cloudprovider, OssWithBLOBs account, OssBucket params) {
+    public OssBucket createBucket(OssProvider cloudprovider, OssWithBLOBs account, OssBucket params, LoginUser loginUser) {
         OssBucket result = null;
         try {
             result = cloudprovider.createBucket(account, params);
@@ -448,7 +446,7 @@ public class OssService {
             }
             result.setId(UUIDUtil.newUUID());
             ossBucketMapper.insertSelective(result);
-            operationLogService.log(tokenService.getLoginUser(), result.getId(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
+            operationLogService.log(loginUser, result.getId(), result.getBucketName(), ResourceTypeConstants.OSS.name(), ResourceOperation.CREATE, "i18n_create_bucket");
             return result;
         } catch (Exception e) {
             LogUtil.error("Failed to create the bucket: " + params.getBucketName(), e);
@@ -588,7 +586,7 @@ public class OssService {
      * 导出excel
      */
     @SuppressWarnings(value = {"unchecked", "deprecation", "serial"})
-    public byte[] exportGroupReport(ExcelExportRequest request) throws Exception {
+    public byte[] exportGroupReport(ExcelExportRequest request, LoginUser loginUser) throws Exception {
         try {
             Map<String, Object> params = request.getParams();
             ResourceRequest resourceRequest = new ResourceRequest();
@@ -648,7 +646,7 @@ public class OssService {
                     });
                 }};
             }).collect(Collectors.toList());
-            operationLogService.log(tokenService.getLoginUser(), request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
+            operationLogService.log(loginUser, request.getAccountId(), "RESOURCE", ResourceTypeConstants.RESOURCE.name(), ResourceOperation.EXPORT, "i18n_export_report");
             return ExcelExportUtils.exportExcelData(Translator.get("i18n_scan_resource"), request.getColumns().stream().map(ExcelExportRequest.Column::getValue).collect(Collectors.toList()), data);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -674,7 +672,7 @@ public class OssService {
 
     private static String basePath = "/tmp/";
 
-    public void uploadObject(String bucketId, String objectId, MultipartFile multipartFile) throws Exception {
+    public void uploadObject(String bucketId, String objectId, MultipartFile multipartFile, LoginUser loginUser) throws Exception {
         OssBucket bucket = getBucketByPrimaryKey(bucketId);
         OssWithBLOBs account = getAccountByPrimaryKey(bucket.getOssId());
         OssProvider ossProvider = getOssProvider(account.getPluginId());
@@ -694,7 +692,7 @@ public class OssService {
             try {
                 fis = new FileInputStream(basePath + objectId);
                 ossProvider.uploadFile(bucket, account, objectId, fis, size);
-                operationLogService.log(tokenService.getLoginUser(), bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
+                operationLogService.log(loginUser, bucket.getBucketName(), objectId, ResourceTypeConstants.OSS.name(), ResourceOperation.UPLOAD, "i18n_upload_oss");
             } catch (Exception e) {
                 LogUtil.error(String.format("Failed to upload file %s to %s, %s", objectId, bucket.getBucketName(), e.getMessage()));
                 throw new RuntimeException("Failed to upload file");

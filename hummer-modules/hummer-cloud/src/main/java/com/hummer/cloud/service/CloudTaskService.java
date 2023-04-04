@@ -3,7 +3,6 @@ package com.hummer.cloud.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.common.core.constant.*;
@@ -11,9 +10,10 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,23 +57,19 @@ public class CloudTaskService {
     @Autowired
     private ProxyMapper proxyMapper;
     @Autowired
-    private RuleMapper ruleMapper;
-    @Autowired
     private ProwlerService prowlerService;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private IOperationLogService operationLogService;
 
-    public CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId) {
+    public CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId, LoginUser loginUser) {
         try {
             if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.custodian.name())) {
                 this.validateYaml(quartzTaskDTO);
-                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
+                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId, loginUser);
             } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.prowler.name())) {
-                return prowlerService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
+                return prowlerService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId, loginUser);
             } else {
-                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId);
+                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId, loginUser);
             }
         } catch (Exception e) {
             throw new HRException(e.getMessage());
@@ -118,7 +114,7 @@ public class CloudTaskService {
         return true;
     }
 
-    public void deleteManualTask(String taskId) {
+    public void deleteManualTask(String taskId, LoginUser loginUser) {
         CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
         CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
         cloudTaskItemExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
@@ -156,7 +152,7 @@ public class CloudTaskService {
 
             });
             cloudTaskMapper.deleteByPrimaryKey(cloudTask.getId());
-            operationLogService.log(tokenService.getLoginUser(), taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "i18n_delete_cloud_task");
+            operationLogService.log(loginUser, taskId, cloudTask.getDescription(), ResourceTypeConstants.TASK.name(), ResourceOperation.DELETE, "i18n_delete_cloud_task");
         } catch (Exception e) {
             LogUtil.error("Delete manual cloudTask error{} " + e.getMessage());
             HRException.throwException(e.getMessage());

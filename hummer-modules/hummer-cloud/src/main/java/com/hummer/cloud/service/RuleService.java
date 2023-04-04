@@ -14,9 +14,9 @@ import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
+import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +72,6 @@ public class RuleService   {
     private ResourceRuleMapper resourceRuleMapper;
     @Autowired
     @Lazy
-    private CommonThreadPool commonThreadPool;
-    @Autowired
-    @Lazy
     private AccountMapper accountMapper;
     @Autowired
     @Lazy
@@ -103,8 +100,6 @@ public class RuleService   {
     @Autowired
     @Lazy
     private CloudTaskMapper cloudTaskMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -135,7 +130,7 @@ public class RuleService   {
         return extRuleGroupMapper.allCloudRuleGroups(request);
     }
 
-    public Rule saveRules(CreateRuleRequest ruleRequest) {
+    public Rule saveRules(CreateRuleRequest ruleRequest, LoginUser loginUser) {
         try {
             if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.custodian.toString())) {
                 cloudTaskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleRequest));
@@ -153,7 +148,7 @@ public class RuleService   {
                 ruleRequest.setPluginIcon(plugin.getIcon());
                 ruleRequest.setFlag(false);
                 ruleMapper.insertSelective(ruleRequest);
-                operationLogService.log(tokenService.getLoginUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
+                operationLogService.log(loginUser, ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_create_rule");
             } else {
                 Plugin plugin = pluginMapper.selectByPrimaryKey(ruleRequest.getPluginId());
                 ruleRequest.setPluginId(plugin.getId());
@@ -162,7 +157,7 @@ public class RuleService   {
                 ruleRequest.setFlag(false);
                 ruleRequest.setLastModified(System.currentTimeMillis());
                 ruleMapper.updateByPrimaryKeySelective(ruleRequest);
-                operationLogService.log(tokenService.getLoginUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.UPDATE, "i18n_update_rule");
+                operationLogService.log(loginUser, ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.UPDATE, "i18n_update_rule");
             }
 
             saveRuleTagMapping(ruleRequest.getId(), ruleRequest.getTagKey());
@@ -227,7 +222,7 @@ public class RuleService   {
         return true;
     }
 
-    public Rule copyRule(CreateRuleRequest ruleRequest) {
+    public Rule copyRule(CreateRuleRequest ruleRequest, LoginUser loginUser) {
         try {
             if (StringUtils.equalsIgnoreCase(ruleRequest.getScanType(), ScanTypeConstants.custodian.toString())) {
                 cloudTaskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleRequest));
@@ -248,7 +243,7 @@ public class RuleService   {
             if (!flag) {
                 HRException.throwException(Translator.get("i18n_compliance_rule_code_error"));
             }
-            operationLogService.log(tokenService.getLoginUser(), ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_copy_rule");
+            operationLogService.log(loginUser, ruleRequest.getId(), ruleRequest.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.CREATE, "i18n_copy_rule");
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
@@ -291,13 +286,13 @@ public class RuleService   {
         }
     }
 
-    public CloudTask runRules(RuleDTO ruleDTO) {
+    public CloudTask runRules(RuleDTO ruleDTO, LoginUser loginUser) {
         try {
             cloudTaskService.validateYaml(BeanUtils.copyBean(new QuartzTaskDTO(), ruleDTO));
             QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
             BeanUtils.copyBean(quartzTaskDTO, ruleDTO);
             quartzTaskDTO.setType("manual");
-            return cloudTaskService.saveManualTask(quartzTaskDTO, null);
+            return cloudTaskService.saveManualTask(quartzTaskDTO, null, loginUser);
         } catch (Exception e) {
             throw new HRException(e.getMessage());
         }
@@ -310,7 +305,7 @@ public class RuleService   {
         return cloudTaskService.ruleDryRun(quartzTaskDTO);
     }
 
-    public void deleteRule(String id) {
+    public void deleteRule(String id, LoginUser loginUser) {
         Rule rule = ruleMapper.selectByPrimaryKey(id);
         ResourceRuleExample resourceItemRuleExample = new ResourceRuleExample();
         resourceItemRuleExample.createCriteria().andRuleIdEqualTo(id);
@@ -325,7 +320,7 @@ public class RuleService   {
             ruleTypeMapper.deleteByExample(ruleTypeExample);
             deleteRuleInspectionReportMapping(id);
             deleteRuleGroupMapping(id);
-            operationLogService.log(tokenService.getLoginUser(), id, rule.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.DELETE, "i18n_delete_rule");
+            operationLogService.log(loginUser, id, rule.getName(), ResourceTypeConstants.RULE.name(), ResourceOperation.DELETE, "i18n_delete_rule");
         } else {
             HRException.throwException(Translator.get("i18n_compliance_rule_useage_error"));
         }
@@ -457,15 +452,15 @@ public class RuleService   {
         return ruleTagDTOList;
     }
 
-    public RuleTag saveRuleTag(RuleTag ruleTag) {
+    public RuleTag saveRuleTag(RuleTag ruleTag, LoginUser loginUser) {
         ruleTagMapper.insertSelective(ruleTag);
-        operationLogService.log(tokenService.getLoginUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.CREATE, "i18n_create_rule_tag");
+        operationLogService.log(loginUser, ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.CREATE, "i18n_create_rule_tag");
         return ruleTag;
     }
 
-    public RuleTag updateRuleTag(RuleTag ruleTag) {
+    public RuleTag updateRuleTag(RuleTag ruleTag, LoginUser loginUser) {
         ruleTagMapper.updateByPrimaryKey(ruleTag);
-        operationLogService.log(tokenService.getLoginUser(), ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.UPDATE, "i18n_update_rule_tag");
+        operationLogService.log(loginUser, ruleTag.getTagKey(), ruleTag.getTagName(), ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.UPDATE, "i18n_update_rule_tag");
         return ruleTag;
     }
 
@@ -496,12 +491,12 @@ public class RuleService   {
         }
     }
 
-    public int deleteRuleTagByTagKey(String tagkey) {
+    public int deleteRuleTagByTagKey(String tagkey, LoginUser loginUser) {
         RuleTagMappingExample example = new RuleTagMappingExample();
         example.createCriteria().andTagKeyEqualTo(tagkey);
         List<RuleTagMapping> list = ruleTagMappingMapper.selectByExample(example);
         if (!list.isEmpty()) HRException.throwException(Translator.get("i18n_not_allowed"));
-        operationLogService.log(tokenService.getLoginUser(), tagkey, tagkey, ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.DELETE, "i18n_delete_rule_tag");
+        operationLogService.log(loginUser, tagkey, tagkey, ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.DELETE, "i18n_delete_rule_tag");
         return ruleTagMapper.deleteByPrimaryKey(tagkey);
     }
 
@@ -532,11 +527,11 @@ public class RuleService   {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public void scan(ScanGroupRequest request) throws Exception {
+    public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
         Integer scanId = systemProviderService.insertScanHistory(account);
         for (Integer groupId : request.getGroups()) {
-            this.scanGroups(request.getAccountId(), scanId, groupId.toString());
+            this.scanGroups(request.getAccountId(), scanId, groupId.toString(), loginUser);
         }
     }
 
@@ -553,7 +548,7 @@ public class RuleService   {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
-    public String reScan(String taskId, String accountId) throws Exception {
+    public String reScan(String taskId, String accountId, LoginUser loginUser) throws Exception {
         CloudTaskItemExample example = new CloudTaskItemExample();
         example.createCriteria().andTaskIdEqualTo(taskId);
         List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(example);
@@ -561,24 +556,24 @@ public class RuleService   {
         RuleDTO rule = getRuleDtoById(cloudTaskItems.get(0).getRuleId(), accountId);
         if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
         Integer scanId = systemProviderService.insertScanHistory(account);
-        return this.dealTask(rule, account, scanId, null);
+        return this.dealTask(rule, account, scanId, null, loginUser);
     }
 
-    private void scanGroups(String accountId, Integer scanId, String groupId) {
+    private void scanGroups(String accountId, Integer scanId, String groupId, LoginUser loginUser) {
         try {
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
             String messageOrderId = systemProviderService.createMessageOrder(account);
 
             List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(accountId, groupId);
             for (RuleDTO rule : ruleDTOS) {
-                this.dealTask(rule, account, scanId, messageOrderId);
+                this.dealTask(rule, account, scanId, messageOrderId, loginUser);
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
     }
 
-    private void scan(AccountWithBLOBs account) throws Exception {
+    private void scan(AccountWithBLOBs account, LoginUser loginUser) throws Exception {
         Integer scanId = systemProviderService.insertScanHistory(account);
 
         String messageOrderId = systemProviderService.createMessageOrder(account);
@@ -589,11 +584,11 @@ public class RuleService   {
         dto.setStatus(true);
         List<RuleDTO> ruleDTOS = accountService.getRules(dto);
         for (RuleDTO rule : ruleDTOS) {
-            this.dealTask(rule, account, scanId, messageOrderId);
+            this.dealTask(rule, account, scanId, messageOrderId, loginUser);
         }
     }
 
-    private String dealTask(RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId) {
+    private String dealTask(RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId, LoginUser loginUser) {
         try {
             if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(),rule.getId(),
                             new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})){
@@ -621,7 +616,7 @@ public class RuleService   {
                 quartzTaskDTO.setType("manual");
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
-                CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId);
+                CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId, loginUser);
                 if(scanId!=null) {
                     if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
                         systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
@@ -711,7 +706,7 @@ public class RuleService   {
         }
     }
 
-    public void scanByGroup(String groupId, String accountId){
-        scanGroups(accountId, null, groupId);
+    public void scanByGroup(String groupId, String accountId, LoginUser loginUser){
+        scanGroups(accountId, null, groupId, loginUser);
     }
 }

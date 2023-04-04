@@ -18,7 +18,6 @@ import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
@@ -62,8 +61,6 @@ public class CloudSyncService {
     private ProxyMapper proxyMapper;
     @Autowired
     private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private IOperationLogService operationLogService;
     /**
@@ -98,8 +95,8 @@ public class CloudSyncService {
         return cloudResourceSyncItemDtos;
     }
 
-    public void sync(String accountId) throws Exception {
-        LoginUser user = tokenService.getLoginUser();
+    public void sync(String accountId, LoginUser loginUser) throws Exception {
+        LoginUser user = loginUser;
         //先清理后插入
         deleteResourceSync(accountId);
 
@@ -283,12 +280,12 @@ public class CloudSyncService {
         cloudResourceItemMapper.deleteByExample(cloudResourceItemExample);
     }
 
-    public void syncResources() throws Exception {
+    public void syncResources(LoginUser loginUser) throws Exception {
         AccountExample example = new AccountExample();
         example.createCriteria().andStatusEqualTo("VALID");
         List<Account> accounts = accountMapper.selectByExample(example);
         for (Account account : accounts) {
-            sync(account.getId());
+            sync(account.getId(), loginUser);
         }
     }
 

@@ -14,6 +14,7 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ import java.util.Map;
 public class ResourceController {
     @Autowired
     private ResourceService resourceService;
-
+    @Autowired
+    private TokenService tokenService;
     @I18n
     @ApiOperation(value = "云账号资源")
     @GetMapping("source/{accountId}")
@@ -83,14 +85,14 @@ public class ResourceController {
     @ApiIgnore
     @GetMapping("fix/{id}")
     public ResourceWithBLOBs fixResource(@PathVariable String id) throws Exception {
-        return resourceService.operatingResource(id, "fix");
+        return resourceService.operatingResource(id, "fix", tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "重新检测")
     @GetMapping("restart/{id}")
     public ResourceWithBLOBs restartResource(@PathVariable String id) throws Exception {
-        return resourceService.operatingResource(id, "restart");
+        return resourceService.operatingResource(id, "restart", tokenService.getLoginUser());
     }
 
     @I18n
@@ -103,7 +105,7 @@ public class ResourceController {
     @ApiOperation(value = "导出整个云检测报告")
     @PostMapping("export")
     public ResponseEntity<byte[]> exportReport(@RequestBody ExcelExportRequest request) throws Exception {
-        byte[] bytes = resourceService.export(request);
+        byte[] bytes = resourceService.export(request, tokenService.getLoginUser());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "不合规资源检测报告.xlsx");
@@ -116,7 +118,7 @@ public class ResourceController {
     @ApiOperation(value = "导出规则组检测报告")
     @PostMapping("groupExport")
     public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
-        byte[] bytes = resourceService.exportGroupReport(request);
+        byte[] bytes = resourceService.exportGroupReport(request, tokenService.getLoginUser());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "不合规资源检测报告.xlsx");
@@ -139,7 +141,7 @@ public class ResourceController {
     @ApiOperation(value = "删除检测记录")
     @GetMapping("account/delete/{id}")
     public void deleteResourceByAccountId(@PathVariable String id) throws Exception {
-        resourceService.deleteResourceByAccountId(id);
+        resourceService.deleteResourceByAccountId(id, tokenService.getLoginUser());
     }
 
     @I18n
