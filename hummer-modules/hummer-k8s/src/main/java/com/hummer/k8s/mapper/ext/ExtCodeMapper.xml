@@ -2,11 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.k8s.mapper.ext.ExtCodeMapper">
 
-    <resultMap id="CodeMap" type="com.hummer.common.core.dto.CodeDTO"
-               extends="com.hummer.k8s.mapper.CodeMapper.BaseResultMap">
-        <result column="user" property="user"/>
-    </resultMap>
-
     <sql id="condition">
         <choose>
             <when test='${object}.operator == "like"'>
@@ -81,12 +76,62 @@
         </if>
     </sql>
 
-    <select id="codeList" resultMap="CodeMap">
+    <resultMap id="CodeMap" type="com.hummer.common.core.dto.CodeDTO">
+        <!-- code -->
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="credential" jdbcType="LONGVARCHAR" property="credential" />
+        <!-- code result -->
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="scan_time" jdbcType="BIGINT" property="scanTime" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="return_json" jdbcType="LONGVARCHAR" property="returnJson" />
+        <!-- extra -->
+        <result column="user" jdbcType="VARCHAR" property="user" />
+        <result column="critical" jdbcType="VARCHAR" property="critical" />
+        <result column="high" jdbcType="VARCHAR" property="high" />
+        <result column="medium" jdbcType="VARCHAR" property="medium" />
+        <result column="low" jdbcType="VARCHAR" property="low" />
+        <result column="unknown" jdbcType="VARCHAR" property="unknown" />
+    </resultMap>
+
+    <select id="codeList" resultMap="CodeMap" parameterType="com.hummer.common.core.domain.request.code.CodeRequest">
         select
         t.*,
-        user.name as userName
+        t1.id as result_id,
+        t1.rule_id,
+        t1.rule_name,
+        t1.rule_desc,
+        t1.result_status,
+        t1.severity,
+        t1.update_time as scan_time,
+        t1.user_name,
+        t1.return_sum,
+        t1.command,
+        t1.return_json,
+        (select count(*) from code_result_item tj where tj.result_id = t1.id and tj.severity = 'CRITICAL') as critical,
+        (select count(*) from code_result_item tj where tj.result_id = t1.id and tj.severity = 'HIGH') as high,
+        (select count(*) from code_result_item tj where tj.result_id = t1.id and tj.severity = 'MEDIUM') as medium,
+        (select count(*) from code_result_item tj where tj.result_id = t1.id and tj.severity = 'LOW') as low,
+        (select count(*) from code_result_item tj where tj.result_id = t1.id and tj.severity = 'UNKNOWN') as unknown
         from code as t
-        left join user on t.creator = user.id
+        left join code_result t1 on t.id = t1.code_id
         <where>
             <if test="request.combine != null">
                 <include refid="combine">

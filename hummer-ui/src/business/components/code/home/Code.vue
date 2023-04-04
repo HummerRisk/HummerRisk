@@ -5,8 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('code.code_settings_list')"
                       @create="create" :createTip="$t('code.code_create')"
-                      @validate="validate" :validateTip="$t('account.one_validate')"
-                      :show-create="true" :show-validate="true"
+                      :show-create="true" :show-validate="false"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -22,7 +21,7 @@
         <el-table-column type="selection" min-width="40">
         </el-table-column>
         <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="name" :label="$t('code.name')" v-if="checkedColumnNames.includes('name')"  min-width="150" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('code.name')" v-if="checkedColumnNames.includes('name')"  min-width="220" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 40px; height: 25px; vertical-align:middle" alt=""/>
@@ -30,12 +29,44 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" min-width="100" v-if="checkedColumnNames.includes('status')" :label="$t('code.status')"
-                         column-key="status"
-                         :filters="statusFilters"
-                         :filter-method="filterStatus">
-          <template v-slot:default="{row}">
-            <code-status :row="row"/>
+        <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" v-if="checkedColumnNames.includes('returnSum')" prop="returnSum" sortable show-overflow-tooltip min-width="220">
+          <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
+            <div class="txt-click" @click="goResource(scope.row)">
+              <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
+              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.high }}</span>
+              <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.medium }}</span>
+              <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.low }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.unknown }}</span>
+            </div>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('code.result_status')" v-if="checkedColumnNames.includes('resultStatus')" min-width="150" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
+          <el-button plain size="medium" type="info" v-else-if="scope.row.resultStatus === null">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+          </el-button>
+        </el-table-column>
+        <el-table-column prop="scanTime" min-width="200" v-if="checkedColumnNames.includes('scanTime')" :label="$t('commons.last_scan_time')" sortable>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.resultStatus !== null"><i class="el-icon-time"/> {{ scope.row.scanTime | timestampFormatDate }}</span>
+            <span v-if="scope.row.resultStatus === null">--</span>
           </template>
         </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('commons.create_time')" sortable
@@ -50,8 +81,8 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="80" show-overflow-tooltip/>
-        <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
+        <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="100" show-overflow-tooltip/>
+        <el-table-column min-width="230" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -233,16 +264,17 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  addCodeUrl,
+  addCodeUrl, codeDownloadUrl,
   codeListUrl,
   codePluginUrl,
   codeValidateUrl,
-  deleteCodeUrl,
+  deleteCodeUrl, getCodeResultUrl,
   scanCodeUrl,
   updateCodeUrl
 } from "@/api/k8s/code/code";
 import {proxyListAllUrl} from "@/api/system/system";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
+import {saveAs} from "@/common/js/FileSaver";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -252,8 +284,18 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'code.status',
-    props: 'status',
+    label: 'resource.i18n_not_compliance',
+    props: 'returnSum',
+    disabled: false
+  },
+  {
+    label: 'code.result_status',
+    props: 'resultStatus',
+    disabled: false
+  },
+  {
+    label: 'commons.last_scan_time',
+    props: 'scanTime',
     disabled: false
   },
   {
@@ -357,6 +399,12 @@ export default {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
         }, {
+          tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "info",
+          exec: this.handleVuln
+        }, {
+          tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
+          exec: this.handleDownload
+        }, {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
         }
@@ -403,6 +451,21 @@ export default {
       this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
       this.isIndeterminate = false;
       this.checkAll = val;
+    },
+    handleVuln() {
+      window.open('http://www.cnnvd.org.cn/','_blank','');
+    },
+    handleDownload(item) {
+      this.$post(codeDownloadUrl, {
+        id: item.resultId
+      }, response => {
+        if (response.success) {
+          let blob = new Blob([response.data], { type: "application/json" });
+          saveAs(blob, item.name + ".json");
+        }
+      }, error => {
+        console.log("下载报错", error);
+      });
     },
     async create() {
       if(this.sboms && this.sboms.length > 0) {
@@ -664,12 +727,7 @@ export default {
             this.$get(scanCodeUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
-                this.$router.push({
-                  path: '/code/result',
-                  query: {
-                    date:new Date().getTime()
-                  },
-                }).catch(error => error);
+                this.search();
               } else {
                 this.$error(response.message);
               }
@@ -678,9 +736,50 @@ export default {
         }
       });
     },
+    getStatus () {
+      if (this.checkStatus(this.tableData)) {
+        this.search();
+        clearInterval(this.timer);
+      } else {
+        for (let data of this.tableData) {
+          this.$get(getCodeResultUrl + data.id, response => {
+            let result = response.data;
+            if (data.resultStatus !== result.resultStatus) {
+              data.resultStatus = result.resultStatus;
+              data.returnSum = result.returnSum;
+              data.critical = result.critical?result.critical:0;
+              data.high = result.high?result.high:0;
+              data.medium = result.medium?result.medium:0;
+              data.low = result.low?result.low:0;
+              data.unknown = result.unknown?result.unknown:0;
+            }
+          });
+        }
+      }
+    },
+    //是否是结束状态，返回false代表都在运行中，true代表已结束
+    checkStatus (tableData) {
+      let sum = 0;
+      for (let row of tableData) {
+        if (row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
+          sum++;
+        }
+      }
+      return sum == 0;
+    },
+  },
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror;
+    }
   },
   activated() {
     this.init();
+    this.location = window.location.href.split("#")[0];
+    // this.timer = setInterval(this.getStatus, 10000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 }
 </script>

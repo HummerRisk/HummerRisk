@@ -223,6 +223,7 @@ export default {
     type: '类型',
     validing: '正在校验',
     note: '注: ',
+    last_scan_time: '执行检测时间',
   },
   workspace: {
     create: '创建工作空间',
@@ -694,7 +695,7 @@ export default {
     i18n_in_process: '正在处理',
     i18n_has_exception: '异 常',
     i18n_has_warn: '告 警',
-    i18n_no_warn: '无检测',
+    i18n_no_warn: '未检测',
     i18n_crteating: '创建中',
     i18n_scaning: '检测中',
     i18n_done: '已完成',

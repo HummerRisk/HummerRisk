@@ -223,6 +223,7 @@ export default {
     type: 'Type',
     validating: 'Validating',
     note: 'Note: ',
+    last_scan_time: 'Execution detection time',
   },
   workspace: {
     create:'Create a workspace',

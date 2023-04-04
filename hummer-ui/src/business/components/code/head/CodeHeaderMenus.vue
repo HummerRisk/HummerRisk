@@ -9,12 +9,12 @@
           </el-menu-item>
 
           <el-menu-item :index="'/code/code'">
-            {{ $t("code.code_setting") }}
+            {{ $t("code.code_scan") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/code/result'">
-            {{ $t("code.code_result") }}
-          </el-menu-item>
+<!--          <el-menu-item :index="'/code/result'">-->
+<!--            {{ $t("code.code_result") }}-->
+<!--          </el-menu-item>-->
 
           <el-menu-item :index="'/code/history'">
             {{ $t("code.history") }}
