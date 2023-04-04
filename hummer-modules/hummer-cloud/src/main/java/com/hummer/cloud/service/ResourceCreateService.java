@@ -135,6 +135,7 @@ public class ResourceCreateService {
                     try {
                         ossService.syncBatch(ossToBeProceed.getId());
                     } catch (Exception e) {
+                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(ossToBeProceed.getId());

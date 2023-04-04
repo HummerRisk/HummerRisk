@@ -249,8 +249,10 @@ public class HuaweiProvider implements OssProvider {
         String[] split = dir.split("/");
         String data = "";
         for (String d : split) {
-            data += d + "/";
-            obsClient.putObject(bucket.getBucketName(), data, new ByteArrayInputStream(new byte[0]));
+            if(!"".equals(d)){
+                data += d + "/";
+                obsClient.putObject(bucket.getBucketName(), data, new ByteArrayInputStream(new byte[0]));
+            }
         }
     }
 
