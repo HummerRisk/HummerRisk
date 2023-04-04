@@ -59,7 +59,7 @@
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
-          <el-button plain size="medium" type="info" v-else-if="scope.row.resultStatus === null">
+          <el-button @click="noWarnLog(scope.row)" plain size="medium" type="info" v-else-if="scope.row.resultStatus === null">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
           </el-button>
         </el-table-column>
@@ -246,6 +246,63 @@
     </el-drawer>
     <!--Update code-->
 
+    <!--Result log-->
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-row class="el-form-item-dev" v-if="logData.length == 0">
+        <span>{{ $t('resource.i18n_no_data') }}<br></span>
+      </el-row>
+      <el-row class="el-form-item-dev" v-if="logData.length > 0">
+        <div>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span">
+                  {{ logForm.name }}
+                  <i class="el-icon-document-copy" @click="copy(logForm)" style="display: none;"></i>
+                </span>
+                <span class="grid-content-log-span">
+                  <img :src="require(`@/assets/img/code/${logForm.pluginIcon}`)" style="width: 40px; height: 25px; vertical-align:middle" alt=""/>
+                  {{ 'C:' + logForm.critical + ' H:' +  logForm.high + ' M:' + logForm.medium + ' L:' + logForm.low + ' U:' + logForm.unknown}}
+                </span>
+                <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
+          <el-table-column>
+            <template v-slot:default="scope">
+              <div class="bg-purple-div">
+                <span
+                    v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <log-form :logForm="logForm"/>
+      <template v-slot:footer>
+        <dialog-footer
+            @cancel="logVisible = false"
+            @confirm="logVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--Result log-->
+
   </main-container>
 </template>
 
@@ -263,12 +320,15 @@ import ProxyDialogFooter from "@/business/components/common/components/ProxyDial
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import LogForm from "@/business/components/code/home/LogForm";
 import {
-  addCodeUrl, codeDownloadUrl,
+  addCodeUrl,
+  codeDownloadUrl,
   codeListUrl,
   codePluginUrl,
-  codeValidateUrl,
-  deleteCodeUrl, getCodeResultUrl,
+  deleteCodeUrl,
+  getCodeResultUrl,
+  logCodeUrl,
   scanCodeUrl,
   updateCodeUrl
 } from "@/api/k8s/code/code";
@@ -329,6 +389,7 @@ export default {
     ProxyDialogFooter,
     ProxyDialogCreateFooter,
     HideTable,
+    LogForm,
   },
   provide() {
     return {
@@ -409,15 +470,6 @@ export default {
           exec: this.handleDelete
         }
       ],
-      statusFilters: [
-        {text: this.$t('account.INVALID'), value: 'INVALID'},
-        {text: this.$t('account.VALID'), value: 'VALID'},
-        {text: this.$t('account.DELETE'), value: 'DELETE'}
-      ],
-      proxyType: [
-        {id: 'Http', value: "Http"},
-        {id: 'Https', value: "Https"},
-      ],
       sboms: [],
       versions: [],
       checkedColumnNames: columnOptions.map((ele) => ele.props),
@@ -435,6 +487,11 @@ export default {
       ],
       checkAll: true,
       isIndeterminate: false,
+      logVisible: false,
+      detailVisible: false,
+      logForm: {},
+      logData: [],
+      detailForm: {},
     }
   },
   watch: {
@@ -455,7 +512,14 @@ export default {
     handleVuln() {
       window.open('http://www.cnnvd.org.cn/','_blank','');
     },
+    noWarnLog(item) {
+      this.$warning(item.name + this.$t('resource.i18n_no_warn'));
+    },
     handleDownload(item) {
+      if (!item.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
       this.$post(codeDownloadUrl, {
         id: item.resultId
       }, response => {
@@ -496,36 +560,6 @@ export default {
         this.proxys = response.data;
       });
     },
-    //校验Git项目账号
-    validate() {
-      if (this.selectIds.size === 0) {
-        this.$warning(this.$t('code.please_choose_code'));
-        return;
-      }
-      this.$alert(this.$t('account.one_validate') + this.$t('code.code_setting') + " ？", '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            let formData = new FormData();
-            this.result = this.$request({
-              method: 'POST',
-              url: codeValidateUrl,
-              data: Array.from(this.selectIds),
-              headers: {
-                'Content-Type': undefined
-              }
-            }, res => {
-              if (res.data) {
-                this.$success(this.$t('commons.success'));
-              } else {
-                this.$error(this.$t('commons.error'));
-              }
-              this.search();
-            });
-          }
-        }
-      });
-    },
     select(selection) {
       this.selectIds.clear();
       selection.forEach(s => {
@@ -555,6 +589,8 @@ export default {
     handleClose() {
       this.createVisible =  false;
       this.updateVisible =  false;
+      this.logVisible=false;
+      this.detailVisible=false;
     },
     handleDelete(obj) {
       this.$alert(this.$t('commons.delete_confirm') + obj.name + " ？", '', {
@@ -744,7 +780,7 @@ export default {
         for (let data of this.tableData) {
           this.$get(getCodeResultUrl + data.id, response => {
             let result = response.data;
-            if (data.resultStatus !== result.resultStatus) {
+            if (result && data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnSum = result.returnSum;
               data.critical = result.critical?result.critical:0;
@@ -761,11 +797,47 @@ export default {
     checkStatus (tableData) {
       let sum = 0;
       for (let row of tableData) {
-        if (row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
+        if (row.resultStatus && row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
           sum++;
         }
       }
       return sum == 0;
+    },
+    showResultLog (result) {
+      if (!result.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
+      this.result = this.$get(logCodeUrl + result.resultId, response => {
+        this.logData = response.data;
+      });
+      this.result = this.$get(getCodeResultUrl + result.resultId, response => {
+        this.logForm = response.data;
+        this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
+      });
+      this.logVisible = true;
+    },
+    copy(row) {
+      let input = document.createElement("input");
+      document.body.appendChild(input);
+      input.value = row['command'];
+      input.select();
+      if (input.setSelectionRange) {
+        input.setSelectionRange(0, input.value.length);
+      }
+      document.execCommand("copy");
+      document.body.removeChild(input);
+    },
+    goResource (params) {
+      if (params.returnSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let path = this.$route.path;
+      let p = '/code/resultdetails/' + params.resultId;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
   },
   computed: {
@@ -776,7 +848,7 @@ export default {
   activated() {
     this.init();
     this.location = window.location.href.split("#")[0];
-    // this.timer = setInterval(this.getStatus, 10000);
+    this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {
     clearInterval(this.timer);
@@ -834,5 +906,102 @@ export default {
   font-size: 25px;
   vertical-align: middle;
 }
+.table-content {
+  width: 100%;
+}
+.el-form-item-dev  >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 10%;
+  width: 47%;
+}
+.tag-v{
+  margin: 10px;
+  cursor:pointer;
+}
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.rtl >>> input {
+  width: 100%;
+}
+.rtl >>> .el-select {
+  width: 80%;
+}
+.rtl >>> .el-form-item__content {
+  width: 75%;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #f2f2f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.el-form-item-dev  >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+
+.grid-content-log-span {
+  width: 34%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 2px;
+  color: #606266;
+  padding: 0 1%;
+}
+
+.grid-content-status-span {
+  width: 20%;float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+  padding: 0 1%;
+}
+.pure-span {
+  color: #606266;
+  margin: 10px 0;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 2%;
+  width: 46%;
+}
+.txt-click {
+  cursor:pointer;
+}
+.txt-click:hover {
+  color: aliceblue;
+  text-shadow: 1px 1px 1px #000;
+}
+* { touch-action: pan-y; }
+/deep/ :focus{outline:0;}
 </style>
 

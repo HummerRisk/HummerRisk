@@ -146,7 +146,8 @@ import {severityOptions} from "@/common/js/constants";
 import LogForm from "@/business/components/code/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  codeDownloadUrl, codeReScanUrl,
+  codeDownloadUrl,
+  codeReScanUrl,
   codeResultListUrl,
   deleteCodeResultUrl,
   getCodeResultUrl,

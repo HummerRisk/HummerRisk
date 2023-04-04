@@ -12,10 +12,6 @@
             {{ $t("code.code_scan") }}
           </el-menu-item>
 
-<!--          <el-menu-item :index="'/code/result'">-->
-<!--            {{ $t("code.code_result") }}-->
-<!--          </el-menu-item>-->
-
           <el-menu-item :index="'/code/history'">
             {{ $t("code.history") }}
           </el-menu-item>

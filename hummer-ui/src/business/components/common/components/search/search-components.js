@@ -97,6 +97,15 @@ export const UPDATE_TIME = {
   },
 }
 
+export const SCAN_TIME = {
+  key: "scanTime",
+  name: "TableSearchDateTimePicker",
+  label: "commons.last_scan_time",
+  operator: {
+    options: [OPERATORS.BETWEEN, OPERATORS.GT, OPERATORS.GE, OPERATORS.LT, OPERATORS.LE, OPERATORS.EQ]
+  },
+}
+
 export const LAST_MODIFIED = {
   key: "lastModified",
   name: "TableSearchDateTimePicker",
@@ -317,6 +326,7 @@ export const K8S_RESULT_STATUS = {
     {label: 'resource.i18n_done', value: 'FINISHED'},
     {label: 'resource.i18n_has_exception', value: 'ERROR'},
     {label: 'resource.i18n_has_warn', value: 'WARNING'},
+    {label: 'resource.i18n_no_warn', value: ''},
   ],
   props: { // 尾部控件的props，一般为element ui控件的props
     multiple: true
@@ -1110,7 +1120,7 @@ export const K8S_RESULT_CONFIGS = [NAME, K8S_PLUGIN_NAME, CREATOR, K8S_RESULT_ST
 export const CONFIG_CONFIGS = [NAME, ACCOUNT_STATUS, UPDATE_TIME, CREATE_TIME, CREATOR];
 export const CONFIG_RESULT_CONFIGS = [NAME, K8S_RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const TASK_CONFIGS = [NAME, CREATOR, CREATE_TIME, UPDATE_TIME];
-export const CODE_CONFIGS = [NAME, UPDATE_TIME, CREATE_TIME, ACCOUNT_STATUS, CREATOR];
+export const CODE_CONFIGS = [NAME, SCAN_TIME, CREATE_TIME, UPDATE_TIME, K8S_RESULT_STATUS, CREATOR];
 export const CODE_RULE_CONFIGS = [RULE_NAME, RULE_SEVERITY];
 export const CODE_RESULT_CONFIGS = [NAME, RULE_NAME, RULE_SEVERITY, K8S_RESULT_STATUS, CREATOR, UPDATE_TIME];
 export const CLOUD_EVENT_SYNC_CONFIGS = [EVENT_ACCOUNT, REGION, CREATE_TIME];

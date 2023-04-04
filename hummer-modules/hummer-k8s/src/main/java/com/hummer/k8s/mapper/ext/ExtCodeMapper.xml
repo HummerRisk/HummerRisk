@@ -62,14 +62,20 @@
                 <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
-        <if test="${condition}.status != null">
-            and t.status
+        <if test="${condition}.scanTime != null">
+            and t1.update_time
             <include refid="condition">
-                <property name="object" value="${condition}.status"/>
+                <property name="object" value="${condition}.scanTime"/>
+            </include>
+        </if>
+        <if test="${condition}.resultStatus != null">
+            and t1.result_status
+            <include refid="condition">
+                <property name="object" value="${condition}.resultStatus"/>
             </include>
         </if>
         <if test="${condition}.creator != null">
-            and user.id
+            and t2.id
             <include refid="condition">
                 <property name="object" value="${condition}.creator"/>
             </include>
@@ -121,7 +127,7 @@
         t1.result_status,
         t1.severity,
         t1.update_time as scan_time,
-        t1.user_name,
+        t2.name as user_name,
         t1.return_sum,
         t1.command,
         t1.return_json,
@@ -132,6 +138,7 @@
         (select count(*) from code_result_item tj where tj.result_id = t1.id and tj.severity = 'UNKNOWN') as unknown
         from code as t
         left join code_result t1 on t.id = t1.code_id
+        left join user t2 on t.creator = t2.id
         <where>
             <if test="request.combine != null">
                 <include refid="combine">
@@ -147,10 +154,10 @@
                 and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
             <if test="request.userName != null and request.userName != ''">
-                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
+                and LOWER(t2.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
-                and t.status = #{request.status}
+                and t1.status = #{request.status}
             </if>
         </where>
         order by t.update_time desc

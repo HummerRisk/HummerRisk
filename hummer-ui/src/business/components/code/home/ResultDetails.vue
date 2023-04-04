@@ -232,7 +232,7 @@ const columnOptions = [
         let path = this.$route.path;
         if (path.indexOf("/code") >= 0) {
           this.$router.push({
-            path: '/code/result',
+            path: '/code/code',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
