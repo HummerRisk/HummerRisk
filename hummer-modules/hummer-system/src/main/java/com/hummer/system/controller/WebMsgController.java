@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Api(tags = "站内消息管理")
-@RequestMapping("/webmsg")
+@RequestMapping("webmsg")
 @RestController
 public class WebMsgController {
 
