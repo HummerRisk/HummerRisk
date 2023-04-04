@@ -778,7 +778,7 @@ export default {
         clearInterval(this.timer);
       } else {
         for (let data of this.tableData) {
-          this.$get(getCodeResultUrl + data.id, response => {
+          this.$get(getCodeResultUrl + data.resultId, response => {
             let result = response.data;
             if (result && data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
@@ -833,7 +833,6 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let path = this.$route.path;
       let p = '/code/resultdetails/' + params.resultId;
       this.$router.push({
         path: p

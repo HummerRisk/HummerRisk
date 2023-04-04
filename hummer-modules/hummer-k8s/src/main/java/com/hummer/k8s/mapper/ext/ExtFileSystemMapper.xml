@@ -2,11 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.k8s.mapper.ext.ExtFileSystemMapper">
 
-    <resultMap id="FileSystemMap" type="com.hummer.common.core.dto.FsDTO"
-               extends="com.hummer.k8s.mapper.FileSystemMapper.BaseResultMap">
-        <result column="user" property="user"/>
-    </resultMap>
-
     <sql id="condition">
         <choose>
             <when test='${object}.operator == "like"'>
@@ -67,10 +62,16 @@
                 <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
-        <if test="${condition}.status != null">
-            and t.status
+        <if test="${condition}.scanTime != null">
+            and t1.update_time
             <include refid="condition">
-                <property name="object" value="${condition}.status"/>
+                <property name="object" value="${condition}.scanTime"/>
+            </include>
+        </if>
+        <if test="${condition}.resultStatus != null">
+            and t1.result_status
+            <include refid="condition">
+                <property name="object" value="${condition}.resultStatus"/>
             </include>
         </if>
         <if test="${condition}.creator != null">
@@ -81,11 +82,66 @@
         </if>
     </sql>
 
-    <select id="fsList" resultMap="FileSystemMap">
+    <resultMap id="FileSystemMap" type="com.hummer.common.core.dto.FsDTO">
+        <!-- fs -->
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="path" jdbcType="VARCHAR" property="path" />
+        <result column="dir" jdbcType="VARCHAR" property="dir" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <!-- fs result -->
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="update_time" jdbcType="BIGINT" property="scanTime" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="return_json" jdbcType="LONGVARCHAR" property="returnJson" />
+        <!-- extra -->
+        <result column="user" jdbcType="VARCHAR" property="user" />
+        <result column="critical" jdbcType="VARCHAR" property="critical" />
+        <result column="high" jdbcType="VARCHAR" property="high" />
+        <result column="medium" jdbcType="VARCHAR" property="medium" />
+        <result column="low" jdbcType="VARCHAR" property="low" />
+        <result column="unknown" jdbcType="VARCHAR" property="unknown" />
+    </resultMap>
+
+    <select id="fsList" resultMap="FileSystemMap" parameterType="com.hummer.common.core.domain.request.fs.FsRequest">
         select
         t.*,
-        user.name as userName
+        t1.id as result_id,
+        t1.rule_id,
+        t1.rule_name,
+        t1.rule_desc,
+        t1.result_status,
+        t1.severity,
+        t1.update_time as scan_time,
+        t1.return_sum,
+        t1.command,
+        t1.return_json,
+        user.name as user_name,
+        (select count(*) from file_system_result_item tj where tj.result_id = t1.id and tj.severity = 'CRITICAL') as critical,
+        (select count(*) from file_system_result_item tj where tj.result_id = t1.id and tj.severity = 'HIGH') as high,
+        (select count(*) from file_system_result_item tj where tj.result_id = t1.id and tj.severity = 'MEDIUM') as medium,
+        (select count(*) from file_system_result_item tj where tj.result_id = t1.id and tj.severity = 'LOW') as low,
+        (select count(*) from file_system_result_item tj where tj.result_id = t1.id and tj.severity = 'UNKNOWN') as unknown
         from file_system as t
+        left join file_system_result t1 on t.id = t1.fs_id
         left join user on t.creator = user.id
         <where>
             <if test="request.combine != null">
@@ -108,7 +164,7 @@
                 and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
-                and t.status = #{request.status}
+                and t1.status = #{request.status}
             </if>
         </where>
         order by t.update_time desc

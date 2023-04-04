@@ -61,7 +61,7 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="updateTime" v-if="checkedColumnNames.includes('resultStatus')" min-width="150" :label="$t('image.last_modified')" sortable>
+        <el-table-column prop="updateTime" v-if="checkedColumnNames.includes('updateTime')" min-width="150" :label="$t('image.last_modified')" sortable>
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
