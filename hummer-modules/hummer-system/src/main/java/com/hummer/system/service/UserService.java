@@ -10,7 +10,6 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.CodingUtil;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.common.security.utils.SecurityUtils;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.RoleMapper;
@@ -42,11 +41,9 @@ public class UserService {
     @Autowired
     private ExtUserMapper extUserMapper;
     @Autowired
-    private TokenService tokenService;
-    @Autowired
     private OperationLogService operationLogService;
 
-    public UserDTO insert(UserRequest user) throws Exception {
+    public UserDTO insert(UserRequest user, LoginUser loginUser) throws Exception {
         checkUserParam(user);
         //
         String id = user.getId();
@@ -54,7 +51,7 @@ public class UserService {
         if (user1 != null) {
             HRException.throwException(Translator.get("user_id_already_exists"));
         } else {
-            createUser(user);
+            createUser(user, loginUser);
         }
         List<Map<String, Object>> roles = user.getRoles();
         if (!roles.isEmpty()) {
@@ -121,7 +118,7 @@ public class UserService {
         }
     }
 
-    public void createUser(User userRequest) throws Exception {
+    public void createUser(User userRequest, LoginUser loginUser) throws Exception {
         User user = new User();
         BeanUtils.copyBean(user, userRequest);
         user.setCreateTime(System.currentTimeMillis());
@@ -133,7 +130,7 @@ public class UserService {
         user.setPassword(CodingUtil.md5(user.getPassword()));
         checkEmailIsExist(user.getEmail());
         userMapper.insertSelective(user);
-        operationLogService.log(tokenService.getLoginUser(), userRequest.getId(), userRequest.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.CREATE, "创建用户");
+        operationLogService.log(loginUser, userRequest.getId(), userRequest.getName(), ResourceTypeConstants.USER.name(), ResourceOperation.CREATE, "创建用户");
     }
 
     private void checkEmailIsExist(String email) {
@@ -245,9 +242,9 @@ public class UserService {
         return extUserMapper.getUserList(request);
     }
 
-    public void deleteUser(String userId) throws Exception {
+    public void deleteUser(String userId, LoginUser loginUser) throws Exception {
         User user = new User();
-        BeanUtils.copyBean(user, tokenService.getLoginUser());
+        BeanUtils.copyBean(user, loginUser);
         if (user == null) return;
         if (StringUtils.equals(user.getId(), userId)) {
             HRException.throwException(Translator.get("cannot_delete_current_user"));
@@ -258,7 +255,7 @@ public class UserService {
         userRoleMapper.deleteByExample(example);
 
         userMapper.deleteByPrimaryKey(userId);
-        operationLogService.log(tokenService.getLoginUser(), tokenService.getLoginUser().getUserId(), tokenService.getLoginUser().getUserName(), ResourceTypeConstants.USER.name(), ResourceOperation.DELETE, "删除用户");
+        operationLogService.log(loginUser, loginUser.getUserId(), loginUser.getUserName(), ResourceTypeConstants.USER.name(), ResourceOperation.DELETE, "删除用户");
     }
 
     public void updateUserRole(UserRequest user) {
@@ -305,22 +302,22 @@ public class UserService {
         return userMapper.countByExample(example) > 0;
     }
 
-    public void setLanguage(String lang) {
-        if (tokenService.getLoginUser() != null) {
+    public void setLanguage(String lang, LoginUser loginUser) {
+        if (loginUser != null) {
             User user = new User();
-            user.setId(tokenService.getLoginUser().getUserId());
+            user.setId(loginUser.getUserId());
             user.setLanguage(lang);
             updateUser(user);
-            tokenService.getLoginUser().getUser().setLanguage(lang);
+            loginUser.getUser().setLanguage(lang);
         }
     }
 
     /*修改当前用户用户密码*/
-    private User updateCurrentUserPwd(EditPassWordRequest request) throws Exception {
+    private User updateCurrentUserPwd(EditPassWordRequest request, LoginUser loginUser) throws Exception {
         String oldPassword = CodingUtil.md5(request.getPassword(), "utf-8");
         String newPassword = request.getNewpassword();
         UserExample userExample = new UserExample();
-        userExample.createCriteria().andIdEqualTo(Objects.requireNonNull(tokenService.getLoginUser()).getUserId()).andPasswordEqualTo(oldPassword);
+        userExample.createCriteria().andIdEqualTo(Objects.requireNonNull(loginUser).getUserId()).andPasswordEqualTo(oldPassword);
         List<User> users = userMapper.selectByExample(userExample);
         if (!CollectionUtils.isEmpty(users)) {
             User user = users.get(0);
@@ -332,23 +329,23 @@ public class UserService {
         }
     }
 
-    public int updateCurrentUserPassword(EditPassWordRequest request) throws Exception {
-        User user = updateCurrentUserPwd(request);
+    public int updateCurrentUserPassword(EditPassWordRequest request, LoginUser loginUser) throws Exception {
+        User user = updateCurrentUserPwd(request, loginUser);
         return extUserMapper.updatePassword(user);
     }
 
     /*管理员修改用户密码*/
-    private User updateUserPwd(EditPassWordRequest request) throws Exception {
+    private User updateUserPwd(EditPassWordRequest request, LoginUser loginUser) throws Exception {
         User user = userMapper.selectByPrimaryKey(request.getId());
         String newped = request.getNewpassword();
         user.setPassword(CodingUtil.md5(newped));
         user.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser(), Objects.requireNonNull(tokenService.getLoginUser()).getUserId(), tokenService.getLoginUser().getUserName(), ResourceTypeConstants.USER.name(), ResourceOperation.UPDATE, "修改密码");
+        operationLogService.log(loginUser, Objects.requireNonNull(loginUser).getUserId(), loginUser.getUserName(), ResourceTypeConstants.USER.name(), ResourceOperation.UPDATE, "修改密码");
         return user;
     }
 
-    public int updateUserPassword(EditPassWordRequest request) throws Exception {
-        User user = updateUserPwd(request);
+    public int updateUserPassword(EditPassWordRequest request, LoginUser loginUser) throws Exception {
+        User user = updateUserPwd(request, loginUser);
         return extUserMapper.updatePassword(user);
     }
 

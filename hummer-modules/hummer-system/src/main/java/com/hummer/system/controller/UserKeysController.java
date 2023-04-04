@@ -36,7 +36,7 @@ public class UserKeysController {
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<UserKey>> getUserKeysInfo(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody UserKeyRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, userKeyService.getUserKeysInfo(request));
+        return PageUtils.setPageInfo(page, userKeyService.getUserKeysInfo(request, tokenService.getLoginUser()));
     }
 
     @I18n
@@ -50,7 +50,7 @@ public class UserKeysController {
     @GetMapping("generate")
     public void generateUserKey() throws Exception {
         String userId = Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId();
-        userKeyService.generateUserKey(userId);
+        userKeyService.generateUserKey(userId, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除API Keys")

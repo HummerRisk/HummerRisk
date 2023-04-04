@@ -7,6 +7,7 @@ import com.hummer.common.core.domain.request.proxy.ProxyRequest;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.ProxyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,12 +23,14 @@ public class ProxyController {
 
     @Autowired
     private ProxyService proxyService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation(value = "添加代理")
     @PostMapping("/add")
     public Proxy insertProxy(@RequestBody Proxy Proxy) throws Exception {
-        return proxyService.insert(Proxy);
+        return proxyService.insert(Proxy, tokenService.getLoginUser());
     }
 
     @I18n
@@ -41,13 +44,13 @@ public class ProxyController {
     @ApiOperation(value = "删除代理")
     @GetMapping("/delete/{proxyId}")
     public void deleteProxy(@PathVariable(value = "proxyId") int proxyId) {
-        proxyService.deleteProxy(proxyId);
+        proxyService.deleteProxy(proxyId, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "更新代理")
     @PostMapping("/update")
     public void updateProxy(@RequestBody Proxy proxy) {
-        proxyService.updateProxy(proxy);
+        proxyService.updateProxy(proxy, tokenService.getLoginUser());
     }
 
     @I18n

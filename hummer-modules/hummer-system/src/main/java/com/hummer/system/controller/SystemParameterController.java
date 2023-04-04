@@ -8,6 +8,7 @@ import com.hummer.common.core.domain.Webhook;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.SystemParameterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,10 +20,12 @@ import java.util.Map;
 
 @Api(tags = "系统设置")
 @RestController
-@RequestMapping(value = "/system")
+@RequestMapping(value = "system")
 public class SystemParameterController {
     @Autowired
     private SystemParameterService systemParameterService;
+    @Autowired
+    private TokenService tokenService;
 
     @ApiOperation(value = "编辑邮箱设置")
     @PostMapping("/edit/email")
@@ -130,19 +133,19 @@ public class SystemParameterController {
     @ApiOperation(value = "添加webhook")
     @PostMapping("add/webhook")
     public int addWebhook(@RequestBody Webhook webhook) {
-        return systemParameterService.addWebhook(webhook);
+        return systemParameterService.addWebhook(webhook, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "修改webhook")
     @PostMapping("edit/webhook")
     public int editWebhook(@RequestBody Webhook webhook) throws Exception {
-        return systemParameterService.editWebhook(webhook);
+        return systemParameterService.editWebhook(webhook, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除webhook")
     @GetMapping("delete/webhook/{id}")
     public void deleteWebhook(@PathVariable String id) throws Exception {
-        systemParameterService.deleteWebhook(id);
+        systemParameterService.deleteWebhook(id, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "启用webhook")

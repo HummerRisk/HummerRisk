@@ -7,6 +7,7 @@ import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.WebMsgService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,8 @@ public class WebMsgController {
 
     @Autowired
     private WebMsgService webMsgService;
+    @Autowired
+    private TokenService tokenService;
 
     @I18n
     @ApiOperation("分页查询")
@@ -40,14 +43,14 @@ public class WebMsgController {
     @ApiOperation("设置已读")
     @GetMapping("/setReaded/{msgId}")
     public void setReaded(@PathVariable Long msgId) {
-        webMsgService.setReaded(msgId);
+        webMsgService.setReaded(msgId, tokenService.getLoginUser());
     }
 
 
     @ApiOperation("批量设置已读")
     @PostMapping("/batchRead")
     public void batchRead(@RequestBody List<Long> msgIds) {
-        webMsgService.setBatchReaded(msgIds);
+        webMsgService.setBatchReaded(msgIds, tokenService.getLoginUser());
     }
 
     @ApiOperation("批量删除")

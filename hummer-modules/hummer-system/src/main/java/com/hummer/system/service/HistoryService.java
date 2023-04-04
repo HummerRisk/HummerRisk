@@ -10,7 +10,6 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtResourceMapper;
@@ -56,8 +55,6 @@ public class HistoryService {
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
     @Autowired
     private ExtResourceMapper extResourceMapper;
-    @Autowired
-    private TokenService tokenService;
     @DubboReference
     private ICloudProviderService cloudProviderService;
     @DubboReference

@@ -7,8 +7,8 @@ import com.hummer.common.core.domain.UserKey;
 import com.hummer.common.core.domain.UserKeyExample;
 import com.hummer.common.core.domain.request.user.UserKeyRequest;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.security.service.TokenService;
 import com.hummer.common.core.i18n.Translator;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.UserKeyMapper;
 import com.hummer.system.mapper.ext.ExtUserKeyMapper;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -37,18 +37,15 @@ public class UserKeyService {
     private UserService userService;
 
     @Autowired
-    private TokenService tokenService;
-
-    @Autowired
     private OperationLogService operationLogService;
 
-    public List<UserKey> getUserKeysInfo(UserKeyRequest request) {
-        String userId = Objects.requireNonNull(tokenService.getLoginUser()).getUserId();
+    public List<UserKey> getUserKeysInfo(UserKeyRequest request, LoginUser loginUser) {
+        String userId = Objects.requireNonNull(loginUser).getUserId();
         if (!StringUtils.equals(userId, "admin")) request.setUserId(userId);
         return extUserKeyMapper.getUserKeysInfo(request);
     }
 
-    public UserKey generateUserKey(String userId) throws Exception {
+    public UserKey generateUserKey(String userId, LoginUser loginUser) throws Exception {
         if (userService.getUserDTO(userId) == null) {
             HRException.throwException(Translator.get("user_not_exist") + userId);
         }
@@ -68,7 +65,7 @@ public class UserKeyService {
         userKeys.setSecretKey(RandomStringUtils.randomAlphanumeric(16));
         userKeys.setCreateTime(System.currentTimeMillis());
         userKeyMapper.insert(userKeys);
-        operationLogService.log(tokenService.getLoginUser(), userKeys.getAccessKey(), ApiKeyConstants.ACTIVE.name(), ResourceConstants.SystemConstants, ResourceOperation.CREATE, "创建API Keys");
+        operationLogService.log(loginUser, userKeys.getAccessKey(), ApiKeyConstants.ACTIVE.name(), ResourceConstants.SystemConstants, ResourceOperation.CREATE, "创建API Keys");
         return userKeyMapper.selectByPrimaryKey(userKeys.getId());
     }
 

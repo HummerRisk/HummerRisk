@@ -3,7 +3,7 @@ package com.hummer.system.service;
 import com.hummer.common.core.domain.WebMsg;
 import com.hummer.common.core.domain.WebMsgExample;
 import com.hummer.common.core.domain.request.webMsg.WebMsgRequest;
-import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.WebMsgMapper;
 import com.hummer.system.mapper.ext.ExtWebMsgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,6 @@ public class WebMsgService {
     private WebMsgMapper webMsgMapper;
     @Autowired
     private ExtWebMsgMapper extWebMsgMapper;
-    @Autowired
-    private TokenService tokenService;
 
     public List<WebMsg> query(WebMsg webMsg) {
         String orderClause = " create_time desc";
@@ -45,25 +43,25 @@ public class WebMsgService {
         return webMsgMapper.countByExample(example);
     }
 
-    public void setReaded(Long msgId) {
+    public void setReaded(Long msgId, LoginUser loginUser) {
         WebMsg msg = new WebMsg();
         msg.setId(msgId);
         msg.setStatus(true);
-        msg.setUserId(tokenService.getLoginUser().getUserId());
+        msg.setUserId(loginUser.getUserId());
         msg.setReadTime(System.currentTimeMillis());
         webMsgMapper.updateByPrimaryKeySelective(msg);
     }
 
-    public void setBatchReaded(List<Long> msgIds) {
-        extWebMsgMapper.batchStatus(msgIds, System.currentTimeMillis(), tokenService.getLoginUser().getUserId());
+    public void setBatchReaded(List<Long> msgIds, LoginUser loginUser) {
+        extWebMsgMapper.batchStatus(msgIds, System.currentTimeMillis(), loginUser.getUserId());
     }
 
     public void batchDelete(List<Long> msgIds) {
         extWebMsgMapper.batchDelete(msgIds);
     }
 
-    public void save(WebMsg webMsg) {
-        webMsg.setUserId(tokenService.getLoginUser().getUserId());
+    public void save(WebMsg webMsg, LoginUser loginUser) {
+        webMsg.setUserId(loginUser.getUserId());
         webMsgMapper.insertSelective(webMsg);
     }
 

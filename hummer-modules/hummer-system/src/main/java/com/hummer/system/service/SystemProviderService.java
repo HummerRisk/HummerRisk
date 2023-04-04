@@ -2,14 +2,13 @@ package com.hummer.system.service;
 
 
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.ReadFileUtils;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.system.mapper.ext.ExtVulnMapper;
@@ -34,11 +33,7 @@ public class SystemProviderService implements ISystemProviderService {
     @Autowired
     private HistoryCloudTaskMapper historyCloudTaskMapper;
     @Autowired
-    private HistoryScanMapper historyScanMapper;
-    @Autowired
     private HistoryScanTaskMapper historyScanTaskMapper;
-    @Autowired
-    private ProxyMapper proxyMapper;
     @Autowired
     private HistoryCodeResultMapper historyCodeResultMapper;
     @Autowired
@@ -51,8 +46,6 @@ public class SystemProviderService implements ISystemProviderService {
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
     @Autowired
     private HistoryImageResultMapper historyImageResultMapper;
-    @Autowired
-    private PluginMapper pluginMapper;
     @Autowired
     private HistoryServerResultMapper historyServerResultMapper;
     @Autowired

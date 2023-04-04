@@ -26,16 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ResourceCreateService {
     // 只有一个任务在处理，防止超配
-    private static ConcurrentHashMap<String, String> processingGroupIdMap = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<Integer, Integer> historyIdMap = new ConcurrentHashMap<>();
-    @Autowired
-    private CommonThreadPool commonThreadPool;
-    @Autowired
-    private TaskMapper taskMapper;
-    @Autowired
-    private TaskItemMapper taskItemMapper;
-    @Autowired
-    private TaskItemResourceMapper taskItemResourceMapper;
     @Autowired
     private HistoryService historyService;
     @Autowired

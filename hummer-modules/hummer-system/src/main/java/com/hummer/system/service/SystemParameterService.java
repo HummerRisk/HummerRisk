@@ -18,9 +18,8 @@ import com.hummer.common.core.domain.Webhook;
 import com.hummer.common.core.domain.WebhookExample;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.FileUploadUtils;
 import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.security.service.TokenService;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.mapper.WebhookMapper;
 import com.hummer.system.message.NotificationBasicResponse;
@@ -35,9 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,8 +52,6 @@ public class SystemParameterService {
     private SysListener sysListener;
     @Autowired
     private WebhookMapper webhookMapper;
-    @Autowired
-    private TokenService tokenService;
     @Autowired
     private OperationLogService operationLogService;
 
@@ -361,25 +356,25 @@ public class SystemParameterService {
         return webhookMapper.selectByExample(example);
     }
 
-    public int addWebhook(Webhook webhook) {
+    public int addWebhook(Webhook webhook, LoginUser loginUser) {
         webhook.setId(UUIDUtil.newUUID());
-        webhook.setCreator(tokenService.getLoginUser().getUserId());
+        webhook.setCreator(loginUser.getUserId());
         webhook.setCreateTime(System.currentTimeMillis());
         webhook.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.CREATE, "i18n_create_webhook");
+        operationLogService.log(loginUser, webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.CREATE, "i18n_create_webhook");
 
         return webhookMapper.insertSelective(webhook);
     }
 
-    public int editWebhook(Webhook webhook) {
+    public int editWebhook(Webhook webhook, LoginUser loginUser) {
         webhook.setUpdateTime(System.currentTimeMillis());
-        operationLogService.log(tokenService.getLoginUser(), webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.UPDATE, "i18n_update_webhook");
+        operationLogService.log(loginUser, webhook.getId(), webhook.getId(), ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.UPDATE, "i18n_update_webhook");
         return webhookMapper.updateByPrimaryKeySelective(webhook);
     }
 
-    public void deleteWebhook(String id) {
+    public void deleteWebhook(String id, LoginUser loginUser) {
         webhookMapper.deleteByPrimaryKey(id);
-        operationLogService.log(tokenService.getLoginUser(), id, id, ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.DELETE, "i18n_delete_webhook");
+        operationLogService.log(loginUser, id, id, ResourceTypeConstants.WEBHOOK.name(), ResourceOperation.DELETE, "i18n_delete_webhook");
     }
 
     public int changeStatus(Webhook webhook) {

@@ -35,7 +35,7 @@ public class UserController {
     @ApiOperation(value = "添加用户")
     @PostMapping("/special/add")
     public UserDTO insertUser(@RequestBody UserRequest user) throws Exception {
-        return userService.insert(user);
+        return userService.insert(user, tokenService.getLoginUser());
     }
 
     @I18n
@@ -56,7 +56,7 @@ public class UserController {
     @ApiOperation(value = "删除用户")
     @GetMapping("/special/delete/{userId}")
     public void deleteUser(@PathVariable(value = "userId") String userId) throws Exception {
-        userService.deleteUser(userId);
+        userService.deleteUser(userId, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "更新用户")
@@ -101,7 +101,7 @@ public class UserController {
     @ApiOperation(value = "修改用户密码")
     @PostMapping("/update/password")
     public int updateCurrentUserPassword(@RequestBody EditPassWordRequest request) throws Exception {
-        return userService.updateCurrentUserPassword(request);
+        return userService.updateCurrentUserPassword(request, tokenService.getLoginUser());
     }
 
     /**
@@ -110,7 +110,7 @@ public class UserController {
     @ApiIgnore
     @PostMapping("/special/password")
     public int updateUserPassword(@RequestBody EditPassWordRequest request) throws Exception {
-        return userService.updateUserPassword(request);
+        return userService.updateUserPassword(request, tokenService.getLoginUser());
     }
 
     @I18n
