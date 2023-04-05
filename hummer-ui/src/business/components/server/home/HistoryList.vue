@@ -1,29 +1,40 @@
 <template>
-  <el-row :gutter="24">
-    <el-col :span="24">
-      <el-card class="box-card" shadow="always">
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter">
+  <main-container v-loading="result.loading">
+
+    <el-card class="table-card">
+      <template v-slot:header>
+        <table-header :condition.sync="condition" @search="search"
+                      :items="items" :columnNames="columnNames" :showName="false"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+      </template>
+        <hide-table
+            :table-data="tableData"
+            @sort-change="sort"
+            @filter-change="filter"
+            @select-all="select"
+            @select="select"
+        >
           <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="130" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="ip" :label="'IP'" min-width="140" show-overflow-tooltip v-slot:default="scope">
+          <el-table-column prop="serverName" :label="$t('server.server_name')" v-if="checkedColumnNames.includes('serverName')" min-width="130" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="ip" :label="'IP'" v-if="checkedColumnNames.includes('ip')" min-width="140" show-overflow-tooltip v-slot:default="scope">
             {{ scope.row.ip }} : {{ scope.row.port }}
           </el-table-column>
-          <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="160" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="100" show-overflow-tooltip v-slot:default="scope">
+          <el-table-column prop="ruleName" :label="$t('server.rule_name')" v-if="checkedColumnNames.includes('ruleName')" min-width="160" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="isSeverity" :label="$t('server.is_severity')" v-if="checkedColumnNames.includes('severity')" min-width="100" show-overflow-tooltip v-slot:default="scope">
             <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
               <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
               <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
             </el-tooltip>
           </el-table-column>
-          <el-table-column prop="type" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+          <el-table-column prop="type" :label="$t('commons.type')" v-if="checkedColumnNames.includes('type')" min-width="70" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span v-if="scope.row.type === 'linux'">Linux</span>
               <span v-if="scope.row.type === 'windows'">Windows</span>
               <span v-if="!scope.row.type">N/A</span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" :label="$t('server.result_status')" v-if="checkedColumnNames.includes('resultStatus')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
             <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
@@ -43,17 +54,23 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column prop="updateTime" min-width="160" :label="$t('commons.create_time')" sortable>
+          <el-table-column prop="isSeverity" v-if="checkedColumnNames.includes('isSeverity')" :label="$t('server.is_severity')" min-width="110" show-overflow-tooltip v-slot:default="scope" sortable>
+            <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
+              <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+              <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
+            </el-tooltip>
+          </el-table-column>
+          <el-table-column prop="updateTime" min-width="160"  v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.create_time')" sortable>
             <template v-slot:default="scope">
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('resource.resource_result')" min-width="90" show-overflow-tooltip fixed="right">
+          <el-table-column :label="$t('commons.operating')" min-width="90" show-overflow-tooltip fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+        </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
       </el-card>
@@ -237,21 +254,68 @@
       </el-dialog>
       <!--History Compared-->
 
-    </el-col>
-  </el-row>
+  </main-container>
 </template>
 
 <script>
 
 import {_filter, _sort} from "@/common/js/utils";
-import TablePagination from "../../common/pagination/TablePagination";
-import DialogFooter from "../../common/components/DialogFooter";
-import TableOperators from "../../common/components/TableOperators";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
+import TableOperators from "@/business/components/common/components/TableOperators";
+import TableHeader from "@/business/components/common/components/TableHeader";
+import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
 import CodeDiff from 'vue-code-diff';
 import {getServerResultUrl, serverLogUrl} from "@/api/k8s/server/server";
 import {serverHistoryUrl, serverDeleteHistoryResultUrl} from "@/api/system/history";
 import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'server.server_name',
+    props: 'serverName',
+    disabled: false
+  },
+  {
+    label: 'IP',
+    props: 'ip',
+    disabled: false
+  },
+  {
+    label: 'server.rule_name',
+    props: 'ruleName',
+    disabled: false
+  },
+  {
+    label: 'server.severity',
+    props: 'severity',
+    disabled: false
+  },
+  {
+    label: 'commons.type',
+    props: 'type',
+    disabled: false
+  },
+  {
+    label: 'server.result_status',
+    props: 'resultStatus',
+    disabled: false
+  },
+  {
+    label: 'server.is_severity',
+    props: 'isSeverity',
+    disabled: false
+  },
+  {
+    label: 'server.last_modified',
+    props: 'updateTime',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
   export default {
     name: "HistoryList",
@@ -261,6 +325,9 @@ import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/sea
       TableOperators,
       RuleType,
       CodeDiff,
+      TableHeader,
+      HideTable,
+      MainContainer,
     },
     props: {
       selectNodeIds: Array,
@@ -272,6 +339,7 @@ import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/sea
     },
     data() {
       return {
+        result: {},
         tags: [],
         tableData: [],
         currentPage: 1,
@@ -320,11 +388,48 @@ import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/sea
           line: true,
           indentWithTabs: true,
         },
+        selectIds: new Set(),
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'server.server_name',
+            id: 'serverName'
+          },
+          {
+            name: 'IP',
+            id: 'ip',
+          },
+          {
+            name: 'server.rule_name',
+            id: 'ruleName',
+          },
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
       init() {
         this.search();
+      },
+      select(selection) {
+        this.selectIds.clear();
+        selection.forEach(s => {
+          this.selectIds.add(s.id)
+        });
       },
       //查询列表
       async search() {
