@@ -1,42 +1,47 @@
 <template>
-  <ul class="header-user-menu align-right el-menu--horizontal el-menu"
-      style="background-color: #df913c;" @mouseenter="setColor(true)" @mouseout="setColor(false)">
-    <li role="menuitem" aria-haspopup="true" class="el-submenu" tabindex="0">
-      <div class="el-submenu__title" @click="helpDoc" id="help"
-           style="border-bottom-color: transparent; color: rgb(255, 255, 255); background-color: #df913c;">
-        <i class="el-icon-question qa-help"></i>  {{ $t('commons.help_documentation') }}
-      </div>
-    </li>
-  </ul>
+  <el-menu :unique-opened="true" class="header-user-menu align-right"
+           mode="horizontal"
+           background-color="#df913c"
+           text-color="#fff"
+           active-text-color="#fff"
+  >
+    <el-submenu index="1">
+      <template slot="title">
+        <font-awesome-icon :icon="['far', 'headset']" style="color: #ffffff;" />
+        <span>{{ $t('commons.support') }}</span>
+      </template>
+      <el-menu-item v-for="(key, value) in items" :key="key" @click="clickTo(key)">
+        {{ value }}
+      </el-menu-item>
+    </el-submenu>
+  </el-menu>
 
 </template>
 <script>
 export default {
   components: {},
   data() {
-    return {}
+    return {
+      items: {
+        Docs: 'https://docs.hummerrisk.com',
+        Support: "https://jinshuju.net/f/eBnJ2q"
+      }
+    }
   },
   mounted() {
   },
   methods: {
-    setColor(e) {
-      if (e) {
-        document.querySelector("#help").setAttribute("style", "background-color:#b26133;color:white;");
-      } else {
-        document.querySelector("#help").setAttribute("style", "background-color:#df913c;color:white;");
-      }
-    },
-    helpDoc() {
-      window.open("https://docs.hummerrisk.com");
+    clickTo(url) {
+      if (!url) return;
+      window.open(url);
     }
   }
 }
 </script>
 
 <style scoped>
-.qa-help {
-  color: #fff;
-  margin: 0;
-  font-size: 14px;
+.el-icon-check {
+  color: #44b349;
+  margin-left: 10px;
 }
 </style>

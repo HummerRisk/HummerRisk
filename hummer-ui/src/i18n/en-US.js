@@ -3,6 +3,7 @@ export default {
   commons: {
     sync: 'sync',
     help_documentation:'Help Documentation',
+    support: "Support",
     notification:'Notification',
     api_help_documentation:'API Documentation',
     advisory: 'Consultation',

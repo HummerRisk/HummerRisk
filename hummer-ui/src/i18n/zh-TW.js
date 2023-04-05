@@ -3,6 +3,7 @@ export default {
   commons: {
     sync: '同步',
     help_documentation: '幫助文檔',
+    support: "獲取支持",
     notification: '通知',
     api_help_documentation: 'API文檔',
     advisory: '問題諮詢',
