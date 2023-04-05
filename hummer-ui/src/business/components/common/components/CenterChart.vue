@@ -49,7 +49,7 @@ export default {
             }
           },
           data: [{
-            value: 100,
+            value: data,
             itemStyle: {
               normal: {
                 color: '#193f67'
