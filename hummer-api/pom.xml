@@ -23,12 +23,6 @@
     </modules>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-openfeign-core</artifactId>
-        </dependency>
-
         <!-- Hummer Common Core-->
         <dependency>
             <groupId>com.hummerrisk</groupId>
