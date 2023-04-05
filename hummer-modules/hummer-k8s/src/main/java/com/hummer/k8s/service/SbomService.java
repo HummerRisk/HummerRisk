@@ -28,10 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author harris
@@ -239,9 +237,9 @@ public class SbomService {
     }
 
     public List<HistoryFsResultDTO> historyFsResult(String sbomVersionId) throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("sbomVersionId", sbomVersionId);
-        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(params);
+        FsResultRequest fsResultRequest = new FsResultRequest();
+        fsResultRequest.setSbomVersionId(sbomVersionId);
+        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(fsResultRequest);
         return historyList;
     }
 

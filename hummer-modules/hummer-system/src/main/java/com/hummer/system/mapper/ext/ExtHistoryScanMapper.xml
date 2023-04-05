@@ -2,6 +2,47 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.system.mapper.ext.ExtHistoryScanMapper">
 
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
     <select id="getScanId">
       select t.id
       from history_scan t
@@ -76,7 +117,69 @@
         <result column="result_json" jdbcType="LONGVARCHAR" property="resultJson" />
     </resultMap>
 
-    <select id="imageHistory" parameterType="java.util.Map" resultMap="imageHistoryBaseResultMap">
+    <sql id="imageCombine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.status != null'>
+            and t.result_status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test='${condition}.imageUrl != null'>
+            and i.image_url
+            <include refid="condition">
+                <property name="object" value="${condition}.imageUrl"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleName != null'>
+            and t.rule_name
+            <include refid="condition">
+                <property name="object" value="${condition}.ruleName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and user.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="imageHistory" parameterType="com.hummer.common.core.domain.request.image.ImageResultRequest" resultMap="imageHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -85,16 +188,30 @@
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
         (select count(*) from image_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
         FROM history_image_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join user u on t.apply_user = u.id
+        left join image i on t.image_id = i.id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
+            <if test="request.combine != null">
+                <include refid="imageCombine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
             </if>
-            <if test="imageId != null">
-                AND t.image_id = #{imageId}
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
             </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.imageUrl != null and request.imageUrl != ''">
+                and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
+            </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
             </if>
         </where>
         ORDER BY t.update_time desc
@@ -121,7 +238,57 @@
         <result column="return_json" jdbcType="LONGVARCHAR" property="returnJson" />
     </resultMap>
 
-    <select id="codeHistory" parameterType="java.util.Map" resultMap="codeHistoryBaseResultMap">
+    <sql id="codeCombine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.resultStatus != null'>
+            and t.result_status
+            <include refid="condition">
+                <property name="object" value="${condition}.resultStatus"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleName != null'>
+            and t.rule_name
+            <include refid="condition">
+                <property name="object" value="${condition}.ruleName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="codeHistory" parameterType="com.hummer.common.core.domain.request.code.CodeResultRequest" resultMap="codeHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -130,16 +297,32 @@
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
         (select count(*) from code_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
         FROM history_code_result t
+        left join rule_tag_mapping t1 on t1.rule_id = t.rule_id
+        left join rule_tag t2 on t1.tag_key = t2.tag_key
+        left join user u on t.apply_user = u.id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
+            <if test="request.combine != null">
+                <include refid="codeCombine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
             </if>
-            <if test="codeId != null">
-                AND t.code_id = #{codeId}
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
             </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
+            </if>
+            <if test="request.ruleName != null and request.ruleName != ''">
+                and LOWER(t.rule_name) like CONCAT('%', LOWER(#{request.ruleName}),'%')
+            </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(user.name) like CONCAT('%', LOWER(#{request.userName}),'%')
+            </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
             </if>
         </where>
         ORDER BY t.update_time desc
@@ -169,6 +352,50 @@
         <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
     </resultMap>
 
+    <sql id="serverCombine">
+        <if test='${condition}.name != null'>
+            and t.server_name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.ip != null'>
+            and s.ip
+            <include refid="condition">
+                <property name="object" value="${condition}.ip"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleName != null'>
+            and t3.name
+            <include refid="condition">
+                <property name="object" value="${condition}.ruleName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.type != null'>
+            and t.type
+            <include refid="condition">
+                <property name="object" value="${condition}.type"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
+    </sql>
+
     <select id="serverHistory" parameterType="com.hummer.common.core.domain.request.server.ServerResultRequest" resultMap="serverHistoryBaseResultMap">
         SELECT
         t.*,
@@ -186,14 +413,24 @@
         left join server_group sg on sg.id = s.server_group_id
 
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
+            <if test="request.combine != null">
+                <include refid="serverCombine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
             </if>
-            <if test="serverId != null">
-                AND t.server_id = #{serverId}
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
             </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            <if test="request.serverName != null and request.serverName != ''">
+                and LOWER(t.server_name) like CONCAT('%',LOWER(#{request.serverName}),'%')
+            </if>
+            <if test="request.ip != null and request.ip != ''">
+                and LOWER(t.ip) like CONCAT('%',LOWER(#{request.ip}),'%')
+            </if>
+            <if test="request.ruleName != null and request.ruleName != ''">
+                and LOWER(t.rule_name) like CONCAT('%',LOWER(#{request.ruleName}),'%')
             </if>
         </where>
         ORDER BY t.is_severity, t.ip, FIELD(t.severity, 'HighRisk', 'MediumRisk', 'LowRisk'), t.server_name, t.update_time desc
@@ -219,7 +456,57 @@
         <result column="return_json" jdbcType="LONGVARCHAR" property="returnJson" />
     </resultMap>
 
-    <select id="fsHistory" parameterType="java.util.Map" resultMap="fsHistoryBaseResultMap">
+    <sql id="fsCombine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test='${condition}.resultStatus != null'>
+            and t.result_status
+            <include refid="condition">
+                <property name="object" value="${condition}.resultStatus"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleName != null'>
+            and t.rule_name
+            <include refid="condition">
+                <property name="object" value="${condition}.ruleName"/>
+            </include>
+        </if>
+        <if test='${condition}.severity != null'>
+            and t.severity
+            <include refid="condition">
+                <property name="object" value="${condition}.severity"/>
+            </include>
+        </if>
+        <if test='${condition}.ruleTag != null and ${condition}.ruleTag.value != "all"'>
+            and #{${condition}.ruleTag.value}
+            <choose>
+                <when test='${condition}.ruleTag.operator == "in"'>
+                    in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+                <when test='${condition}.ruleTag.operator == "not in"'>
+                    not in (select tag_key from rule_tag_mapping where rule_id = t.rule_id)
+                </when>
+            </choose>
+        </if>
+        <if test="${condition}.creator != null">
+            and user.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="fsHistory" parameterType="com.hummer.common.core.domain.request.fs.FsResultRequest" resultMap="fsHistoryBaseResultMap">
         SELECT
         t.*,
         t1.file_name as fileName,
@@ -231,19 +518,26 @@
         (select count(*) from file_system_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
         FROM history_file_system_result t
         LEFT JOIN file_system t1 on t.fs_id = t1.id
-
+        LEFT JOIN user on t.apply_user = user.id
         <where>
-            <if test="id != null">
-                AND t.id = #{id}
+            <if test="request.combine != null">
+                <include refid="fsCombine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
             </if>
-            <if test="fsId != null">
-                AND t.fs_id = #{fsId}
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
             </if>
-            <if test="sbomVersionId != null">
-                AND t.sbom_version_id = #{sbomVersionId}
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
-            <if test="name != null">
-                AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            <if test="request.fileName != null and request.fileName != ''">
+                and LOWER(t1.file_name) like CONCAT('%', LOWER(#{request.fileName}),'%')
+            </if>
+            <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
+                and t.sbom_version_id = #{request.sbomVersionId}
             </if>
         </where>
         ORDER BY t.update_time desc
@@ -269,7 +563,46 @@
         <result column="kube_bench" jdbcType="LONGVARCHAR" property="kubeBench" />
     </resultMap>
 
-    <select id="k8sHistory" parameterType="java.util.Map" resultMap="k8sHistoryBaseResultMap">
+    <sql id="k8sCombine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.pluginId != null">
+            and t1.plugin_id
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="k8sHistory" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultRequest" resultMap="k8sHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as `critical`,
@@ -287,16 +620,22 @@
         (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'info') as `info`,
         (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'pass') as `pass`
         FROM history_cloud_native_result t
+        left join user u on t.apply_user = u.id
 
         <where>
-            <if test="id != null">
+            <if test="combine != null">
+                <include refid="k8sCombine">
+                    <property name="condition" value="combine"/>
+                </include>
+            </if>
+            <if test="id != null and id != ''">
                 AND t.id = #{id}
             </if>
-            <if test="cloudNativeId != null">
-                AND t.cloud_native_id = #{cloudNativeId}
-            </if>
-            <if test="name != null">
+            <if test="name != null and name != ''">
                 AND LOWER(t.name) like CONCAT('%',#{name},'%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND LOWER(u.name) like CONCAT('%',#{userName},'%')
             </if>
         </where>
         ORDER BY t.update_time desc
@@ -319,7 +658,28 @@
         <result column="result_json" jdbcType="LONGVARCHAR" property="resultJson" />
     </resultMap>
 
-    <select id="configHistory" parameterType="java.util.Map" resultMap="configHistoryBaseResultMap">
+    <sql id="configCombine">
+        <if test='${condition}.name != null'>
+            and t.name
+            <include refid="condition">
+                <property name="object" value="${condition}.name"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and u.id
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="configHistory" parameterType="com.hummer.common.core.domain.request.config.ConfigResultRequest" resultMap="configHistoryBaseResultMap">
         SELECT
         t.*,
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'CRITICAL') as critical,
@@ -328,16 +688,21 @@
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'LOW') as low,
         (select count(*) from cloud_native_config_result_item tj where tj.result_id = t.id and severity = 'UNKNOWN') as unknown
         FROM history_cloud_native_config_result t
+        left join user u on t.apply_user = u.id
 
         <where>
-            <if test="id != null and id != ''">
-                AND t.id = #{id}
+            <if test="request.combine != null">
+                <include refid="configCombine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
             </if>
-            <if test="configId != null and configId != ''">
-                AND t.config_id = #{configId}
+
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
-            <if test="name != null and name != ''">
-                AND LOWER(t.name) like CONCAT('%',LOWER(#{name}),'%')
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(u.name) like CONCAT('%', LOWER(#{request.userName}),'%')
             </if>
         </where>
         ORDER BY t.update_time desc
