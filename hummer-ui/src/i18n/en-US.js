@@ -695,7 +695,7 @@ export default {
     i18n_task_type:'Rule Type',
     status:'Scan status',
     i18n_in_process:'Processing',
-    i18n_has_exception:'abnormal',
+    i18n_has_exception:'Error',
     i18n_has_warn:'Warning',
     i18n_no_warn:'No scan',
     i18n_crteating:'Created',

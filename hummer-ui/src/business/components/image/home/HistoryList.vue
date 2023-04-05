@@ -1,11 +1,25 @@
 <template>
-  <el-row :gutter="24">
-    <el-col :span="24">
-      <el-card class="box-card" shadow="always">
-        <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
-                  @filter-change="filter">
-          <el-table-column type="index" min-width="2%"/>
-          <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
+  <main-container>
+    <el-card class="table-card" v-loading="result.loading">
+      <template v-slot:header>
+        <table-header :condition.sync="condition" @search="search"
+                      :items="items" :columnNames="columnNames" :show-name="false"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
+                      @handleCheckAllChange="handleCheckAllChange"/>
+      </template>
+
+      <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+      >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
+        <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" :label="$t('image.image_name')" min-width="200" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
@@ -13,7 +27,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+          <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="200">
             <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
               <div class="txt-click" @click="goResource(scope.row)">
                 <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
@@ -24,7 +38,7 @@
               </div>
             </el-tooltip>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
             <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
@@ -44,17 +58,17 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+          <el-table-column prop="updateTime" min-width="160" :label="$t('image.last_modified')" sortable>
             <template v-slot:default="scope">
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('resource.resource_result')" min-width="10%" show-overflow-tooltip>
+          <el-table-column :label="$t('resource.resource_result')" min-width="100" show-overflow-tooltip fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
-        </el-table>
+      </hide-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
 
       </el-card>
@@ -212,17 +226,20 @@
       </el-dialog>
       <!--History Compared-->
 
-    </el-col>
-  </el-row>
+  </main-container>
 </template>
 
 <script>
 
 import {_filter, _sort} from "@/common/js/utils";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TableHeader from "@/business/components/common/components/TableHeader";
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import LogForm from "@/business/components/image/home/LogForm";
+import HideTable from "@/business/components/common/hideTable/HideTable";
+import {IMAGE_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import CodeDiff from 'vue-code-diff';
 import {imageHistoryUrl, imageDeleteHistoryResultUrl} from "@/api/system/history";
 import {
@@ -231,6 +248,36 @@ import {
   imageMetricChartUrl,
   logImageUrl
 } from "@/api/k8s/image/image";
+
+//列表展示与隐藏
+const columnOptions = [
+  {
+    label: 'image.image_name',
+    props: 'name',
+    disabled: false
+  },
+  {
+    label: 'image.image_url',
+    props: 'imageUrl',
+    disabled: false
+  },
+  {
+    label: 'resource.i18n_not_compliance',
+    props: 'returnSum',
+    disabled: false
+  },
+  {
+    label: 'image.result_status',
+    props: 'resultStatus',
+    disabled: false
+  },
+  {
+    label: 'image.last_modified',
+    props: 'updateTime',
+    disabled: false
+  },
+];
+
 /* eslint-disable */
   export default {
     name: "HistoryList",
@@ -240,6 +287,9 @@ import {
       TableOperators,
       CodeDiff,
       LogForm,
+      MainContainer,
+      TableHeader,
+      HideTable,
     },
     props: {
       selectNodeIds: Array,
@@ -251,15 +301,16 @@ import {
     },
     data() {
       return {
+        result: {},
+        condition: {
+          components: IMAGE_RESULT_CONFIGS
+        },
         tags: [],
         tableData: [],
         currentPage: 1,
         pageSize: 10,
         total: 0,
         loading: false,
-        condition: {
-          components: Object
-        },
         direction: 'rtl',
         visibleList: false,
         oldStr: 'old code',
@@ -292,11 +343,44 @@ import {
         statisticsData: [],
         logForm: {},
         logData: [],
+        selectIds: new Set(),
+        checkedColumnNames: columnOptions.map((ele) => ele.props),
+        columnNames: columnOptions,
+        //名称搜索
+        items: [
+          {
+            name: 'image.image_name',
+            id: 'name'
+          },
+          {
+            name: 'image.image_url',
+            id: 'imageUrl'
+          },
+        ],
+        checkAll: true,
+        isIndeterminate: false,
       }
     },
     computed: {
     },
     methods: {
+      handleCheckedColumnNamesChange(value) {
+        const checkedCount = value.length;
+        this.checkAll = checkedCount === this.columnNames.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.columnNames.length;
+        this.checkedColumnNames = value;
+      },
+      handleCheckAllChange(val) {
+        this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
+        this.isIndeterminate = false;
+        this.checkAll = val;
+      },
+      select(selection) {
+        this.selectIds.clear();
+        selection.forEach(s => {
+          this.selectIds.add(s.id)
+        });
+      },
       init() {
         this.search();
       },
