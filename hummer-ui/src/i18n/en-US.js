@@ -1397,6 +1397,12 @@ export default {
     rule_group: 'K8s detection rule group',
     k8s_rule: 'K8s detection rule',
     please_choose_plugin: 'Please choose cloud native plugin',
+    show_k8s_risk: 'View K8s risk',
+    image: 'Images',
+    node: 'Nodes',
+    namespace: 'Namespaces',
+    controller: 'Controller',
+    reset: 'Reset',
   },
   config: {
     config_settings: 'Deployment configuration',

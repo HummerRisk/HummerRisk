@@ -1397,6 +1397,12 @@ export default {
     rule_group: 'K8s 检测规则组',
     k8s_rule: 'K8s 检测规则',
     please_choose_plugin: '请选择云原生插件',
+    show_k8s_risk: '查看 K8s 风险',
+    image: '镜像',
+    node: '节点',
+    namespace: '命名空间',
+    controller: '控制器',
+    reset: '重置',
   },
   config: {
     config_settings: '部署配置',

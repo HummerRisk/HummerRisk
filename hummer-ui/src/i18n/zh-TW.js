@@ -1397,6 +1397,12 @@ export default {
     rule_group: 'K8s 檢測規則組',
     k8s_rule: 'K8s 檢測規則',
     please_choose_plugin: '請選擇雲原生插件',
+    show_k8s_risk: '查看 K8s 風險',
+    image: '鏡像',
+    node: '節點',
+    namespace: '命名空間',
+    controller: '控制器',
+    reset: '重置',
   },
   config: {
     config_settings: '部署配置',

@@ -2,13 +2,15 @@
   <main-container class="card">
     <el-card class="table-card" v-loading="result.loading">
       <el-tabs type="border-card">
+        <!-- k8s 风险视角 -->
         <el-tab-pane v-if="k8sImage" :label="$t('k8s.k8s_perspective')">
           <el-row :gutter="24" id="pdfDom">
+            <!-- 左侧镜像 -->
             <el-col :span="6">
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
                   <el-tabs v-if="k8sImage.images" v-model="activeName" @tab-click="handleClick" :stretch="true">
-                    <el-tab-pane class="el-tab-pane-k8s" :label="k8sImage.images + ' Images'" name="image">
+                    <el-tab-pane class="el-tab-pane-k8s" :label="k8sImage.images + ' ' + $t('k8s.image')" name="image">
                       <div v-if="!vulnDetails" class="text item">
                         <slot name="header">
                           <el-input style="background-color: #364f6c;color: #FFF" prefix-icon="el-icon-search" @change="search" :placeholder="$t('image.search_by_name')" v-model="filterText" size="small" :clearable="true"/>
@@ -125,7 +127,7 @@
                           </div>
                       </div>
                     </el-tab-pane>
-                    <el-tab-pane class="el-tab-pane-k8s" :label="nodes.length + ' Nodes'" name="node">
+                    <el-tab-pane class="el-tab-pane-k8s" :label="nodes.length + ' ' + $t('k8s.node')" name="node">
                       <div v-for="(node, index_n) in nodes" :key="index_n">
                         <el-card class="node-card">
                           <div slot="header" class="clearfix">
@@ -157,10 +159,13 @@
 
               </el-card>
             </el-col>
+            <!-- 左侧镜像 -->
+
+            <!-- 中间资源 -->
             <el-col :span="15">
               <el-row :gutter="24">
                 <el-card class="box-card-top">
-                    <div style="float: left;color: white;margin: 11px 1%;min-width: 18%;">NameSpace<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.nameSpaces }}</I></div>
+                    <div style="float: left;color: white;margin: 11px 1%;min-width: 18%;">{{ $t('k8s.namespace') }}<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.nameSpaces }}</I></div>
                     <div style="float: left;min-width: 53%;vertical-align: middle;height: 100%;background-color: #364f6c;">
                       <el-menu class="header-menu" :unique-opened="true" mode="horizontal" default-active="1" router background-color="#364f6c;" active-text-color="red">
                         <!-- 不激活项目路由-->
@@ -173,45 +178,50 @@
                           </template>
                           <search-list v-if="items.length>0" :items="items" @cloudAccountSwitch="cloudAccountSwitch"/>
                         </el-submenu>
-                        <el-button type="text text-2" @click="showRisk">{{ 'Show K8s Risk' }}</el-button>
+                        <el-button type="text text-2" @click="showRisk">{{ $t('k8s.show_k8s_risk') }}</el-button>
                       </el-menu>
                     </div>
-                    <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">Controller<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.riskController }} / {{ k8sImage.controllers }} (Reset)</I></div>
+                    <div style="float: right;color: white;margin: 11px 1%;min-width: 18%;">{{ $t('k8s.controller') }}<I style="color: turquoise;margin-left: 20px;">{{ k8sImage.riskController }} / {{ k8sImage.controllers }} ({{ $t('k8s.reset') }})</I></div>
                 </el-card>
               </el-row>
               <el-row :gutter="24">
                 <svg id="risk-topo"></svg>
               </el-row>
             </el-col>
+            <!-- 中间资源 -->
+
+            <!-- 右侧风险 -->
             <el-col :span="3" style="cursor:pointer;">
               <el-card class="box-card-right hr-card-index-left1">
-                <div class="item-left" style="color: #FFF;text-align: center;" @click="clearK8sRisk">
-                  {{ $t('k8s.image_risk') }}
-                </div>
+                <el-tooltip effect="dark" :content="$t('k8s.kubench_result')" placement="top">
+                  <div class="item-left" style="color: #FFF;text-align: center;" @click="clearK8sRisk">
+                      {{ $t('k8s.image_risk') }}
+                  </div>
+                </el-tooltip>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-1">
                 <div class="item-left">
-                  <el-radio v-model="radio" label="critical" style="color: #FFFFFF" @change="searchK8sRisk">{{ 'Critical: ' }} {{ k8sImage.critical }}</el-radio>
+                  <el-radio v-model="radio" label="critical" style="color: #FFFFFF" @change="searchK8sRisk">{{ $t('rule.CriticalRisk') }} : {{ k8sImage.critical }}</el-radio>
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-2">
                 <div class="item-left">
-                  <el-radio v-model="radio" label="high" style="color: #FFFFFF" @change="searchK8sRisk">{{ 'High: ' }} {{ k8sImage.high }}</el-radio>
+                  <el-radio v-model="radio" label="high" style="color: #FFFFFF" @change="searchK8sRisk">{{ $t('rule.HighRisk') }} : {{ k8sImage.high }}</el-radio>
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-3">
                 <div class="item-left">
-                  <el-radio v-model="radio" label="medium" style="color: #FFFFFF" @change="searchK8sRisk">{{ 'Medium: ' }} {{ k8sImage.medium }}</el-radio>
+                  <el-radio v-model="radio" label="medium" style="color: #FFFFFF" @change="searchK8sRisk">{{ $t('rule.MediumRisk') }} : {{ k8sImage.medium }}</el-radio>
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-4">
                 <div class="item-left">
-                  <el-radio v-model="radio" label="low" style="color: #FFFFFF" @change="searchK8sRisk">{{ 'Low: ' }} {{ k8sImage.low }}</el-radio>
+                  <el-radio v-model="radio" label="low" style="color: #FFFFFF" @change="searchK8sRisk">{{ $t('rule.LowRisk') }} : {{ k8sImage.low }}</el-radio>
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-5">
                 <div class="item-left">
-                  <el-radio v-model="radio" label="unknown" style="color: #FFFFFF" @click="searchK8sRisk">{{ 'Unknown: ' }} {{ k8sImage.unknown }}</el-radio>
+                  <el-radio v-model="radio" label="unknown" style="color: #FFFFFF" @click="searchK8sRisk">{{ $t('rule.Normal') }} : {{ k8sImage.unknown }}</el-radio>
                 </div>
               </el-card>
               <el-card class="box-card-right2 hr-card-index-left2">
@@ -225,19 +235,32 @@
                 </div>
               </el-card>
             </el-col>
+            <!-- 右侧风险 -->
+
           </el-row>
         </el-tab-pane>
+        <!-- k8s 风险视角 -->
+
+        <!-- 节点视角 -->
         <el-tab-pane :label="$t('k8s.node_perspective')">
           <el-col :span="18">
             <svg id="node-topo"></svg>
           </el-col>
         </el-tab-pane>
+        <!-- 节点视角 -->
+
+        <!-- 命名空间视角 -->
         <el-tab-pane :label="$t('k8s.namespace_perspective')">
           <svg id="namespace-topo"></svg>
         </el-tab-pane>
+        <!-- 命名空间视角 -->
+
+        <!-- 资源视角 -->
         <el-tab-pane :label="$t('k8s.resource_perspective')">
           <svg id="k8s-topo"></svg>
         </el-tab-pane>
+        <!-- 资源视角 -->
+
       </el-tabs>
     </el-card>
 
