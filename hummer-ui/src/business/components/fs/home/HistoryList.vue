@@ -84,7 +84,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('resource.resource_result')" min-width="100" show-overflow-tooltip fixed="right">
+        <el-table-column :label="$t('commons.operating')" min-width="100" show-overflow-tooltip fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
