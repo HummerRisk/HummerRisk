@@ -224,10 +224,9 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import LogForm from "@/business/components/image/home/LogForm";
 import CodeDiff from 'vue-code-diff';
+import {imageHistoryUrl, imageDeleteHistoryResultUrl} from "@/api/system/history";
 import {
-  deleteHistoryImageResultUrl,
   getImageResultWithBLOBsUrl,
-  historyImageUrl,
   historyResultItemListUrl,
   imageMetricChartUrl,
   logImageUrl
@@ -303,7 +302,7 @@ import {
       },
       //查询列表
       async search() {
-        let url = historyImageUrl + this.currentPage + "/" + this.pageSize;
+        let url = imageHistoryUrl + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.imageId = this.selectNodeIds[0];
         } else {
@@ -343,7 +342,7 @@ import {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(deleteHistoryImageResultUrl + obj.id,  res => {
+              this.result = this.$get(imageDeleteHistoryResultUrl + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -353,7 +352,7 @@ import {
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post(historyImageUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
+        await this.$post(imageHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;

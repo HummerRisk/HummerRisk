@@ -10,7 +10,6 @@ import com.hummer.common.core.domain.request.code.CodeRuleRequest;
 import com.hummer.common.core.dto.CodeDTO;
 import com.hummer.common.core.dto.CodeResultDTO;
 import com.hummer.common.core.dto.CodeRuleDTO;
-import com.hummer.common.core.dto.HistoryCodeResultDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
@@ -226,20 +225,6 @@ public class CodeController {
     @PostMapping("download")
     public String download(@RequestBody Map<String, Object> map) throws Exception {
         return codeService.download(map);
-    }
-
-    @I18n
-    @ApiOperation(value = "源码检测历史记录")
-    @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryCodeResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, codeService.history(request));
-    }
-
-    @ApiOperation(value = "删除源码检测历史记录")
-    @GetMapping("deleteHistoryCodeResult/{id}")
-    public void deleteHistoryCodeResult(@PathVariable String id) throws Exception {
-        codeService.deleteHistoryCodeResult(id);
     }
 
     @I18n

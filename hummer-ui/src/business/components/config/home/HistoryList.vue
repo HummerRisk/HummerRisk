@@ -228,11 +228,10 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import LogForm from "@/business/components/config/home/LogForm";
 import CodeDiff from 'vue-code-diff';
+import {configHistoryUrl, configDeleteHistoryResultUrl} from "@/api/system/history";
 import {
   configMetricChartUrl,
-  deleteHistoryConfigResultUrl,
   getCloudNativeConfigResultUrl,
-  historyConfigUrl,
   historyResultItemListUrl,
   logConfigUrl
 } from "@/api/k8s/config/config";
@@ -307,7 +306,7 @@ import {
       },
       //查询列表
       async search() {
-        let url = historyConfigUrl + this.currentPage + "/" + this.pageSize;
+        let url = configHistoryUrl + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.configId = this.selectNodeIds[0];
         } else {
@@ -347,7 +346,7 @@ import {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(deleteHistoryConfigResultUrl + obj.id,  res => {
+              this.result = this.$get(configDeleteHistoryResultUrl + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -357,7 +356,7 @@ import {
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post(historyConfigUrl + this.outputListPage + "/" + this.outputListPageSize, {cloudNativeId: item.cloudNativeId}, response => {
+        await this.$post(configHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {cloudNativeId: item.cloudNativeId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;

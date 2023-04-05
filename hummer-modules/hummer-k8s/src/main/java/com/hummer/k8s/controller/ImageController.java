@@ -301,24 +301,10 @@ public class ImageController {
     }
 
     @I18n
-    @ApiOperation(value = "镜像检测历史记录")
-    @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryImageResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, imageService.history(request));
-    }
-
-    @I18n
     @ApiOperation(value = "检测结果历史详情")
     @PostMapping("historyResultItemList")
     public List<ImageResultItemWithBLOBs> historyResultItemList(@RequestBody ImageResultItem request) {
         return imageService.historyResultItemList(request);
-    }
-
-    @ApiOperation(value = "删除检测历史记录")
-    @GetMapping("deleteHistoryImageResult/{id}")
-    public void deleteHistoryImageResult(@PathVariable String id) throws Exception {
-        imageService.deleteHistoryImageResult(id);
     }
 
     @I18n

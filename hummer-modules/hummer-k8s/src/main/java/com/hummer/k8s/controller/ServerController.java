@@ -270,21 +270,6 @@ public class ServerController {
     }
 
     @I18n
-    @ApiOperation(value = "主机检测历史记录")
-    @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryServerResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerResultRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, serverService.history(request));
-    }
-
-    @I18n
-    @ApiOperation(value = "删除主机检测历史记录")
-    @GetMapping("deleteHistoryServerResult/{id}")
-    public void deleteHistoryServerResult(@PathVariable String id) throws Exception {
-        serverService.deleteHistoryServerResult(id);
-    }
-
-    @I18n
     @ApiOperation("通过Excel导入专家数据")
     @PostMapping(value = "/ExcelInsertExperts", consumes = {"multipart/form-data"})
     public void insertExperts(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("request") Server server) throws Exception {

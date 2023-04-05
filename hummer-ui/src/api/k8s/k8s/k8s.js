@@ -31,10 +31,6 @@ export const reinstallOperatorUrl = "/k8s/k8s/reinstallOperator/";
 
 export const reinstallKubenchUrl = "/k8s/k8s/reinstallKubench/";
 
-export const k8sHistoryUrl = "/k8s/k8s/history/";
-
-export const deleteHistoryK8sResultUrl = "/k8s/k8s/deleteHistoryK8sResult/";
-
 export const historyResultItemListUrl = "/k8s/k8s/historyResultItemList";
 
 export const k8sMetricChartUrl = "/k8s/k8s/metricChart/";

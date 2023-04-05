@@ -249,12 +249,8 @@ import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
 import RuleType from "./RuleType";
 import CodeDiff from 'vue-code-diff';
-import {
-  deleteHistoryServerResultUrl,
-  getServerResultUrl,
-  serverHistoryUrl,
-  serverLogUrl
-} from "@/api/k8s/server/server";
+import {getServerResultUrl, serverLogUrl} from "@/api/k8s/server/server";
+import {serverHistoryUrl, serverDeleteHistoryResultUrl} from "@/api/system/history";
 import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 /* eslint-disable */
   export default {
@@ -367,7 +363,7 @@ import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/sea
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(deleteHistoryServerResultUrl + obj.id,  res => {
+              this.result = this.$get(serverDeleteHistoryResultUrl + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });

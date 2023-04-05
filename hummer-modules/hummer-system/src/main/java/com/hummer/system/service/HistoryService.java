@@ -7,11 +7,18 @@ import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.code.CodeResultRequest;
+import com.hummer.common.core.domain.request.config.ConfigResultRequest;
+import com.hummer.common.core.domain.request.fs.FsResultRequest;
+import com.hummer.common.core.domain.request.image.ImageResultRequest;
+import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
+import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.*;
+import com.hummer.system.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.system.mapper.ext.ExtResourceMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -55,6 +62,8 @@ public class HistoryService {
     private HistoryFileSystemResultMapper historyFileSystemResultMapper;
     @Autowired
     private ExtResourceMapper extResourceMapper;
+    @Autowired
+    private ExtHistoryScanMapper extHistoryScanMapper;
     @DubboReference
     private ICloudProviderService cloudProviderService;
     @DubboReference
@@ -508,5 +517,58 @@ public class HistoryService {
         historyFileSystemResultMapper.updateByPrimaryKeySelective(record);
     }
 
+    public List<HistoryImageResultDTO> imageHistory(ImageResultRequest request) {
+        List<HistoryImageResultDTO> historyList = extHistoryScanMapper.imageHistory(request);
+        return historyList;
+    }
+
+    public List<HistoryCodeResultDTO> codeHistory(CodeResultRequest request) {
+        List<HistoryCodeResultDTO> historyList = extHistoryScanMapper.codeHistory(request);
+        return historyList;
+    }
+
+    public List<HistoryServerResultDTO> serverHistory(ServerResultRequest request) {
+        List<HistoryServerResultDTO> historyList = extHistoryScanMapper.serverHistory(request);
+        return historyList;
+    }
+
+    public List<HistoryFsResultDTO> fsHistory(FsResultRequest request) {
+        List<HistoryFsResultDTO> historyList = extHistoryScanMapper.fsHistory(request);
+        return historyList;
+    }
+
+    public List<HistoryCloudNativeResultDTO> k8sHistory(K8sResultRequest request) {
+        List<HistoryCloudNativeResultDTO> historyList = extHistoryScanMapper.k8sHistory(request);
+        return historyList;
+    }
+
+    public List<HistoryCloudNativeConfigResultDTO> configHistory(ConfigResultRequest request) {
+        List<HistoryCloudNativeConfigResultDTO> historyList = extHistoryScanMapper.configHistory(request);
+        return historyList;
+    }
+
+    public void serverDeleteHistoryResult(String id) throws Exception {
+        historyServerResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void codeDeleteHistoryResult(String id) throws Exception {
+        historyCodeResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void configDeleteHistoryResult(String id) throws Exception {
+        historyCloudNativeConfigResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void fsDeleteHistoryResult(String id) throws Exception {
+        historyFileSystemResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void imageDeleteHistoryResult(String id) throws Exception {
+        historyImageResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void k8sDeleteHistoryResult(String id) throws Exception {
+        historyCloudNativeResultMapper.deleteByPrimaryKey(id);
+    }
 
 }

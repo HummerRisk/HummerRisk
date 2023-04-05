@@ -33,12 +33,6 @@ export const serverExcelInsertExpertsUrl = "/k8s/server/ExcelInsertExperts";
 
 export const serverDownloadExcelUrl = "/k8s/server/downloadExcel";
 
-export const serverHistoryUrl = "/k8s/server/history/";
-
-export const deleteHistoryServerResultUrl = "/k8s/server/deleteHistoryServerResult/";
-
-export const historyResultItemListUrl = "/k8s/code/historyResultItemList";
-
 export const codeMetricChartUrl = "/k8s/sbom/codeMetricChart/";
 
 export const serverLogUrl = "/k8s/server/log/";

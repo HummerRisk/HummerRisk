@@ -17,10 +17,6 @@ export const scanFsUrl = "/k8s/fs/scan/";
 
 export const fsValidateByIdUrl = "/k8s/fs/validate/";
 
-export const historyFsUrl = "/k8s/fs/history/";
-
-export const deleteHistoryFsResultUrl = "/k8s/fs/deleteHistoryFsResult/";
-
 export const historyResultItemListUrl = "/k8s/fs/historyResultItemList";
 
 export const fsMetricChartUrl = "/k8s/sbom/fsMetricChart/";

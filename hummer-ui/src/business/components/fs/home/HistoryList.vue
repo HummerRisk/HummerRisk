@@ -234,10 +234,10 @@ import DialogFooter from "../../common/components/DialogFooter";
 import TableOperators from "../../common/components/TableOperators";
 import LogForm from "@/business/components/fs/home/LogForm";
 import CodeDiff from 'vue-code-diff';
+import {fsHistoryUrl, fsDeleteHistoryResultUrl} from "@/api/system/history";
 import {
-  deleteHistoryFsResultUrl, fsMetricChartUrl,
+  fsMetricChartUrl,
   getFsResultUrl,
-  historyFsUrl,
   historyResultItemListUrl,
   logFsUrl
 } from "@/api/k8s/fs/fs";
@@ -312,7 +312,7 @@ import {
       },
       //查询列表
       async search() {
-        let url = historyFsUrl + this.currentPage + "/" + this.pageSize;
+        let url = fsHistoryUrl + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.fsId = this.selectNodeIds[0];
         } else {
@@ -352,7 +352,7 @@ import {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(deleteHistoryFsResultUrl + obj.id,  res => {
+              this.result = this.$get(fsDeleteHistoryResultUrl + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
@@ -362,7 +362,7 @@ import {
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post(historyFsUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
+        await this.$post(fsHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;

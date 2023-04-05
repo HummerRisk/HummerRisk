@@ -310,14 +310,6 @@ public class K8sController {
     }
 
     @I18n
-    @ApiOperation(value = "K8s 检测历史记录")
-    @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryCloudNativeResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, k8sService.history(request));
-    }
-
-    @I18n
     @ApiOperation(value = "漏洞检测结果历史详情")
     @PostMapping("historyResultItemList")
     public List<CloudNativeResultItem> historyResultItemList(@RequestBody CloudNativeResultItem request) {
@@ -336,12 +328,6 @@ public class K8sController {
     @PostMapping("historyResultKubenchList")
     public List<CloudNativeResultKubenchWithBLOBs> historyResultKubenchList(@RequestBody CloudNativeResultKubenchWithBLOBs request) {
         return k8sService.historyResultKubenchList(request);
-    }
-
-    @ApiOperation(value = "删除检测历史记录")
-    @GetMapping("deleteHistoryK8sResult/{id}")
-    public void deleteHistoryK8sResult(@PathVariable String id) throws Exception {
-        k8sService.deleteHistoryK8sResult(id);
     }
 
     @I18n

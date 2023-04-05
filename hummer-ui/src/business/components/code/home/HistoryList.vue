@@ -223,14 +223,8 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import LogForm from "@/business/components/code/home/LogForm";
 import CodeDiff from 'vue-code-diff';
-import {
-  codeMetricChartUrl,
-  deleteHistoryCodeResultUrl,
-  getCodeResultUrl,
-  historyCodeUrl,
-  historyResultItemListUrl,
-  logCodeUrl
-} from "@/api/k8s/code/code";
+import {codeHistoryUrl, codeDeleteHistoryResultUrl} from "@/api/system/history";
+import {codeMetricChartUrl, getCodeResultUrl, historyResultItemListUrl, logCodeUrl} from "@/api/k8s/code/code";
 /* eslint-disable */
   export default {
     name: "HistoryList",
@@ -302,7 +296,7 @@ import {
       },
       //查询列表
       async search() {
-        let url = historyCodeUrl + this.currentPage + "/" + this.pageSize;
+        let url = codeHistoryUrl + this.currentPage + "/" + this.pageSize;
         if (!!this.selectNodeIds) {
           this.condition.codeId = this.selectNodeIds[0];
         } else {
@@ -342,7 +336,7 @@ import {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(deleteHistoryCodeResultUrl + obj.id,  res => {
+              this.result = this.$get(codeDeleteHistoryResultUrl + obj.id,  res => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -352,7 +346,7 @@ import {
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post(historyCodeUrl + this.outputListPage + "/" + this.outputListPageSize, {codeId: item.codeId}, response => {
+        await this.$post(codeHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {codeId: item.codeId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;

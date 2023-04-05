@@ -10,7 +10,6 @@ import com.hummer.common.core.domain.request.fs.FsRuleRequest;
 import com.hummer.common.core.dto.FsDTO;
 import com.hummer.common.core.dto.FsResultDTO;
 import com.hummer.common.core.dto.FsRuleDTO;
-import com.hummer.common.core.dto.HistoryFsResultDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
@@ -215,20 +214,6 @@ public class FileSystemController {
     @PostMapping("download")
     public String download(@RequestBody Map<String, Object> map) throws Exception {
         return fileSystemService.download(map);
-    }
-
-    @I18n
-    @ApiOperation(value = "文件系统检测历史记录")
-    @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryFsResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FsResultRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, fileSystemService.history(request));
-    }
-
-    @ApiOperation(value = "删除文件系统检测历史记录")
-    @GetMapping("deleteHistoryFsResult/{id}")
-    public void deleteHistoryFsResult(@PathVariable String id) throws Exception {
-        fileSystemService.deleteHistoryFsResult(id);
     }
 
     @I18n

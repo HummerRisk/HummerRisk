@@ -735,11 +735,6 @@ public class ServerService {
         return codeChartDTO;
     }
 
-    public List<HistoryServerResultDTO> history(ServerResultRequest request) {
-        List<HistoryServerResultDTO> historyList = systemProviderService.serverHistory(request);
-        return historyList;
-    }
-
     public void insertExperts(MultipartFile excelFile, Server request, LoginUser loginUser) throws Exception {
         if (excelFile==null|| excelFile.getSize()==0){
             LogUtil.error("文件上传错误，重新上传");
@@ -880,10 +875,6 @@ public class ServerService {
             }
         }
         return list;
-    }
-
-    public void deleteHistoryServerResult(String id) throws Exception {
-        systemProviderService.deleteHistoryServerResult(id);
     }
 
     public List<ServerRule> allBindList(String id) {

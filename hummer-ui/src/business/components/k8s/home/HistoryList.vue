@@ -304,13 +304,13 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TableOperators from "@/business/components/common/components/TableOperators";
 import LogForm from "@/business/components/k8s/home/LogForm";
 import CodeDiff from 'vue-code-diff';
+import {k8sHistoryUrl, k8sDeleteHistoryResultUrl} from "@/api/system/history";
 import {
-  deleteHistoryK8sResultUrl,
   getCloudNativeResultWithBLOBsUrl,
   historyResultConfigItemListUrl,
   historyResultItemListUrl,
   historyResultKubenchListUrl,
-  k8sHistoryUrl, k8sMetricChartUrl,
+  k8sMetricChartUrl,
   logK8sUrl
 } from "@/api/k8s/k8s/k8s";
 /* eslint-disable */
@@ -428,7 +428,7 @@ import {
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(deleteHistoryK8sResultUrl + obj.id,  res => {
+              this.result = this.$get(k8sDeleteHistoryResultUrl + obj.id,  res => {
                 setTimeout(function () {window.location.reload()}, 2000);
                 this.$success(this.$t('commons.delete_success'));
               });
