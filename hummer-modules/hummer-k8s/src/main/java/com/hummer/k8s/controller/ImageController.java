@@ -303,9 +303,9 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryImageResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<HistoryImageResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, imageService.history(params));
+        return PageUtils.setPageInfo(page, imageService.history(request));
     }
 
     @I18n

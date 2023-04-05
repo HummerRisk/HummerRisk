@@ -255,6 +255,7 @@ import {
   serverHistoryUrl,
   serverLogUrl
 } from "@/api/k8s/server/server";
+import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 /* eslint-disable */
   export default {
     name: "HistoryList",
@@ -282,7 +283,7 @@ import {
         total: 0,
         loading: false,
         condition: {
-          components: Object
+          components: SERVER_RESULT_CONFIGS
         },
         direction: 'rtl',
         visibleList: false,
@@ -338,6 +339,7 @@ import {
           this.condition.serverId = null;
         }
         this.result = await this.$post(url, this.condition, response => {
+          console.log(response)
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;

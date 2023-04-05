@@ -1135,8 +1135,8 @@ public class K8sService {
         return cloudNativeMapper.selectByExample(null);
     }
 
-    public List<HistoryCloudNativeResultDTO> history(Map<String, Object> params) {
-        List<HistoryCloudNativeResultDTO> historyList = systemProviderService.k8sHistory(params);
+    public List<HistoryCloudNativeResultDTO> history(K8sResultRequest request) {
+        List<HistoryCloudNativeResultDTO> historyList = systemProviderService.k8sHistory(request);
         return historyList;
     }
 

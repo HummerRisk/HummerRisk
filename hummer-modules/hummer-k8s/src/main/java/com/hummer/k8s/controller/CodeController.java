@@ -231,9 +231,9 @@ public class CodeController {
     @I18n
     @ApiOperation(value = "源码检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryCodeResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<HistoryCodeResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, codeService.history(params));
+        return PageUtils.setPageInfo(page, codeService.history(request));
     }
 
     @ApiOperation(value = "删除源码检测历史记录")

@@ -1005,8 +1005,8 @@ public class ImageService {
         return imageMapper.selectByExample(null);
     }
 
-    public List<HistoryImageResultDTO> history(Map<String, Object> params) {
-        List<HistoryImageResultDTO> historyList = systemProviderService.imageHistory(params);
+    public List<HistoryImageResultDTO> history(ImageResultRequest request) {
+        List<HistoryImageResultDTO> historyList = systemProviderService.imageHistory(request);
         return historyList;
     }
 

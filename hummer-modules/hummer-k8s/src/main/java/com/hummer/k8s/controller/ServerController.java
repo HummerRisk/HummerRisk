@@ -272,9 +272,9 @@ public class ServerController {
     @I18n
     @ApiOperation(value = "主机检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryServerResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<HistoryServerResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, serverService.history(params));
+        return PageUtils.setPageInfo(page, serverService.history(request));
     }
 
     @I18n

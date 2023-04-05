@@ -312,9 +312,9 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "K8s 检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryCloudNativeResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<HistoryCloudNativeResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, k8sService.history(params));
+        return PageUtils.setPageInfo(page, k8sService.history(request));
     }
 
     @I18n

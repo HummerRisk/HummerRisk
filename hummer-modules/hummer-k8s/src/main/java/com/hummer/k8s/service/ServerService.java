@@ -631,6 +631,7 @@ public class ServerService {
     public List<ServerListDTO> resultServerList(ServerRequest request) {
         return extServerResultMapper.resultServerList(request);
     }
+
     public ServerResultDTO getServerResult(String resultId) {
         ServerResultRequest request = new ServerResultRequest();
         request.setId(resultId);
@@ -734,8 +735,8 @@ public class ServerService {
         return codeChartDTO;
     }
 
-    public List<HistoryServerResultDTO> history(Map<String, Object> params) {
-        List<HistoryServerResultDTO> historyList = systemProviderService.serverHistory(params);
+    public List<HistoryServerResultDTO> history(ServerResultRequest request) {
+        List<HistoryServerResultDTO> historyList = systemProviderService.serverHistory(request);
         return historyList;
     }
 

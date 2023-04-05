@@ -220,9 +220,9 @@ public class FileSystemController {
     @I18n
     @ApiOperation(value = "文件系统检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryFsResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<HistoryFsResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FsResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, fileSystemService.history(params));
+        return PageUtils.setPageInfo(page, fileSystemService.history(request));
     }
 
     @ApiOperation(value = "删除文件系统检测历史记录")

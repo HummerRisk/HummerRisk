@@ -169,7 +169,7 @@
         <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
     </resultMap>
 
-    <select id="serverHistory" parameterType="java.util.Map" resultMap="serverHistoryBaseResultMap">
+    <select id="serverHistory" parameterType="com.hummer.common.core.domain.request.server.ServerResultRequest" resultMap="serverHistoryBaseResultMap">
         SELECT
         t.*,
         t1.tag_key as tagKey,

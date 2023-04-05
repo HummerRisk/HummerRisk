@@ -1,6 +1,12 @@
 package com.hummer.system.api;
 
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.code.CodeResultRequest;
+import com.hummer.common.core.domain.request.config.ConfigResultRequest;
+import com.hummer.common.core.domain.request.fs.FsResultRequest;
+import com.hummer.common.core.domain.request.image.ImageResultRequest;
+import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
+import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.system.api.model.LoginUser;
 
@@ -121,17 +127,17 @@ public interface ISystemProviderService {
 
     HistoryImageReportDTO getImageResultDto(String resultId);
 
-    List<HistoryImageResultDTO> imageHistory(Map<String, Object> params);
+    List<HistoryImageResultDTO> imageHistory(ImageResultRequest request);
 
-    List<HistoryCodeResultDTO> codeHistory(Map<String, Object> params);
+    List<HistoryCodeResultDTO> codeHistory(CodeResultRequest request);
 
-    List<HistoryServerResultDTO> serverHistory(Map<String, Object> params);
+    List<HistoryServerResultDTO> serverHistory(ServerResultRequest request);
 
-    List<HistoryFsResultDTO> fsHistory(Map<String, Object> params);
+    List<HistoryFsResultDTO> fsHistory(FsResultRequest request);
 
-    List<HistoryCloudNativeResultDTO> k8sHistory(Map<String, Object> params);
+    List<HistoryCloudNativeResultDTO> k8sHistory(K8sResultRequest request);
 
-    List<HistoryCloudNativeConfigResultDTO> configHistory(Map<String, Object> params);
+    List<HistoryCloudNativeConfigResultDTO> configHistory(ConfigResultRequest request);
 
     String getCodeCredential();
 

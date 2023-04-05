@@ -69,6 +69,12 @@
             <span v-if="scope.row.resultStatus === null">--</span>
           </template>
         </el-table-column>
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
+                         prop="createTime">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
@@ -311,6 +317,11 @@ const columnOptions = [
   {
     label: 'commons.last_scan_time',
     props: 'scanTime',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
     disabled: false
   },
   {

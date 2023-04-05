@@ -187,9 +187,9 @@ public class ConfigController {
     @I18n
     @ApiOperation(value = "部署检测历史记录")
     @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryCloudNativeConfigResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
+    public Pager<List<HistoryCloudNativeConfigResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, configService.history(params));
+        return PageUtils.setPageInfo(page, configService.history(request));
     }
 
     @I18n

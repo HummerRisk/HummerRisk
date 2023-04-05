@@ -1,10 +1,16 @@
 package com.hummer.system.mapper.ext;
 
 import com.hummer.common.core.domain.HistoryScan;
+import com.hummer.common.core.domain.request.code.CodeResultRequest;
+import com.hummer.common.core.domain.request.config.ConfigResultRequest;
+import com.hummer.common.core.domain.request.fs.FsResultRequest;
+import com.hummer.common.core.domain.request.image.ImageResultRequest;
+import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
+import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ExtHistoryScanMapper {
 
@@ -14,16 +20,16 @@ public interface ExtHistoryScanMapper {
 
     HistoryImageReportDTO getImageResultDto(String resultId);
 
-    List<HistoryImageResultDTO> imageHistory(Map<String, Object> params);
+    List<HistoryImageResultDTO> imageHistory(@Param("request") ImageResultRequest request);
 
-    List<HistoryCodeResultDTO> codeHistory(Map<String, Object> params);
+    List<HistoryCodeResultDTO> codeHistory(@Param("request") CodeResultRequest request);
 
-    List<HistoryServerResultDTO> serverHistory(Map<String, Object> params);
+    List<HistoryServerResultDTO> serverHistory(@Param("request") ServerResultRequest request);
 
-    List<HistoryFsResultDTO> fsHistory(Map<String, Object> params);
+    List<HistoryFsResultDTO> fsHistory(@Param("request") FsResultRequest request);
 
-    List<HistoryCloudNativeResultDTO> k8sHistory(Map<String, Object> params);
+    List<HistoryCloudNativeResultDTO> k8sHistory(@Param("request") K8sResultRequest request);
 
-    List<HistoryCloudNativeConfigResultDTO> configHistory(Map<String, Object> params);
+    List<HistoryCloudNativeConfigResultDTO> configHistory(@Param("request") ConfigResultRequest request);
 
 }
