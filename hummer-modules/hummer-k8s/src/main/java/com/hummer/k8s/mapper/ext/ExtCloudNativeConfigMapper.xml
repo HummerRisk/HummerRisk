@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.k8s.mapper.ext.ExtCloudNativeConfigMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudNativeConfigDTO"
-               extends="com.hummer.k8s.mapper.CloudNativeConfigMapper.ResultMapWithBLOBs">
-        <result column="userName" property="userName"/>
-        <result column="isProxy" property="isProxy"/>
-        <result column="proxy_ip" jdbcType="VARCHAR" property="proxyIp" />
-        <result column="proxy_port" jdbcType="VARCHAR" property="proxyPort" />
-        <result column="proxy_name" jdbcType="VARCHAR" property="proxyName" />
-        <result column="proxy_password" jdbcType="VARCHAR" property="proxyPassword" />
-    </resultMap>
 
     <sql id="condition">
         <choose>
@@ -77,10 +68,16 @@
                 <property name="object" value="${condition}.createTime"/>
             </include>
         </if>
-        <if test="${condition}.status != null">
-            and t.status
+        <if test="${condition}.scanTime != null">
+            and t1.update_time
             <include refid="condition">
-                <property name="object" value="${condition}.status"/>
+                <property name="object" value="${condition}.scanTime"/>
+            </include>
+        </if>
+        <if test="${condition}.resultStatus != null">
+            and t1.result_status
+            <include refid="condition">
+                <property name="object" value="${condition}.resultStatus"/>
             </include>
         </if>
         <if test="${condition}.creator != null">
@@ -89,24 +86,68 @@
                 <property name="object" value="${condition}.creator"/>
             </include>
         </if>
-        <if test='${condition}.ip != null'>
-            and sg.ip
-            <include refid="condition">
-                <property name="object" value="${condition}.ip"/>
-            </include>
-        </if>
     </sql>
 
-    <select id="getCloudNativeConfigList" resultMap="BaseResultMap">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudNativeConfigDTO">
+        <!-- config -->
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="config_yaml" jdbcType="LONGVARCHAR" property="configYaml" />
+        <!-- config result -->
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="scan_time" jdbcType="BIGINT" property="scanTime" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="result_json" jdbcType="LONGVARCHAR" property="resultJson" />
+        <!-- extra -->
+        <result column="proxy_ip" jdbcType="VARCHAR" property="proxyIp" />
+        <result column="proxy_port" jdbcType="VARCHAR" property="proxyPort" />
+        <result column="proxy_name" jdbcType="VARCHAR" property="proxyName" />
+        <result column="proxy_password" jdbcType="VARCHAR" property="proxyPassword" />
+        <result column="user" jdbcType="VARCHAR" property="user" />
+        <result column="critical" jdbcType="VARCHAR" property="critical" />
+        <result column="high" jdbcType="VARCHAR" property="high" />
+        <result column="medium" jdbcType="VARCHAR" property="medium" />
+        <result column="low" jdbcType="VARCHAR" property="low" />
+        <result column="unknown" jdbcType="VARCHAR" property="unknown" />
+    </resultMap>
+
+    <select id="getCloudNativeConfigList" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.request.config.ConfigRequest">
         select
         t.*,
         p.proxy_ip,
         p.proxy_port,
         p.proxy_name,
         p.proxy_password,
-        user.name as userName,
-        IF(p.proxy_ip, true, false) as isProxy
+        user.name as user_name,
+        t1.id as result_id,
+        t1.rule_id,
+        t1.rule_name,
+        t1.rule_desc,
+        t1.result_status,
+        t1.severity,
+        t1.update_time as scan_time,
+        t1.return_sum,
+        t1.command,
+        t1.result_json,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t1.id and tj.severity = 'CRITICAL') as critical,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t1.id and tj.severity = 'HIGH') as high,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t1.id and tj.severity = 'MEDIUM') as medium,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t1.id and tj.severity = 'LOW') as low,
+        (select count(*) from cloud_native_config_result_item tj where tj.result_id = t1.id and tj.severity = 'UNKNOWN') as unknown
         from cloud_native_config as t
+        left join cloud_native_config_result t1 on t.id = t1.config_id
         left join user on t.creator = user.id
         left join proxy p on t.proxy_id = p.id
         <where>

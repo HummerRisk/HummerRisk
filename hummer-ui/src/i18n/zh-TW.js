@@ -224,6 +224,7 @@ export default {
     validing: '正在校验',
     note: '注: ',
     last_scan_time: '執行檢測時間',
+    failed_status: '無效狀態不可執行檢測',
   },
   workspace: {
     create: '創建工作空間',

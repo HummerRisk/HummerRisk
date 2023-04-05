@@ -234,7 +234,7 @@ const columnOptions = [
         let path = this.$route.path;
         if (path.indexOf("/config") >= 0) {
           this.$router.push({
-            path: '/config/result',
+            path: '/config/config',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({

@@ -224,6 +224,7 @@ export default {
     validating: 'Validating',
     note: 'Note: ',
     last_scan_time: 'Execution detection time',
+    failed_status: 'Invalid status is not executable detection',
   },
   workspace: {
     create:'Create a workspace',

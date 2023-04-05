@@ -63,9 +63,10 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column prop="scanTime" v-if="checkedColumnNames.includes('scanTime')" min-width="160" :label="$t('commons.last_scan_time')" sortable>
+        <el-table-column prop="scanTime" min-width="200" v-if="checkedColumnNames.includes('scanTime')" :label="$t('commons.last_scan_time')" sortable>
           <template v-slot:default="scope">
-            <span>{{ scope.row.scanTime | timestampFormatDate }}</span>
+            <span v-if="scope.row.resultStatus !== null"><i class="el-icon-time"/> {{ scope.row.scanTime | timestampFormatDate }}</span>
+            <span v-if="scope.row.resultStatus === null">--</span>
           </template>
         </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" sortable
@@ -675,7 +676,7 @@ export default {
         for (let data of this.tableData) {
           this.$get(getFsResultUrl + data.resultId, response => {
             let result = response.data;
-            if (data.resultStatus !== result.resultStatus) {
+            if (result && data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnSum = result.returnSum;
               data.critical = result.critical?result.critical:0;

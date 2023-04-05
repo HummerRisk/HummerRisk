@@ -9,11 +9,7 @@
           </el-menu-item>
 
           <el-menu-item :index="'/fs/fs'">
-            {{ $t("fs.file_system_manage") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/fs/result'">
-            {{ $t("fs.fs_result") }}
+            {{ $t("fs.file_system") }}
           </el-menu-item>
 
           <el-menu-item :index="'/fs/history'">

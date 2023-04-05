@@ -9,11 +9,7 @@
           </el-menu-item>
 
           <el-menu-item :index="'/config/config'">
-            {{ $t("config.config_settings") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/config/result'">
-            {{ $t("config.config_result") }}
+            {{ $t("commons.deployment_detection") }}
           </el-menu-item>
 
           <el-menu-item :index="'/config/history'">
