@@ -56,3 +56,32 @@ management:
     web:
       exposure:
         include: '*'
+
+
+knife4j:
+  # 聚合swagger文档
+  gateway:
+    enabled: true
+    # 指定手动配置的模式(默认为该模式)
+    strategy: manual
+    routes:
+      - name: hummer-system
+        # 真实子服务访问url地址-提供OpenAPI的文档
+        url: /system/v3/api-docs?group=default
+        service-name: hummer-system
+        # 路由前缀
+        # 兼容OpenAPI3规范在聚合时丢失contextPath属性的异常情况，由开发者自己配置contextPath,Knife4j的前端Ui做兼容处理,与url属性独立不冲突，仅OpenAPI3规范聚合需要，OpenAPI2规范不需要设置此属性,默认为(apiPathPrefix)
+        context-path: /
+        order: 1
+      - name: hummer-cloud
+        url: /cloud/v3/api-docs?group=default
+        service-name: hummer-cloud
+        # 路由前缀
+        context-path: /
+        order: 2
+      - name: hummer-k8s
+        url: /k8s/v3/api-docs?group=default
+        service-name: hummer-k8s
+        # 路由前缀
+        context-path: /
+        order: 3
