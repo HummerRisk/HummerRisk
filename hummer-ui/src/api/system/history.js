@@ -9,9 +9,9 @@ export const codeDeleteHistoryResultUrl = "/system/history/codeDeleteHistoryResu
 
 export const configHistoryUrl = "/system/history/configHistory/";
 
-export const configDeleteHistoryResultUrl = "/system/history/configDeleteHistoryResultUrl/";
+export const configDeleteHistoryResultUrl = "/system/history/configDeleteHistoryResult/";
 
-export const fsHistoryUrl = "/system/history/fsHistoryUrl/";
+export const fsHistoryUrl = "/system/history/fsHistory/";
 
 export const fsDeleteHistoryResultUrl = "/system/history/fsDeleteHistoryResult/";
 

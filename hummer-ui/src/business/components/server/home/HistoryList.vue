@@ -15,6 +15,8 @@
             @select-all="select"
             @select="select"
         >
+          <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
+          </el-table-column>
           <el-table-column type="index" min-width="40"/>
           <el-table-column prop="serverName" :label="$t('server.server_name')" v-if="checkedColumnNames.includes('serverName')" min-width="130" show-overflow-tooltip></el-table-column>
           <el-table-column prop="ip" :label="'IP'" v-if="checkedColumnNames.includes('ip')" min-width="140" show-overflow-tooltip v-slot:default="scope">
