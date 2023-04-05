@@ -1,6 +1,6 @@
 <template>
   <container class="header-menu">
-    <aside-container :enable-aside-hidden="false" :width="'250px'">
+    <aside-container :enable-aside-hidden="false" :width="'200px'">
       <scenario-module
         @nodeSelectEvent="nodeChange"
         @refreshTable="refresh"
