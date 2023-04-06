@@ -769,6 +769,7 @@ public class ImageService {
     public List<ImageRepoSyncLogWithBLOBs> repoSyncList(String id) {
         ImageRepoSyncLogExample example = new ImageRepoSyncLogExample();
         example.createCriteria().andRepoIdEqualTo(id);
+        example.setOrderByClause("create_time desc");
         return imageRepoSyncLogMapper.selectByExampleWithBLOBs(example);
     }
 

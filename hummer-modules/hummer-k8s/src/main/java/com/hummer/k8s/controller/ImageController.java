@@ -241,9 +241,10 @@ public class ImageController {
 
     @I18n
     @ApiOperation(value = "镜像仓库同步日志列表")
-    @GetMapping("repoSyncList/{id}")
-    public List<ImageRepoSyncLogWithBLOBs> repoSyncList(@PathVariable String id) {
-        return imageService.repoSyncList(id);
+    @PostMapping("repoSyncList/{goPage}/{pageSize}")
+    public Pager<List<ImageRepoSyncLogWithBLOBs>> repoSyncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRepoSyncLog imageRepoSyncLog) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.repoSyncList(imageRepoSyncLog.getRepoId()));
     }
 
     @I18n
