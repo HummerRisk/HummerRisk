@@ -168,6 +168,9 @@
             <if test="request.imageUrl != null and request.imageUrl != ''">
                 and LOWER(t.image_url) like CONCAT('%', LOWER(#{request.imageUrl}),'%')
             </if>
+            <if test="request.userName != null and request.userName != ''">
+                and LOWER(u.name) like CONCAT('%', LOWER(#{request.userName}),'%')
+            </if>
             <if test="request.sbomVersionId != null and request.sbomVersionId != ''">
                 and t.sbom_version_id = #{request.sbomVersionId}
             </if>

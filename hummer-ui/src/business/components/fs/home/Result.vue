@@ -41,7 +41,7 @@
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('image.result_status')" min-width="140" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
@@ -299,7 +299,7 @@ export default {
         for (let data of this.tableData) {
           this.$get(getFsResultUrl + data.id, response => {
             let result = response.data;
-            if (data.resultStatus !== result.resultStatus) {
+            if (result && data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnSum = result.returnSum;
               data.critical = result.critical?result.critical:0;

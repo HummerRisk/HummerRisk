@@ -232,7 +232,7 @@ const columnOptions = [
         let path = this.$route.path;
         if (path.indexOf("/image") >= 0) {
           this.$router.push({
-            path: '/image/result',
+            path: '/image/image',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({

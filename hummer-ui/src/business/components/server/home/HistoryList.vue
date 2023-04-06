@@ -36,7 +36,7 @@
               <span v-if="!scope.row.type">N/A</span>
             </template>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('server.result_status')" v-if="checkedColumnNames.includes('resultStatus')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" :label="$t('server.result_status')" v-if="checkedColumnNames.includes('resultStatus')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
             <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>

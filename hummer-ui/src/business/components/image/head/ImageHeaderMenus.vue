@@ -13,11 +13,7 @@
           </el-menu-item>
 
           <el-menu-item :index="'/image/image'">
-            {{ $t("image.image_setting") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/image/result'">
-            {{ $t("image.image_result") }}
+            {{ $t("image.image_scan") }}
           </el-menu-item>
 
           <el-menu-item :index="'/image/history'">

@@ -84,8 +84,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像列表")
     @PostMapping("imageList/{goPage}/{pageSize}")
-    public Pager<List<ImageDTO>> imageList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
+    public Pager<List<ImageDTO>> imageList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.imageList(request));
     }
@@ -107,19 +106,17 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "添加镜像")
     @PostMapping(value = "addImage", consumes = {"multipart/form-data"})
-    public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
-                          @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
+    public Image addImage(@RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
-        return imageService.addImage(iconFile, tarFile, request, tokenService.getLoginUser());
+        return imageService.addImage(tarFile, request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "修改镜像")
     @PostMapping(value = "updateImage", consumes = {"multipart/form-data"})
-    public Image updateImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
-                          @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
+    public Image updateImage(@RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
-        return imageService.updateImage(iconFile, tarFile, request, tokenService.getLoginUser());
+        return imageService.updateImage(tarFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除镜像")

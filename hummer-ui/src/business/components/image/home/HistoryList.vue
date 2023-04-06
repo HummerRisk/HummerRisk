@@ -38,7 +38,7 @@
               </div>
             </el-tooltip>
           </el-table-column>
-          <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="140" prop="resultStatus" sortable show-overflow-tooltip>
             <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
@@ -164,8 +164,8 @@
                  :destroy-on-close="true">
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
-            <el-table-column type="index" min-width="2%"/>
-            <el-table-column prop="name" :label="$t('image.image_name')" min-width="15%" show-overflow-tooltip>
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column prop="name" :label="$t('image.image_name')" min-width="160" show-overflow-tooltip>
               <template v-slot:default="scope">
               <span>
                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
@@ -173,10 +173,10 @@
               </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="16%">
+            <el-table-column v-slot:default="scope" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="180">
               {{ 'C:' + scope.row.critical + ' H:' +  scope.row.high + ' M:' + scope.row.medium + ' L:' + scope.row.low + ' U:' + scope.row.unknown}}
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="11%" prop="resultStatus" sortable show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
               <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                 <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
               </el-button>
@@ -196,12 +196,12 @@
                 <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
               </el-button>
             </el-table-column>
-            <el-table-column prop="updateTime" min-width="14%" :label="$t('image.last_modified')" sortable>
+            <el-table-column prop="updateTime" min-width="160" :label="$t('image.last_modified')" sortable>
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column min-width="10%" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
+            <el-table-column min-width="100" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
               <template v-slot:default="scope">
                 <table-operators :buttons="diffButtons" :row="scope.row"/>
               </template>

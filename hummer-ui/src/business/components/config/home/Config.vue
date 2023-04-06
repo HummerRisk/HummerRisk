@@ -18,6 +18,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column :label="$t('config.name')" v-if="checkedColumnNames.includes('name')" min-width="130" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -46,7 +48,7 @@
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('image.result_status')" v-if="checkedColumnNames.includes('resultStatus')" min-width="150" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" :label="$t('image.result_status')" v-if="checkedColumnNames.includes('resultStatus')" min-width="140" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
@@ -612,6 +614,10 @@ export default {
       this.form.configYaml = "";
     },
     goResource (params) {
+      if (!params.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
       if (params.returnSum == 0) {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
