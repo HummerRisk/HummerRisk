@@ -95,6 +95,21 @@
             </div>
           </el-tooltip>
         </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('commons.compliance_scan_statistics')" prop="returnSum" sortable show-overflow-tooltip min-width="150">
+          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+            <span v-if="scope.row.cloudReturnSum == null && scope.row.cloudResourcesSum == null"> N/A</span>
+            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum == 0)">
+              <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
+            </span>
+            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum > 0)">
+              <el-link type="primary" class="text-click" @click="goCloudResource(scope.row)">
+                <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
+                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
+              </el-link>
+            </span>
+          </el-tooltip>
+        </el-table-column>
         <el-table-column prop="scanTime" min-width="200" v-if="checkedColumnNames.includes('scanTime')" :label="$t('commons.last_scan_time')" sortable>
           <template v-slot:default="scope">
             <span v-if="scope.row.resultStatus !== null"><i class="el-icon-time"/> {{ scope.row.scanTime | timestampFormatDate }}</span>
@@ -483,6 +498,11 @@ const columnOptions = [
     disabled: false
   },
   {
+    label: 'image.result_status',
+    props: 'status',
+    disabled: false
+  },
+  {
     label: 'k8s.vuln_compliance',
     props: 'result',
     disabled: false
@@ -498,8 +518,8 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'image.result_status',
-    props: 'status',
+    label: 'dashboard.i18n_not_compliance',
+    props: 'returnSum',
     disabled: false
   },
   {
@@ -1119,6 +1139,16 @@ export default {
         path: p
       }).catch(error => error);
     },
+    goCloudResource (params) {
+      if (params.cloudReturnSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/k8s/cloudResultDetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
+    },
     goConfigResource (params) {
       if (!params.resultId) {
         this.$warning(this.$t('resource.i18n_no_warn'));
@@ -1217,6 +1247,7 @@ export default {
   },
   activated() {
     this.init();
+    this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {

@@ -226,6 +226,9 @@ export default {
     note: 'Note: ',
     last_scan_time: 'Execution detection time',
     failed_status: 'Invalid status is not executable detection',
+    compliance_scan_statistics: 'Compliance detection statistics',
+    resource_result_tip1: 'Non-compliant resource',
+    resource_result_tip2: 'Total resources',
   },
   workspace: {
     create:'Create a workspace',

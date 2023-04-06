@@ -226,6 +226,9 @@ export default {
     note: '注: ',
     last_scan_time: '執行檢測時間',
     failed_status: '無效狀態不可執行檢測',
+    compliance_scan_statistics: '合規檢測統計',
+    resource_result_tip1: '不合規資源',
+    resource_result_tip2: '資源總數',
   },
   workspace: {
     create: '創建工作空間',

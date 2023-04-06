@@ -69,9 +69,9 @@ public class CloudNativeDTO extends CloudNative {
 
     private String pass;
 
-    private Long cloudResourcesSum;
+    private String cloudResourcesSum;
 
-    private Long cloudReturnSum;
+    private String cloudReturnSum;
 
     public String getUserName() {
         return userName;
@@ -329,19 +329,19 @@ public class CloudNativeDTO extends CloudNative {
         this.pass = pass;
     }
 
-    public Long getCloudResourcesSum() {
+    public String getCloudResourcesSum() {
         return cloudResourcesSum;
     }
 
-    public void setCloudResourcesSum(Long cloudResourcesSum) {
+    public void setCloudResourcesSum(String cloudResourcesSum) {
         this.cloudResourcesSum = cloudResourcesSum;
     }
 
-    public Long getCloudReturnSum() {
+    public String getCloudReturnSum() {
         return cloudReturnSum;
     }
 
-    public void setCloudReturnSum(Long cloudReturnSum) {
+    public void setCloudReturnSum(String cloudReturnSum) {
         this.cloudReturnSum = cloudReturnSum;
     }
 

@@ -33,6 +33,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultKubenchDetails"),
     },
     {
+      path: "cloudResultDetails/:id",
+      name: "K8sCloudResultDetails",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/CloudResultDetails"),
+    },
+    {
       path: "overview",
       name: "K8sOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Overview"),
