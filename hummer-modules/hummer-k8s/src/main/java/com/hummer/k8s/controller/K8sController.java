@@ -35,8 +35,7 @@ public class K8sController {
     @I18n
     @ApiOperation(value = "云原生账号列表")
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<CloudNativeDTO>> getCloudNativeList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeRequest request) {
+    public Pager<List<CloudNativeDTO>> getCloudNativeList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.getCloudNativeList(request));
     }
@@ -210,6 +209,14 @@ public class K8sController {
     @GetMapping(value = "getCloudNativeResultWithBLOBs/topo/{accountId}")
     public CloudNativeResultWithBLOBs topoResult(@PathVariable String accountId) {
         return k8sService.topoResult(accountId);
+    }
+
+    @I18n
+    @ApiOperation(value = "云原生安装日志")
+    @PostMapping(value = "installLog/{goPage}/{pageSize}")
+    public Pager<List<CloudNativeResultLogWithBLOBs>> getCloudNativeResultLog(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, k8sService.getCloudNativeResultLog(request.getId()));
     }
 
     @I18n

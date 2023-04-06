@@ -41,6 +41,8 @@ export const historyResultKubenchListUrl = "/k8s/k8s/historyResultKubenchList";
 
 export const logK8sUrl = "/k8s/k8s/log/";
 
+export const k8sInstallLogUrl = "/k8s/k8s/installLog/";
+
 export const getCloudNativeResultWithBLOBsUrl = "/k8s/k8s/getCloudNativeResultWithBLOBs/";
 
 export const getCloudNativeResultUrl = "/k8s/k8s/getCloudNativeResult/";

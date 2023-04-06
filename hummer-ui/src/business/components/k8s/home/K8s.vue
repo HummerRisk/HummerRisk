@@ -22,41 +22,22 @@
         <el-table-column type="selection" min-width="40">
         </el-table-column>
         <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('k8s.name')" min-width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="140" show-overflow-tooltip>
+        <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('k8s.name')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
+                 &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="110" :label="$t('k8s.status')"
-                         column-key="status"
-                         :filters="statusFilters"
-                         :filter-method="filterStatus">
-          <template v-slot:default="{row}">
-            <div @click="validateK8s(row)" style="cursor:pointer;">
-              <el-tag size="mini" type="warning" v-if="row.status === 'DELETE'">
-                {{ $t('account.DELETE') }}
-              </el-tag>
-              <el-tag size="mini" type="success" v-else-if="row.status === 'VALID'">
-                {{ $t('account.VALID') }}
-              </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="row.status === 'INVALID'">
-                {{ $t('account.INVALID') }}
-              </el-tag>
-            </div>
-          </template>
-        </el-table-column>
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('log')" :label="$t('k8s.install_log')" min-width="130" prop="log" show-overflow-tooltip>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="success" v-if="scope.row.resultStatus === 'FINISHED'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="success" v-if="scope.row.k8sStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.k8sStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.k8sStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
@@ -195,7 +176,7 @@
           <el-row>
             <el-col :span="24">
               <div class="grid-content bg-purple-light">
-                <span class="grid-content-log-span"> {{ logForm.name }}</span>
+                <span class="grid-content-log-span"> {{ $t('k8s.name') }} : {{ logForm.name }}</span>
                 <span class="grid-content-log-span">
                   <img :src="require(`@/assets/img/platform/${logForm.pluginIcon?logForm.pluginIcon:'k8s.png'}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 </span>
@@ -212,6 +193,31 @@
             </el-col>
           </el-row>
         </div>
+        <el-table style="width: 100%" :data="installData" :show-header="false">
+          <el-table-column prop="status" width="300">{{ 'K8s ' + $t('k8s.status') }}</el-table-column>
+          <el-table-column prop="status" min-width="300"
+                           column-key="status"
+                           :filters="statusFilters"
+                           v-slot:default="scope"
+                           :filter-method="filterStatus">
+            <div @click="validateK8s(scope.row)" style="cursor:pointer;">
+              <el-button size="mini" type="warning" v-if="scope.row.status === 'DELETE'">
+                {{ $t('account.DELETE') }}
+              </el-button>
+              <el-button size="mini" type="success" v-else-if="scope.row.status === 'VALID'">
+                {{ $t('account.VALID') }}
+              </el-button>
+              <el-button size="mini" type="danger" v-else-if="scope.row.status === 'INVALID'">
+                {{ $t('account.INVALID') }}
+              </el-button>
+            </div>
+          </el-table-column>
+          <el-table-column prop="operator" min-width="300" fixed="right" v-slot:default="scope">
+            <el-button type="primary" size="mini" @click="validateK8s(scope.row)">
+              {{ $t('account.validate') }}
+            </el-button>
+          </el-table-column>
+        </el-table>
         <el-table style="width: 100%" :data="installData" :show-header="false">
           <el-table-column prop="status" width="300">{{ $t('k8s.operator_status') }}</el-table-column>
           <el-table-column prop="operatorStatus" min-width="300"
@@ -262,21 +268,47 @@
             </el-button>
           </el-table-column>
         </el-table>
-        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
-          <el-table-column>
-            <template v-slot:default="scope">
-              <div class="bg-purple-div">
-                <span
-                  v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
-                      {{ scope.row.createTime | timestampFormatDate }}
-                      {{ scope.row.operator }}
-                      {{ scope.row.operation }}
-                      {{ scope.row.output }}<br>
+
+        <br>
+        <div>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light-log">
+                <span class="grid-content-log-span" style="color: red;"> {{ $t('k8s.install_log') }}</span>
+                <span class="grid-content-log-span">
+                </span>
+                <span class="grid-content-status-span">
                 </span>
               </div>
+            </el-col>
+          </el-row>
+        </div>
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content" :row-class-name="tableRowClassName">
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column min-width="160" prop="createTime">
+            <template v-slot:default="scope">
+              <span v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                </span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="120" prop="operator">
+            <template v-slot:default="scope">
+              <span v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.operator }}
+                </span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="240" prop="operation" fixed="right">
+            <template v-slot:default="scope">
+              <span v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}
+                </span>
             </template>
           </el-table-column>
         </el-table>
+        <table-pagination :change="searchLogData" :current-page.sync="logPage" :page-size.sync="logSize" :total="logTotal"/>
       </el-row>
       <template v-slot:footer>
         <dialog-footer
@@ -306,7 +338,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {nativePluginUrl, pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
 import {
   addK8sUrl,
-  deleteK8sUrl,
+  deleteK8sUrl, k8sInstallLogUrl,
   k8sListUrl,
   k8sValidatesUrl,
   k8sValidateUrl,
@@ -497,6 +529,9 @@ export default {
       logForm: {},
       logData: [],
       installData: [],
+      logPage: 1,
+      logSize: 5,
+      logTotal: 0,
     }
   },
   watch: {
@@ -857,9 +892,20 @@ export default {
         }
       });
     },
+    searchLogData(item) {
+      let url = k8sInstallLogUrl + this.logPage + '/' + this.logSize;
+      this.result = this.$post(url, {id : item.id}, response => {
+        let data = response.data;
+        this.logData = data.listObject;
+        this.logTotal = data.itemCount;
+      });
+    },
     showLog(item){
-      this.result = this.$get(logK8sUrl + item.id, response => {
-        this.logData = response.data;
+      let url = k8sInstallLogUrl + this.logPage + '/' + this.logSize;
+      this.result = this.$post(url, {id : item.id}, response => {
+        let data = response.data;
+        this.logData = data.listObject;
+        this.logTotal = data.itemCount;
       });
       this.logForm = item;
       this.installData = [];
@@ -879,6 +925,17 @@ export default {
         }
       });
     },
+    tableRowClassName({row, rowIndex}) {
+      if (this.tableRow) {
+        if (rowIndex % 4 === 0) {
+          return 'success-row';
+        } else if (rowIndex % 2 === 0) {
+          return 'warning-row';
+        } else {
+          return '';
+        }
+      }
+    },
     reinstallKubench(item){
       this.$alert(this.$t('k8s.k8s_setting') + this.$t('k8s.reinstall_operator') + ' : ' + item.name +  " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
@@ -892,7 +949,6 @@ export default {
         }
       });
     },
-
   },
   activated() {
     this.init();
@@ -966,6 +1022,10 @@ export default {
 
 .el-form-item-dev >>> .bg-purple-light {
   background: #f2f2f2;
+}
+
+.el-form-item-dev >>> .bg-purple-light-log {
+  background: #dddddd;
 }
 
 .grid-content {
