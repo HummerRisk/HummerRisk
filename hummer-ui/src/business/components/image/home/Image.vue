@@ -13,9 +13,9 @@
 
       <el-card class="table-card el-row-card" :body-style="{ padding: '0' }" :key="index" v-for="(data, index) in tableData">
         <el-row class="cp-el-i">
-          <el-col :span="3" class="co-el-img">
+          <el-col :span="2" class="co-el-img">
             <el-image class="co-el-i"
-                      :src="data.pluginIcon==='docker.png'?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
+                      :src="require(`@/assets/img/platform/${data.pluginIcon}`)"
                       :fit="'fill'">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
@@ -25,7 +25,7 @@
           <el-col :span="1">
             <div class="split"></div>
           </el-col>
-          <el-col :span="20">
+          <el-col :span="21">
             <el-row>
               <el-col :span="20" class="cl-ver-col">
                 <el-row class="cl-mid-row">
@@ -169,12 +169,6 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('image.is_image_icon')">
-          <el-switch v-model="form.isImageIcon"></el-switch>
-        </el-form-item>
-        <el-form-item v-if="form.isImageIcon" :label="$t('image.plugin_icon')">
-          <image-upload v-on:appendImg="appendImg" v-model="form.pluginIcon" :param="form.pluginIcon"/>
-        </el-form-item>
         <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
           <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
             <hr-code-edit :read-only="true" height="200px" :data.sync="content" :modes="modes" :mode="'html'"/>
@@ -277,12 +271,6 @@
               &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('image.is_image_icon')">
-          <el-switch v-model="form.isImageIcon"></el-switch>
-        </el-form-item>
-        <el-form-item v-if="form.isImageIcon" :label="$t('image.plugin_icon')">
-          <image-upload v-on:appendImg="appendImg" v-model="form.pluginIcon" :param="form.pluginIcon"/>
         </el-form-item>
         <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
           <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
@@ -726,11 +714,11 @@ export default {
 }
 /deep/ :focus{outline:0;}
 .el-row-card {
-  padding: 0 10px 0 10px;
-  margin: 1%;
+  padding: 0 5px 0 5px;
+  margin: 0.5% 1% 0.5% 1%;
 }
 .split {
-  height: 80px;
+  height: 70px;
   border-left: 1px solid #D8DBE1;
 }
 .cl-ver-col {
@@ -774,14 +762,14 @@ export default {
 
 .co-el-img >>> .el-image {
   display: table-cell;
-  left: 40%;
+  left: 15%;
 }
 .cp-el-i {
-  margin: 1%;
+  margin: 0.5% 1% 0.5% 1%;
 }
 .co-el-i{
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
 }
 .word-wrap{
   width: 98%;
