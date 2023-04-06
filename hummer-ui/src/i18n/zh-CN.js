@@ -1348,7 +1348,7 @@ export default {
     platform: '云原生平台',
     k8s_platform: 'K8s 账号',
     by_k8s_platform: '按 K8s 账号统计',
-    status: '账号状态',
+    status: 'K8s 账号状态',
     operator_status: 'Operator 状态',
     kubench_status: 'Kube-bench 状态',
     add: '新增多个',

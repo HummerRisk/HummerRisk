@@ -201,7 +201,7 @@ const columnOptions = [
         let path = this.$route.path;
         if (path.indexOf("/k8s") >= 0) {
           this.$router.push({
-            path: '/k8s/result',
+            path: '/k8s/k8s',
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({

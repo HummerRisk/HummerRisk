@@ -1348,7 +1348,7 @@ export default {
     platform: 'Cloud native platform',
     k8s_platform: 'K8s account',
     by_k8s_platform: 'Statistics by K8s account',
-    status: 'Status',
+    status: 'K8s status',
     operator_status: 'Operator Status',
     kubench_status: 'Kube-bench status',
     add: 'Add multiple',

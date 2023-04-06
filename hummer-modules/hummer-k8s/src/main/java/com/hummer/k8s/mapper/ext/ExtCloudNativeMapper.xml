@@ -126,7 +126,7 @@
         <result column="fail" jdbcType="VARCHAR" property="fail" />
         <result column="info" jdbcType="VARCHAR" property="info" />
         <result column="pass" jdbcType="VARCHAR" property="pass" />
-        <result column="cloud_reource_sum" jdbcType="BIGINT" property="cloudResourceSum" />
+        <result column="cloud_resources_sum" jdbcType="BIGINT" property="cloudResourcesSum" />
         <result column="cloud_return_sum" jdbcType="BIGINT" property="cloudReturnSum" />
     </resultMap>
 
@@ -170,7 +170,7 @@
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'info') as `info`,
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'pass') as `pass`,
         (select IFNULL(sum(tj.return_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_return_sum`,
-        (select IFNULL(sum(tj.resources_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_resource_sum`
+        (select IFNULL(sum(tj.resources_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_resources_sum`
         from cloud_native as t
         left join user on t.creator = user.id
         left join proxy p on t.proxy_id = p.id

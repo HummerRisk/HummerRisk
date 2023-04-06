@@ -30,7 +30,7 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('log')" :label="$t('k8s.install_log')" min-width="130" prop="log" show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('log')" :label="$t('k8s.status')" min-width="120" prop="log" show-overflow-tooltip>
           <el-button @click="showLog(scope.row)" plain size="mini" type="success" v-if="scope.row.k8sStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
@@ -41,6 +41,66 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('image.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
+          <el-button @click="noWarnLog(scope.row)" plain size="medium" type="info" v-else-if="scope.row.resultStatus === null">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+          </el-button>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('result')" :label="$t('k8s.vuln_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="210">
+          <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
+            <div class="txt-click" @click="goResource(scope.row)">
+              <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
+              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.high }}</span>
+              <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.medium }}</span>
+              <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.low }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.unknown }}</span>
+            </div>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('configResult')" :label="$t('k8s.config_compliance')" prop="returnConfigSum" sortable show-overflow-tooltip min-width="190">
+          <el-tooltip effect="dark" :content="$t('history.config_result') + ' CRITICAL:' + scope.row.configCritical + ' HIGH:' +  scope.row.configHigh + ' MEDIUM:' + scope.row.configMedium + ' LOW:' + scope.row.configLow" placement="top">
+            <div class="txt-click" @click="goConfigResource(scope.row)">
+              <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.configCritical }}</span>
+              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.configHigh }}</span>
+              <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.configMedium }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'L:' + scope.row.configLow }}</span>
+            </div>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('kubenchResult')" :label="$t('k8s.kubench_compliance')" prop="kubenchResult" sortable show-overflow-tooltip min-width="190">
+          <el-tooltip effect="dark" :content="$t('k8s.kubench_result') + ' FAIL:' + scope.row.fail + ' WARN:' +  scope.row.warn + ' INFO:' + scope.row.info + ' PASS:' + scope.row.pass" placement="top">
+            <div class="txt-click" @click="goKubenchResource(scope.row)">
+              <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'F:' + scope.row.fail }}</span>
+              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'W:' +  scope.row.warn }}</span>
+              <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'I:' + scope.row.info }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'P:' + scope.row.pass }}</span>
+            </div>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column prop="scanTime" min-width="200" v-if="checkedColumnNames.includes('scanTime')" :label="$t('commons.last_scan_time')" sortable>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.resultStatus !== null"><i class="el-icon-time"/> {{ scope.row.scanTime | timestampFormatDate }}</span>
+            <span v-if="scope.row.resultStatus === null">--</span>
+          </template>
+        </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
                          prop="updateTime">
           <template v-slot:default="scope">
@@ -48,7 +108,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('account.creator')" min-width="110" show-overflow-tooltip/>
-        <el-table-column min-width="150" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="230" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -194,7 +254,7 @@
           </el-row>
         </div>
         <el-table style="width: 100%" :data="installData" :show-header="false">
-          <el-table-column prop="status" width="300">{{ 'K8s ' + $t('k8s.status') }}</el-table-column>
+          <el-table-column prop="status" width="300">{{ $t('k8s.status') }}</el-table-column>
           <el-table-column prop="status" min-width="300"
                            column-key="status"
                            :filters="statusFilters"
@@ -318,6 +378,59 @@
     </el-drawer>
     <!--Install log-->
 
+    <!--Result log-->
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logResultVisible" size="85%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-row class="el-form-item-dev" v-if="logResultData.length == 0">
+        <span>{{ $t('resource.i18n_no_data') }}<br></span>
+      </el-row>
+      <el-row class="el-form-item-dev" v-if="logResultData.length > 0">
+        <div>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span"> {{ logResultForm.name }}</span>
+                <span class="grid-content-log-span">
+                  <img :src="require(`@/assets/img/platform/${logResultForm.pluginIcon?logResultForm.pluginIcon:'k8s.png'}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                </span>
+                <span class="grid-content-status-span" v-if="logResultForm.resultStatus === 'APPROVED'" style="color: #579df8">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logResultForm.resultStatus === 'FINISHED'" style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logResultForm.resultStatus === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <el-table :show-header="false" :data="logResultData" class="adjust-table table-content">
+          <el-table-column>
+            <template v-slot:default="scope">
+              <div class="bg-purple-div">
+                <span
+                    v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <log-form :logForm="logResultForm"/>
+      </el-row>
+      <template v-slot:footer>
+        <dialog-footer
+            @cancel="logResultVisible = false"
+            @confirm="logResultVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--Result log-->
+
   </main-container>
 </template>
 
@@ -335,10 +448,15 @@ import ProxyDialogCreateFooter from "@/business/components/common/components/Pro
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import HideTable from "@/business/components/common/hideTable/HideTable";
+import LogForm from "@/business/components/k8s/home/LogForm";
 import {nativePluginUrl, pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
 import {
   addK8sUrl,
-  deleteK8sUrl, k8sInstallLogUrl,
+  deleteK8sUrl,
+  getCloudNativeResultUrl,
+  getCloudNativeResultWithBLOBsUrl,
+  k8sDownloadUrl,
+  k8sInstallLogUrl,
   k8sListUrl,
   k8sValidatesUrl,
   k8sValidateUrl,
@@ -350,6 +468,7 @@ import {
   scanK8sUrl,
   updateK8sUrl
 } from "@/api/k8s/k8s/k8s";
+import {saveAs} from "@/common/js/FileSaver";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -359,18 +478,33 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'k8s.platform',
-    props: 'pluginName',
+    label: 'k8s.install_log',
+    props: 'log',
     disabled: false
   },
   {
-    label: 'k8s.status',
+    label: 'k8s.vuln_compliance',
+    props: 'result',
+    disabled: false
+  },
+  {
+    label: 'k8s.config_compliance',
+    props: 'configResult',
+    disabled: false
+  },
+  {
+    label: 'k8s.kubench_compliance',
+    props: 'kubenchResult',
+    disabled: false
+  },
+  {
+    label: 'image.result_status',
     props: 'status',
     disabled: false
   },
   {
-    label: 'k8s.install_log',
-    props: 'log',
+    label: 'commons.last_scan_time',
+    props: 'scanTime',
     disabled: false
   },
   {
@@ -399,6 +533,7 @@ export default {
     ProxyDialogCreateFooter,
     HrCodeEdit,
     HideTable,
+    LogForm,
   },
   provide() {
     return {
@@ -467,6 +602,12 @@ export default {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
         }, {
+          tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "info",
+          exec: this.handleVuln
+        }, {
+          tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
+          exec: this.handleDownload
+        }, {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
         }
@@ -510,6 +651,18 @@ export default {
         '# 4.检测operator是否启动成功\n' +
         'kubectl get pod -A|grep trivy-operator\n' +
         'trivy-system   trivy-operator-69f99f79c4-lvzvs           1/1     Running            0          118s\n',
+      cmOptions: {
+        tabSize: 4,
+        mode: {
+          name: 'shell',
+          json: true
+        },
+        theme: 'bespin',
+        lineNumbers: true,
+        line: true,
+        indentWithTabs: true,
+        location: "",
+      },
       checkedColumnNames: columnOptions.map((ele) => ele.props),
       columnNames: columnOptions,
       //名称搜索
@@ -532,6 +685,10 @@ export default {
       logPage: 1,
       logSize: 5,
       logTotal: 0,
+      logResultVisible: false,
+      logResultForm: {},
+      logResultData: [],
+      detailForm: {},
     }
   },
   watch: {
@@ -548,6 +705,9 @@ export default {
       this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
       this.isIndeterminate = false;
       this.checkAll = val;
+    },
+    handleVuln() {
+      window.open('http://www.cnnvd.org.cn/','_blank','');
     },
     create() {
       this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
@@ -703,6 +863,7 @@ export default {
       this.createVisible = false;
       this.updateVisible = false;
       this.logVisible = false;
+      this.logResultVisible = false;
     },
     handleDelete(obj) {
       this.$alert(this.$t('commons.delete_confirm') + obj.name + " ？", '', {
@@ -878,12 +1039,7 @@ export default {
             this.$get(scanK8sUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
-                this.$router.push({
-                  path: '/k8s/result',
-                  query: {
-                    date:new Date().getTime()
-                  },
-                }).catch(error => error);
+                this.search();
               } else {
                 this.$error(response.message);
               }
@@ -949,9 +1105,122 @@ export default {
         }
       });
     },
+    goResource (params) {
+      if (!params.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
+      if (params.returnSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/k8s/resultdetails/' + params.resultId;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
+    },
+    goConfigResource (params) {
+      if (!params.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
+      if (params.returnConfigSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/k8s/resultconfigdetails/' + params.resultId;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
+    },
+    goKubenchResource (params) {
+      if (!params.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
+      if (params.returnConfigSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/k8s/resultkubenchdetails/' + params.resultId;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
+    },
+    async showResultLog (result) {
+      if (!result.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
+      this.result = this.$get(logK8sUrl + result.resultId, response => {
+        this.logResultData = response.data;
+      });
+      await this.$get(getCloudNativeResultWithBLOBsUrl + result.resultId, response => {
+        this.logResultForm = response.data;
+        this.logResultForm.vulnerabilityReport = JSON.parse(this.logResultForm.vulnerabilityReport);
+        this.logResultForm.configAuditReport = JSON.parse(this.logResultForm.configAuditReport);
+      });
+      this.logResultVisible = true;
+    },
+    noWarnLog(item) {
+      this.$warning(item.name + this.$t('resource.i18n_no_warn'));
+    },
+    getStatus () {
+      if (this.checkStatus(this.tableData)) {
+        this.search();
+        clearInterval(this.timer);
+      } else {
+        for (let data of this.tableData) {
+          this.$get(getCloudNativeResultUrl + data.resultId, response => {
+            let result = response.data;
+            if (result && data.resultStatus !== result.resultStatus) {
+              data.resultStatus = result.resultStatus;
+              data.returnSum = result.returnSum;
+              data.critical = result.critical;
+              data.high = result.high;
+              data.medium = result.medium;
+              data.low = result.low;
+              data.unknown = result.unknown;
+              data.fail = result.fail;
+              data.warn = result.warn;
+              data.info = result.info;
+              data.pass = result.pass;
+              data.cloudResourcesSum = result.cloudResourcesSum;
+              data.cloudReturnSum = result.cloudReturnSum;
+            }
+          });
+        }
+      }
+    },
+    //是否是结束状态，返回false代表都在运行中，true代表已结束
+    checkStatus (tableData) {
+      let sum = 0;
+      for (let row of tableData) {
+        if (row.resultStatus && row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
+          sum++;
+        }
+      }
+      return sum == 0;
+    },
+    handleDownload(item) {
+      this.$post(k8sDownloadUrl, {
+        id: item.id
+      }, response => {
+        if (response.success) {
+          let blob = new Blob([response.data], { type: "application/json" });
+          saveAs(blob, item.name + ".json");
+        }
+      }, error => {
+        console.log("下载报错", error);
+      });
+    },
   },
   activated() {
     this.init();
+    this.timer = setInterval(this.getStatus, 10000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 }
 </script>
@@ -1039,6 +1308,168 @@ export default {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
+.table-content {
+  width: 100%;
+}
 
+.el-table {
+  cursor: pointer;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 10%;
+  width: 47%;
+}
+
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.rtl >>> input {
+  width: 100%;
+}
+.rtl >>> .el-select {
+  width: 80%;
+}
+.rtl >>> .el-form-item__content {
+  width: 75%;
+}
+.code-mirror {
+  height: 600px !important;
+}
+.code-mirror >>> .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  height: 600px !important;
+}
+/deep/ :focus{outline:0;}
+.el-box-card {
+  margin: 10px 0;
+}
+.el-form-item-dev  >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+.grid-content-log-span {
+  width: 39%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 2px;
+  color: #606266;
+}
+
+.grid-content-status-span {
+  width: 20%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0;
+}
+
+.el-form-item-dev >>> .bg-purple-light {
+  background: #f2f2f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+.box-card >>> .clearfix-dev {
+  background-color: aliceblue;
+  padding: 18px 20px;
+  border-bottom: 1px solid #ebeef5;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.table-content {
+  width: 100%;
+}
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 10%;
+  width: 47%;
+}
+.tag-v{
+  margin: 10px;
+  cursor:pointer;
+}
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.rtl >>> input {
+  width: 100%;
+}
+.rtl >>> .el-select {
+  width: 80%;
+}
+.rtl >>> .el-form-item__content {
+  width: 75%;
+}
+.bg-purple-dark {
+  background: #99a9bf;
+}
+.bg-purple {
+  background: #d3dce6;
+}
+.bg-purple-light {
+  background: #f2f2f2;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.grid-content-log-span {
+  width: 39%;
+  float: left;
+  vertical-align: middle;
+  display:table-cell;
+  margin: 6px 0 6px 2px;
+  color: #606266;
+}
+
+.pure-span {
+  color: #606266;
+  margin: 10px 0;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 2%;
+  width: 46%;
+}
+.txt-click {
+  cursor:pointer;
+}
+.txt-click:hover {
+  color: aliceblue;
+  text-shadow: 1px 1px 1px #000;
+}
 </style>
 

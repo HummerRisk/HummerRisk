@@ -1348,7 +1348,7 @@ export default {
     platform: '雲原生平台',
     k8s_platform: 'K8s 賬號',
     by_k8s_platform: '按 K8s 賬號統計',
-    status: '狀態',
+    status: 'K8s 狀態',
     operator_status: 'Operator 狀態',
     kubench_status: 'Kube-bench 狀態',
     add: '新增多個',
