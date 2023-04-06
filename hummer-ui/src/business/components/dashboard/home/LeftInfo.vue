@@ -104,7 +104,6 @@ export default {
     this.getList();
     this.$nextTick(() => {
       this.cloudChart = this.$refs.cloudChart.$el.offsetWidth;
-      this.vulnChart = this.$refs.vulnChart.$el.offsetWidth;
     });
   }
 }

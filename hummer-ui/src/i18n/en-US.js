@@ -528,7 +528,7 @@ export default {
     rules: 'Rules',
     results: 'Results',
     tasks: 'Task',
-    safe_score: 'Safety score',
+    safe_score: 'Comprehensive Safety Score',
     system_his: 'Operation record',
     cloud_account_statistics_top10: 'Cloud account statistics TOP 10',
     vuln_statistics_top10: 'Vulnerability detection statistics TOP 10',

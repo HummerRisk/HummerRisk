@@ -528,7 +528,7 @@ export default {
     rules: '規則',
     results: '結果',
     tasks: '任務',
-    safe_score: '安全評分',
+    safe_score: '綜合安全評分',
     system_his: '操作記錄',
     cloud_account_statistics_top10: '雲賬號統計 TOP 10',
     vuln_statistics_top10: '漏洞檢測統計 TOP 10',
