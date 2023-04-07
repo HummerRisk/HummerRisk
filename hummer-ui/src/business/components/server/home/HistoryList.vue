@@ -25,8 +25,9 @@
           <el-table-column prop="ruleName" :label="$t('server.rule_name')" v-if="checkedColumnNames.includes('ruleName')" min-width="160" show-overflow-tooltip></el-table-column>
           <el-table-column prop="isSeverity" :label="$t('server.is_severity')" v-if="checkedColumnNames.includes('severity')" min-width="100" show-overflow-tooltip v-slot:default="scope">
             <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
-              <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
-              <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
+              <span v-if="scope.row.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+              <span v-if="scope.row.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
+              <span v-if="scope.row.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('dashboard.i18n_has_warn') }}</span>
             </el-tooltip>
           </el-table-column>
           <el-table-column prop="type" :label="$t('commons.type')" v-if="checkedColumnNames.includes('type')" min-width="70" show-overflow-tooltip>
@@ -58,8 +59,9 @@
           </el-table-column>
           <el-table-column prop="isSeverity" v-if="checkedColumnNames.includes('isSeverity')" :label="$t('server.is_severity')" min-width="110" show-overflow-tooltip v-slot:default="scope" sortable>
             <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
-              <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
-              <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
+              <span v-if="scope.row.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+              <span v-if="scope.row.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
+              <span v-if="scope.row.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('dashboard.i18n_has_warn') }}</span>
             </el-tooltip>
           </el-table-column>
           <el-table-column prop="updateTime" min-width="160"  v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.create_time')" sortable>
@@ -140,8 +142,9 @@
                   <span class="grid-content-log-span"> {{ logForm.ruleDesc }}</span>
                   <span class="grid-content-log-span">
                     {{ logForm.ip }}
-                    <span v-if="logForm.isSeverity" style="color: #46ad59">({{ $t('resource.risk_free') }})</span>
-                    <span v-if="!logForm.isSeverity" style="color: #f84846">({{ $t('resource.risky') }})</span>
+                    <span v-if="logForm.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+                    <span v-if="logForm.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
+                    <span v-if="logForm.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('dashboard.i18n_has_warn') }}</span>
                   </span>
                   <span class="grid-content-status-span">
                   <rule-type :row="logForm"/>
@@ -203,8 +206,9 @@
             <el-table-column prop="ip" :label="'IP'" min-width="10%" show-overflow-tooltip></el-table-column>
             <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="15%" show-overflow-tooltip></el-table-column>
             <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="10%" show-overflow-tooltip v-slot:default="scope">
-              <span v-if="scope.row.isSeverity" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
-              <span v-if="!scope.row.isSeverity" style="color: #f84846">{{ $t('resource.risky') }}</span>
+              <span v-if="scope.row.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+              <span v-if="scope.row.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
+              <span v-if="scope.row.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('dashboard.i18n_has_warn') }}</span>
             </el-table-column>
             <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="14%" prop="resultStatus" sortable show-overflow-tooltip>
               <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">

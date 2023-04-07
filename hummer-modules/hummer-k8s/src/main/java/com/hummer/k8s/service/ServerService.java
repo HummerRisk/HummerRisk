@@ -195,12 +195,12 @@ public class ServerService {
             }
             String returnLog = execute(server, script, proxy, jsonArray);
             if (returnLog.contains(ServerConstants.HUMMER_SUCCESS)) {
-                result.setIsSeverity(true);
+                result.setIsSeverity("true");
             } else if (returnLog.contains(ServerConstants.HUMMER_ERROR)) {
-                result.setIsSeverity(false);
+                result.setIsSeverity("false");
             } else if (StringUtils.isBlank(returnLog)) {
-                returnLog = ServerConstants.HUMMER_ERROR + ": 没有获取到返回值";
-                result.setIsSeverity(false);
+                returnLog = ServerConstants.HUMMER_WARN + ": 没有获取到返回值";
+                result.setIsSeverity("warn");
             }
             result.setCommand(script);
             result.setReturnLog(returnLog);
@@ -210,7 +210,7 @@ public class ServerService {
 
             systemProviderService.createServerMessageOrderItem(result, this.messageOrderId);
 
-            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, result.getIsSeverity(), loginUser);
+            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, StringUtils.equals(result.getIsSeverity(), "true")?true:false, loginUser);
 
             systemProviderService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
         } catch (Exception e) {

@@ -14,4 +14,6 @@ public class ServerConstants {
     public final static String HUMMER_SUCCESS = "HummerSuccess";
 
     public final static String HUMMER_ERROR = "HummerError";
+
+    public final static String HUMMER_WARN = "HummerWarn";
 }

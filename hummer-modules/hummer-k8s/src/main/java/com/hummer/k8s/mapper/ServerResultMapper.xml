@@ -25,7 +25,7 @@
     <result column="port" jdbcType="VARCHAR" property="port" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+    <result column="is_severity" jdbcType="VARCHAR" property="isSeverity" />
     <result column="command" jdbcType="VARCHAR" property="command" />
     <result column="type" jdbcType="VARCHAR" property="type" />
   </resultMap>
@@ -216,7 +216,7 @@
       #{updateTime,jdbcType=BIGINT}, #{applyUser,jdbcType=VARCHAR}, #{serverGroupId,jdbcType=VARCHAR},
       #{serverGroupName,jdbcType=VARCHAR}, #{pluginIcon,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR},
       #{port,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      #{isSeverity,jdbcType=BIT}, #{command,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+      #{isSeverity,jdbcType=VARCHAR}, #{command,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
       #{returnLog,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.hummer.common.core.domain.ServerResult">
@@ -350,7 +350,7 @@
         #{password,jdbcType=VARCHAR},
       </if>
       <if test="isSeverity != null">
-        #{isSeverity,jdbcType=BIT},
+        #{isSeverity,jdbcType=VARCHAR},
       </if>
       <if test="command != null">
         #{command,jdbcType=VARCHAR},
@@ -437,7 +437,7 @@
         `password` = #{record.password,jdbcType=VARCHAR},
       </if>
       <if test="record.isSeverity != null">
-        is_severity = #{record.isSeverity,jdbcType=BIT},
+        is_severity = #{record.isSeverity,jdbcType=VARCHAR},
       </if>
       <if test="record.command != null">
         command = #{record.command,jdbcType=VARCHAR},
@@ -478,7 +478,7 @@
       port = #{record.port,jdbcType=VARCHAR},
       user_name = #{record.userName,jdbcType=VARCHAR},
       `password` = #{record.password,jdbcType=VARCHAR},
-      is_severity = #{record.isSeverity,jdbcType=BIT},
+      is_severity = #{record.isSeverity,jdbcType=VARCHAR},
       command = #{record.command,jdbcType=VARCHAR},
       `type` = #{record.type,jdbcType=VARCHAR},
       return_log = #{record.returnLog,jdbcType=LONGVARCHAR}
@@ -511,7 +511,7 @@
       port = #{record.port,jdbcType=VARCHAR},
       user_name = #{record.userName,jdbcType=VARCHAR},
       `password` = #{record.password,jdbcType=VARCHAR},
-      is_severity = #{record.isSeverity,jdbcType=BIT},
+      is_severity = #{record.isSeverity,jdbcType=VARCHAR},
       command = #{record.command,jdbcType=VARCHAR},
       `type` = #{record.type,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -578,7 +578,7 @@
         `password` = #{password,jdbcType=VARCHAR},
       </if>
       <if test="isSeverity != null">
-        is_severity = #{isSeverity,jdbcType=BIT},
+        is_severity = #{isSeverity,jdbcType=VARCHAR},
       </if>
       <if test="command != null">
         command = #{command,jdbcType=VARCHAR},
@@ -616,7 +616,7 @@
       port = #{port,jdbcType=VARCHAR},
       user_name = #{userName,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=VARCHAR},
-      is_severity = #{isSeverity,jdbcType=BIT},
+      is_severity = #{isSeverity,jdbcType=VARCHAR},
       command = #{command,jdbcType=VARCHAR},
       `type` = #{type,jdbcType=VARCHAR},
       return_log = #{returnLog,jdbcType=LONGVARCHAR}
@@ -646,7 +646,7 @@
       port = #{port,jdbcType=VARCHAR},
       user_name = #{userName,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=VARCHAR},
-      is_severity = #{isSeverity,jdbcType=BIT},
+      is_severity = #{isSeverity,jdbcType=VARCHAR},
       command = #{command,jdbcType=VARCHAR},
       `type` = #{type,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}

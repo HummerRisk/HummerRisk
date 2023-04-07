@@ -172,7 +172,7 @@ public class ServerResult implements Serializable {
      *
      * @mbg.generated Fri Dec 09 02:30:10 CST 2022
      */
-    private Boolean isSeverity;
+    private String isSeverity;
 
     /**
      *
@@ -649,7 +649,7 @@ public class ServerResult implements Serializable {
      *
      * @mbg.generated Fri Dec 09 02:30:10 CST 2022
      */
-    public Boolean getIsSeverity() {
+    public String getIsSeverity() {
         return isSeverity;
     }
 
@@ -661,7 +661,7 @@ public class ServerResult implements Serializable {
      *
      * @mbg.generated Fri Dec 09 02:30:10 CST 2022
      */
-    public void setIsSeverity(Boolean isSeverity) {
+    public void setIsSeverity(String isSeverity) {
         this.isSeverity = isSeverity;
     }
 
