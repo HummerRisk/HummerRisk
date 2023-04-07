@@ -1,8 +1,8 @@
 package com.hummer.k8s.mapper;
 
-import com.hummer.system.domain.CloudNativeResult;
-import com.hummer.system.domain.CloudNativeResultExample;
-import com.hummer.system.domain.CloudNativeResultWithBLOBs;
+import com.hummer.common.core.domain.CloudNativeResult;
+import com.hummer.common.core.domain.CloudNativeResultExample;
+import com.hummer.common.core.domain.CloudNativeResultWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
