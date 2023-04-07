@@ -524,7 +524,7 @@ public class ServerService {
         try {
             switch (server.getType()) {
                 case "linux":
-                    return SshUtil.executeSshd(SshUtil.loginSshd(server, proxy), "su - -c " + "\"" + cmd + "\"");
+                    return SshUtil.executeSudoSshd(SshUtil.loginSshd(server, proxy), "\"" + cmd + "\"");
                 case "windows":
                     String result = WinRMHelper.execute(server, cmd);
                     String hummerSuccess = "", hummerError = "";

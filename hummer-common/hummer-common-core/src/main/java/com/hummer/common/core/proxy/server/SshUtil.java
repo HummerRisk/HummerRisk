@@ -2,7 +2,9 @@ package com.hummer.common.core.proxy.server;
 
 import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.domain.Server;
+import com.hummer.common.core.utils.DateUtils;
 import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.core.utils.Md5Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
@@ -161,6 +163,83 @@ public class SshUtil {
         result = result.trim();
         session.close();
         return result;
+    }
+
+    /**
+     * 远程执行shell脚本或者命令
+     * @param cmd 即将执行的命令
+     * @return 命令执行完后返回的结果值
+     */
+    public static String executeSudoSshd(ClientSession session, String cmd) throws Exception {
+        String result = "";
+        try {
+            if(session != null){
+                String file = "/tmp/" + DateUtils.datePath() + "-" + encodingFilename("server") + ".sh";
+                String cmd1 = "cat >> " + file + " << EOF" + "\n"
+                        + cmd + "\n"
+                        + "EOF";
+                ChannelExec ce1 = session.createExecChannel(cmd1);
+                ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+                ByteArrayOutputStream err1 = new ByteArrayOutputStream();
+                ce1.setOut(out1);
+                ce1.setErr(err1);
+
+                ce1.open();
+                Set<ClientChannelEvent> events1 = ce1.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(60000));
+
+                if (events1.contains(ClientChannelEvent.TIMEOUT)) {
+                    throw new Exception("【执行命令失败超时】\n执行的命令如下：\n" + cmd1 + "\n" + ClientChannelEvent.TIMEOUT);
+                }
+                //如果为得到标准输出为空，说明脚本执行出错了
+                if(StringUtils.isBlank(out1.toString())){
+                    LogUtil.info("【得到标准输出为空】\n执行的命令如下：\n" + cmd1);
+                } else{
+                    LogUtil.info("【执行命令成功】\n执行的命令如下：\n" + cmd1);
+                }
+
+                String cmd2 = "sudo sh " + file;
+                ChannelExec ce2 = session.createExecChannel(cmd2);
+                ByteArrayOutputStream out2 = new ByteArrayOutputStream();
+                ByteArrayOutputStream err2 = new ByteArrayOutputStream();
+                ce2.setOut(out2);
+                ce2.setErr(err2);
+
+                ce2.open();
+                Set<ClientChannelEvent> events2 = ce2.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(60000));
+
+                if (events2.contains(ClientChannelEvent.TIMEOUT)) {
+                    throw new Exception("【执行命令失败超时】\n执行的命令如下：\n" + cmd2 + "\n" + ClientChannelEvent.TIMEOUT);
+                }
+                //如果为得到标准输出为空，说明脚本执行出错了
+                if(StringUtils.isBlank(out2.toString())){
+                    LogUtil.info("【得到标准输出为空】\n执行的命令如下：\n" + cmd2);
+                } else{
+                    LogUtil.info("【执行命令成功】\n执行的命令如下：\n" + cmd2);
+                }
+
+                result = out2.toString();
+            }
+        } catch (IOException e) {
+            LogUtil.error("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
+            throw new Exception("【执行命令失败】\n执行的命令如下：\n" + cmd + "\n" + e.getMessage());
+        }
+        StringTokenizer pas = new StringTokenizer(result, " ");
+        result = "";
+        while (pas.hasMoreTokens()) {
+            String s = pas.nextToken();
+            result = result + s + " ";
+        }
+        result = result.trim();
+        session.close();
+        return result;
+    }
+
+    /**
+     * 编码文件名
+     */
+    private static final String encodingFilename(String filename) {
+        filename = Md5Utils.hash(filename + System.nanoTime());
+        return filename;
     }
 
 }
