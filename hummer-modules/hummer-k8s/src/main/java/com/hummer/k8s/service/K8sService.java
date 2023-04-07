@@ -603,6 +603,7 @@ public class K8sService {
                 result.setRuleName(rule.getName());
                 result.setRuleDesc(rule.getDescription());
                 result.setSeverity(rule.getSeverity());
+                result.setGroups(JSON.toJSONString(request.getGroups()));
                 cloudNativeResultMapper.insertSelective(result);
 
                 saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
@@ -710,11 +711,24 @@ public class K8sService {
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 
-            long count = saveResultItem(result);
-            result.setReturnSum(count);
-            long sum = saveResultConfigItem(result);
-            result.setReturnConfigSum(sum);
-            result.setKubeBench(scanKubeBench(cloudNative, result.getId()));
+            JSONArray jsonArray = JSONArray.parseArray(result.getGroups());
+            for (Object o : jsonArray) {
+                String obj = (String) o;
+                switch (obj) {
+                    case "vuln" :
+                        long count = saveResultItem(result);
+                        result.setReturnSum(count);
+                        continue;
+                    case "config" :
+                        long sum = saveResultConfigItem(result);
+                        result.setReturnConfigSum(sum);
+                        continue;
+                    case "kubench" :
+                        String kubeBench = scanKubeBench(cloudNative, result.getId());
+                        result.setKubeBench(kubeBench);
+                }
+            }
+
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createCloudNativeMessageOrder(result);
