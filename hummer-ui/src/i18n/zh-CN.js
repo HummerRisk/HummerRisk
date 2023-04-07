@@ -229,6 +229,10 @@ export default {
     compliance_scan_statistics: '合规检测统计',
     resource_result_tip1: '不合规资源',
     resource_result_tip2: '资源总数',
+    safety_scan: '安全检测',
+    vuln_scan: '漏洞检测',
+    config_scan: '配置审计',
+    kubench_scan: 'CIS Benchmark',
   },
   workspace: {
     create: '创建工作空间',

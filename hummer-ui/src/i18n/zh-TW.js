@@ -229,6 +229,10 @@ export default {
     compliance_scan_statistics: '合規檢測統計',
     resource_result_tip1: '不合規資源',
     resource_result_tip2: '資源總數',
+    safety_scan: '安全檢測',
+    vuln_scan: '漏洞檢測',
+    config_scan: '配置審計',
+    kubench_scan: 'CIS Benchmark',
   },
   workspace: {
     create: '創建工作空間',

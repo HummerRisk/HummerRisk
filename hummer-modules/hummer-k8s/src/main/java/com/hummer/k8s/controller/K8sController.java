@@ -116,9 +116,9 @@ public class K8sController {
 
     @I18n
     @ApiOperation(value = "云原生检测")
-    @GetMapping("scan/{id}")
-    public void scan(@PathVariable String id) throws Exception {
-        k8sService.scan(id, tokenService.getLoginUser());
+    @PostMapping("scan")
+    public void scan(@RequestBody CloudNativeRequest request) throws Exception {
+        k8sService.scan(request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "重新云原生检测")

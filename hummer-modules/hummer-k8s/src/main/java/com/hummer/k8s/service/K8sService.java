@@ -581,19 +581,19 @@ public class K8sService {
         return extCloudNativeSourceMapper.situationInfo(params);
     }
 
-    public void scan(String id, LoginUser loginUser) throws Exception {
-        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+    public void scan(CloudNativeRequest request, LoginUser loginUser) throws Exception {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(request.getId());
         Integer scanId = systemProviderService.insertScanHistory(cloudNative);
         if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
             CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
-            deleteRescanResultByCloudNativeId(id);
+            deleteRescanResultByCloudNativeId(request.getId());
 
             for (CloudNativeRule rule : ruleList) {
                 BeanUtils.copyBean(result, cloudNative);
                 result.setId(UUIDUtil.newUUID());
-                result.setCloudNativeId(id);
+                result.setCloudNativeId(request.getId());
                 result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());

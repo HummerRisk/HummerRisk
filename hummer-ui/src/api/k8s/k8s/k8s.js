@@ -25,7 +25,7 @@ export const addK8sUrl = "/k8s/k8s/add";
 
 export const updateK8sUrl = "/k8s/k8s/update";
 
-export const scanK8sUrl = "/k8s/k8s/scan/";
+export const scanK8sUrl = "/k8s/k8s/scan";
 
 export const reinstallOperatorUrl = "/k8s/k8s/reinstallOperator/";
 

@@ -3,6 +3,7 @@ package com.hummer.common.core.domain.request.cloudNative;
 import com.hummer.common.core.utils.FuzzyQuery;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +45,8 @@ public class CloudNativeRequest {
     private String userName;
 
     private Map<String, Object> combine;
+
+    private List<String> groups;
 
     public String getId() {
         return id;
@@ -139,5 +142,13 @@ public class CloudNativeRequest {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
     }
 }

@@ -229,6 +229,10 @@ export default {
     compliance_scan_statistics: 'Compliance detection statistics',
     resource_result_tip1: 'Non-compliant resource',
     resource_result_tip2: 'Total resources',
+    safety_scan: 'Safety detection',
+    vuln_scan: 'Vulnerability detection',
+    config_scan: 'Configuration Audit',
+    kubench_scan: 'CIS Benchmark',
   },
   workspace: {
     create:'Create a workspace',

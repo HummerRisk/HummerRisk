@@ -446,6 +446,47 @@
     </el-drawer>
     <!--Result log-->
 
+    <!-- 一键检测选择规则组 -->
+    <el-dialog :close-on-click-modal="false"
+               :modal-append-to-body="false"
+               :title="$t('commons.k8s_scan')"
+               :visible.sync="scanVisible"
+               class="" width="70%">
+      <div v-loading="groupResult.loading">
+        <el-card class="box-card el-box-card">
+          <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('commons.safety_scan') }} | {{ $t('k8s.name') }} : {{ accountWithGroup.name }}
+              </span>
+          </div>
+          <el-checkbox-group v-model="checkedScans">
+            <el-checkbox v-for="(scan, index) in scans" :label="scan.id" :value="scan.id" :key="index" border >
+              {{ scan.name }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-card>
+        <el-card class="box-card el-box-card">
+          <div slot="header" class="clearfix">
+              <span>
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} {{ $t('dashboard.i18n_policy_comliance') }} | {{ $t('k8s.name') }} : {{ accountWithGroup.name }}
+              </span>
+            <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+          </div>
+          <el-checkbox-group v-model="checkedGroups">
+            <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
+              {{ group.name }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-card>
+        <dialog-footer
+            @cancel="scanVisible = false"
+            @confirm="scanGroup()"/>
+      </div>
+    </el-dialog>
+    <!-- 一键检测选择检测组 -->
+
   </main-container>
 </template>
 
@@ -484,6 +525,8 @@ import {
   updateK8sUrl
 } from "@/api/k8s/k8s/k8s";
 import {saveAs} from "@/common/js/FileSaver";
+import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
+import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -617,7 +660,7 @@ export default {
       buttons: [
         {
           tip: this.$t('k8s.execute_scan'), icon: "el-icon-s-promotion", type: "success",
-          exec: this.handleScan
+          exec: this.openScanGroup
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
@@ -709,6 +752,17 @@ export default {
       logResultForm: {},
       logResultData: [],
       detailForm: {},
+      scanVisible: false,
+      groupResult: {},
+      checkedGroups: [],
+      checkedScans: ['vuln', 'config', 'kubench'],
+      groups: [],
+      scans: [
+        {id: 'vuln', name: this.$t('commons.vuln_scan')},
+        {id: 'config', name: this.$t('commons.config_scan')},
+        {id: 'kubench', name: this.$t('commons.kubench_scan')},
+      ],
+      accountWithGroup: {pluginIcon: 'k8s.png'},
     }
   },
   watch: {
@@ -1047,27 +1101,6 @@ export default {
         }
       }
     },
-    handleScan(item) {
-      if (item.status === 'INVALID') {
-        this.$warning(item.name + ':' + this.$t('k8s.failed_status'));
-        return;
-      }
-      this.$alert(this.$t('image.one_scan') + item.name + " ？", '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.$get(scanK8sUrl + item.id,response => {
-              if (response.success) {
-                this.$success(this.$t('schedule.event_start'));
-                this.search();
-              } else {
-                this.$error(response.message);
-              }
-            });
-          }
-        }
-      });
-    },
     searchLogData(item) {
       let url = k8sInstallLogUrl + this.logPage + '/' + this.logSize;
       this.result = this.$post(url, {id : item.id}, response => {
@@ -1243,6 +1276,70 @@ export default {
       }, error => {
         console.log("下载报错", error);
       });
+    },
+    scanGroup () {
+      if (this.accountWithGroup.status === 'INVALID') {
+        this.$warning(item.name + ':' + this.$t('k8s.failed_status'));
+        return;
+      }
+      let account = this.$t('account.one_scan') + ' Kubernetes';
+      this.$alert( account + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            let params1 = {
+              id: this.accountWithGroup.id,
+              groups: this.checkedScans
+            }
+            this.groupResult = this.$post(scanK8sUrl, params1,response => {
+              if (response.success) {
+                this.$success(this.$t('schedule.event_start'));
+                this.search();
+              } else {
+                this.$error(response.message);
+              }
+              if (this.checkedGroups.length > 0) {
+                let params = {
+                  accountId: this.accountWithGroup.id,
+                  groups: this.checkedGroups
+                }
+                this.$post(ruleScanUrl, params, () => {
+                  this.$success(this.$t('account.i18n_hr_create_success'));
+                  this.search();
+                });
+              }
+              this.scanVisible = false;
+            });
+          }
+        }
+      });
+    },
+    initGroups(pluginId) {
+      this.result = this.$get(groupsByAccountId + pluginId,response => {
+        this.groups = response.data;
+      });
+    },
+    openScanGroup(account) {
+      if (account.status === 'INVALID') {
+        this.$warning(account.name + ':' + this.$t('account.failed_status'));
+        return;
+      }
+      this.accountWithGroup = account;
+      this.initGroups(account.pluginId);
+      this.scanVisible = true;
+    },
+    handleCheckAllByAccount() {
+      if (this.checkedGroups.length === this.groups.length) {
+        this.checkedGroups = [];
+      } else {
+        let arr = [];
+        this.checkedGroups = [];
+        for (let group of this.groups) {
+          arr.push(group.id);
+        }
+        let concatArr = this.checkedGroups.concat(arr);
+        this.checkedGroups = Array.from(concatArr);
+      }
     },
   },
   activated() {
