@@ -92,7 +92,7 @@
       <!--Create rule-->
       <el-drawer class="rtl" :title="$t('rule.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="createRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createRuleForm">
+        <el-form v-loading="ruleResult.loading" :model="createRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createRuleForm">
           <el-form-item :label="$t('account.scan_type')" :rules="{required: true, message: $t('account.scan_type'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="createRuleForm.scanType" :placeholder="$t('account.please_choose_scan_type')" @change="changeScanType(createRuleForm.scanType)">
               <el-option
@@ -201,7 +201,7 @@
       <!--Update rule-->
       <el-drawer class="rtl" :title="$t('rule.update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="updateRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateRuleForm">
+        <el-form v-loading="ruleResult.loading" :model="updateRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateRuleForm">
           <el-form-item :label="$t('account.scan_type')" prop="scanType">
             <el-input v-model="updateRuleForm.scanType" autocomplete="off" :placeholder="$t('account.scan_type')" disabled/>
           </el-form-item>
@@ -302,7 +302,7 @@
       <!--Copy rule-->
       <el-drawer class="rtl" :title="$t('rule.copy')" :visible.sync="copyVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="copyRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="copyRuleForm">
+        <el-form v-loading="ruleResult.loading" :model="copyRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="copyRuleForm">
           <el-form-item :label="$t('account.scan_type')" prop="scanType">
             <el-input v-model="copyRuleForm.scanType" autocomplete="off" :placeholder="$t('account.scan_type')" disabled/>
           </el-form-item>
@@ -481,6 +481,7 @@ const columnOptions = [
       return {
         tagKey:"all",
         result: {},
+        ruleResult: {},
         condition: {
           components: RULE_CONFIGS
         },
@@ -783,7 +784,7 @@ const columnOptions = [
             if (url === '') {
               this.$error(this.$t('rule.ex_request_parameter_error'));
             }
-            this.result = this.$post(getRuleByNameUrl, param, response => {
+            this.ruleResult = this.$post(getRuleByNameUrl, param, response => {
               if (!response.data) {
                 this.$error(this.$t('rule.rule_name_validate'));
                 return;
@@ -804,14 +805,14 @@ const columnOptions = [
         let param = Object.assign({}, mdObj);
         param.parameter = JSON.stringify(param.parameter);
         param.tags = [];
-        this.result = this.$post(ruleDryRunUrl, param, response => {
+        this.ruleResult = this.$post(ruleDryRunUrl, param, response => {
           this.$success(this.$t('rule.opt_success'));
         }, error => {
           this.$warning(error);
         });
       },
       changeStatus (item) {
-        this.result = this.$post(ruleChangeStatusUrl, {id: item.id, status: item.status?1:0}, response => {
+        this.ruleResult = this.$post(ruleChangeStatusUrl, {id: item.id, status: item.status?1:0}, response => {
           if (item.status == 1) {
             this.$success(this.$t('rule.change_status_on'));
           } else if (item.status == 0) {

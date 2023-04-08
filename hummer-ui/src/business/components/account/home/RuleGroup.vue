@@ -125,7 +125,7 @@
       <!--Create group-->
       <el-drawer class="rtl" :title="$t('rule.create_group')" :visible.sync="createVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
+        <el-form v-loading="groupResult.loading" :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('rule.rule_set')"/>
           </el-form-item>
@@ -157,7 +157,7 @@
       <!--Update group-->
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+        <el-form v-loading="groupResult.loading" :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
@@ -189,7 +189,7 @@
       <!--Info group-->
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+        <el-form v-loading="groupResult.loading" :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             {{ infoForm.name }}
           </el-form-item>
@@ -209,58 +209,60 @@
       <!--rule list-->
       <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_list')"
-                      :items="items2" :columnNames="columnNames2"
-                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
-        <hide-table
-          :table-data="ruleForm"
-          @sort-change="sort"
-          @filter-change="filter"
-          @select-all="select"
-          @select="select"
-        >
-          <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
-            <template v-slot:default="scope">
+        <div v-loading="groupResult.loading">
+          <table-header :condition.sync="ruleCondition" @search="handleListSearch"
+                        :title="$t('rule.rule_list')"
+                        :items="items2" :columnNames="columnNames2"
+                        :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                        @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+          <hide-table
+            :table-data="ruleForm"
+            @sort-change="sort"
+            @filter-change="filter"
+            @select-all="select"
+            @select="select"
+          >
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
+              <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
-            <template v-slot:default="{row}">
-              <severity-type :row="row"></severity-type>
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
-            <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-        </hide-table>
-        <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
+              </template>
+            </el-table-column>
+            <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
+              <template v-slot:default="{row}">
+                <severity-type :row="row"></severity-type>
+              </template>
+            </el-table-column>
+            <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
+              </template>
+            </el-table-column>
+            <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
+              <template v-slot:default="scope">
+                <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+          </hide-table>
+          <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
+        </div>
       </el-drawer>
       <!--rule list-->
 
       <!--rule bind-->
       <el-drawer class="rtl edit-dev-drawer" :title="$t('rule.rule_list_bind')" :visible.sync="bindVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-card class="table-card edit_dev" style="">
+        <el-card v-loading="groupResult.loading" class="table-card edit_dev" style="">
           <div style="text-align: center; margin: 25px;">
             <p style="text-align: center; padding: 10px;margin: 25px;color: red;background-color: aliceblue;">{{ $t('rule.rule_list_bind') }}</p>
             <el-transfer :titles="[$t('rule.source_rule'), $t('rule.target_rule')]" :filter-method="filterMethod" class="el-trans"
@@ -277,7 +279,7 @@
       <!--Create sync-->
       <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
+        <el-form v-loading="groupResult.loading" :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
           <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('account.please_choose_account')">
               <el-option
@@ -409,6 +411,7 @@ const columnOptions2 = [
     data() {
       return {
         result: {},
+        groupResult: {},
         condition: {
           components: RULE_GROUP_CONFIGS
         },
@@ -591,7 +594,7 @@ const columnOptions2 = [
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
         let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
-        this.result = this.$post(url, this.ruleCondition, response => {
+        this.groupResult = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
           this.ruleForm = data.listObject;
@@ -676,7 +679,7 @@ const columnOptions2 = [
               params.flag = item.flag ? item.flag : false;
               params.type = "cloud";
               let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
-              this.result = this.$post(url, params, response => {
+              this.groupResult = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;
                 this.updateVisible =  false;
@@ -729,7 +732,7 @@ const columnOptions2 = [
           }
           this.bindVisible = true;
         });
-        this.$get(ruleAllBindListUrl + item.id,response => {
+        this.groupResult = this.$get(ruleAllBindListUrl + item.id,response => {
           this.cloudValue = [];
           for(let data of response.data) {
             this.cloudValue.push(data.id);
@@ -741,7 +744,7 @@ const columnOptions2 = [
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post(bindRuleUrl, params,response => {
+        this.groupResult = this.$post(bindRuleUrl, params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -752,7 +755,7 @@ const columnOptions2 = [
       },
       handleScan(item) {
         let url = cloudListByGroupUrl + item.pluginId;
-        this.result = this.$get(url, response => {
+        this.groupResult = this.$get(url, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
             this.groupId = item.id;
@@ -766,7 +769,7 @@ const columnOptions2 = [
           return;
         }
         let url = scanByGroupUrl + this.groupId + "/" + this.scanForm.id;
-        this.result = this.$get(url, response => {
+        this.groupResult = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
           this.$router.push({
