@@ -129,7 +129,7 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       deleteTip: {
         type: String,
         default() {
-          return this.$t('commons.delete');
+          return this.$t('oss.delete_batch');
         }
       },
       showOpen: {
