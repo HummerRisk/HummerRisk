@@ -688,11 +688,15 @@ const columnOptions = [
           this.tmpList = fromJson.data;
           if (type === 'edit') {
             let credentials = typeof(this.item.credential) === 'string'?JSON.parse(this.item.credential):this.item.credential;
+            console.log(credentials, this.tmpList)
             for (let tmp of this.tmpList) {
               if (credentials[tmp.name] === undefined) {
                 tmp.input = tmp.defaultValue?tmp.defaultValue:"";
               } else {
-                tmp.input = credentials[tmp.name];
+                // 编辑时不显示密钥信息，新增时才显示，防止泄露。
+                if (tmp.inputType !== 'password') {
+                  tmp.input = credentials[tmp.name];
+                }
               }
             }
           } else {
