@@ -156,6 +156,19 @@ public class NoticeService {
         return uuid;
     }
 
+    public String createK8sMessageOrder(CloudNative cloudNative) {
+        MessageOrder messageOrder = new MessageOrder();
+        String uuid = UUIDUtil.newUUID();
+        messageOrder.setId(uuid);
+        messageOrder.setAccountId(cloudNative.getId());
+        messageOrder.setAccountName(cloudNative.getName());
+        messageOrder.setCreateTime(System.currentTimeMillis());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.K8S.name());
+        messageOrderMapper.insertSelective(messageOrder);
+        return uuid;
+    }
+
     public void finishMessageOrder(MessageOrder messageOrder) {
         messageOrder.setSendTime(System.currentTimeMillis());
         messageOrder.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
@@ -163,6 +176,16 @@ public class NoticeService {
     }
 
     public void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) {
+        MessageOrderItem messageOrderItem = new MessageOrderItem();
+        messageOrderItem.setMessageOrderId(messageOrderId);
+        messageOrderItem.setTaskId(cloudTask.getId());
+        messageOrderItem.setTaskName(cloudTask.getTaskName());
+        messageOrderItem.setCreateTime(System.currentTimeMillis());
+        messageOrderItem.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrderItemMapper.insertSelective(messageOrderItem);
+    }
+
+    public void createK8sMessageOrderItem(String messageOrderId, CloudTask cloudTask) {
         MessageOrderItem messageOrderItem = new MessageOrderItem();
         messageOrderItem.setMessageOrderId(messageOrderId);
         messageOrderItem.setTaskId(cloudTask.getId());

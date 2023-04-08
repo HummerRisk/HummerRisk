@@ -7,7 +7,6 @@ import com.hummer.common.core.domain.request.config.ConfigResultRequest;
 import com.hummer.common.core.domain.request.fs.FsResultRequest;
 import com.hummer.common.core.domain.request.image.ImageResultRequest;
 import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
-import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
@@ -72,8 +71,18 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
+    public String createK8sMessageOrder(CloudNative cloudNative) throws Exception {
+        return noticeService.createK8sMessageOrder(cloudNative);
+    }
+
+    @Override
     public void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception {
         noticeService.createMessageOrderItem(messageOrderId, cloudTask);
+    }
+
+    @Override
+    public void createK8sMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception {
+        noticeService.createK8sMessageOrderItem(messageOrderId, cloudTask);
     }
 
     @Override

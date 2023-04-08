@@ -1,6 +1,14 @@
 <template>
   <main-container v-loading="result.loading">
 
+    <el-card class="table-card el-row-card">
+      <el-row type="flex" justify="space-between" align="middle">
+        <span class="operate-button">
+          <el-button  icon="el-icon-back" @click="back">{{ $t('k8s.back_resource') }}</el-button>
+        </span>
+      </el-row>
+    </el-card>
+
     <div id="pdfDom">
 
       <el-card class="table-card el-row-card" v-if="source">
@@ -543,9 +551,7 @@ import TableOperator from "@/business/components/common/components/TableOperator
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import ResultLog from "./ResultLog";
-import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
-import {ACCOUNT_ID} from "@/common/js/constants";
-import AccountChange from "@/business/components/resource/head/AccountSwitch";
+import {_filter, _sort} from "@/common/js/utils";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {RESOURCE_CONFIGS, RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
@@ -655,7 +661,6 @@ export default {
     DialogFooter,
     CenterChart,
     ResultLog,
-    AccountChange,
     TableSearchBar,
     ResultReadOnly,
     SeverityType,
@@ -674,7 +679,7 @@ export default {
       condition: {
         components: RESULT_CONFIGS
       },
-      accountId: localStorage.getItem(ACCOUNT_ID),
+      accountId: "",
       direction: 'rtl',
       tagSelect: [],
       resourceTypes: [],
@@ -921,9 +926,6 @@ export default {
           this.resourceTypes.push(typeItem);
         }
       });
-      if (!!getCurrentAccountID()) {
-        this.accountId = getCurrentAccountID();
-      }
     },
     goResource(params) {
       if (params.returnSum == 0) {
@@ -952,7 +954,6 @@ export default {
       this.resourceSearch();
     },
     init() {
-      this.currentAccount = this.$route.params.id;
       this.initSelect();
       this.search();
       this.regionDataSearch();
@@ -1196,13 +1197,20 @@ export default {
         }
       });
     },
+    back () {
+      this.$router.push({
+        path: '/k8s/k8s',
+      }).catch(error => error);
+    },
   },
   computed: {
     codemirror() {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  activated() {
+  mounted() {
+    this.accountId = this.$route.params.id;
+    this.currentAccount = this.$route.params.id;
     this.init();
     this.timer = setInterval(this.getStatus, 10000);
   },

@@ -55,10 +55,10 @@ export const cloudTagRuleUpdateUrl = "/cloud/tag/rule/update";
 
 export const cloudListByGroupUrl = "/cloud/account/listByGroup/";
 
-export const cloudResourceListUrl = "/cloud/cloud/resource/list/";
+export const cloudResourceListUrl = "/cloud/cloudResource/list/";
 
-export const resourceSummaryReport = "/cloud/cloud/resource/summary/";
+export const resourceSummaryReport = "/cloud/cloudResource/summary/";
 
-export const resourceTaskCountUrl = "/cloud/cloud/resource/task/count/";
+export const resourceTaskCountUrl = "/cloud/cloudResource/task/count/";
 
-export const resourceRiskListUrl = "/cloud/cloud/resource/risk/list/";
+export const resourceRiskListUrl = "/cloud/cloudResource/risk/list/";

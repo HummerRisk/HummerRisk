@@ -14,6 +14,7 @@ import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
+import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
@@ -103,6 +104,8 @@ public class RuleService   {
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
+    private IK8sProviderService k8sProviderService;
+    @DubboReference
     private IOperationLogService operationLogService;
 
     public List<RuleDTO> cloudList(CreateRuleRequest ruleRequest) {
@@ -112,6 +115,7 @@ public class RuleService   {
     public List<RuleDTO> k8sList(CreateRuleRequest ruleRequest) {
         return extRuleMapper.k8sList(ruleRequest);
     }
+
     public List<Rule> getRulesByAccountId(String accountId) {
         RuleExample example = new RuleExample();
         example.createCriteria().andPluginIdEqualTo(accountMapper.selectByPrimaryKey(accountId).getPluginId());

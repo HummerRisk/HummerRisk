@@ -306,6 +306,11 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.insertSelective(account);
+
+                AccountWithBLOBs accountWithBLOBs = new AccountWithBLOBs();
+                BeanUtils.copyBean(accountWithBLOBs, account);
+                cloudProviderService.insertCloudAccount(accountWithBLOBs);
+
                 reinstallOperator(account.getId(), loginUser);
                 reinstallKubench(account.getId(), loginUser);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
@@ -371,6 +376,11 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
+
+                AccountWithBLOBs accountWithBLOBs = new AccountWithBLOBs();
+                BeanUtils.copyBean(accountWithBLOBs, account);
+                cloudProviderService.updateCloudAccount(accountWithBLOBs);
+
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
                 //检验账号已更新状态
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
@@ -388,6 +398,7 @@ public class K8sService {
     public void delete(String accountId, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
         cloudNativeMapper.deleteByPrimaryKey(accountId);
+        cloudProviderService.deleteCloudAccount(accountId);
         deleteResultByCloudNativeId(accountId, loginUser);
         operationLogService.log(loginUser, accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
     }
@@ -603,7 +614,7 @@ public class K8sService {
                 result.setRuleName(rule.getName());
                 result.setRuleDesc(rule.getDescription());
                 result.setSeverity(rule.getSeverity());
-                result.setGroups(JSON.toJSONString(request.getGroups()));
+                result.setScanGroups(JSON.toJSONString(request.getGroups()));
                 cloudNativeResultMapper.insertSelective(result);
 
                 saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
@@ -711,7 +722,7 @@ public class K8sService {
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 
-            JSONArray jsonArray = JSONArray.parseArray(result.getGroups());
+            JSONArray jsonArray = JSONArray.parseArray(result.getScanGroups());
             for (Object o : jsonArray) {
                 String obj = (String) o;
                 switch (obj) {

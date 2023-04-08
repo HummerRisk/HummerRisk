@@ -19,7 +19,11 @@ public interface ISystemProviderService {
 
     String createMessageOrder(AccountWithBLOBs account) throws Exception;
 
+    String createK8sMessageOrder(CloudNative cloudNative) throws Exception;
+
     void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception;
+
+    void createK8sMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception;
 
     void insertScanTaskHistory(Object obj, Integer scanId, String accountId, String accountType) throws Exception;
 

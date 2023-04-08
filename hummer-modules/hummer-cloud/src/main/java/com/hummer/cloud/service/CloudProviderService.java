@@ -38,6 +38,8 @@ public class CloudProviderService implements ICloudProviderService {
     private RuleTagMapper ruleTagMapper;
     @Autowired
     private RuleGroupMapper ruleGroupMapper;
+    @Autowired
+    private AccountService accountService;
 
 
     @Override
@@ -135,5 +137,32 @@ public class CloudProviderService implements ICloudProviderService {
         return extCloudTaskMapper.getResourcesSumForEmail(messageOrder);
     }
 
+    @Override
+    public int insertCloudAccount(AccountWithBLOBs account) throws Exception {
+        AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(account.getId());
+        if (accountWithBLOBs != null)  return 1;
+        int i = accountMapper.insertSelective(account);
+        accountService.updateRegionsThrows(account);
+        return i;
+    }
+
+    @Override
+    public int updateCloudAccount(AccountWithBLOBs account) throws Exception {
+        AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(account.getId());
+        if (accountWithBLOBs != null) {
+            int i = accountMapper.updateByPrimaryKeySelective(account);
+            accountService.updateRegionsThrows(account);
+            return i;
+        } else {
+            int i = accountMapper.insertSelective(account);
+            accountService.updateRegionsThrows(account);
+            return i;
+        }
+    }
+
+    @Override
+    public int deleteCloudAccount(String id) {
+        return accountMapper.deleteByPrimaryKey(id);
+    }
 
 }
