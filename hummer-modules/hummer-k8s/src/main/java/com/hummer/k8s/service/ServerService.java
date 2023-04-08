@@ -210,7 +210,7 @@ public class ServerService {
 
             systemProviderService.createServerMessageOrderItem(result, this.messageOrderId);
 
-            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, StringUtils.equals(result.getIsSeverity(), "true")?true:false, loginUser);
+            saveServerResultLog(result.getId(), "i18n_end_server_result", returnLog, StringUtils.equals(result.getIsSeverity(), "true") ? true : false, loginUser);
 
             systemProviderService.updateHistoryServerResult(BeanUtils.copyBean(new HistoryServerResult(), result));
         } catch (Exception e) {
@@ -296,7 +296,7 @@ public class ServerService {
             if (server.getIsProxy() != null && server.getIsProxy()) {
                 proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
             }
-            serverValidateDTO= validateAccount(server, proxy);
+            serverValidateDTO = validateAccount(server, proxy);
             return serverValidateDTO;
         } catch (Exception e) {
             LogUtil.error(String.format("HRException in verifying server, server: [%s], ip: [%s], error information:%s", server.getName(), server.getIp(), e.getMessage()), e);
@@ -736,22 +736,22 @@ public class ServerService {
     }
 
     public void insertExperts(MultipartFile excelFile, Server request, LoginUser loginUser) throws Exception {
-        if (excelFile==null|| excelFile.getSize()==0){
+        if (excelFile == null || excelFile.getSize() == 0) {
             LogUtil.error("文件上传错误，重新上传");
         }
         String filename = excelFile.getOriginalFilename();
-        if (!(filename.endsWith(".xls")|| filename.endsWith(".xlsx"))){
+        if (!(filename.endsWith(".xls") || filename.endsWith(".xlsx"))) {
             LogUtil.error("文件上传格式错误，请重新上传");
         }
 
         List<Server> list = new ArrayList<>();
         try {
-            if (filename.endsWith(".xls")){
-                list = readXLS(excelFile);
-            }else {
+            if (filename.endsWith(".xlsx")) {
                 list = readXLSX(excelFile);
+            } else {
+                list = readXLS(excelFile);
             }
-        }catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             LogUtil.error("文件内容读取失败，请重试");
         }
@@ -770,7 +770,7 @@ public class ServerService {
                 return true;
             }
         }).collect(Collectors.toList());
-        if(!newExpertList.isEmpty()){
+        if (!newExpertList.isEmpty()) {
             for (Server server : newExpertList) {
                 server.setId(UUIDUtil.newUUID());
                 server.setCreateTime(System.currentTimeMillis());
@@ -788,7 +788,7 @@ public class ServerService {
     }
 
     public List<Server> readXLS(MultipartFile file) throws IOException {
-        List<Server> list =new ArrayList<>();
+        List<Server> list = new ArrayList<>();
 
         InputStream inputStream = file.getInputStream();
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(inputStream);
@@ -799,7 +799,7 @@ public class ServerService {
         //遍历每一行Excel获取内容
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             HSSFRow row = sheet.getRow(rowNum);
-            if (row!=null){
+            if (row != null) {
                 Server expert = new Server();
                 // 名称
                 // Row.MissingCellPolicy.CREATE_NULL_AS_BLANK 获取的数据位null时 替换成""
@@ -815,7 +815,7 @@ public class ServerService {
                     expert.setIp(row.getCell(2).getStringCellValue());
                 }
                 // port
-                if(row.getCell(3) != null){
+                if (row.getCell(3) != null) {
                     int i = (int) row.getCell(3).getNumericCellValue();
                     expert.setPort(String.valueOf(i));
                 }
@@ -844,11 +844,11 @@ public class ServerService {
         int lastRowNum = sheet.getLastRowNum();
         for (int rowNum = 1; rowNum <= lastRowNum; rowNum++) {
             XSSFRow row = sheet.getRow(rowNum);
-            if (row!=null){
+            if (row != null) {
                 Server expert = new Server();
                 // 名称
-                if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setName(row.getCell(0).getStringCellValue());
+                if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getRawValue() !=null) {
+                    expert.setName(row.getCell(0).getRawValue());
                 }
                 // type
                 if (!row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
@@ -859,17 +859,17 @@ public class ServerService {
                     expert.setIp(row.getCell(2).getStringCellValue());
                 }
                 // port
-                if(row.getCell(3) != null){
+                if (row.getCell(3) != null) {
                     int i = (int) row.getCell(3).getNumericCellValue();
                     expert.setPort(String.valueOf(i));
                 }
                 // username
-                if (!row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
+                if (row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue() != null) {
                     expert.setUserName(row.getCell(4).getStringCellValue());
                 }
                 // password
-                if (!row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("")) {
-                    expert.setPassword(row.getCell(5).getStringCellValue());
+                if (row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getRawValue() != null) {
+                    expert.setPassword(row.getCell(5).getRawValue());
                 }
                 list.add(expert);
             }
