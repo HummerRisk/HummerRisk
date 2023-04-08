@@ -578,6 +578,7 @@ import {
   cloudTaskManualListUrl
 } from "@/api/cloud/account/account";
 import {resourceTypesUrl, ruleReScansUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
+import FakeProgress from "fake-progress";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -823,6 +824,10 @@ export default {
       ],
       checkAll2: true,
       isIndeterminate2: false,
+      fake: new FakeProgress({
+        timeConstant : 10000,
+        autoStart : true
+      }),
     }
   },
   watch: {
@@ -987,7 +992,12 @@ export default {
         this.source.resourcesSum = data.resourcesSum;
         this.source.overRules = data.overRules;
         this.source.allRules = data.allRules;
-        this.progressResult = parseFloat((this.source.overRules/this.source.allRules * 100).toFixed(2)?(this.source.overRules/this.source.allRules * 100).toFixed(2):0.0);
+        //进度条前端一直转不会到100%
+        this.progressResult = parseInt(this.fake.progress * 100);
+        //进度条结束
+        if (this.source.overRules === this.source.allRules) {
+          this.fake.end();
+        }
         let url = cloudTaskManualListUrl + this.currentPage + "/" + this.pageSize;
         this.condition.accountId = this.accountId;
         //在这里实现事件

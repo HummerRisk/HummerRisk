@@ -122,7 +122,7 @@ public class K8sController {
     }
 
     @ApiOperation(value = "重新云原生检测")
-    @GetMapping("reScan/{id}")
+    @GetMapping("rescan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
         k8sService.reScan(id, tokenService.getLoginUser());
     }
