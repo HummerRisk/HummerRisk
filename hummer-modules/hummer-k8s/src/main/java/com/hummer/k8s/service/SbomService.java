@@ -49,9 +49,13 @@ public class SbomService {
     @Autowired
     private ImageMapper imageMapper;
     @Autowired
+    private FileSystemMapper fileSystemMapper;
+    @Autowired
     private CodeService codeService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private FileSystemService fileSystemService;
     @Autowired
     private ImageResultLogMapper imageResultLogMapper;
     @Autowired
@@ -151,6 +155,16 @@ public class SbomService {
                 throw new RuntimeException(e);
             }
         });
+        FileSystemExample fileSystemExample = new FileSystemExample();
+        fileSystemExample.createCriteria().andSbomVersionIdEqualTo(id);
+        List<FileSystem> fileSystems = fileSystemMapper.selectByExample(fileSystemExample);
+        fileSystems.forEach(fileSystem -> {
+            try {
+                fileSystemService.scan(fileSystem.getId(), loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void settingVersion(SettingVersionRequest request) throws Exception {
@@ -185,6 +199,21 @@ public class SbomService {
             image.setSbomId(sbomId);
             image.setSbomVersionId(sbomVersionId);
             imageMapper.updateByPrimaryKeySelective(image);
+        }
+        //系统文件
+        FileSystemExample fileSystemExample = new FileSystemExample();
+        fileSystemExample.createCriteria().andSbomVersionIdEqualTo(sbomVersionId);
+        List<FileSystem> fileSystems = fileSystemMapper.selectByExample(fileSystemExample);
+        for (FileSystem fileSystem : fileSystems) {
+            fileSystem.setSbomId("");
+            fileSystem.setSbomVersionId("");
+            fileSystemMapper.updateByPrimaryKeySelective(fileSystem);
+        }
+        for (String id : request.getFileSystemValue()) {
+            FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(id);
+            fileSystem.setSbomId(sbomId);
+            fileSystem.setSbomVersionId(sbomVersionId);
+            fileSystemMapper.updateByPrimaryKeySelective(fileSystem);
         }
     }
 
