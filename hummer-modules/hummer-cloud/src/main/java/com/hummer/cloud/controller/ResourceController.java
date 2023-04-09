@@ -47,6 +47,13 @@ public class ResourceController {
     }
 
     @I18n
+    @ApiOperation(value = "云原生资源")
+    @GetMapping("k8sSource/{accountId}")
+    public SourceDTO k8sSource(@PathVariable String accountId) {
+        return resourceService.k8sSource(accountId);
+    }
+
+    @I18n
     @ApiOperation(value = "资源列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> list(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {

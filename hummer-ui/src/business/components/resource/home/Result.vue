@@ -422,7 +422,7 @@
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%"
                :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <result-log :row="logForm"></result-log>
+      <result-log v-loading="ruleResult.loading" :row="logForm"></result-log>
       <template v-slot:footer>
         <dialog-footer
           @cancel="logVisible = false"
@@ -439,7 +439,7 @@
         <span>{{ $t('resource.i18n_detail') }}</span>
         <i class="el-icon-close el-icon-close-detail" @click="detailVisible=false"></i>
       </div>
-      <el-form :model="detailForm" label-position="right" label-width="120px" size="small" :rules="rule"
+      <el-form v-loading="ruleResult.loading" :model="detailForm" label-position="right" label-width="120px" size="small" :rules="rule"
                ref="detailForm">
         <el-form-item class="el-form-item-dev">
           <el-tabs type="border-card" @tab-click="showCodemirror">
@@ -517,7 +517,7 @@
 
     <!--regulation report-->
     <el-drawer class="rtl" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-      <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+      <el-card v-loading="ruleResult.loading" class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
         <el-row class="el-row-c">
           <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
           <el-col :span="16"><span>{{ data.project }}</span></el-col>
@@ -673,6 +673,7 @@ export default {
   data() {
     return {
       result: {},
+      ruleResult: {},
       source: {},
       tableData: [],
       currentPage: 1,
@@ -925,11 +926,11 @@ export default {
     },
     async initSelect() {
       this.tagSelect = [];
-      await this.$get(cloudTagRuleListUrl, response => {
+      this.result = await this.$get(cloudTagRuleListUrl, response => {
         this.tagSelect = response.data;
       });
       this.resourceTypes = [];
-      await this.$get(resourceTypesUrl, response => {
+      this.result = await this.$get(resourceTypesUrl, response => {
         for (let item of response.data) {
           let typeItem = {};
           typeItem.value = item.name;
@@ -1043,14 +1044,14 @@ export default {
       }
       this.logForm.cloudTaskItemLogDTOs = [];
       this.logForm.showLogTaskId = showLogTaskId;
-      this.$get(url + showLogTaskId, response => {
+      this.ruleResult = this.$get(url + showLogTaskId, response => {
         this.logForm.cloudTaskItemLogDTOs = response.data;
         this.logVisible = true;
       });
     },
     showTaskDetail(item) {
       this.detailForm = {};
-      this.$get(cloudTaskDetailUrl + item.id, response => {
+      this.ruleResult = this.$get(cloudTaskDetailUrl + item.id, response => {
         if (response.success) {
           this.detailForm = response.data;
           this.detailVisible = true;
@@ -1068,7 +1069,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(ruleReScansUrl + item.id, response => {
+            this.result = this.$get(ruleReScansUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -1082,7 +1083,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
+            this.ruleResult = this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
               if (response.success) {
                 this.search();
               }
@@ -1115,7 +1116,7 @@ export default {
     },
     regionDataSearch() {
       this.regionCondition.id = this.accountId;
-      this.$post(resourceRegionDataUrl, this.regionCondition, response => {
+      this.result = this.$post(resourceRegionDataUrl, this.regionCondition, response => {
         let data = response.data;
         this.regionData = data;
       });
@@ -1125,7 +1126,7 @@ export default {
     },
     severityDataSearch() {
       this.severityCondition.id = this.accountId;
-      this.$post(resourceSeverityDataUrl, this.severityCondition, response => {
+      this.result = this.$post(resourceSeverityDataUrl, this.severityCondition, response => {
         let data = response.data;
         this.severityData = data;
       });
@@ -1135,7 +1136,7 @@ export default {
     },
     resourceTypeDataSearch() {
       this.resourceTypeCondition.id = this.accountId;
-      this.$post(resourceTypeDataUrl, this.resourceTypeCondition, response => {
+      this.result = this.$post(resourceTypeDataUrl, this.resourceTypeCondition, response => {
         let data = response.data;
         this.resourceTypeData = data;
       });
@@ -1145,7 +1146,7 @@ export default {
     },
     ruleDataSearch() {
       this.ruleCondition.id = this.accountId;
-      this.$post(resourceRuleDataUrl, this.ruleCondition, response => {
+      this.result = this.$post(resourceRuleDataUrl, this.ruleCondition, response => {
         let data = response.data;
         this.ruleData = data;
       });
@@ -1154,7 +1155,7 @@ export default {
       this.string2Key = title;
       this.string2PrettyFormat = "";
       if (row) {
-        this.$post(string2PrettyFormatUrl, {json: details}, res => {
+        this.ruleResult = this.$post(string2PrettyFormatUrl, {json: details}, res => {
           this.string2PrettyFormat = res.data;
         });
       } else {
@@ -1204,7 +1205,7 @@ export default {
       this.resourceSearch();
     },
     showSeverityDetail(item) {
-      this.$get(resourceRegulationUrl + item.ruleId, response => {
+      this.ruleResult = this.$get(resourceRegulationUrl + item.ruleId, response => {
         if (response.success) {
           this.regulationData = response.data;
           this.regulationVisible = true;

@@ -767,6 +767,7 @@ export default {
     search_by_report_name: '根據要求條款名稱搜索',
     search_by_hummerid: '根據資源標識搜索',
     the_cloud_platform: '該雲平台',
+    the_k8s_platform: '該雲原生平台',
     not_currently: '暫時不支持此類型的資源的檢測：0/0',
     status_on_off: '是否合規',
     download_report: '下載報告',

@@ -354,9 +354,16 @@ public class ResourceCreateService {
                 resourceWithBLOBs.setResourceCommandAction(taskItemResource.getResourceCommandAction());
                 ResourceWithBLOBs resource = resourceService.saveResource(resourceWithBLOBs, taskItem, cloudTask, taskItemResource);
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
-                orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
-                        + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
-                        true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
+                if (!PlatformUtils.isSupportNative(resource.getPluginId())) {
+                    orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
+                                    + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
+                            true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
+                } else {
+                    orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_k8s_account" + ": " + resource.getPluginName() + "，"
+                                    + "i18n_namespace" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
+                            true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
+                }
+
                 //执行完删除返回目录文件，以便于下一次操作覆盖
                 String deleteResourceDir = "rm -rf " + dirPath;
                 CommandUtils.commonExecCmdWithResult(deleteResourceDir, dirPath);

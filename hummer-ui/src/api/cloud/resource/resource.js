@@ -32,3 +32,5 @@ export const resourceRuleGroupListUrl = "/cloud/resource/ruleGroup/list/";
 export const resourceGroupExportUrl = "/cloud/resource/groupExport";
 
 export const resourceSourceUrl = "/cloud/resource/source/";
+
+export const resourceK8sSourceUrl = "/cloud/resource/k8sSource/";

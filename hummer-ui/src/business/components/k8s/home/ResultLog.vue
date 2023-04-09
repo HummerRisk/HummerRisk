@@ -72,7 +72,7 @@
               </span>
               <div v-if="(scope.row.cloudTaskItem.status === 'FINISHED' || scope.row.cloudTaskItem.status === 'ERROR' || scope.row.cloudTaskItem.status === 'WARNING')
                       && (scope.row.cloudTaskItemLogList.length === 0)">
-                {{ $t('resource.the_cloud_platform') }}
+                {{ $t('resource.the_k8s_platform') }}
                 {{ scope.row.cloudTaskItem.accountLabel }} |
                 {{ scope.row.cloudTaskItem.regionName }}
                 {{ $t('resource.not_currently') }}
