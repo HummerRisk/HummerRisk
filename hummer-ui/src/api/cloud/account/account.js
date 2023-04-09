@@ -59,6 +59,8 @@ export const cloudResourceListUrl = "/cloud/cloudResource/list/";
 
 export const resourceSummaryReport = "/cloud/cloudResource/summary/";
 
+export const resourceSummaryToReport = "/cloud/cloudResource/summary";
+
 export const resourceTaskCountUrl = "/cloud/cloudResource/task/count/";
 
 export const resourceRiskListUrl = "/cloud/cloudResource/risk/list/";
