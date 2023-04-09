@@ -449,7 +449,7 @@
     <!-- 一键检测选择规则组 -->
     <el-dialog :close-on-click-modal="false"
                :modal-append-to-body="false"
-               :title="$t('commons.k8s_scan')"
+               :title="$t('commons.k8s_scan') + ' | ' + $t('k8s.name') + ':' + accountWithGroup.name"
                :visible.sync="scanVisible"
                class="" width="70%">
       <div v-loading="groupResult.loading">
@@ -457,7 +457,7 @@
           <div slot="header" class="clearfix">
               <span>
                 <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('commons.safety_scan') }} | {{ $t('k8s.name') }} : {{ accountWithGroup.name }}
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('commons.safety_scan') }}
               </span>
           </div>
           <el-checkbox-group v-model="checkedScans">
@@ -470,7 +470,7 @@
           <div slot="header" class="clearfix">
               <span>
                 <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} {{ $t('dashboard.i18n_policy_comliance') }} | {{ $t('k8s.name') }} : {{ accountWithGroup.name }}
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} {{ $t('dashboard.i18n_policy_comliance') }}
               </span>
             <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
           </div>
