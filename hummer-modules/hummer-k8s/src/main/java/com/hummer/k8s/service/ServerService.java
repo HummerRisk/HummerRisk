@@ -49,6 +49,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.hummer.common.core.proxy.server.SshUtil.encodingFilename;
+
 /**
  * @author harris
  */
@@ -524,7 +526,13 @@ public class ServerService {
         try {
             switch (server.getType()) {
                 case "linux":
-                    return SshUtil.executeSudoSshd(SshUtil.loginSshd(server, proxy), "\"" + cmd + "\"");
+                    //先从本地生成文件
+                    String dirPath = "/tmp/";
+                    String fileName = DateUtils.datePath() + "-" + encodingFilename("server") + ".sh";
+                    String filePath = dirPath + fileName;
+                    CommandUtils.saveAsFile(cmd, dirPath, fileName, false);
+                    //再scp到主机, 最后执行sudo sh检测
+                    return SshUtil.executeScp(server, proxy, filePath);
                 case "windows":
                     String result = WinRMHelper.execute(server, cmd);
                     String hummerSuccess = "", hummerError = "";
