@@ -209,7 +209,7 @@
                   {{ logForm.ip }}
                   <span v-if="logForm.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
                   <span v-if="logForm.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
-                  <span v-if="logForm.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('dashboard.i18n_has_warn') }}</span>
+                  <span v-if="logForm.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('resource.i18n_has_warn') }}</span>
                 </span>
                 <span class="grid-content-status-span">
                   <rule-type :row="logForm"/>

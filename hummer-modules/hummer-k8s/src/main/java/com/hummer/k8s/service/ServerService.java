@@ -527,12 +527,13 @@ public class ServerService {
             switch (server.getType()) {
                 case "linux":
                     //先从本地生成文件
-                    String dirPath = "/tmp/";
+                    String dirPath = "/tmp/server";
+                    String remotePath = "/tmp";
                     String fileName = DateUtils.datePath() + "-" + encodingFilename("server") + ".sh";
-                    String filePath = dirPath + fileName;
+                    String filePath = dirPath + "/" + fileName;
                     CommandUtils.saveAsFile(cmd, dirPath, fileName, false);
                     //再scp到主机, 最后执行sudo sh检测
-                    return SshUtil.executeScp(server, proxy, filePath);
+                    return SshUtil.executeScp(server, proxy, filePath, fileName, remotePath);
                 case "windows":
                     String result = WinRMHelper.execute(server, cmd);
                     String hummerSuccess = "", hummerError = "";

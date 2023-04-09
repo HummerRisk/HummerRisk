@@ -167,7 +167,6 @@ public class SshUtil {
             result = result + s + " ";
         }
         result = result.trim();
-        session.close();
         return result;
     }
 
@@ -176,7 +175,7 @@ public class SshUtil {
      *
      * @return 命令执行完后返回的结果值
      */
-    public static String executeScp(Server server, Proxy proxy, String localPath) throws Exception {
+    public static String executeScp(Server server, Proxy proxy, String localPath, String fileName, String remotePath) throws Exception {
         long startTime = Calendar.getInstance().getTimeInMillis();
         String result = "";
         try {
@@ -217,10 +216,13 @@ public class SshUtil {
 
                 LogUtil.info("Scp beginning.");
                 // ScpClient.Option.Recursive：递归copy，可以将子文件夹和子文件遍历copy
-                scpClient.upload(localPath, "/tmp", ScpClient.Option.Recursive, ScpClient.Option.TargetIsDirectory);
+                scpClient.upload(localPath, remotePath, ScpClient.Option.Recursive, ScpClient.Option.TargetIsDirectory);
                 LogUtil.info("Scp finished.");
 
-                result = executeSshd(session, "sudo sh " + localPath);
+                //执行检测
+                result = executeSshd(session, "sudo sh " + remotePath + "/" + fileName);
+                //检测完清理文件
+                executeSshd(session, "sudo rm -rf " + remotePath + "/" + fileName);
 
                 // 释放 SCP客户端
                 if (scpClient != null) {
