@@ -1438,9 +1438,6 @@ export default {
     config_chart: 'Deployment detection statistics',
     config_chart_vuln: 'Deployment configuration detection statistics',
     all_label: 'All deployment configurations',
-    install_log: 'Installation log',
-    reinstall_operator: 'Reinstall Operator',
-    reinstall_kubench: 'Reinstall CIS Benchmark',
   },
   code: {
     code_scan: 'Source code detection',
