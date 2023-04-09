@@ -9,7 +9,7 @@
       <template slot="title">
         <span><i class="el-icon-question qa-help icon global"></i> {{ $t('commons.support') }}</span>
       </template>
-      <el-menu-item v-for="(key, value) in items" :key="key" @click="clickTo(key.value)">
+      <el-menu-item v-for="key in items" :key="key.name" @click="clickTo(key.value)">
         {{ key.name }}
       </el-menu-item>
     </el-submenu>

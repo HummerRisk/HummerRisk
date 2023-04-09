@@ -410,10 +410,6 @@
                     <artifactId>okhttp</artifactId>
                     <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>tea</artifactId>
-                    <groupId>com.aliyun</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
