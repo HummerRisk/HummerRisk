@@ -8,6 +8,8 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
+        <table-button v-if="showSync" icon="el-icon-sort-down"
+                      type="primary" :content="syncTip" @click="sync"/>
         <table-button v-if="showCreate" icon="el-icon-circle-plus-outline"
                       type="primary" :content="createTip" @click="create"/>
         <table-button v-if="showScan" icon="el-icon-video-play"
@@ -61,6 +63,10 @@ import htmlToPdf from "@/common/js/htmlToPdf";
           return this.$t('commons.name');
         }
       },
+      showSync: {
+        type: Boolean,
+        default: false
+      },
       showCreate: {
         type: Boolean,
         default: false
@@ -83,6 +89,12 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       },
       condition: {
         type: Object
+      },
+      syncTip: {
+        type: String,
+        default() {
+          return this.$t('image.image_sync');
+        }
       },
       createTip: {
         type: String,
@@ -117,7 +129,7 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       deleteTip: {
         type: String,
         default() {
-          return this.$t('commons.delete');
+          return this.$t('oss.delete_batch');
         }
       },
       showOpen: {
@@ -169,6 +181,9 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       search(value) {
         this.$emit('update:condition', this.condition);
         this.$emit('search', value);
+      },
+      sync() {
+        this.$emit('sync');
       },
       create() {
         this.$emit('create');

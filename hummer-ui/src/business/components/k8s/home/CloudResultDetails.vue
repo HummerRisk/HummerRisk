@@ -1,18 +1,18 @@
 <template>
   <main-container v-loading="result.loading">
 
+    <el-card class="table-card el-row-card">
+      <el-row type="flex" justify="space-between" align="middle">
+        <span class="operate-button">
+          <el-button  icon="el-icon-back" @click="back">{{ $t('k8s.back_resource') }}</el-button>
+        </span>
+      </el-row>
+    </el-card>
+
     <div id="pdfDom">
 
-      <el-card class="table-card el-row-card">
-
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
-
-        <el-divider><i class="el-icon-tickets"></i></el-divider>
-
-      </el-card>
-
       <el-card class="table-card el-row-card" v-if="source">
-        <h2 style="font-size: 18px;">{{ $t('account.cloud_account') }}</h2>
+        <h2 style="font-size: 18px;">{{ 'Kubernetes' }}</h2>
         <el-row>
           <el-col :span="8">
             <div class="grid-content">
@@ -40,13 +40,13 @@
             <!-- 第一行 -->
             <el-row>
               <el-col :span="4">
-                <span style="color: #909090;font-size: 16px;">{{ $t('account.name') }}</span>
+                <span style="color: #909090;font-size: 16px;">{{ $t('k8s.name') }}</span>
               </el-col>
               <el-col :span="8">
                 <span style="font-size: 16px;">{{ source.name }}</span>
               </el-col>
               <el-col :span="4">
-                <span style="color: #909090;font-size: 16px;">{{ $t('account.cloud_platform') }}</span>
+                <span style="color: #909090;font-size: 16px;">{{ $t('k8s.platform') }}</span>
               </el-col>
               <el-col :span="8">
                 <span style="font-size: 16px;">
@@ -551,9 +551,7 @@ import TableOperator from "@/business/components/common/components/TableOperator
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import ResultLog from "./ResultLog";
-import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
-import {ACCOUNT_ID} from "@/common/js/constants";
-import AccountChange from "@/business/components/resource/head/AccountSwitch";
+import {_filter, _sort} from "@/common/js/utils";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {RESOURCE_CONFIGS, RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
@@ -663,7 +661,6 @@ export default {
     DialogFooter,
     CenterChart,
     ResultLog,
-    AccountChange,
     TableSearchBar,
     ResultReadOnly,
     SeverityType,
@@ -682,7 +679,7 @@ export default {
       condition: {
         components: RESULT_CONFIGS
       },
-      accountId: localStorage.getItem(ACCOUNT_ID),
+      accountId: "",
       direction: 'rtl',
       tagSelect: [],
       resourceTypes: [],
@@ -892,14 +889,6 @@ export default {
         }
       });
     },
-    cloudAccountSwitch(accountId) {
-      this.accountId = accountId;
-      this.search();
-      this.regionDataSearch();
-      this.ruleDataSearch();
-      this.resourceTypeDataSearch();
-      this.severityDataSearch();
-    },
     async search() {
       await this.$get(resourceSourceUrl + this.accountId, response => {
         this.source = response.data;
@@ -937,9 +926,6 @@ export default {
           this.resourceTypes.push(typeItem);
         }
       });
-      if (!!getCurrentAccountID()) {
-        this.accountId = getCurrentAccountID();
-      }
     },
     goResource(params) {
       if (params.returnSum == 0) {
@@ -1211,14 +1197,9 @@ export default {
         }
       });
     },
-    selectAccount(accountId, accountName) {
-      this.accountId = accountId;
-      this.currentAccount = accountName;
-    },
-    goReport() {
-      let p = '/report/cloudReport';
+    back () {
       this.$router.push({
-        path: p
+        path: '/k8s/k8s',
       }).catch(error => error);
     },
   },
@@ -1227,7 +1208,9 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  activated() {
+  mounted() {
+    this.accountId = this.$route.params.id;
+    this.currentAccount = this.$route.params.id;
     this.init();
     this.timer = setInterval(this.getStatus, 10000);
   },

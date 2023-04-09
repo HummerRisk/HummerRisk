@@ -42,7 +42,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="180" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="140" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators v-if="scope.row.pluginIcon !== 'other.png'" :buttons="buttons" :row="scope.row"/>
             <table-operators v-if="scope.row.pluginIcon === 'other.png'" :buttons="buttons2" :row="scope.row"/>
@@ -137,15 +137,15 @@
                     @scan="saveAddAll" :scanTip="$t('image.one_scan')"
                     @setting="setting" :settingTip="$t('image.batch_settings_repo')"
                     :show-name="false" :show-scan="true" :show-setting="true"
-                    :items="items2" :columnNames="columnNames2"
+                    :items="items2" :columnNames="columnNames2" :show-sync="true" @sync="handleSync"
                     :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                     @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
       <hide-table
-        :table-data="imageData"
-        @sort-change="sort"
-        @filter-change="filter"
-        @select-all="select"
-        @select="select"
+      :table-data="imageData"
+      @sort-change="sort"
+      @filter-change="filter"
+      @select-all="select"
+      @select="select"
       >
         <el-table-column type="selection" min-width="40">
         </el-table-column>
@@ -155,7 +155,7 @@
         </el-table-column>
         <el-table-column prop="repository" v-if="checkedColumnNames2.includes('repository')" :label="'Repository'" min-width="150">
         </el-table-column>
-        <el-table-column prop="path" v-if="checkedColumnNames2.includes('path')" :label="'ImagePath'" min-width="200">
+        <el-table-column prop="path" v-if="checkedColumnNames2.includes('path')" :label="'ImagePath'" min-width="250">
         </el-table-column>
         <el-table-column min-width="90" v-if="checkedColumnNames2.includes('size')" :label="'Size'" prop="size" v-slot:default="scope">
           {{ scope.row.size?scope.row.size:'--' }}
@@ -284,6 +284,47 @@
             @confirm="saveSetting()"/>
         </el-drawer>
       </div>
+      <div>
+        <el-drawer
+            class="rtl"
+            size="80%"
+            :title="$t('image.image_sync_for_repo')"
+            :append-to-body="true"
+            :before-close="innerClose"
+            :visible.sync="syncVisible">
+          <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
+          <sync-table-header @sync="sync" :sync-tip="$t('image.image_sync')" :title="$t('image.image_sync_log')" style="margin: 0 0 15px 0;"/>
+          <el-table border :data="syncData" class="adjust-table table-content">
+            <el-table-column type="index" min-width="2%"/>
+            <el-table-column prop="operation" :label="$t('image.image_sync')" min-width="15%"/>
+            <el-table-column prop="operator" :label="$t('resource.creator')" min-width="15%"/>
+            <el-table-column prop="result" min-width="15%" :label="$t('image.image_repo_status')">
+              <template v-slot:default="scope">
+                <el-tooltip class="item" effect="dark" :content="scope.row.output" placement="top">
+                  <el-tag size="mini" type="success" v-if="scope.row.result">
+                    {{ $t('commons.success') }}
+                  </el-tag>
+                  <el-tag size="mini" type="danger" v-else-if="!scope.row.result">
+                    {{ $t('commons.error') }}
+                  </el-tag>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column prop="sum" :label="$t('resource.i18n_not_compliance')" min-width="12%"/>
+            <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="20%" sortable>
+              <template v-slot:default="scope">
+                <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+          <table-pagination :change="handleSync" :current-page.sync="syncPage" :page-size.sync="syncSize" :total="syncTotal"/>
+          <div style="margin: 10px;">
+            <dialog-footer
+                @cancel="syncVisible = false"
+                @confirm="syncVisible = false"/>
+          </div>
+        </el-drawer>
+      </div>
       <div style="margin: 10px;">
         <dialog-footer
           @cancel="imageVisible = false"
@@ -292,41 +333,6 @@
     </el-drawer>
     <!--Image list-->
 
-    <!--Sync image-->
-    <el-drawer class="rtl" :title="$t('image.image_sync_for_repo')" :visible.sync="syncVisible" size="90%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
-      <sync-table-header @sync="sync" :sync-tip="$t('image.image_sync')" :title="$t('image.image_sync_log')" style="margin: 0 0 15px 0;"/>
-      <el-table border :data="syncData" class="adjust-table table-content">
-        <el-table-column type="index" min-width="2%"/>
-        <el-table-column prop="operation" :label="$t('image.image_sync')" min-width="15%"/>
-        <el-table-column prop="operator" :label="$t('resource.creator')" min-width="15%"/>
-        <el-table-column prop="result" min-width="15%" :label="$t('image.image_repo_status')">
-          <template v-slot:default="scope">
-            <el-tooltip class="item" effect="dark" :content="scope.row.output" placement="top">
-              <el-tag size="mini" type="success" v-if="scope.row.result">
-                {{ $t('commons.success') }}
-              </el-tag>
-              <el-tag size="mini" type="danger" v-else-if="!scope.row.result">
-                {{ $t('commons.error') }}
-              </el-tag>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column prop="sum" :label="$t('resource.i18n_not_compliance')" min-width="12%"/>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="20%" sortable>
-          <template v-slot:default="scope">
-            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div style="margin: 10px;">
-        <dialog-footer
-          @cancel="syncVisible = false"
-          @confirm="syncVisible = false"/>
-      </div>
-    </el-drawer>
-    <!--Sync image-->
   </main-container>
 </template>
 
@@ -476,10 +482,6 @@ export default {
       },
       buttons: [
         {
-          tip: this.$t('image.image_sync'), icon: "el-icon-sort-down", type: "warning",
-          exec: this.handleSync
-        },
-        {
           tip: this.$t('image.image_list'), icon: "el-icon-more", type: "success",
           exec: this.handleList
         },
@@ -578,6 +580,9 @@ export default {
       isIndeterminate2: false,
       settingForm: {},
       settingVisible: false,
+      syncTotal: 0,
+      syncPage: 1,
+      syncSize: 10,
     }
   },
   methods: {
@@ -708,27 +713,29 @@ export default {
         this.imageTotal = data.itemCount;
         this.imageData = data.listObject;
         this.imageVisible = true;
+        this.repoId = this.handleItem.id;
       });
     },
-    handleSync(item) {
-      this.repoId = item.id;
-      this.$get(repoSyncListUrl + item.id, response => {
-        this.syncData = response.data;
+    handleSync() {
+      let url = repoSyncListUrl + '/' + this.syncPage + '/' + this.syncSize;
+      this.$post(url, {repoId: this.repoId}, response => {
+        let data = response.data;
+        this.syncData = data.listObject;
+        this.syncTotal = data.itemCount;
         this.syncVisible = true;
       });
     },
     sync() {
       this.$get(syncImageUrl + this.repoId, response => {
         this.$success(this.$t('commons.success'));
-        this.$get(repoSyncListUrl + this.repoId, response => {
-          this.syncData = response.data;
-        });
+        this.handleSync();
       });
     },
     innerClose() {
       this.innerAdd = false;
       this.innerK8s = false;
       this.settingVisible = false;
+      this.syncVisible = false;
     },
     initSboms() {
       this.result = this.$post(allSbomListUrl, {},response => {

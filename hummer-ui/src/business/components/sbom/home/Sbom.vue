@@ -90,7 +90,7 @@
                   <el-link type="primary" class="text-click" @click="showCodeResource(scope.row)">{{ scope.row.returnSum }}</el-link>
                 </el-tooltip>
               </el-table-column>
-              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
+              <el-table-column v-slot:default="scope" :label="$t('image.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
                 <el-button @click="showCodeResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                   <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                 </el-button>

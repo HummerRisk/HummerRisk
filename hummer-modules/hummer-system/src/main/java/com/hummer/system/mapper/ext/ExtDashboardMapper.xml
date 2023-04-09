@@ -8,7 +8,7 @@
               (SELECT IFNULL(count(user.id), 0) as users from user) as users,
               (SELECT IFNULL(count(task.id), 0) as tasks from task) as tasks,
               (SELECT
-                  (SELECT IFNULL(count(t.id), 0) from cloud_account t) +
+                  (SELECT IFNULL(count(t.id), 0) from cloud_account t where t.plugin_id != 'hummer-k8s-plugin') +
                   (SELECT IFNULL(count(t.id), 0) from server t) +
                   (SELECT IFNULL(count(t.id), 0) from image t) +
                   (SELECT IFNULL(count(t.id), 0) from code t) +
@@ -36,7 +36,7 @@
               (SELECT IFNULL(count(t.id), 0) as imageRules from image_rule t) as imageRules,
               (SELECT IFNULL(count(t.id), 0) as serverRules from server_rule t) as serverRules,
               (SELECT IFNULL(count(t.id), 0) as codeRules from code_rule t) as codeRules,
-              (SELECT IFNULL(count(t.id), 0) as k8sRules from cloud_native_rule t) as k8sRules,
+              (SELECT IFNULL(count(t.id), 0) as k8sRules from rule t LEFT JOIN plugin p on t.plugin_id = p.id where p.type = 'native') as k8sRules,
               (SELECT IFNULL(count(t.id), 0) as configRules from cloud_native_config_rule t) as configRules,
               (SELECT IFNULL(count(t.id), 0) as fsRules from file_system_rule t) as fsRules,
               (SELECT

@@ -39,10 +39,6 @@ export const repoSyncListUrl = "/k8s/image/repoSyncList/";
 
 export const syncImageUrl = "/k8s/image/syncImage/";
 
-export const historyImageUrl = "/k8s/image/history/";
-
-export const deleteHistoryImageResultUrl = "/k8s/image/deleteHistoryImageResult/";
-
 export const historyResultItemListUrl = "/k8s/image/historyResultItemList";
 
 export const imageMetricChartUrl = "/k8s/sbom/imageMetricChart/";

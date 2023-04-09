@@ -570,8 +570,8 @@ public class FileSystemService {
         return str;
     }
 
-    public List<HistoryFsResultDTO> history(Map<String, Object> params) {
-        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(params);
+    public List<HistoryFsResultDTO> history(FsResultRequest request) {
+        List<HistoryFsResultDTO> historyList = systemProviderService.fsHistory(request);
         return historyList;
     }
 

@@ -24,6 +24,7 @@
     "echarts": "^5.4.1",
     "element-ui": "^2.15.7",
     "error-stack-parser": "^2.1.4",
+    "fake-progress": "^1.0.4",
     "highlight.js": "^11.2.0",
     "html2canvas": "^1.4.1",
     "js-base64": "^3.4.4",

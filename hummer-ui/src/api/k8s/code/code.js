@@ -19,10 +19,6 @@ export const scanCodeUrl = "/k8s/code/scan/";
 
 export const codeValidateByIdUrl = "/k8s/code/validate/";
 
-export const historyCodeUrl = "/k8s/code/history/";
-
-export const deleteHistoryCodeResultUrl = "/k8s/code/deleteHistoryCodeResult/";
-
 export const historyResultItemListUrl = "/k8s/code/historyResultItemList";
 
 export const codeMetricChartUrl = "/k8s/sbom/codeMetricChart/";

@@ -11,7 +11,7 @@ public class SettingVersionRequest {
 
     private List<String> imageValue;
 
-    private List<String> packageValue;
+    private List<String> fileSystemValue;
 
     private String sbomId;
 
@@ -33,12 +33,12 @@ public class SettingVersionRequest {
         this.imageValue = imageValue;
     }
 
-    public List<String> getPackageValue() {
-        return packageValue;
+    public List<String> getFileSystemValue() {
+        return fileSystemValue;
     }
 
-    public void setPackageValue(List<String> packageValue) {
-        this.packageValue = packageValue;
+    public void setFileSystemValue(List<String> fileSystemValue) {
+        this.fileSystemValue = fileSystemValue;
     }
 
     public String getSbomId() {

@@ -51,12 +51,11 @@
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!-- XML映射文件 -->
-        <sqlMapGenerator targetPackage="com.hummer.system.mapper" targetProject="src/main/java">
+        <sqlMapGenerator targetPackage="com.hummer.system.domain.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!-- 接口 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.hummer.system.mapper"
-                             targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.hummer.system.domain.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
         <!--要生成的数据库表 -->
@@ -80,7 +79,7 @@
 <!--        <table tableName="rule_group_mapping" domainObjectName="RuleGroupMapping"/>-->
 <!--        <table tableName="rule_inspection_report" domainObjectName="RuleInspectionReport"/>-->
 <!--        <table tableName="rule_inspection_report_mapping" domainObjectName="RuleInspectionReportMapping"/>-->
-        <table tableName="cloud_task" domainObjectName="CloudTask"/>
+<!--        <table tableName="cloud_task" domainObjectName="CloudTask"/>-->
 <!--        <table tableName="cloud_task_item" domainObjectName="CloudTaskItem"/>-->
 <!--        <table tableName="cloud_task_item_log" domainObjectName="CloudTaskItemLog"/>-->
 <!--        <table tableName="cloud_task_item_resource" domainObjectName="CloudTaskItemResource"/>-->
@@ -105,7 +104,7 @@
 <!--        <table tableName="task_item_resource_log" domainObjectName="TaskItemResourceLog"/>-->
 <!--        <table tableName="history_scan" domainObjectName="HistoryScan"/>-->
 <!--        <table tableName="history_scan_task" domainObjectName="HistoryScanTask"/>-->
-        <table tableName="history_cloud_task" domainObjectName="HistoryCloudTask"/>
+<!--        <table tableName="history_cloud_task" domainObjectName="HistoryCloudTask"/>-->
 <!--        <table tableName="history_cloud_task_item" domainObjectName="HistoryCloudTaskItem"/>-->
 <!--        <table tableName="history_cloud_task_log" domainObjectName="HistoryCloudTaskLog"/>-->
 <!--        <table tableName="history_cloud_task_resource" domainObjectName="HistoryCloudTaskResource"/>-->

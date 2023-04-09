@@ -84,8 +84,7 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "镜像列表")
     @PostMapping("imageList/{goPage}/{pageSize}")
-    public Pager<List<ImageDTO>> imageList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
+    public Pager<List<ImageDTO>> imageList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, imageService.imageList(request));
     }
@@ -107,19 +106,17 @@ public class ImageController {
     @I18n
     @ApiOperation(value = "添加镜像")
     @PostMapping(value = "addImage", consumes = {"multipart/form-data"})
-    public Image addImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
-                          @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
+    public Image addImage(@RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
-        return imageService.addImage(iconFile, tarFile, request, tokenService.getLoginUser());
+        return imageService.addImage(tarFile, request, tokenService.getLoginUser());
     }
 
     @I18n
     @ApiOperation(value = "修改镜像")
     @PostMapping(value = "updateImage", consumes = {"multipart/form-data"})
-    public Image updateImage(@RequestPart(value = "iconFile", required = false) MultipartFile iconFile,
-                          @RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
+    public Image updateImage(@RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
-        return imageService.updateImage(iconFile, tarFile, request, tokenService.getLoginUser());
+        return imageService.updateImage(tarFile, request, tokenService.getLoginUser());
     }
 
     @ApiOperation(value = "删除镜像")
@@ -241,9 +238,10 @@ public class ImageController {
 
     @I18n
     @ApiOperation(value = "镜像仓库同步日志列表")
-    @GetMapping("repoSyncList/{id}")
-    public List<ImageRepoSyncLogWithBLOBs> repoSyncList(@PathVariable String id) {
-        return imageService.repoSyncList(id);
+    @PostMapping("repoSyncList/{goPage}/{pageSize}")
+    public Pager<List<ImageRepoSyncLogWithBLOBs>> repoSyncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRepoSyncLog imageRepoSyncLog) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, imageService.repoSyncList(imageRepoSyncLog.getRepoId()));
     }
 
     @I18n
@@ -301,24 +299,10 @@ public class ImageController {
     }
 
     @I18n
-    @ApiOperation(value = "镜像检测历史记录")
-    @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryImageResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, imageService.history(params));
-    }
-
-    @I18n
     @ApiOperation(value = "检测结果历史详情")
     @PostMapping("historyResultItemList")
     public List<ImageResultItemWithBLOBs> historyResultItemList(@RequestBody ImageResultItem request) {
         return imageService.historyResultItemList(request);
-    }
-
-    @ApiOperation(value = "删除检测历史记录")
-    @GetMapping("deleteHistoryImageResult/{id}")
-    public void deleteHistoryImageResult(@PathVariable String id) throws Exception {
-        imageService.deleteHistoryImageResult(id);
     }
 
     @I18n

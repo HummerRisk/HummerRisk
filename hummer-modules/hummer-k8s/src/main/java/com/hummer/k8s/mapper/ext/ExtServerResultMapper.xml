@@ -106,7 +106,7 @@
         <result column="port" jdbcType="VARCHAR" property="port" />
         <result column="user_name" jdbcType="VARCHAR" property="userName" />
         <result column="password" jdbcType="VARCHAR" property="password" />
-        <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+        <result column="is_severity" jdbcType="VARCHAR" property="isSeverity" />
         <result column="command" jdbcType="VARCHAR" property="command" />
         <result column="type" jdbcType="VARCHAR" property="type" />
         <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />
@@ -262,7 +262,7 @@
         <result column="port" jdbcType="VARCHAR" property="port" />
         <result column="user_name" jdbcType="VARCHAR" property="userName" />
         <result column="password" jdbcType="VARCHAR" property="password" />
-        <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+        <result column="is_severity" jdbcType="VARCHAR" property="isSeverity" />
         <result column="command" jdbcType="VARCHAR" property="command" />
         <result column="type" jdbcType="VARCHAR" property="type" />
         <result column="return_log" jdbcType="LONGVARCHAR" property="returnLog" />

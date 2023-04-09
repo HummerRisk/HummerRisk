@@ -47,4 +47,10 @@ public interface ICloudProviderService {
 
     int getResourcesSumForEmail(MessageOrder messageOrder);
 
+    int insertCloudAccount(AccountWithBLOBs account) throws Exception;
+
+    int updateCloudAccount(AccountWithBLOBs account) throws Exception;
+
+    int deleteCloudAccount(String id);
+
 }

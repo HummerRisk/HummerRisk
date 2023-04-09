@@ -797,7 +797,7 @@ export default {
         for (let data of this.tableData) {
           this.$get(getTaskUrl + data.id, response => {
             let result = response.data;
-            if (data.status !== result.status) {
+            if (result && data.status !== result.status) {
               data.status = result.status;
             }
           });

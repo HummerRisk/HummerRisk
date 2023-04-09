@@ -545,8 +545,8 @@ public class CodeService {
         return str;
     }
 
-    public List<HistoryCodeResultDTO> history(Map<String, Object> params) {
-        List<HistoryCodeResultDTO> historyList = systemProviderService.codeHistory(params);
+    public List<HistoryCodeResultDTO> history(CodeResultRequest request) {
+        List<HistoryCodeResultDTO> historyList = systemProviderService.codeHistory(request);
         return historyList;
     }
 

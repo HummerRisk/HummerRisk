@@ -306,6 +306,11 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.insertSelective(account);
+
+                AccountWithBLOBs accountWithBLOBs = new AccountWithBLOBs();
+                BeanUtils.copyBean(accountWithBLOBs, account);
+                cloudProviderService.insertCloudAccount(accountWithBLOBs);
+
                 reinstallOperator(account.getId(), loginUser);
                 reinstallKubench(account.getId(), loginUser);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
@@ -371,6 +376,11 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
                 }
                 cloudNativeMapper.updateByPrimaryKeySelective(account);
+
+                AccountWithBLOBs accountWithBLOBs = new AccountWithBLOBs();
+                BeanUtils.copyBean(accountWithBLOBs, account);
+                cloudProviderService.updateCloudAccount(accountWithBLOBs);
+
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
                 //检验账号已更新状态
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.UPDATE, "i18n_update_cloud_native");
@@ -388,6 +398,7 @@ public class K8sService {
     public void delete(String accountId, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
         cloudNativeMapper.deleteByPrimaryKey(accountId);
+        cloudProviderService.deleteCloudAccount(accountId);
         deleteResultByCloudNativeId(accountId, loginUser);
         operationLogService.log(loginUser, accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
     }
@@ -581,19 +592,19 @@ public class K8sService {
         return extCloudNativeSourceMapper.situationInfo(params);
     }
 
-    public void scan(String id, LoginUser loginUser) throws Exception {
-        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
+    public void scan(CloudNativeRequest request, LoginUser loginUser) throws Exception {
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(request.getId());
         Integer scanId = systemProviderService.insertScanHistory(cloudNative);
         if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
             CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
-            deleteRescanResultByCloudNativeId(id);
+            deleteRescanResultByCloudNativeId(request.getId());
 
             for (CloudNativeRule rule : ruleList) {
                 BeanUtils.copyBean(result, cloudNative);
                 result.setId(UUIDUtil.newUUID());
-                result.setCloudNativeId(id);
+                result.setCloudNativeId(request.getId());
                 result.setApplyUser(loginUser.getUserId());
                 result.setCreateTime(System.currentTimeMillis());
                 result.setUpdateTime(System.currentTimeMillis());
@@ -603,6 +614,7 @@ public class K8sService {
                 result.setRuleName(rule.getName());
                 result.setRuleDesc(rule.getDescription());
                 result.setSeverity(rule.getSeverity());
+                result.setScanGroups(JSON.toJSONString(request.getGroups()));
                 cloudNativeResultMapper.insertSelective(result);
 
                 saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
@@ -710,11 +722,24 @@ public class K8sService {
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
 
-            long count = saveResultItem(result);
-            result.setReturnSum(count);
-            long sum = saveResultConfigItem(result);
-            result.setReturnConfigSum(sum);
-            result.setKubeBench(scanKubeBench(cloudNative, result.getId()));
+            JSONArray jsonArray = JSONArray.parseArray(result.getScanGroups());
+            for (Object o : jsonArray) {
+                String obj = (String) o;
+                switch (obj) {
+                    case "vuln" :
+                        long count = saveResultItem(result);
+                        result.setReturnSum(count);
+                        continue;
+                    case "config" :
+                        long sum = saveResultConfigItem(result);
+                        result.setReturnConfigSum(sum);
+                        continue;
+                    case "kubench" :
+                        String kubeBench = scanKubeBench(cloudNative, result.getId());
+                        result.setKubeBench(kubeBench);
+                }
+            }
+
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createCloudNativeMessageOrder(result);
@@ -1053,6 +1078,7 @@ public class K8sService {
     public List<CloudNativeResultLogWithBLOBs> getCloudNativeResultLog(String resultId) {
         CloudNativeResultLogExample example = new CloudNativeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
+        example.setOrderByClause("create_time desc");
         return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
@@ -1135,8 +1161,8 @@ public class K8sService {
         return cloudNativeMapper.selectByExample(null);
     }
 
-    public List<HistoryCloudNativeResultDTO> history(Map<String, Object> params) {
-        List<HistoryCloudNativeResultDTO> historyList = systemProviderService.k8sHistory(params);
+    public List<HistoryCloudNativeResultDTO> history(K8sResultRequest request) {
+        List<HistoryCloudNativeResultDTO> historyList = systemProviderService.k8sHistory(request);
         return historyList;
     }
 

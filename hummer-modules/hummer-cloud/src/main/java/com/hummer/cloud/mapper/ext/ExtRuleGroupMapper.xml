@@ -166,6 +166,27 @@
         ORDER BY t.id desc
     </select>
 
+    <select id="getK8sRules" resultMap="com.hummer.cloud.mapper.ext.ExtRuleMapper.BaseResultMap2">
+        SELECT
+            t.id,
+            t.name,
+            t.status,
+            t.severity,
+            t.description,
+            t.script,
+            t.`parameter`,
+            t.plugin_id as plugin_id,
+            t.plugin_name as plugin_name,
+            t.plugin_icon as plugin_icon,
+            t.last_modified as last_modified,
+            t.scan_type as scan_type
+        FROM rule t
+         LEFT JOIN rule_group_mapping t2 ON t.id = t2.rule_id
+         LEFT JOIN rule_group t3 ON t2.group_id = t3.id
+        WHERE t3.id = #{groupId}
+        ORDER BY t.id desc
+    </select>
+
     <select id="getPluginId">
         SELECT t.plugin_id
         FROM rule t

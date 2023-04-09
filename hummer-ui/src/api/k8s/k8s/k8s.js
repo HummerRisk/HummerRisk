@@ -25,15 +25,11 @@ export const addK8sUrl = "/k8s/k8s/add";
 
 export const updateK8sUrl = "/k8s/k8s/update";
 
-export const scanK8sUrl = "/k8s/k8s/scan/";
+export const scanK8sUrl = "/k8s/k8s/scan";
 
 export const reinstallOperatorUrl = "/k8s/k8s/reinstallOperator/";
 
 export const reinstallKubenchUrl = "/k8s/k8s/reinstallKubench/";
-
-export const k8sHistoryUrl = "/k8s/k8s/history/";
-
-export const deleteHistoryK8sResultUrl = "/k8s/k8s/deleteHistoryK8sResult/";
 
 export const historyResultItemListUrl = "/k8s/k8s/historyResultItemList";
 
@@ -44,6 +40,8 @@ export const historyResultConfigItemListUrl = "/k8s/k8s/historyResultConfigItemL
 export const historyResultKubenchListUrl = "/k8s/k8s/historyResultKubenchList";
 
 export const logK8sUrl = "/k8s/k8s/log/";
+
+export const k8sInstallLogUrl = "/k8s/k8s/installLog/";
 
 export const getCloudNativeResultWithBLOBsUrl = "/k8s/k8s/getCloudNativeResultWithBLOBs/";
 

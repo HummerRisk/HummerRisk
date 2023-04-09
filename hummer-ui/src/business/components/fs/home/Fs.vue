@@ -18,6 +18,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="name" :label="$t('fs.name')" v-if="checkedColumnNames.includes('name')" min-width="180" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -40,7 +42,7 @@
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('image.result_status')" min-width="150" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('image.result_status')" min-width="140" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
@@ -67,6 +69,12 @@
           <template v-slot:default="scope">
             <span v-if="scope.row.resultStatus !== null"><i class="el-icon-time"/> {{ scope.row.scanTime | timestampFormatDate }}</span>
             <span v-if="scope.row.resultStatus === null">--</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
+                         prop="createTime">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" sortable
@@ -311,6 +319,11 @@ const columnOptions = [
   {
     label: 'commons.last_scan_time',
     props: 'scanTime',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
     disabled: false
   },
   {
@@ -646,6 +659,10 @@ export default {
       document.body.removeChild(input);
     },
     goResource (params) {
+      if (!params.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
       if (params.returnSum == 0) {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;

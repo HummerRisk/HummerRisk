@@ -278,7 +278,7 @@ public class ImageService {
         return imageMapper.selectByExample(null);
     }
 
-    public Image addImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request, LoginUser loginUser) throws Exception {
+    public Image addImage(MultipartFile tarFile, ImageRequest request, LoginUser loginUser) throws Exception {
 
         try {
             String id = UUIDUtil.newUUID();
@@ -287,10 +287,7 @@ public class ImageService {
             request.setCreateTime(System.currentTimeMillis());
             request.setUpdateTime(System.currentTimeMillis());
             request.setCreator(loginUser.getUserId());
-            if (iconFile != null) {
-                String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
-                request.setPluginIcon("images/" + iconFilePath);
-            }
+            request.setPluginIcon("docker.png");
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
                 ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
                 request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
@@ -313,16 +310,13 @@ public class ImageService {
         return request;
     }
 
-    public Image updateImage(MultipartFile iconFile, MultipartFile tarFile, ImageRequest request, LoginUser loginUser) throws Exception {
+    public Image updateImage(MultipartFile tarFile, ImageRequest request, LoginUser loginUser) throws Exception {
 
         try {
             request.setStatus("VALID");
             request.setUpdateTime(System.currentTimeMillis());
             request.setCreator(loginUser.getUserId());
-            if (iconFile != null) {
-                String iconFilePath = upload(iconFile, ImageConstants.DEFAULT_BASE_DIR);
-                request.setPluginIcon("images/" + iconFilePath);
-            }
+            request.setPluginIcon("docker.png");
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
                 ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
                 request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
@@ -769,6 +763,7 @@ public class ImageService {
     public List<ImageRepoSyncLogWithBLOBs> repoSyncList(String id) {
         ImageRepoSyncLogExample example = new ImageRepoSyncLogExample();
         example.createCriteria().andRepoIdEqualTo(id);
+        example.setOrderByClause("create_time desc");
         return imageRepoSyncLogMapper.selectByExampleWithBLOBs(example);
     }
 
@@ -1005,8 +1000,8 @@ public class ImageService {
         return imageMapper.selectByExample(null);
     }
 
-    public List<HistoryImageResultDTO> history(Map<String, Object> params) {
-        List<HistoryImageResultDTO> historyList = systemProviderService.imageHistory(params);
+    public List<HistoryImageResultDTO> history(ImageResultRequest request) {
+        List<HistoryImageResultDTO> historyList = systemProviderService.imageHistory(request);
         return historyList;
     }
 

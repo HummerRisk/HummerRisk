@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.k8s.mapper.ext.ExtCloudNativeMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudNativeDTO"
-               extends="com.hummer.k8s.mapper.CloudNativeMapper.BaseResultMap">
-        <result column="userName" property="userName"/>
-        <result column="isProxy" property="isProxy"/>
-        <result column="proxy_ip" jdbcType="VARCHAR" property="proxyIp" />
-        <result column="proxy_port" jdbcType="VARCHAR" property="proxyPort" />
-        <result column="proxy_name" jdbcType="VARCHAR" property="proxyName" />
-        <result column="proxy_password" jdbcType="VARCHAR" property="proxyPassword" />
-    </resultMap>
 
     <sql id="condition">
         <choose>
@@ -91,7 +82,55 @@
         </if>
     </sql>
 
-    <select id="getCloudNativeList" resultMap="BaseResultMap">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudNativeDTO">
+        <!-- k8s -->
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="operator_status" jdbcType="VARCHAR" property="operatorStatus" />
+        <result column="kubench_status" jdbcType="VARCHAR" property="kubenchStatus" />
+        <result column="credential" jdbcType="LONGVARCHAR" property="credential" />
+        <!-- k8s result -->
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="scan_time" jdbcType="BIGINT" property="scanTime" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="return_config_sum" jdbcType="BIGINT" property="returnConfigSum" />
+        <!-- extra -->
+        <result column="proxy_ip" jdbcType="VARCHAR" property="proxyIp" />
+        <result column="proxy_port" jdbcType="VARCHAR" property="proxyPort" />
+        <result column="proxy_name" jdbcType="VARCHAR" property="proxyName" />
+        <result column="proxy_password" jdbcType="VARCHAR" property="proxyPassword" />
+        <result column="critical" jdbcType="VARCHAR" property="critical" />
+        <result column="high" jdbcType="VARCHAR" property="high" />
+        <result column="medium" jdbcType="VARCHAR" property="medium" />
+        <result column="low" jdbcType="VARCHAR" property="low" />
+        <result column="unknown" jdbcType="VARCHAR" property="unknown" />
+        <result column="configCritical" jdbcType="VARCHAR" property="configCritical" />
+        <result column="configHigh" jdbcType="VARCHAR" property="configHigh" />
+        <result column="configMedium" jdbcType="VARCHAR" property="configMedium" />
+        <result column="configLow" jdbcType="VARCHAR" property="configLow" />
+        <result column="configUnknown" jdbcType="VARCHAR" property="configUnknown" />
+        <result column="fail" jdbcType="VARCHAR" property="fail" />
+        <result column="info" jdbcType="VARCHAR" property="info" />
+        <result column="pass" jdbcType="VARCHAR" property="pass" />
+        <result column="cloud_resources_sum" jdbcType="BIGINT" property="cloudResourcesSum" />
+        <result column="cloud_return_sum" jdbcType="BIGINT" property="cloudReturnSum" />
+    </resultMap>
+
+    <select id="getCloudNativeList" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.request.cloudNative.CloudNativeRequest">
         select
         t.*,
         p.proxy_ip,
@@ -101,15 +140,43 @@
         user.name as userName,
         IF(p.proxy_ip, true, false) as isProxy,
         CASE
-        WHEN t.operator_status = 'INVALID' and t.kubench_status = 'INVALID' THEN 'ERROR'
-        WHEN t.operator_status = 'INVALID' or t.kubench_status = 'INVALID' THEN 'WARNING'
-        WHEN t.operator_status = 'VALID' and t.kubench_status = 'VALID' THEN 'FINISHED'
+        WHEN t.status = 'INVALID' and t.operator_status = 'INVALID' and t.kubench_status = 'INVALID' THEN 'ERROR'
+        WHEN t.status = 'INVALID' or t.operator_status = 'INVALID' or t.kubench_status = 'INVALID' THEN 'WARNING'
+        WHEN t.status = 'VALID' and t.operator_status = 'VALID' and t.kubench_status = 'VALID' THEN 'FINISHED'
         ELSE 'FINISHED'
-        END AS resultStatus
+        END AS k8sStatus,
+        user.name as user_name,
+        t1.id as result_id,
+        t1.rule_id,
+        t1.rule_name,
+        t1.rule_desc,
+        t1.result_status,
+        t1.severity,
+        t1.update_time as scan_time,
+        t1.return_sum,
+        t1.return_config_sum,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'critical') as `critical`,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'high') as `high`,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'medium') as `medium`,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'low') as `low`,
+        (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'unknown') as `unknown`,
+        (select count(tj.id) from cloud_native_result_config_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'critical') as `configCritical`,
+        (select count(tj.id) from cloud_native_result_config_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'high') as `configHigh`,
+        (select count(tj.id) from cloud_native_result_config_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'medium') as `configMedium`,
+        (select count(tj.id) from cloud_native_result_config_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'low') as `configLow`,
+        (select count(tj.id) from cloud_native_result_config_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'unknown') as `configUnknown`,
+        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'fail') as `fail`,
+        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'warn') as `warn`,
+        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'info') as `info`,
+        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'pass') as `pass`,
+        (select IFNULL(sum(tj.return_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_return_sum`,
+        (select IFNULL(sum(tj.resources_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_resources_sum`
         from cloud_native as t
         left join user on t.creator = user.id
         left join proxy p on t.proxy_id = p.id
         LEFT JOIN plugin p1 on t.plugin_id = p1.id
+        left join cloud_native_result t1 on t.id = t1.cloud_native_id
+
         <where>
             <if test="request.combine != null">
                 <include refid="combine">

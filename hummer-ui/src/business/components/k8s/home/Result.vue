@@ -57,7 +57,22 @@
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('image.result_status')" min-width="130" prop="resultStatus" sortable show-overflow-tooltip>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('commons.compliance_scan_statistics')" prop="returnSum" sortable show-overflow-tooltip min-width="150">
+          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+            <span v-if="scope.row.cloudReturnSum == null && scope.row.cloudResourcesSum == null"> N/A</span>
+            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum == 0)">
+              <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
+            </span>
+            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum > 0)">
+              <el-link type="primary" class="text-click" @click="goCloudResource(scope.row)">
+                <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
+                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
+              </el-link>
+            </span>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('image.result_status')" min-width="140" prop="resultStatus" sortable show-overflow-tooltip>
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
@@ -163,7 +178,9 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   deleteCloudNativeResultUrl,
   getCloudNativeResultUrl,
-  getCloudNativeResultWithBLOBsUrl, k8sDownloadUrl, k8sReScanUrl,
+  getCloudNativeResultWithBLOBsUrl,
+  k8sDownloadUrl,
+  k8sReScanUrl,
   k8sResultListUrl,
   logK8sUrl
 } from "@/api/k8s/k8s/k8s";
@@ -193,6 +210,11 @@ const columnOptions = [
   {
     label: 'k8s.kubench_compliance',
     props: 'kubenchResult',
+    disabled: false
+  },
+  {
+    label: 'dashboard.i18n_not_compliance',
+    props: 'returnSum',
     disabled: false
   },
   {
@@ -314,7 +336,7 @@ export default {
         for (let data of this.tableData) {
           this.$get(getCloudNativeResultUrl + data.id, response => {
             let result = response.data;
-            if (data.resultStatus !== result.resultStatus) {
+            if (result && data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnSum = result.returnSum;
               data.critical = result.critical;

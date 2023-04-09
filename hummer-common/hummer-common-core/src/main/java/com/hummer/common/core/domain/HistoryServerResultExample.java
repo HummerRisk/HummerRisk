@@ -1445,52 +1445,52 @@ public class HistoryServerResultExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityEqualTo(Boolean value) {
+        public Criteria andIsSeverityEqualTo(String value) {
             addCriterion("is_severity =", value, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityNotEqualTo(Boolean value) {
+        public Criteria andIsSeverityNotEqualTo(String value) {
             addCriterion("is_severity <>", value, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityGreaterThan(Boolean value) {
+        public Criteria andIsSeverityGreaterThan(String value) {
             addCriterion("is_severity >", value, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andIsSeverityGreaterThanOrEqualTo(String value) {
             addCriterion("is_severity >=", value, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityLessThan(Boolean value) {
+        public Criteria andIsSeverityLessThan(String value) {
             addCriterion("is_severity <", value, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityLessThanOrEqualTo(Boolean value) {
+        public Criteria andIsSeverityLessThanOrEqualTo(String value) {
             addCriterion("is_severity <=", value, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityIn(List<Boolean> values) {
+        public Criteria andIsSeverityIn(List<String> values) {
             addCriterion("is_severity in", values, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityNotIn(List<Boolean> values) {
+        public Criteria andIsSeverityNotIn(List<String> values) {
             addCriterion("is_severity not in", values, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityBetween(Boolean value1, Boolean value2) {
+        public Criteria andIsSeverityBetween(String value1, String value2) {
             addCriterion("is_severity between", value1, value2, "isSeverity");
             return (Criteria) this;
         }
 
-        public Criteria andIsSeverityNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andIsSeverityNotBetween(String value1, String value2) {
             addCriterion("is_severity not between", value1, value2, "isSeverity");
             return (Criteria) this;
         }

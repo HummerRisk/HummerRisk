@@ -1,6 +1,5 @@
 package com.hummer.auth;
 
-import com.hummer.common.security.annotation.EnableHrFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author harris
  */
-@EnableHrFeignClients
 @SpringBootApplication
 public class AuthApplication {
     public static void main(String[] args) {

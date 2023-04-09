@@ -2,6 +2,12 @@ package com.hummer.system.service;
 
 
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.request.code.CodeResultRequest;
+import com.hummer.common.core.domain.request.config.ConfigResultRequest;
+import com.hummer.common.core.domain.request.fs.FsResultRequest;
+import com.hummer.common.core.domain.request.image.ImageResultRequest;
+import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
+import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
@@ -65,8 +71,18 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
+    public String createK8sMessageOrder(CloudNative cloudNative) throws Exception {
+        return noticeService.createK8sMessageOrder(cloudNative);
+    }
+
+    @Override
     public void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception {
         noticeService.createMessageOrderItem(messageOrderId, cloudTask);
+    }
+
+    @Override
+    public void createK8sMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception {
+        noticeService.createK8sMessageOrderItem(messageOrderId, cloudTask);
     }
 
     @Override
@@ -336,38 +352,38 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
-    public List<HistoryImageResultDTO> imageHistory(Map<String, Object> params) {
-        List<HistoryImageResultDTO> historyList = extHistoryScanMapper.imageHistory(params);
+    public List<HistoryImageResultDTO> imageHistory(ImageResultRequest request) {
+        List<HistoryImageResultDTO> historyList = extHistoryScanMapper.imageHistory(request);
         return historyList;
     }
 
     @Override
-    public List<HistoryCodeResultDTO> codeHistory(Map<String, Object> params) {
-        List<HistoryCodeResultDTO> historyList = extHistoryScanMapper.codeHistory(params);
+    public List<HistoryCodeResultDTO> codeHistory(CodeResultRequest request) {
+        List<HistoryCodeResultDTO> historyList = extHistoryScanMapper.codeHistory(request);
         return historyList;
     }
 
     @Override
-    public List<HistoryServerResultDTO> serverHistory(Map<String, Object> params) {
-        List<HistoryServerResultDTO> historyList = extHistoryScanMapper.serverHistory(params);
+    public List<HistoryServerResultDTO> serverHistory(ServerResultRequest request) {
+        List<HistoryServerResultDTO> historyList = extHistoryScanMapper.serverHistory(request);
         return historyList;
     }
 
     @Override
-    public List<HistoryFsResultDTO> fsHistory(Map<String, Object> params) {
-        List<HistoryFsResultDTO> historyList = extHistoryScanMapper.fsHistory(params);
+    public List<HistoryFsResultDTO> fsHistory(FsResultRequest request) {
+        List<HistoryFsResultDTO> historyList = extHistoryScanMapper.fsHistory(request);
         return historyList;
     }
 
     @Override
-    public List<HistoryCloudNativeResultDTO> k8sHistory(Map<String, Object> params) {
-        List<HistoryCloudNativeResultDTO> historyList = extHistoryScanMapper.k8sHistory(params);
+    public List<HistoryCloudNativeResultDTO> k8sHistory(K8sResultRequest request) {
+        List<HistoryCloudNativeResultDTO> historyList = extHistoryScanMapper.k8sHistory(request);
         return historyList;
     }
 
     @Override
-    public List<HistoryCloudNativeConfigResultDTO> configHistory(Map<String, Object> params) {
-        List<HistoryCloudNativeConfigResultDTO> historyList = extHistoryScanMapper.configHistory(params);
+    public List<HistoryCloudNativeConfigResultDTO> configHistory(ConfigResultRequest request) {
+        List<HistoryCloudNativeConfigResultDTO> historyList = extHistoryScanMapper.configHistory(request);
         return historyList;
     }
 

@@ -11,101 +11,107 @@
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-card class="table-card el-row-card" :body-style="{ padding: '0' }" :key="index" v-for="(data, index) in tableData">
-        <el-row class="cp-el-i">
-          <el-col :span="3" class="co-el-img">
-            <el-image class="co-el-i"
-                      :src="data.pluginIcon==='docker.png'?require(`@/assets/img/platform/${data.pluginIcon}`):`${location}${data.pluginIcon}`"
-                      :fit="'fill'">
-              <div slot="error" class="image-slot">
-                <i class="el-icon-picture-outline"></i>
-              </div>
-            </el-image>
-          </el-col>
-          <el-col :span="1">
-            <div class="split"></div>
-          </el-col>
-          <el-col :span="20">
-            <el-row>
-              <el-col :span="20" class="cl-ver-col">
-                <el-row class="cl-mid-row">
-                  <el-col :span="3" v-if="checkedColumnNames.includes('name')" class="cl-span-col">{{ $t('image.image_name') }}</el-col>
-                  <el-col :span="3" v-if="checkedColumnNames.includes('status')" class="cl-span-col">{{ $t('image.image_status') }}</el-col>
-                  <el-col :span="data.type==='tar'?5:8" v-if="checkedColumnNames.includes('type')" class="cl-span-col">{{ $t('image.image_url') }}</el-col>
-                  <el-col :span="3" v-if="data.type==='tar' && checkedColumnNames.includes('tar')" class="cl-span-col">{{ $t('image.image_size') }}</el-col>
-                  <el-col :span="5" v-if="checkedColumnNames.includes('imageRepoName')" class="cl-span-col">{{ $t('image.image_repo_name') }}</el-col>
-                  <el-col :span="5" v-if="checkedColumnNames.includes('updateTime')" class="cl-span-col">{{ $t('commons.update_time') }}</el-col>
-                </el-row>
-                <el-row class="cl-mid-row">
-                  <el-col :span="3" class="cl-data-col" v-if="checkedColumnNames.includes('name')">
-                    <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
-                      <span class="word-wrap">{{ data.name }}</span>
-                    </el-tooltip>
-                  </el-col>
-                  <el-col :span="3" class="cl-data-col" v-if="checkedColumnNames.includes('status')">
-                    <el-tag size="mini" type="warning" v-if="data.status === 'DELETE'">
-                      {{ $t('server.DELETE') }}
-                    </el-tag>
-                    <el-tag size="mini" type="success" v-else-if="data.status === 'VALID'">
-                      {{ $t('server.VALID') }}
-                    </el-tag>
-                    <el-tag size="mini" type="danger" v-else-if="data.status === 'INVALID'">
-                      {{ $t('server.INVALID') }}
-                    </el-tag>
-                  </el-col>
-                  <el-col :span="data.type==='tar'?5:8" class="cl-data-col" v-if="checkedColumnNames.includes('type')">
-                    <div v-if="data.type==='repo'">
-                      <el-tooltip class="item" effect="dark" :content="data.imageUrl + ':' + data.imageTag" placement="top-start">
-                        <span class="word-wrap">{{ data.imageUrl + ':' + data.imageTag }}</span>
-                      </el-tooltip>
-                    </div>
-                    <div v-if="data.type==='image'">
-                      <el-tooltip class="item" effect="dark" :content="data.imageUrl + ':' + data.imageTag" placement="top-start">
-                        <span class="word-wrap">{{ data.imageUrl + ':' + data.imageTag }}</span>
-                      </el-tooltip>
-                    </div>
-                    <div v-if="data.type==='tar'">
-                      <el-tooltip class="item" effect="dark" :content="data.path" placement="top-start">
-                        <span class="word-wrap">{{ data.path }}</span>
-                      </el-tooltip>
-                    </div>
-                  </el-col>
-                  <el-col :span="3" v-if="data.type==='tar' && checkedColumnNames.includes('tar')" class="cl-data-col">{{ data.size }}</el-col>
-                  <el-col :span="5" class="cl-data-col" v-if="checkedColumnNames.includes('imageRepoName')">{{ data.imageRepoName?data.imageRepoName:$t('image.no_image_repo') }}</el-col>
-                  <el-col :span="5" class="cl-data-col" v-if="checkedColumnNames.includes('updateTime')">{{ data.updateTime | timestampFormatDate }}</el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="4" class="cl-ver-col">
-                <el-row class="cl-btn-mid-row">
-                  <el-col :span="8" class="cl-btn-col">
-                    <el-button @click="handleScan(data)" circle icon="el-icon-s-promotion" size="mini">
-                    </el-button>
-                  </el-col>
-                  <el-col :span="8" class="cl-btn-col">
-                    <el-button @click="handleEdit(data)" circle icon="el-icon-edit" size="mini">
-                    </el-button>
-                  </el-col>
-                  <el-col :span="8" class="cl-btn-col">
-                    <el-button @click="handleDelete(data)" circle icon="el-icon-delete" size="mini" type="danger">
-                    </el-button>
-                  </el-col>
-                </el-row>
-                <el-row class="cl-btn-mid-row">
-                  <el-col :span="8" class="cl-btn-data-col">
-                    {{ $t('account.scan') }}
-                  </el-col>
-                  <el-col :span="8" class="cl-btn-data-col">
-                    {{ $t('commons.edit') }}
-                  </el-col>
-                  <el-col :span="8" class="cl-btn-data-col">
-                    {{ $t('commons.delete') }}
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-      </el-card>
+      <hide-table
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
+      >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="name" :label="$t('image.image_name')" v-if="checkedColumnNames.includes('name')" min-width="180" show-overflow-tooltip>
+          <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.name }}
+              </span>
+          </template>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="200">
+          <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
+            <div class="txt-click" @click="goResource(scope.row)">
+              <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
+              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.high }}</span>
+              <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.medium }}</span>
+              <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.low }}</span>
+              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.unknown }}</span>
+            </div>
+          </el-tooltip>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('image.result_status')" min-width="140" prop="resultStatus" sortable show-overflow-tooltip>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
+          <el-button @click="noWarnLog(scope.row)" plain size="medium" type="info" v-else-if="scope.row.resultStatus === null">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+          </el-button>
+        </el-table-column>
+        <el-table-column prop="scanTime" min-width="200" v-if="checkedColumnNames.includes('scanTime')" :label="$t('commons.last_scan_time')" sortable>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.resultStatus !== null"><i class="el-icon-time"/> {{ scope.row.scanTime | timestampFormatDate }}</span>
+            <span v-if="scope.row.resultStatus === null">--</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="imageUrl" v-slot:default="scope" v-if="checkedColumnNames.includes('imageUrl')" :label="$t('image.image_url')" min-width="230" show-overflow-tooltip>
+          <div v-if="scope.row.type==='repo'">
+            <el-tooltip class="item" effect="dark" :content="scope.row.imageUrl + ':' + scope.row.imageTag" placement="top-start">
+              <span>{{ scope.row.imageUrl + ':' + scope.row.imageTag }}</span>
+            </el-tooltip>
+          </div>
+          <div v-if="scope.row.type==='image'">
+            <el-tooltip class="item" effect="dark" :content="scope.row.imageUrl + ':' + scope.row.imageTag" placement="top-start">
+              <span>{{ scope.row.imageUrl + ':' + scope.row.imageTag }}</span>
+            </el-tooltip>
+          </div>
+          <div v-if="scope.row.type==='tar'">
+            <el-tooltip class="item" effect="dark" :content="scope.row.path" placement="top-start">
+              <span>{{ scope.row.path }}</span>
+            </el-tooltip>
+          </div>
+        </el-table-column>
+        <el-table-column prop="imageRepoName" v-slot:default="scope" v-if="checkedColumnNames.includes('imageRepoName')" :label="$t('image.image_repo_name')" min-width="150" show-overflow-tooltip>
+          {{ scope.row.imageRepoName?scope.row.imageRepoName:$t('image.no_image_repo') }}
+        </el-table-column>
+        <el-table-column prop="size" v-slot:default="scope" v-if="checkedColumnNames.includes('size')" :label="$t('fs.size')" min-width="100" show-overflow-tooltip>
+          <span v-if="scope.row.size">{{ scope.row.size }}</span>
+          <span v-else>{{ '--' }}</span>
+        </el-table-column>
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
+                         prop="createTime">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('commons.update_time')" sortable
+                         prop="updateTime">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="100" show-overflow-tooltip/>
+        <el-table-column min-width="230" :label="$t('commons.operating')" fixed="right">
+          <template v-slot:default="scope">
+            <table-operators :buttons="buttons" :row="scope.row"/>
+          </template>
+        </el-table-column>
+      </hide-table>
 
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
@@ -168,12 +174,6 @@
               &nbsp;&nbsp; {{ item.proxyIp + ':' + item.proxyPort }}
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('image.is_image_icon')">
-          <el-switch v-model="form.isImageIcon"></el-switch>
-        </el-form-item>
-        <el-form-item v-if="form.isImageIcon" :label="$t('image.plugin_icon')">
-          <image-upload v-on:appendImg="appendImg" v-model="form.pluginIcon" :param="form.pluginIcon"/>
         </el-form-item>
         <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
           <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
@@ -278,12 +278,6 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('image.is_image_icon')">
-          <el-switch v-model="form.isImageIcon"></el-switch>
-        </el-form-item>
-        <el-form-item v-if="form.isImageIcon" :label="$t('image.plugin_icon')">
-          <image-upload v-on:appendImg="appendImg" v-model="form.pluginIcon" :param="form.pluginIcon"/>
-        </el-form-item>
         <el-form-item :label="$t('commons.remark')" ref="type" prop="type">
           <el-popover placement="right-end" :title="$t('image.image_type')" width="800" trigger="click">
             <hr-code-edit :read-only="true" height="200px" :data.sync="content" :modes="modes" :mode="'html'"/>
@@ -328,6 +322,67 @@
     </el-drawer>
     <!--Update image-->
 
+    <!--Result log-->
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%"
+               :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true">
+      <el-row class="el-form-item-dev" v-if="logData.length == 0">
+        <span>{{ $t('resource.i18n_no_data') }}<br></span>
+      </el-row>
+      <el-row class="el-form-item-dev" v-if="logData.length > 0">
+        <div>
+          <el-row>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-light">
+                <span class="grid-content-log-span">
+                  {{ logForm.name }}
+                  <i class="el-icon-document-copy" @click="copy(logForm)" style="display: none;"></i>
+                </span>
+                <span class="grid-content-log-span">
+                  <img :src="require(`@/assets/img/platform/docker.png`)"
+                       style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ logForm.imageName }}
+                </span>
+                <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'"
+                      style="color: #579df8">
+                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'FINISHED'"
+                      style="color: #7ebf50">
+                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                </span>
+                <span class="grid-content-status-span" v-else-if="logForm.resultStatus === 'ERROR'" style="color: red;">
+                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                </span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <el-table :show-header="false" :data="logData" class="adjust-table table-content">
+          <el-table-column>
+            <template v-slot:default="scope">
+              <div class="bg-purple-div">
+                <span
+                    v-bind:class="{true: 'color-red', false: ''}[scope.row.result == false]">
+                      {{ scope.row.createTime | timestampFormatDate }}
+                      {{ scope.row.operator }}
+                      {{ scope.row.operation }}
+                      {{ scope.row.output }}<br>
+                </span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <log-form :logForm="logForm"/>
+      </el-row>
+      <template v-slot:footer>
+        <dialog-footer
+            @cancel="logVisible = false"
+            @confirm="logVisible = false"/>
+      </template>
+    </el-drawer>
+    <!--Result log-->
+
   </main-container>
 </template>
 
@@ -339,9 +394,11 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import TableOperatorButton from "@/business/components/common/components/TableOperatorButton";
 import ImageStatus from "../head/ImageStatus";
 import {_filter, _sort} from "@/common/js/utils";
+import LogForm from "@/business/components/image/home/LogForm";
 import HrCodeEdit from "@/business/components/common/components/HrCodeEdit";
 import ImageUpload from "../head/ImageUpload";
 import ImageTarUpload from "../head/ImageTarUpload";
+import HideTable from "@/business/components/common/hideTable/HideTable";
 import MainContainer from "@/business/components/common/components/MainContainer";
 import {IMAGE_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {
@@ -349,12 +406,17 @@ import {
   allImageReposUrl,
   changeImageUrl,
   deleteImageUrl,
+  getImageResultUrl,
+  getImageResultWithBLOBsUrl,
+  imageDownloadUrl,
   imageListUrl,
+  imageLogUrl,
   scanImageUrl,
   updateImageUrl
 } from "@/api/k8s/image/image";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 import {proxyListAllUrl} from "@/api/system/system";
+import {saveAs} from "@/common/js/FileSaver";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -364,18 +426,28 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'image.image_status',
-    props: 'status',
+    label: 'resource.i18n_not_compliance',
+    props: 'returnSum',
+    disabled: false
+  },
+  {
+    label: 'image.result_status',
+    props: 'resultStatus',
+    disabled: false
+  },
+  {
+    label: 'commons.last_scan_time',
+    props: 'scanTime',
     disabled: false
   },
   {
     label: 'image.image_url',
-    props: 'type',
+    props: 'imageUrl',
     disabled: false
   },
   {
     label: 'image.image_size',
-    props: 'tar',
+    props: 'size',
     disabled: false
   },
   {
@@ -384,8 +456,18 @@ const columnOptions = [
     disabled: false
   },
   {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
     label: 'commons.update_time',
     props: 'updateTime',
+    disabled: false
+  },
+  {
+    label: 'account.creator',
+    props: 'userName',
     disabled: false
   },
 ];
@@ -404,6 +486,8 @@ export default {
     ImageUpload,
     ImageTarUpload,
     MainContainer,
+    HideTable,
+    LogForm,
   },
   data() {
     return {
@@ -440,11 +524,17 @@ export default {
       },
       buttons: [
         {
-          tip: this.$t('account.scan'), icon: "el-icon-s-promotion", type: "",
+          tip: this.$t('account.scan'), icon: "el-icon-s-promotion", type: "success",
           exec: this.handleScan
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
+        }, {
+          tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "info",
+          exec: this.handleVuln
+        }, {
+          tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
+          exec: this.handleDownload
         }, {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
@@ -461,7 +551,6 @@ export default {
       location: "",
       modes: ['text', 'html'],
       content: this.$t('image.image_support'),
-      iconFile: Object,
       tarFile: Object,
       sboms: [],
       versions: [],
@@ -485,13 +574,12 @@ export default {
       ],
       checkAll: true,
       isIndeterminate: false,
+      logVisible: false,
+      detailVisible: false,
+      logForm: {},
+      logData: [],
+      detailForm: {},
     }
-  },
-  activated() {
-    this.search();
-    this.activeProxy();
-    this.activeRepo();
-    this.location = window.location.href.split("#")[0];
   },
   methods: {
     handleCheckedColumnNamesChange(value) {
@@ -504,6 +592,11 @@ export default {
       this.checkedColumnNames = val ? this.columnNames.map((ele) => ele.props) : [];
       this.isIndeterminate = false;
       this.checkAll = val;
+    },
+    handleVuln() {
+      window.open('http://www.cnnvd.org.cn/','_blank','');
+    },
+    select(selection) {
     },
     create() {
       this.form = {type: 'image'};
@@ -562,12 +655,7 @@ export default {
             this.$get(scanImageUrl + data.id, response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
-                this.$router.push({
-                  path: '/image/result',
-                  query: {
-                    date:new Date().getTime()
-                  },
-                }).catch(error => error);
+                this.search();
               } else {
                 this.$error(this.$t('schedule.event_failed'));
               }
@@ -580,9 +668,6 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           let formData = new FormData();
-          if (this.iconFile) {
-            formData.append("iconFile", this.iconFile);
-          }
           if (this.tarFile) {
             formData.append("tarFile", this.tarFile);
           }
@@ -609,9 +694,6 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           let formData = new FormData();
-          if (this.iconFile) {
-            formData.append("iconFile", this.iconFile);
-          }
           if (this.tarFile) {
             formData.append("tarFile", this.tarFile);
           }
@@ -657,6 +739,8 @@ export default {
       this.form = {};
       this.createVisible =  false;
       this.updateVisible =  false;
+      this.logVisible = false;
+      this.detailVisible = false;
     },
     //查询代理
     activeProxy() {
@@ -695,9 +779,6 @@ export default {
         }
       });
     },
-    appendImg(file) {
-      this.iconFile = file;
-    },
     appendTar(file) {
       this.tarFile = file;
     },
@@ -706,6 +787,106 @@ export default {
         this.images = response.data;
       });
     },
+    noWarnLog(item) {
+      this.$warning(item.name + this.$t('resource.i18n_no_warn'));
+    },
+    showResultLog(result) {
+      this.result = this.$get(imageLogUrl + result.resultId, response => {
+        this.logData = response.data;
+      });
+      this.result = this.$get(getImageResultWithBLOBsUrl + result.resultId, response => {
+        this.logForm = response.data;
+        this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
+      });
+      this.logVisible = true;
+    },
+    getStatus() {
+      if (this.checkStatus(this.tableData)) {
+        this.search();
+        clearInterval(this.timer);
+      } else {
+        for (let data of this.tableData) {
+          this.$get(getImageResultUrl + data.resultId, response => {
+            let result = response.data;
+            if (result && data.resultStatus !== result.resultStatus) {
+              data.resultStatus = result.resultStatus;
+              data.returnSum = result.returnSum;
+              data.critical = result.critical ? result.critical : 0;
+              data.high = result.high ? result.high : 0;
+              data.medium = result.medium ? result.medium : 0;
+              data.low = result.low ? result.low : 0;
+              data.unknown = result.unknown ? result.unknown : 0;
+            }
+          });
+        }
+      }
+    },
+    //是否是结束状态，返回false代表都在运行中，true代表已结束
+    checkStatus(tableData) {
+      let sum = 0;
+      for (let row of tableData) {
+        if (row.resultStatus && row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
+          sum++;
+        }
+      }
+      return sum == 0;
+    },
+    goResource (params) {
+      if (!params.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
+      if (params.returnSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/image/resultdetails/' + params.resultId;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
+    },
+    handleDownload(item) {
+      if (!item.resultId) {
+        this.$warning(this.$t('resource.i18n_no_warn'));
+        return;
+      }
+      this.$post(imageDownloadUrl, {
+        id: item.resultId
+      }, response => {
+        if (response.success) {
+          let blob = new Blob([response.data], {type: "application/json"});
+          saveAs(blob, item.name + ".json");
+        }
+      }, error => {
+        console.log("下载报错", error);
+      });
+    },
+    copy(row) {
+      let input = document.createElement("input");
+      document.body.appendChild(input);
+      input.value = row['command'];
+      input.select();
+      if (input.setSelectionRange) {
+        input.setSelectionRange(0, input.value.length);
+      }
+      document.execCommand("copy");
+      document.body.removeChild(input);
+    },
+  },
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror;
+    }
+  },
+  activated() {
+    this.search();
+    this.activeProxy();
+    this.activeRepo();
+    this.location = window.location.href.split("#")[0];
+    this.timer = setInterval(this.getStatus, 10000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 }
 </script>
@@ -726,11 +907,11 @@ export default {
 }
 /deep/ :focus{outline:0;}
 .el-row-card {
-  padding: 0 10px 0 10px;
-  margin: 1%;
+  padding: 0 5px 0 5px;
+  margin: 0.5% 1% 0.5% 1%;
 }
 .split {
-  height: 80px;
+  height: 70px;
   border-left: 1px solid #D8DBE1;
 }
 .cl-ver-col {
@@ -774,14 +955,14 @@ export default {
 
 .co-el-img >>> .el-image {
   display: table-cell;
-  left: 40%;
+  left: 15%;
 }
 .cp-el-i {
-  margin: 1%;
+  margin: 0.5% 1% 0.5% 1%;
 }
 .co-el-i{
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
 }
 .word-wrap{
   width: 98%;
@@ -789,5 +970,126 @@ export default {
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+}
+.table-content {
+  width: 100%;
+}
+
+.el-form-item-dev >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 10%;
+  width: 47%;
+}
+
+.tag-v {
+  margin: 10px;
+  cursor: pointer;
+}
+
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.rtl >>> input {
+  width: 100%;
+}
+
+.rtl >>> .el-select {
+  width: 80%;
+}
+
+.rtl >>> .el-form-item__content {
+  width: 75%;
+}
+
+.bg-purple-dark {
+  background: #99a9bf;
+}
+
+.bg-purple {
+  background: #d3dce6;
+}
+
+.bg-purple-light {
+  background: #f2f2f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.el-form-item-dev >>> .el-form-item__content {
+  margin-left: 0 !important;
+}
+
+.grid-content-log-span {
+  width: 39%;
+  float: left;
+  vertical-align: middle;
+  display: table-cell;
+  margin: 6px 0 6px 2px;
+  color: #606266;
+}
+
+.grid-content-status-span {
+  width: 20%;
+  float: left;
+  vertical-align: middle;
+  display: table-cell;
+  margin: 6px 0;
+}
+
+.pure-span {
+  color: #606266;
+  margin: 10px 0;
+}
+
+.demo-table-expand {
+  font-size: 0;
+}
+
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 10px 2%;
+  width: 46%;
+}
+
+.txt-click {
+  cursor: pointer;
+}
+
+.txt-click:hover {
+  color: aliceblue;
+  text-shadow: 1px 1px 1px #000;
+}
+
+* {
+  touch-action: pan-y;
+}
+
+/deep/ :focus {
+  outline: 0;
 }
 </style>

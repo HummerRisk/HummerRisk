@@ -11,7 +11,6 @@ import com.hummer.common.core.domain.request.config.ConfigResultItemRequest;
 import com.hummer.common.core.domain.request.config.ConfigResultRequest;
 import com.hummer.common.core.dto.CloudNativeConfigDTO;
 import com.hummer.common.core.dto.CloudNativeConfigResultDTO;
-import com.hummer.common.core.dto.HistoryCloudNativeConfigResultDTO;
 import com.hummer.common.core.dto.MetricChartDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
@@ -184,25 +183,13 @@ public class ConfigController {
         return configService.allList();
     }
 
-    @I18n
-    @ApiOperation(value = "部署检测历史记录")
-    @PostMapping("history/{goPage}/{pageSize}")
-    public Pager<List<HistoryCloudNativeConfigResultDTO>> history(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, configService.history(params));
-    }
+
 
     @I18n
     @ApiOperation(value = "检测结果历史详情")
     @PostMapping("historyResultItemList")
     public List<CloudNativeConfigResultItemWithBLOBs> historyResultItemList(@RequestBody CloudNativeConfigResultItem request) {
         return configService.historyResultItemList(request);
-    }
-
-    @ApiOperation(value = "删除检测历史记录")
-    @GetMapping("deleteHistoryConfigResult/{id}")
-    public void deleteHistoryConfigResult(@PathVariable String id) throws Exception {
-        configService.deleteHistoryConfigResult(id);
     }
 
 }

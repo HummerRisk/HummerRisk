@@ -520,8 +520,8 @@ public class ConfigService {
         return cloudNativeConfigMapper.selectByExample(null);
     }
 
-    public List<HistoryCloudNativeConfigResultDTO> history(Map<String, Object> params) {
-        List<HistoryCloudNativeConfigResultDTO> historyList = systemProviderService.configHistory(params);
+    public List<HistoryCloudNativeConfigResultDTO> history(ConfigResultRequest request) {
+        List<HistoryCloudNativeConfigResultDTO> historyList = systemProviderService.configHistory(request);
         return historyList;
     }
 

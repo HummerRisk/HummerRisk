@@ -18,17 +18,11 @@ import java.util.List;
 
 @ApiIgnore
 @RestController
-@RequestMapping(value = "cloud/resource")
+@RequestMapping(value = "cloudResource")
 public class CloudResourceController {
 
     @Autowired
     private CloudResourceService cloudResourceService;
-
-    @I18n
-    @GetMapping(value = "summary")
-    public List<CloudResourceSummary> summary(@RequestParam(required = false) String accountId) throws Exception {
-        return cloudResourceService.getSummary(accountId);
-    }
 
     @I18n
     @GetMapping(value = "summary/{accountId}")

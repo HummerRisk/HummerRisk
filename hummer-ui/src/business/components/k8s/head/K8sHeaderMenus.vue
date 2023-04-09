@@ -9,7 +9,7 @@
           </el-menu-item>
 
           <el-menu-item :index="'/k8s/k8s'">
-            {{ $t("k8s.k8s_setting") }}
+            {{ $t("commons.k8s_scan") }}
           </el-menu-item>
 
           <el-menu-item :index="'/k8s/ruleGroup'">
@@ -18,10 +18,6 @@
 
           <el-menu-item :index="'/k8s/rule'">
             {{ $t("k8s.k8s_rule") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/k8s/result'">
-            {{ $t("k8s.result") }}
           </el-menu-item>
 
           <el-menu-item :index="'/k8s/history'">

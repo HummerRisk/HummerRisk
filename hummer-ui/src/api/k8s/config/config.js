@@ -16,10 +16,6 @@ export const scanConfigUrl = "/k8s/config/scan/";
 
 export const configValidateByIdUrl = "/k8s/config/validate/";
 
-export const historyConfigUrl = "/k8s/config/history/";
-
-export const deleteHistoryConfigResultUrl = "/k8s/config/deleteHistoryConfigResult/";
-
 export const historyResultItemListUrl = "/k8s/config/historyResultItemList";
 
 export const configMetricChartUrl = "/k8s/config/metricChart/";
