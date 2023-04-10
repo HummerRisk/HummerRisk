@@ -840,7 +840,7 @@ public class ImageService {
             image.setUpdateTime(System.currentTimeMillis());
             image.setCreator(loginUser.getUserId());
             image.setType("repo");
-            image.setImageUrl(request.getPath().split(":")[0]);
+            image.setImageUrl(request.getPath().replace(":" + request.getTag(), ""));
             image.setImageTag(request.getTag());
             image.setPluginIcon("docker.png");
             image.setIsImageRepo(true);
