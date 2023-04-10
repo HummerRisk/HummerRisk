@@ -117,6 +117,9 @@ public class CommandUtils {
      * @throws Exception Io异常
      */
     public static String saveAsFile(String content, String dirPath, String fileName, boolean append) throws Exception {
+        if(content == null){
+            content = "";
+        }
         File file = new File(dirPath);
         if (!file.exists()) {
             file.mkdirs();
