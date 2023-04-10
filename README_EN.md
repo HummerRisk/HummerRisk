@@ -109,11 +109,12 @@ For more product information and usage instructions, you can visit our online  d
 
 ## Wechat
 
-<img src="http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/contact_me_qr.png" width="156" height="156" alt="">
+![微信群](./hummer-ui/src/assets/img/readme/contact_me_qr.png)
 
 ## Public Account
 
-<img src="http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/qrcode_gongzhonghao.jpeg" width="156" height="156" alt="">
+![公众号](./hummer-ui/src/assets/img/readme/qrcode_gongzhonghao.jpeg)
+
 
 ## Safety Instructions
 
