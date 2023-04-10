@@ -128,6 +128,7 @@
         <result column="pass" jdbcType="VARCHAR" property="pass" />
         <result column="cloud_resources_sum" jdbcType="BIGINT" property="cloudResourcesSum" />
         <result column="cloud_return_sum" jdbcType="BIGINT" property="cloudReturnSum" />
+        <result column="k8s_status" jdbcType="VARCHAR" property="k8sStatus" />
     </resultMap>
 
     <select id="getCloudNativeList" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.request.cloudNative.CloudNativeRequest">
@@ -144,13 +145,20 @@
         WHEN t.status = 'INVALID' or t.operator_status = 'INVALID' or t.kubench_status = 'INVALID' THEN 'WARNING'
         WHEN t.status = 'VALID' and t.operator_status = 'VALID' and t.kubench_status = 'VALID' THEN 'FINISHED'
         ELSE 'FINISHED'
-        END AS k8sStatus,
+        END AS k8s_status,
         user.name as user_name,
         t1.id as result_id,
         t1.rule_id,
         t1.rule_name,
         t1.rule_desc,
-        t1.result_status,
+        CASE
+        WHEN (t1.result_status in ('APPROVED', 'PROCESSING')) or
+             (('APPROVED' in (select ct.status from cloud_task ct where t.id = ct.account_id)) or ('PROCESSING' in (select ct.status from cloud_task ct where t.id = ct.account_id)))
+            THEN 'APPROVED'
+        WHEN (t1.result_status in ('ERROR')) THEN 'ERROR'
+        WHEN (t1.result_status in ('WARNING')) THEN 'WARNING'
+        ELSE 'FINISHED'
+        END AS result_status,
         t1.severity,
         t1.update_time as scan_time,
         t1.return_sum,

@@ -388,7 +388,7 @@
     <!--Install log-->
 
     <!--Result log-->
-    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logResultVisible" size="85%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logResultVisible" size="90%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logResultData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
