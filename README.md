@@ -107,11 +107,11 @@ curl -sSL https://download.hummerrisk.com/hummerrisk/hummerrisk/releases/downloa
 
 ## 微信群
 
-<img src="http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/contact_me_qr.png" width="156" height="156" alt="">
+![微信群](./hummer-ui/src/assets/img/readme/contact_me_qr.png)
 
 ## 公众号
 
-<img src="http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/qrcode_gongzhonghao.jpeg" width="156" height="156" alt="">
+![公众号](./hummer-ui/src/assets/img/readme/qrcode_gongzhonghao.jpeg)
 
 ## 安全说明
 

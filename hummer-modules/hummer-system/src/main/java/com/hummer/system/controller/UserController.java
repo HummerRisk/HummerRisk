@@ -13,15 +13,15 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
-@Api(tags = "用户")
+@Tag(name = "用户")
 @RequestMapping("user")
 @RestController
 public class UserController {
@@ -32,14 +32,14 @@ public class UserController {
     private TokenService tokenService;
 
     @I18n
-    @ApiOperation(value = "添加用户")
+    @Operation(summary = "添加用户")
     @PostMapping("/special/add")
     public UserDTO insertUser(@RequestBody UserRequest user) throws Exception {
         return userService.insert(user, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation(value = "用户列表")
+    @Operation(summary = "用户列表")
     @PostMapping("/special/list/{goPage}/{pageSize}")
     public Pager<List<User>> getUserList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody UserRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -47,32 +47,32 @@ public class UserController {
     }
 
     @I18n
-    @ApiOperation(value = "用户角色")
+    @Operation(summary = "用户角色")
     @GetMapping("/special/user/role/{userId}")
     public UserRoleDTO getUserRole(@PathVariable("userId") String userId) {
         return userService.getUserRole(userId);
     }
 
-    @ApiOperation(value = "删除用户")
+    @Operation(summary = "删除用户")
     @GetMapping("/special/delete/{userId}")
     public void deleteUser(@PathVariable(value = "userId") String userId) throws Exception {
         userService.deleteUser(userId, tokenService.getLoginUser());
     }
 
-    @ApiOperation(value = "更新用户")
+    @Operation(summary = "更新用户")
     @PostMapping("/special/update")
     public void updateUser(@RequestBody UserRequest user) {
         userService.updateUserRole(user);
     }
 
-    @ApiOperation(value = "更新用户状态")
+    @Operation(summary = "更新用户状态")
     @PostMapping("/special/update_status")
     public void updateStatus(@RequestBody User user) {
         userService.updateUser(user);
     }
 
     @I18n
-    @ApiOperation(value = "所有用户")
+    @Operation(summary = "所有用户")
     @GetMapping("/list/all")
     public List<User> getUserList() {
         return userService.getUserList();
@@ -89,7 +89,7 @@ public class UserController {
     }
 
     @I18n
-    @ApiOperation(value = "用户信息")
+    @Operation(summary = "用户信息")
     @GetMapping("/info/{userId}")
     public UserDTO getUserInfo(@PathVariable(value = "userId") String userId) throws Exception {
         return userService.getUserInfo(userId);
@@ -98,7 +98,7 @@ public class UserController {
     /**
      * 修改当前用户密码
      */
-    @ApiOperation(value = "修改用户密码")
+    @Operation(summary = "修改用户密码")
     @PostMapping("/update/password")
     public int updateCurrentUserPassword(@RequestBody EditPassWordRequest request) throws Exception {
         return userService.updateCurrentUserPassword(request, tokenService.getLoginUser());

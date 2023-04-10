@@ -19,8 +19,8 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Api(tags = "对象存储")
+@Tag(name = "对象存储")
 @RestController
 @RequestMapping(value = "oss")
 public class OssController {
@@ -48,7 +48,7 @@ public class OssController {
     private TokenService tokenService;
 
     @I18n
-    @ApiOperation(value = "对象存储账号列表")
+    @Operation(summary = "对象存储账号列表")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<OssDTO>> ossList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssRequest request) {
@@ -57,80 +57,80 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation(value = "所有对象存储账号")
+    @Operation(summary = "所有对象存储账号")
     @GetMapping("allList")
     public List<OssWithBLOBs> allList() {
         return ossService.allList();
     }
 
     @I18n
-    @ApiOperation(value = "云账号列表")
+    @Operation(summary = "云账号列表")
     @GetMapping("accounts")
     public List<AccountWithBLOBs> getCloudAccountList() {
         return ossService.getCloudAccountList();
     }
 
     @I18n
-    @ApiOperation(value = "IAM策略信息")
+    @Operation(summary = "IAM策略信息")
     @GetMapping("iam/strategy/{accountId}")
     public String strategy(@PathVariable String accountId) throws Exception {
         return ossService.strategy(accountId);
     }
 
-    @ApiOperation(value = "批量校验对象存储账号")
+    @Operation(summary = "批量校验对象存储账号")
     @PostMapping("validate")
     public Boolean validate(@RequestBody List<String> selectIds) {
         return ossService.validate(selectIds);
     }
 
-    @ApiOperation(value = "校验对象存储账号")
+    @Operation(summary = "校验对象存储账号")
     @PostMapping("validate/{id}")
     public ValidateDTO validate(@PathVariable String id) {
         return ossService.validate(id);
     }
 
-    @ApiOperation(value = "云账号详情")
+    @Operation(summary = "云账号详情")
     @GetMapping("changeAccount/{accountId}")
     public String getCredential(@PathVariable String accountId) {
         return ossService.getCredential(accountId);
     }
 
     @I18n
-    @ApiOperation(value = "添加对象存储")
+    @Operation(summary = "添加对象存储")
     @PostMapping("add")
     public OssWithBLOBs addOss(@RequestBody OssWithBLOBs request) throws Exception {
         return ossService.addOss(request, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation(value = "更新对象存储")
+    @Operation(summary = "更新对象存储")
     @PostMapping("update")
     public OssWithBLOBs editOss(@RequestBody OssWithBLOBs request) throws Exception {
         return ossService.editOss(request, tokenService.getLoginUser());
     }
 
-    @ApiOperation(value = "删除对象存储")
+    @Operation(summary = "删除对象存储")
     @GetMapping(value = "delete/{ossId}")
     public void deleteOss(@PathVariable String ossId) {
         ossService.deleteOss(ossId);
     }
 
     @I18n
-    @ApiOperation(value = "同步对象存储")
+    @Operation(summary = "同步对象存储")
     @GetMapping("batch/sync/{id}")
     public void sync(@PathVariable String id) throws Exception {
         ossService.batch(id, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation(value = "对象存储同步日志")
+    @Operation(summary = "对象存储同步日志")
     @GetMapping(value = "log/{ossId}")
     public List<OssLogWithBLOBs> getLogList(@PathVariable String ossId) {
         return ossService.getLogList(ossId);
     }
 
     @I18n
-    @ApiOperation(value = "对象存储桶列表")
+    @Operation(summary = "对象存储桶列表")
     @PostMapping("bucketList/{goPage}/{pageSize}")
     public Pager<List<OssBucketDTO>> ossBucketList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssBucketRequest request) {
@@ -139,14 +139,14 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation("文件目录列表")
+    @Operation(summary = "文件目录列表")
     @GetMapping("objects/{bucketId}")
     public List<BucketObjectDTO> getObjects(@PathVariable String bucketId) throws Exception {
         return ossService.getObjects(bucketId, null);
     }
 
     @I18n
-    @ApiOperation("文件列表")
+    @Operation(summary = "文件列表")
     @PostMapping("objects/{bucketId}")
     public List<BucketObjectDTO> getObjects(@PathVariable String bucketId, @RequestBody Map map) throws Exception {
         String path = map.get("path").toString();
@@ -154,7 +154,7 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation("下载文件")
+    @Operation(summary = "下载文件")
     @PostMapping("downloadObject/{bucketId}")
     public void downloadObject(@PathVariable String bucketId, @RequestBody Map map, HttpServletResponse response) throws Exception {
         BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
@@ -176,42 +176,42 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation("创建存储桶")
+    @Operation(summary = "创建存储桶")
     @PostMapping("create")
     public void create(@RequestBody OssBucket bucket) throws Exception {
         ossService.create(bucket, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation("批量删除存储桶")
+    @Operation(summary = "批量删除存储桶")
     @PostMapping("deleteByBatch")
     public ResultHolder deleteByBatch(@RequestBody List<String> ids) {
         return ossService.delete(ids, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation("删除存储桶")
+    @Operation(summary = "删除存储桶")
     @GetMapping("deleteBucket/{bucketId}")
     public ResultHolder deleteBucket(@PathVariable String bucketId) {
         return ossService.delete(Arrays.asList(bucketId), tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation("创建目录")
+    @Operation(summary = "创建目录")
     @PostMapping("createDir/{bucketId}")
     public void createDir(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
         ossService.createDir(bucketId, map.get("dir").toString());
     }
 
     @I18n
-    @ApiOperation("删除对象")
+    @Operation(summary = "删除对象")
     @PostMapping("deleteObject/{bucketId}")
     public void deleteObject(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
         ossService.deleteObject(bucketId, map.get("objectId").toString());
     }
 
     @I18n
-    @ApiOperation("批量删除对象")
+    @Operation(summary = "批量删除对象")
     @PostMapping("deleteObjects/{bucketId}")
     public void deleteObjects(@PathVariable String bucketId, @RequestBody List<String> objectIds) throws Exception{
         ossService.deleteObjects(bucketId, objectIds);
@@ -225,14 +225,14 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation("获取对象存储区域")
+    @Operation(summary = "获取对象存储区域")
     @GetMapping("support/regions/{ossId}")
     public List<OssRegion> getRegions(@PathVariable String ossId) throws Exception {
         return ossService.getOssRegions(ossId);
     }
 
     @I18n
-    @ApiOperation("获取对象存储类型")
+    @Operation(summary = "获取对象存储类型")
     @GetMapping("support/{ossId}/params/{type}")
     public List<KeyValueItem> getParams(@PathVariable String ossId, @PathVariable String type) throws Exception{
         return ossService.getParamList(ossId, type);
@@ -246,14 +246,14 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation(value = "合规报告规则组列表")
+    @Operation(summary = "合规报告规则组列表")
     @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ossService.ruleGroupList(request));
     }
 
-    @ApiOperation(value = "导出规则组检测报告")
+    @Operation(summary = "导出规则组检测报告")
     @PostMapping("groupExport")
     public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
         byte[] bytes = ossService.exportGroupReport(request, tokenService.getLoginUser());
@@ -284,7 +284,7 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation(value = "上传文件")
+    @Operation(summary = "上传文件")
     @PostMapping(value = "uploadFile/{bucketId}", consumes = {"multipart/form-data"})
     public void uploadFile(@PathVariable String bucketId, @RequestPart(value = "request") Path request, @RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
         String path = request.getPath();
@@ -298,27 +298,27 @@ public class OssController {
     }
 
     @I18n
-    @ApiOperation(value = "对象存储概览TOP统计")
+    @Operation(summary = "对象存储概览TOP统计")
     @PostMapping("topInfo")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return ossService.topInfo(params);
     }
 
     @I18n
-    @ApiOperation(value = "对象存储统计")
+    @Operation(summary = "对象存储统计")
     @GetMapping("ossChart")
     public List<Map<String, Object>> ossChart() {
         return ossService.ossChart();
     }
 
-    @ApiOperation(value = "存储桶统计")
+    @Operation(summary = "存储桶统计")
     @GetMapping("bucketChart")
     public List<Map<String, Object>> bucketChart() {
         return ossService.bucketChart();
     }
 
     @I18n
-    @ApiOperation(value = "对象存储风险统计")
+    @Operation(summary = "对象存储风险统计")
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return ossService.severityChart();
