@@ -8,17 +8,17 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
-        <table-button v-if="showSync" icon="el-icon-sort-down"
+        <table-button v-if="showSync" icon="el-icon-sort-down" :showName="showSyncName"
                       type="primary" :content="syncTip" @click="sync"/>
-        <table-button v-if="showCreate" icon="el-icon-circle-plus-outline"
+        <table-button v-if="showCreate" icon="el-icon-circle-plus-outline" :showName="showCreateName"
                       type="primary" :content="createTip" @click="create"/>
-        <table-button v-if="showScan" icon="el-icon-video-play"
+        <table-button v-if="showScan" icon="el-icon-video-play" :showName="showScanName"
                               type="success" :content="scanTip" @click="scan"/>
-        <table-button v-if="showValidate" icon="el-icon-video-play"
+        <table-button v-if="showValidate" icon="el-icon-video-play" :showName="showValidateName"
                          type="warning" :content="validateTip" @click="validate"/>
-        <table-button v-if="showSetting" icon="el-icon-s-tools"
+        <table-button v-if="showSetting" icon="el-icon-s-tools" :showName="showSettingName"
                       type="warning" :content="settingTip" @click="setting"/>
-        <table-button v-if="showDelete" icon="el-icon-remove-outline"
+        <table-button v-if="showDelete" icon="el-icon-remove-outline" :showName="showDeleteName"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
         <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" @upload="upload"
                           :showFilter="showFilter" :showUpload="showUpload" :showUploadName="showUploadName" :tip="tip" :items="items"/>
@@ -86,6 +86,30 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       showDelete: {
         type: Boolean,
         default: false
+      },
+      showSyncName: {
+        type: Boolean,
+        default: true
+      },
+      showCreateName: {
+        type: Boolean,
+        default: true
+      },
+      showScanName: {
+        type: Boolean,
+        default: true
+      },
+      showValidateName: {
+        type: Boolean,
+        default: true
+      },
+      showSettingName: {
+        type: Boolean,
+        default: true
+      },
+      showDeleteName: {
+        type: Boolean,
+        default: true
       },
       condition: {
         type: Object

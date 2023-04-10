@@ -4,9 +4,9 @@
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
                         :title="$t('server.server_list')" class="table-header-l"
-                        @create="create" :createTip="$t('server.server_create')"
-                        @validate="validate" :validateTip="$t('server.one_validate')"
-                        :show-validate="true" :show-scan="false" :show-create="true" :show-filter="false"
+                        @create="create" :createTip="$t('server.server_create')" :showValidateName="false" :show-delete="true"
+                        @validate="validate" :validateTip="$t('server.one_validate')" :showDeleteName="false"
+                        :show-validate="true" :show-scan="false" :show-create="true" :show-filter="false" @deleteSelect="deleteServers"
                         :items="items" :columnNames="columnNames" :show-open="false" :show-upload="true" @upload="upload"
                         :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -559,7 +559,7 @@ import {proxyListAllUrl} from "@/api/system/system";
 import {
   addServerUrl,
   allCertificateListUrl,
-  copyServerUrl,
+  copyServerUrl, deleteServersUrl,
   deleteServerUrl,
   editServerUrl,
   serverDownloadExcelUrl,
@@ -844,6 +844,30 @@ const columnOptions = [
                   }
                   this.$error(this.$t('server.failed_server') + name);
                 }
+                this.search();
+              });
+            }
+          }
+        });
+      },
+      deleteServers() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('server.please_choose_server'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('server.server_1') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteServersUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('account.success'));
                 this.search();
               });
             }

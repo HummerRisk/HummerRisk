@@ -986,5 +986,15 @@ public class ServerService {
         this.scanGroups(server, scanId, groupId, loginUser);
     }
 
+    public void deleteServers(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteServer(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
 
 }

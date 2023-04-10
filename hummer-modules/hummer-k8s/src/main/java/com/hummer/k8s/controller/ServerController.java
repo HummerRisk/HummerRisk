@@ -345,5 +345,11 @@ public class ServerController {
         serverService.scanByGroup(groupId, serverId, tokenService.getLoginUser());
     }
 
+    @ApiOperation(value = "批量删除主机")
+    @PostMapping("deleteServers")
+    public void deleteServers(@RequestBody List<String> selectIds) throws Exception {
+        serverService.deleteServers(selectIds, tokenService.getLoginUser());
+    }
+
 
 }
