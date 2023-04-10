@@ -6,4 +6,4 @@ ARG triy_db_version=2023010101
 
 ENV triy_db=trivy-offline-v2-${triy_db_version}.db.tar.gz
 
-RUN wget https://company.hummercloud.com/offline-package/trivy/trivy-db/$triy_db
+RUN wget https://download.hummercloud.com/offline-package/trivy/trivy-db/$triy_db
