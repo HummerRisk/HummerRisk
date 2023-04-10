@@ -228,7 +228,7 @@
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
-                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('account.regions') }}</span>
+                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('k8s.namespace') }}</span>
                 <table-search-right :condition.sync="regionCondition" @change="regionFilter" style="float: right;width: 70%" class="search-bar"/>
               </div>
               <div style="height: 130px;">
@@ -375,7 +375,7 @@
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
               {{ scope.row.resourceType }}
             </el-table-column>
-            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('account.regions')" min-width="130">
+            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('k8s.namespace')" min-width="130">
               <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -398,8 +398,7 @@
             </el-table-column>
             <el-table-column min-width="90" :label="$t('commons.operating')" show-overflow-tooltip>
               <template v-slot:default="scope">
-                <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
-                <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
+                <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
               </template>
             </el-table-column>
           </hide-table>
@@ -561,11 +560,10 @@ import TableSearchRight from "@/business/components/common/components/search/Tab
 import {
   cloudResourceListUrl,
   resourceAccountDeleteUrl,
+  resourceK8sSourceUrl,
   resourceRegionDataUrl,
-  resourceRegulationUrl,
   resourceRuleDataUrl,
   resourceSeverityDataUrl,
-  resourceSourceUrl,
   resourceTypeDataUrl,
   string2PrettyFormatUrl
 } from "@/api/cloud/resource/resource";
@@ -628,7 +626,7 @@ const columnOptions2 = [
     disabled: false
   },
   {
-    label: 'account.regions',
+    label: 'k8s.namespace',
     props: 'regionName',
     disabled: false
   },
@@ -707,18 +705,8 @@ export default {
       ],
       resource_buttons: [
         {
-          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
-          exec: this.showSeverityDetail
-        },
-      ],
-      resource_buttons2: [
-        {
           tip: this.$t('rule.suggestion'), icon: "el-icon-share", type: "primary",
           exec: this.handleSuggestion
-        },
-        {
-          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
-          exec: this.showSeverityDetail
         },
       ],
       logVisible: false,
@@ -779,8 +767,6 @@ export default {
       highSeverityRow: true,
       highResourceTypeRow: true,
       highRuleRow: true,
-      regulationData: [],
-      regulationVisible: false,
       rowIndex: '',
       progressResult: 0.0,
       checkedColumnNames: columnOptions.map((ele) => ele.props),
@@ -815,7 +801,7 @@ export default {
           id: 'hummerId',
         },
         {
-          name: 'account.regions',
+          name: 'k8s.namespace',
           id: 'regionName',
         },
       ],
@@ -890,7 +876,7 @@ export default {
       });
     },
     async search() {
-      await this.$get(resourceSourceUrl + this.accountId, response => {
+      await this.$get(resourceK8sSourceUrl + this.accountId, response => {
         this.source = response.data;
       });
 
@@ -967,7 +953,7 @@ export default {
         this.search();
         clearInterval(this.timer);
       }
-      this.$get(resourceSourceUrl + this.accountId, response => {
+      this.$get(resourceK8sSourceUrl + this.accountId, response => {
         let data = response.data;
         if (!data) {
           return;
@@ -1188,14 +1174,6 @@ export default {
         this.resourceCondition.taskId = row.id;
       }
       this.resourceSearch();
-    },
-    showSeverityDetail(item) {
-      this.$get(resourceRegulationUrl + item.ruleId, response => {
-        if (response.success) {
-          this.regulationData = response.data;
-          this.regulationVisible = true;
-        }
-      });
     },
     back () {
       this.$router.push({

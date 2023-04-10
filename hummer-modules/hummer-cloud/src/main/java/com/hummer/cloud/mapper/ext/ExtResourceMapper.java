@@ -23,6 +23,8 @@ public interface ExtResourceMapper {
 
     SourceDTO source(@Param("accountId")String accountId);
 
+    SourceDTO k8sSource(@Param("accountId")String accountId);
+
     String resultPercentByCloud(@Param("accountId") String accountId, @Param("severity") String severity, @Param("taskId") String taskId);
 
     Integer sumReturnSum(@Param("id") Integer id);

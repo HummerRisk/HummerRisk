@@ -123,6 +123,64 @@
         ORDER BY t.create_time DESC
     </select>
 
+    <select id="k8sSource" parameterType="java.lang.String" resultMap="ResultMap">
+        SELECT
+        t.*,
+        u.name as userName,
+        IFNULL((
+        SELECT
+        sum( tt.return_sum )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as returnSum,
+        IFNULL((
+        SELECT
+        sum( tt.resources_sum )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as resourcesSum,
+        IFNULL((
+        SELECT
+        count( tc.id )
+        FROM
+        cloud_task tc
+        WHERE
+        tc.account_id = t.id
+        and tc.status in ('FINISHED', 'ERROR', 'WARNING')
+        ), 0) as overRules,
+        IFNULL((
+        SELECT
+        count( tt.id )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.account_id = t.id
+        ), 0) as allRules,
+        IFNULL((select t1.scan_score FROM history_scan t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
+        CASE
+        WHEN 'APPROVED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
+        WHEN 'PROCESSING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'PROCESSING'
+        WHEN 'ERROR' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'ERROR'
+        WHEN 'WARNING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'WARNING'
+        WHEN 'FINISHED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'FINISHED'
+        ELSE 'UNDEFINED'
+        END AS resultStatus
+        FROM cloud_account t
+        LEFT JOIN user u on t.creator = u.id
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
+            <if test="accountId != null and accountId != ''">
+                AND t.id = #{accountId}
+            </if>
+            and p.type in ('native')
+        </where>
+        ORDER BY t.create_time DESC
+    </select>
+
     <select id="getTaskList" resultType="com.hummer.common.core.domain.CloudTask" parameterType="java.lang.String">
         SELECT t.*
         FROM cloud_task t

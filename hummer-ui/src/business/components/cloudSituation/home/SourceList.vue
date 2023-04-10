@@ -3,7 +3,10 @@
     <el-col :span="24">
       <el-card class="content" shadow="always">
         <el-descriptions :title="$t('k8s.source_sum')" :column="8" border direction="vertical">
-          <el-descriptions-item v-for="item in resourceSummary" :label="item.resourceType" :key="item.resourceType" label-class-name="my-label" content-class-name="my-content" ><a href="#" @click="resourceTypeClick(item.resourceType)">{{ item.count }}</a></el-descriptions-item>
+          <el-descriptions-item v-for="item in resourceSummary" :label="item.resourceType" :key="item.resourceType"
+                                label-class-name="my-label" content-class-name="my-content">
+            <a href="#" @click="resourceTypeClick(item.resourceType)">{{ item.count }}</a>
+          </el-descriptions-item>
         </el-descriptions>
 
         <el-card class="table-card" v-loading="result.loading" style="margin-top: 10px;">
@@ -12,8 +15,10 @@
                           @search="search"
                           :title="$t('k8s.source_list')"
                           :items="items" :columnNames="columnNames"
-                          :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
-                          @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+                          :checkedColumnNames="checkedColumnNames" :checkAll="checkAll"
+                          :isIndeterminate="isIndeterminate"
+                          @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
+                          @handleCheckAllChange="handleCheckAllChange"/>
           </template>
           <hide-table
             :table-data="tableData"
@@ -22,44 +27,56 @@
             @select-all="select"
             @select="select"
           >
-            <el-table-column type="expand"  min-width="40">
+            <el-table-column type="expand" min-width="40">
               <template v-slot:default="scope">
                 <el-divider><i class="el-icon-folder-opened"></i></el-divider>
                 <el-form>
-                  <result-read-only :row="typeof(scope.row.resource) === 'string'?JSON.parse(scope.row.resource):scope.row.resource"></result-read-only>
+                  <result-read-only
+                    :row="typeof(scope.row.resource) === 'string'?JSON.parse(scope.row.resource):scope.row.resource"></result-read-only>
                   <el-divider><i class="el-icon-document-checked"></i></el-divider>
                 </el-form>
               </template>
             </el-table-column>
             <el-table-column type="index" min-width="40"/>
-            <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" min-width="130" show-overflow-tooltip>
+            <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')"
+                             :label="$t('event.cloud_account_name')" min-width="130" show-overflow-tooltip>
               <template v-slot:default="scope">
-              <span><img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+              <span><img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)"
+                         style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="hummerId" v-if="checkedColumnNames.includes('hummerId')" :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')" :label="$t('event.region')" min-width="150"  show-overflow-tooltip sortable></el-table-column>
-            <el-table-column prop="resourceType" v-if="checkedColumnNames.includes('resourceType')" :label="$t('dashboard.resource_type')" min-width="130" show-overflow-tooltip sortable></el-table-column>
+            <el-table-column prop="hummerId" v-if="checkedColumnNames.includes('hummerId')"
+                             :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip
+                             sortable></el-table-column>
+            <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')"
+                             :label="$t('event.region')" min-width="150" show-overflow-tooltip
+                             sortable></el-table-column>
+            <el-table-column prop="resourceType" v-if="checkedColumnNames.includes('resourceType')"
+                             :label="$t('dashboard.resource_type')" min-width="130" show-overflow-tooltip
+                             sortable></el-table-column>
             <el-table-column
               prop="ruleCount" v-if="checkedColumnNames.includes('ruleCount')"
               :label="$t('resource.risk')"
               min-width="120">
               <template v-slot:default="scope">
-                <resource-rule  :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount" :account-id="scope.row.accountId"
-                                :region-id="scope.row.regionId" :resource-type="scope.row.resourceType"
-                                :account-name="getAccountName(scope.row.accountId)"
+                <resource-rule :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount"
+                               :account-id="scope.row.accountId"
+                               :region-id="scope.row.regionId" :resource-type="scope.row.resourceType"
+                               :account-name="getAccountName(scope.row.accountId)"
                 ></resource-rule>
               </template>
             </el-table-column>
-            <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')" :label="$t('account.update_time')" sortable
+            <el-table-column min-width="160" v-if="checkedColumnNames.includes('updateTime')"
+                             :label="$t('account.update_time')" sortable
                              prop="updateTime">
               <template v-slot:default="scope">
                 <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
           </hide-table>
-          <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
+          <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize"
+                            :total="total"/>
         </el-card>
       </el-card>
     </el-col>
@@ -76,7 +93,12 @@ import {SITUATION_CONFIGS} from "../../common/components/search/search-component
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import ResourceRule from "@/business/components/cloudSituation/home/ResourceRule";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {allListUrl, resourceSummaryReport, cloudResourceListUrl} from "@/api/cloud/account/account";
+import {
+  allListUrl,
+  resourceSummaryReport,
+  cloudResourceListUrl,
+  resourceSummaryToReport
+} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -133,7 +155,7 @@ export default {
       result: {},
       loading: false,
       situationInfo: {},
-      resourceSummary:[],
+      resourceSummary: [],
       condition: {
         components: SITUATION_CONFIGS
       },
@@ -197,28 +219,28 @@ export default {
           let data = response.data;
           this.resourceSummary = data;
         });
-      }else{
-        this.result = this.$get("/cloud/cloud/resource/summary", response => {
+      } else {
+        this.result = this.$get(resourceSummaryToReport, response => {
           let data = response.data;
           this.resourceSummary = data;
         });
       }
-      if(!!accountId){
-        this.condition["combine"] = {"accountId":{"value":accountId}}
-      }else {
+      if (!!accountId) {
+        this.condition["combine"] = {"accountId": {"value": accountId}}
+      } else {
         this.condition["combine"] = {}
       }
       this.search();
     },
-    resourceTypeClick(resourceType){
+    resourceTypeClick(resourceType) {
       let accountId = ""
       if (!!this.selectNodeIds[0]) {
         accountId = this.selectNodeIds[0];
       }
-      if(!!accountId){
-        this.condition["combine"]["accountId"]= {"value":accountId}
+      if (!!accountId) {
+        this.condition["combine"]["accountId"] = {"value": accountId}
       }
-      this.condition["combine"]["resourceType"]={"value":resourceType}
+      this.condition["combine"]["resourceType"] = {"value": resourceType}
       this.condition.resourceType = resourceType;
       this.search();
     },
@@ -240,11 +262,11 @@ export default {
       _filter(filters, this.condition);
       this.init();
     },
-    getAccountName(accountId){
-      let result =  this.accountList.filter(item =>{
+    getAccountName(accountId) {
+      let result = this.accountList.filter(item => {
         return item.id === accountId;
       })
-      return result.length >0?result[0].name:"";
+      return result.length > 0 ? result[0].name : "";
     },
     initAccount() {
       this.$get(allListUrl, response => {
@@ -263,6 +285,7 @@ export default {
 .table-card {
   min-height: 10%;
 }
+
 .hr-card-index-1 .hr-card-data-digital {
   color: #0051a4;
 }

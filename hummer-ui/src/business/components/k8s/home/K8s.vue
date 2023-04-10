@@ -95,18 +95,12 @@
             </div>
           </el-tooltip>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('commons.compliance_scan_statistics')" prop="returnSum" sortable show-overflow-tooltip min-width="150">
-          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('commons.compliance_scan_statistics')" prop="returnSum" sortable show-overflow-tooltip min-width="170">
+          <el-tooltip class="item txt-click" effect="dark" :content="$t('history.resource_result')" placement="top">
             <span v-if="scope.row.cloudReturnSum == null && scope.row.cloudResourcesSum == null"> N/A</span>
-            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum == 0)">
+            <span @click="goCloudResource(scope.row)">
               <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
               <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
-            </span>
-            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum > 0)">
-              <el-link type="primary" class="text-click" @click="goCloudResource(scope.row)">
-                <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
-                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
-              </el-link>
             </span>
           </el-tooltip>
         </el-table-column>
@@ -246,7 +240,7 @@
     <!--Install log-->
     <el-drawer class="rtl" :title="$t('k8s.install_log')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-row class="el-form-item-dev">
+      <el-row class="el-form-item-dev" v-loading="k8sResult.loading">
         <div>
           <el-row>
             <el-col :span="24">
@@ -399,7 +393,7 @@
       <el-row class="el-form-item-dev" v-if="logResultData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>
-      <el-row class="el-form-item-dev" v-if="logResultData.length > 0">
+      <el-row class="el-form-item-dev" v-if="logResultData.length > 0" v-loading="k8sResult.loading">
         <div>
           <el-row>
             <el-col :span="24">
@@ -449,7 +443,7 @@
     <!-- 一键检测选择规则组 -->
     <el-dialog :close-on-click-modal="false"
                :modal-append-to-body="false"
-               :title="$t('commons.k8s_scan')"
+               :title="$t('commons.k8s_scan') + ' | ' + $t('k8s.name') + ':' + accountWithGroup.name"
                :visible.sync="scanVisible"
                class="" width="70%">
       <div v-loading="groupResult.loading">
@@ -457,7 +451,7 @@
           <div slot="header" class="clearfix">
               <span>
                 <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('commons.safety_scan') }} | {{ $t('k8s.name') }} : {{ accountWithGroup.name }}
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('commons.safety_scan') }}
               </span>
           </div>
           <el-checkbox-group v-model="checkedScans">
@@ -470,7 +464,7 @@
           <div slot="header" class="clearfix">
               <span>
                 <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} {{ $t('dashboard.i18n_policy_comliance') }} | {{ $t('k8s.name') }} : {{ accountWithGroup.name }}
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} {{ $t('dashboard.i18n_policy_comliance') }}
               </span>
             <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
           </div>
@@ -812,7 +806,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$request({
+            this.k8sResult = this.$request({
               method: 'POST',
               url: k8sValidatesUrl,
               data: Array.from(this.selectIds),
@@ -840,7 +834,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post(k8sValidateUrl + row.id, {}, response => {
+            this.k8sResult = this.$post(k8sValidateUrl + row.id, {}, response => {
               let data = response.data;
               if (data) {
                 if (data.flag) {
@@ -862,7 +856,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post(operatorStatusValidateUrl + row.id, {}, response => {
+            this.k8sResult = this.$post(operatorStatusValidateUrl + row.id, {}, response => {
               let data = response.data;
               if (data) {
                 if (data.flag) {
@@ -887,7 +881,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post(kubenchStatusValidateUrl + row.id, {}, response => {
+            this.k8sResult = this.$post(kubenchStatusValidateUrl + row.id, {}, response => {
               let data = response.data;
               if (data) {
                 if (data.flag) {
@@ -978,7 +972,7 @@ export default {
     },
     //新增云原生账号信息/选择插件查询云原生账号信息
     async changePluginForAdd (form){
-      this.result = await this.$get(pluginByIdUrl + form.pluginId, response => {
+      this.k8sResult = await this.$get(pluginByIdUrl + form.pluginId, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         form.tmpList = fromJson.data;
         for (let tmp of form.tmpList) {
@@ -990,7 +984,7 @@ export default {
     },
     //编辑云原生账号信息/选择插件查询云原生账号信息
     async changePlugin (pluginId, type){
-      this.result = await this.$get(pluginByIdUrl + pluginId, response => {
+      this.k8sResult = await this.$get(pluginByIdUrl + pluginId, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         this.tmpList = fromJson.data;
         if (type === 'edit') {
@@ -1103,7 +1097,7 @@ export default {
     },
     searchLogData(item) {
       let url = k8sInstallLogUrl + this.logPage + '/' + this.logSize;
-      this.result = this.$post(url, {id : item.id}, response => {
+      this.k8sResult = this.$post(url, {id : item.id}, response => {
         let data = response.data;
         this.logData = data.listObject;
         this.logTotal = data.itemCount;
@@ -1111,7 +1105,7 @@ export default {
     },
     showLog(item){
       let url = k8sInstallLogUrl + this.logPage + '/' + this.logSize;
-      this.result = this.$post(url, {id : item.id}, response => {
+      this.k8sResult = this.$post(url, {id : item.id}, response => {
         let data = response.data;
         this.logData = data.listObject;
         this.logTotal = data.itemCount;
@@ -1126,7 +1120,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post(reinstallOperatorUrl + item.id, {}, response => {
+            this.k8sResult = this.$post(reinstallOperatorUrl + item.id, {}, response => {
               this.$success(this.$t('commons.success'));
               this.showLog(item);
             });
@@ -1150,7 +1144,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$post(reinstallKubenchUrl + item.id, {}, response => {
+            this.k8sResult = this.$post(reinstallKubenchUrl + item.id, {}, response => {
               this.$success(this.$t('commons.success'));
               this.showLog(item);
             });
@@ -1215,10 +1209,10 @@ export default {
         this.$warning(this.$t('resource.i18n_no_warn'));
         return;
       }
-      this.result = this.$get(logK8sUrl + result.resultId, response => {
+      this.k8sResult = this.$get(logK8sUrl + result.resultId, response => {
         this.logResultData = response.data;
       });
-      await this.$get(getCloudNativeResultWithBLOBsUrl + result.resultId, response => {
+      this.k8sResult = await this.$get(getCloudNativeResultWithBLOBsUrl + result.resultId, response => {
         this.logResultForm = response.data;
         this.logResultForm.vulnerabilityReport = JSON.parse(this.logResultForm.vulnerabilityReport);
         this.logResultForm.configAuditReport = JSON.parse(this.logResultForm.configAuditReport);
@@ -1266,7 +1260,7 @@ export default {
       return sum == 0;
     },
     handleDownload(item) {
-      this.$post(k8sDownloadUrl, {
+      this.result = this.$post(k8sDownloadUrl, {
         id: item.id
       }, response => {
         if (response.success) {
@@ -1303,7 +1297,7 @@ export default {
                   accountId: this.accountWithGroup.id,
                   groups: this.checkedGroups
                 }
-                this.$post(ruleScanUrl, params, () => {
+                this.groupResult = this.$post(ruleScanUrl, params, () => {
                   this.$success(this.$t('account.i18n_hr_create_success'));
                   this.search();
                 });

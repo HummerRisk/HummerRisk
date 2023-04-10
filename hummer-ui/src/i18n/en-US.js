@@ -767,6 +767,7 @@ export default {
     search_by_report_name:'Search by name of the required terms',
     search_by_hummerid:'Search based on resource identification',
     the_cloud_platform:'The cloud platform',
+    the_k8s_platform: 'The cloud native platform',
     not_currently:'Scanning of this type of resource is temporarily not supported: 0/0',
     status_on_off:'Is it compliant',
     download_report:'Download report',
@@ -1437,9 +1438,6 @@ export default {
     config_chart: 'Deployment detection statistics',
     config_chart_vuln: 'Deployment configuration detection statistics',
     all_label: 'All deployment configurations',
-    install_log: 'Installation log',
-    reinstall_operator: 'Reinstall Operator',
-    reinstall_kubench: 'Reinstall CIS Benchmark',
   },
   code: {
     code_scan: 'Source code detection',

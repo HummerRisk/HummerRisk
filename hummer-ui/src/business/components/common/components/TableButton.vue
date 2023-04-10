@@ -1,6 +1,6 @@
 <template>
   <el-button :disabled="disabled" @click="exec()" plain :type="type" :icon="icon" :size="size">
-    {{ content }}
+    <spcan v-if="showName">{{ content }}</spcan>
   </el-button>
 </template>
 
@@ -30,6 +30,10 @@
         size: {
           type: String,
           default: 'mini'
+        },
+        showName: {
+          type: Boolean,
+          default: true
         },
       },
       mounted() {

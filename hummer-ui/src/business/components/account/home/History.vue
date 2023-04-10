@@ -91,6 +91,6 @@ import MainContainer from "../.././common/components/MainContainer";
   }
   .header-menu >>> .main-container {
     padding: 0;
-    margin: 0 0 0 10px;
+    margin: 0 0 0 5px;
   }
 </style>

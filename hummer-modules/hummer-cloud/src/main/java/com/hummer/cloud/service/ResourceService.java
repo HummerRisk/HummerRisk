@@ -88,6 +88,10 @@ public class ResourceService {
         return extResourceMapper.source(accountId);
     }
 
+    public SourceDTO k8sSource (String accountId) {
+        return extResourceMapper.k8sSource(accountId);
+    }
+
     public List<ResourceDTO> search(ResourceRequest request) {
         List<ResourceDTO> resourceDTOListTmp ;
         try {
