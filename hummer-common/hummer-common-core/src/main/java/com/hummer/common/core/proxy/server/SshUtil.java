@@ -190,12 +190,16 @@ public class SshUtil {
 
             if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
                 // 密钥模式
-                // publicKey方式认证
-                session.addPublicKeyIdentity(getKeyPairFromString(server.getPublicKey()));
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
+                }
             } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
                 // 密钥模式
-                // publicKey方式认证
-                session.addPublicKeyIdentity(getKeyPairFromString(server.getPublicKey()));
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
+                }
             } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "no")) {
                 // 密码模式
                 // 给Session添加密码
