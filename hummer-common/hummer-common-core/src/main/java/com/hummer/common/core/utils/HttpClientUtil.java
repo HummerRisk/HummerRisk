@@ -277,8 +277,10 @@ public class HttpClientUtil {
         Request request = builder.url(url).method("GET", null).build();
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
-                response.body().string();
-                return true;
+                if (!response.body().string().contains("unable to retrieve container logs for docker")) {
+                    return true;
+                }
+                return false;
             } else {
                 return false;
             }

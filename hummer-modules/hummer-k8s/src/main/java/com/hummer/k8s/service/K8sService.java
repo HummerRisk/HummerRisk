@@ -217,10 +217,11 @@ public class K8sService {
             }
 
             if (url.endsWith("/")) {
-                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName();
+                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
             } else {
-                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName();
+                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
             }
+
             Map<String, String> param = new HashMap<>();
             param.put("Accept", CloudNativeConstants.Accept);
             param.put("Authorization", token);
@@ -781,27 +782,31 @@ public class K8sService {
                 createKubench(k8sRequest, example, cloudNative);
             }
 
-            CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
+            List<CloudNativeSource> cloudNativeSources = cloudNativeSourceMapper.selectByExample(example);
 
-            if (cloudNativeSource == null) {
+            if (cloudNativeSources.size() == 0) {
                 return "";
             }
 
-            if (url.endsWith("/")) {
-                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
-            } else {
-                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
+            for (CloudNativeSource cloudNativeSource : cloudNativeSources) {
+                if (url.endsWith("/")) {
+                    url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
+                } else {
+                    url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
+                }
+                Map<String, String> param = new HashMap<>();
+                param.put("Accept", CloudNativeConstants.Accept);
+                param.put("Authorization", token);
+                String reponse = HttpClientUtil.HttpGet(url, param);
+                if (!reponse.contains("unable to retrieve container logs for docker")) {
+                    saveKubenchResultItem(reponse, resultId);
+                    return reponse;
+                }
             }
-            Map<String, String> param = new HashMap<>();
-            param.put("Accept", CloudNativeConstants.Accept);
-            param.put("Authorization", token);
-            String reponse = HttpClientUtil.HttpGet(url, param);
-            saveKubenchResultItem(reponse, resultId);
-            return reponse;
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
-        return "";
+        return "Unable to retrieve container logs for docker, Kubebench job 对应的 SourceName 已经过期失效。";
     }
 
     void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws Exception {
