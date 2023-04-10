@@ -81,8 +81,14 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 1.  准备一台不小于 4 核 8 G 内存的 64 位 Linux 主机；
 2.  以 root 用户执行如下命令一键安装 HummerRisk。
 
+全球：
 ```sh
 curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quick_start.sh | sh
+```
+
+中国大陆：
+```sh
+curl -sSL https://download.hummerrisk.com/hummerrisk/hummerrisk/releases/download/latest/quick_start.sh | sh
 ```
 
 ## 帮助文档
