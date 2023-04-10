@@ -862,19 +862,10 @@ public class PlatformUtils {
                     }
                     break;
                 case k8s:
-                    K8sRequest k8sRequest = new K8sRequest();
-                    k8sRequest.setCredential(account.getCredential());
-                    ApiClient apiClient = k8sRequest.getK8sClient(proxy);
-                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
-                    String pretty = "true";
-                    V1NamespaceList v1NamespaceList = apiInstance.listNamespace(pretty, true, null,
-                            null, null, null, null, null, null, null);
-                    for (V1Namespace v1Namespace : v1NamespaceList.getItems()) {
-                        JSONObject k8sJsonObject = new JSONObject();
-                        k8sJsonObject.put("regionId", v1Namespace.getMetadata().getName());
-                        k8sJsonObject.put("regionName", v1Namespace.getMetadata().getName());
-                        if (!jsonArray.contains(k8sJsonObject)) jsonArray.add(k8sJsonObject);
-                    }
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("regionId","all-namespaces");
+                    jsonObject.put("regionName","all-namespaces");
+                    jsonArray.add(jsonObject);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected regions value{}: " + account.getPluginName());
