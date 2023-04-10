@@ -9,14 +9,14 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.ProxyService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "代理")
+@Tag(name = "代理")
 @RequestMapping("proxy")
 @RestController
 public class ProxyController {
@@ -27,34 +27,34 @@ public class ProxyController {
     private TokenService tokenService;
 
     @I18n
-    @ApiOperation(value = "添加代理")
+    @Operation(summary = "添加代理")
     @PostMapping("/add")
     public Proxy insertProxy(@RequestBody Proxy Proxy) throws Exception {
         return proxyService.insert(Proxy, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation(value = "代理列表")
+    @Operation(summary = "代理列表")
     @PostMapping("/list/{goPage}/{pageSize}")
     public Pager<List<Proxy>> getProxyList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ProxyRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, proxyService.getProxyListWithRequest(request));
     }
 
-    @ApiOperation(value = "删除代理")
+    @Operation(summary = "删除代理")
     @GetMapping("/delete/{proxyId}")
     public void deleteProxy(@PathVariable(value = "proxyId") int proxyId) {
         proxyService.deleteProxy(proxyId, tokenService.getLoginUser());
     }
 
-    @ApiOperation(value = "更新代理")
+    @Operation(summary = "更新代理")
     @PostMapping("/update")
     public void updateProxy(@RequestBody Proxy proxy) {
         proxyService.updateProxy(proxy, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiOperation(value = "所有代理")
+    @Operation(summary = "所有代理")
     @GetMapping("/list/all")
     public List<Proxy> getProxyList() {
         return proxyService.getProxyList();
