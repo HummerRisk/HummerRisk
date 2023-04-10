@@ -10,8 +10,8 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.ApiKeyHandler;
 import com.hummer.system.service.UserKeyService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.List;
 import java.util.Objects;
 
-@Api(tags = "API Keys")
+@Tag(name = "API Keys")
 @RestController
 @RequestMapping("user/key")
 public class UserKeysController {
@@ -32,7 +32,7 @@ public class UserKeysController {
     private TokenService tokenService;
 
     @I18n
-    @ApiOperation(value = "API Keys信息")
+    @Operation(summary = "API Keys信息")
     @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<UserKey>> getUserKeysInfo(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody UserKeyRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -40,20 +40,20 @@ public class UserKeysController {
     }
 
     @I18n
-    @ApiOperation(value = "校验API Keys")
+    @Operation(summary = "校验API Keys")
     @GetMapping("validate")
     public String validate(ServletRequest request) throws Exception {
         return ApiKeyHandler.getUser((HttpServletRequest)request);
     }
 
-    @ApiOperation(value = "生成API Keys")
+    @Operation(summary = "生成API Keys")
     @GetMapping("generate")
     public void generateUserKey() throws Exception {
         String userId = Objects.requireNonNull(tokenService.getLoginUser().getUser()).getId();
         userKeyService.generateUserKey(userId, tokenService.getLoginUser());
     }
 
-    @ApiOperation(value = "删除API Keys")
+    @Operation(summary = "删除API Keys")
     @GetMapping("delete/{id}")
     public void deleteUserKey(@PathVariable String id) {
         userKeyService.deleteUserKey(id);
