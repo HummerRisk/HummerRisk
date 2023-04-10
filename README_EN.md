@@ -124,14 +124,14 @@ If you find any security problems during use, please contact us directly through
 
 ## Technology Stack
 
-- [Vue](https://vuejs.org/)：Use Vue.js as hummer-ui
-- [Spring Boot](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm) Spring Boot as backend
+- [Vue](https://vuejs.org/)：Use vue.js as Hummer-ui
+- [Spring Cloud](https://spring.io/projects/spring-cloud) Spring Cloud
 - [MySQL](https://www.mysql.com/)：Database
 - [Cloud Custodian](https://cloudcustodian.io/)：Cloud platform detection engine
 - [Prowler](https://prowler.pro/)： AWS detection engine
 - [Trivy](https://github.com/aquasecurity/trivy): k8s detection engine
 - [Kube-Bench](https://github.com/aquasecurity/kube-bench): CIS Kubernetes Benchmark detection tool
-- [Element](https://element.eleme.cn/#/)：UI
+- [Element](https://element.eleme.cn/#/)：Element UI
 
 ## License & Copyright
 

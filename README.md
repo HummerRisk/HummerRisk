@@ -122,13 +122,13 @@ curl -sSL https://download.hummerrisk.com/hummerrisk/hummerrisk/releases/downloa
 ## 技术栈
 
 - [Vue](https://vuejs.org/)：使用了 Vue.js 作为前端技术栈
-- [Spring Boot](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)：使用了 Spring Boot 作为后端技术栈
+- [Spring Cloud](https://spring.io/projects/spring-cloud)：使用了 Spring Cloud 作为微服务框架
 - [MySQL](https://www.mysql.com/)：使用了 MySQL 作为数据库引擎
 - [Cloud Custodian](https://cloudcustodian.io/)：使用了 Cloud Custodian 作为云平台检测引擎
 - [Prowler](https://prowler.pro/)：使用了 Prowler 作为 AWS 检测引擎
 - [Trivy](https://github.com/aquasecurity/trivy)：使用了 Trivy 作为云原生检测引擎
 - [Kube-Bench](https://github.com/aquasecurity/kube-bench)：使用了 Kube-Bench 作为 CIS Kubernetes Benchmark 检测工具
-- [Element](https://element.eleme.cn/#/)：使用了 Element 提供的优秀组件库
+- [Element](https://element.eleme.cn/#/)：使用了 Element 作为桌面端组件库
 
 ## License & Copyright
 
