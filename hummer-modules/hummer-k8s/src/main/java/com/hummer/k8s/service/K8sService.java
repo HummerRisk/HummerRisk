@@ -297,6 +297,7 @@ public class K8sService {
                     account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
+                    reinstallOperator(account.getId(), loginUser);
                 }
                 //检验kube-bench
                 ValidateDTO kubenchStatusValidate = validateKubenchStatus(account);
@@ -304,6 +305,7 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
+                    reinstallKubench(account.getId(), loginUser);
                 }
                 cloudNativeMapper.insertSelective(account);
 
@@ -311,8 +313,6 @@ public class K8sService {
                 BeanUtils.copyBean(accountWithBLOBs, account);
                 cloudProviderService.insertCloudAccount(accountWithBLOBs);
 
-                reinstallOperator(account.getId(), loginUser);
-                reinstallKubench(account.getId(), loginUser);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return valid;
             }
@@ -736,12 +736,12 @@ public class K8sService {
 
             if (ruleGroups.size() > 0) {
                 //如果K8s规则检测没完成，先不其他检测
-                long num = cloudProviderService.handleK8sTask(result.getId());
+                long num = cloudProviderService.handleK8sTask(result.getCloudNativeId());
                 if (num > 0) {
                     return;
                 } else {
-                    result.setCloudReturnSum(cloudProviderService.getReturnSum(result.getId()));
-                    result.setCloudResourcesSum(cloudProviderService.getResourceSum(result.getId()));
+                    result.setCloudReturnSum(cloudProviderService.getReturnSum(result.getCloudNativeId()));
+                    result.setCloudResourcesSum(cloudProviderService.getResourceSum(result.getCloudNativeId()));
                 }
             }
 

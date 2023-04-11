@@ -15,11 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.Map;
 
-@Hidden
 @RestController
 @RequestMapping
 public class LoginController {

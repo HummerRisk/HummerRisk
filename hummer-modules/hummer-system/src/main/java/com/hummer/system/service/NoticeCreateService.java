@@ -152,7 +152,7 @@ public class NoticeCreateService {
             MessageOrder messageOrder = messageOrderMapper.selectByPrimaryKey(item.getMessageOrderId());
             String scanType = messageOrder.getScanType();
 
-            if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.VULN.name(), scanType)) {
+            if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), scanType)) {
                 CloudTask cloudTask = cloudProviderService.selectCloudTask(item.getTaskId());
                 if (cloudTask == null) {
                     item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);

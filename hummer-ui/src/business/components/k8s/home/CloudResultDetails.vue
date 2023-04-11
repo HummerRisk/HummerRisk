@@ -370,18 +370,10 @@
             <!-- 展开 end -->
             <el-table-column type="index" min-width="40"/>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="150">
-              {{ scope.row.hummerId }}
+              <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/> {{ scope.row.hummerId }}
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
               {{ scope.row.resourceType }}
-            </el-table-column>
-            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('k8s.namespace')" min-width="130">
-              <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ scope.row.regionName }}
-              </span>
-              </template>
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
                              :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
@@ -756,6 +748,8 @@ export default {
       resourcePage: 1,
       resourceSize: 10,
       resourceTotal: 0,
+      regulationData: [],
+      regulationVisible: false,
       string2Key: "",
       string2PrettyFormat: "",
       visible: false,
@@ -1173,6 +1167,14 @@ export default {
         this.resourceCondition.taskId = row.id;
       }
       this.resourceSearch();
+    },
+    showSeverityDetail(item) {
+      this.$get(resourceRegulationUrl + item.ruleId, response => {
+        if (response.success) {
+          this.regulationData = response.data;
+          this.regulationVisible = true;
+        }
+      });
     },
     back () {
       this.$router.push({

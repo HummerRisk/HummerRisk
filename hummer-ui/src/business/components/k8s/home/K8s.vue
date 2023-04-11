@@ -1222,6 +1222,7 @@ export default {
       this.$warning(item.name + this.$t('resource.i18n_no_warn'));
     },
     getStatus () {
+      console.log(11111)
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
@@ -1252,10 +1253,12 @@ export default {
     checkStatus (tableData) {
       let sum = 0;
       for (let row of tableData) {
+        console.log(row.resultStatus)
         if (row.resultStatus && row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
           sum++;
         }
       }
+      console.log(3343, sum)
       return sum == 0;
     },
     handleDownload(item) {

@@ -165,6 +165,7 @@ public class ResourceService {
 
         return resourceWithBLOBs;
     }
+
     private void insertTaskItemResource(CloudTaskItemResourceWithBLOBs taskItemResource) throws Exception {
         if (taskItemResource.getId() != null) {
             cloudTaskItemResourceMapper.updateByPrimaryKeySelective(taskItemResource);
@@ -176,6 +177,7 @@ public class ResourceService {
             systemProviderService.insertHistoryCloudTaskResource(BeanUtils.copyBean(new HistoryCloudTaskResourceWithBLOBs(), taskItemResource));
         }
     }
+
     private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, JSONObject jsonObject) throws Exception {
         ResourceItem resourceItem = new ResourceItem();
         try{

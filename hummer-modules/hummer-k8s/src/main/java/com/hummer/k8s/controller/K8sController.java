@@ -36,11 +36,6 @@ public class K8sController {
     @Autowired
     private ResourceCreateService resourceCreateService;
 
-    @GetMapping("runtask")
-    public String runtask() throws Exception {
-        resourceCreateService.k8sTasksJobHandler();
-        return "success";
-    }
     @I18n
     @Operation(summary = "云原生账号列表")
     @PostMapping("list/{goPage}/{pageSize}")
