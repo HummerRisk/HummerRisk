@@ -1,6 +1,6 @@
 <template>
   <el-button :disabled="disabled" @click="exec()" plain :type="type" :icon="icon" :size="size">
-    <spcan v-if="showName">{{ content }}</spcan>
+    <span v-if="showName">{{ content }}</span>
   </el-button>
 </template>
 

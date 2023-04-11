@@ -11,77 +11,94 @@ import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.proxy.Request;
 
 public class AWSRequest extends Request {
-	private AWSCredential awsCredential;
+    private AWSCredential awsCredential;
 
-	public AWSRequest() {
-		super("", "");
-	}
+    public AWSRequest() {
+        super("", "");
+    }
 
-	public AWSRequest(Request req) {
-		super(req.getCredential(), req.getRegionId());
-		setCredential(req.getCredential());
-		setRegionId(req.getRegionId());
-	}
+    public AWSRequest(Request req) {
+        super(req.getCredential(), req.getRegionId());
+        setCredential(req.getCredential());
+        setRegionId(req.getRegionId());
+    }
 
-	public String getSecretKey() {
-		awsCredential = getAwsCredential();
-		if(awsCredential != null) {
-			return awsCredential.getSecretKey();
-		}
-		return null;
-	}
+    public String getSecretKey() {
+        awsCredential = getAwsCredential();
+        if (awsCredential != null) {
+            return awsCredential.getSecretKey();
+        }
+        return null;
+    }
 
-	public String getAccessKey() {
-		awsCredential = getAwsCredential();
-		if(awsCredential != null) {
-			return awsCredential.getAccessKey();
-		}
-		return null;
-	}
+    public String getAccessKey() {
+        awsCredential = getAwsCredential();
+        if (awsCredential != null) {
+            return awsCredential.getAccessKey();
+        }
+        return null;
+    }
 
-	public AWSCredential getAwsCredential() {
-		if(awsCredential == null) {
-			awsCredential = new Gson().fromJson(getCredential(), AWSCredential.class);
-		}
-		return awsCredential;
-	}
+    public String getAwsSessionToken() {
+        awsCredential = getAwsCredential();
+        if (awsCredential != null) {
+            return awsCredential.getAwsSessionToken();
+        }
+        return null;
+    }
 
-	public AmazonEC2Client getAmazonEC2Client(Proxy proxy) {
-		if(getAccessKey() != null && getAccessKey().trim().length() > 0 && getSecretKey() != null && getSecretKey().trim().length() > 0) {
-			AmazonEC2Client client;
-			ClientConfiguration clientConfiguration = getClientConfiguration(proxy);
-			if(clientConfiguration != null) {
-				client = new AmazonEC2Client(new BasicAWSCredentials(getAccessKey(), getSecretKey()), clientConfiguration);
-			}else {
-				if(awsCredential.checkIsSessionCredential()){
-					client = new AmazonEC2Client(new BasicSessionCredentials(getAccessKey(), getSecretKey(), awsCredential.getAwsSessionToken()));
-				}else{
-					client = new AmazonEC2Client(new BasicAWSCredentials(getAccessKey(), getSecretKey()));
-				}
+    public Boolean getIsSessionCredential() {
+        awsCredential = getAwsCredential();
+        if (awsCredential != null) {
+            return awsCredential.getSessionCredential();
+        }
+        return null;
+    }
 
-			}
-			if(getRegionId() != null && getRegionId().trim().length() > 0) {
-				Region r = RegionUtils.getRegion(getRegionId());
-				if(r != null) {
-					client.setRegion(r);
-				}
-			}
-			return client;
-		}
-		return null;
-	}
+    public AWSCredential getAwsCredential() {
+        if (awsCredential == null) {
+            awsCredential = new Gson().fromJson(getCredential(), AWSCredential.class);
+        }
+        return awsCredential;
+    }
 
-	private ClientConfiguration getClientConfiguration(Proxy proxy) {
-		ClientConfiguration clientConfiguration = null;
-		AWSProxySetting proxySetting = ProxyUtils.getProxySetting(proxy);
-		if(proxySetting != null) {
-			clientConfiguration = new ClientConfiguration();
-			clientConfiguration.setProxyHost(proxySetting.getHost());
-			clientConfiguration.setProxyPort(proxySetting.getPort());
-			clientConfiguration.setProxyUsername(proxySetting.getUserName());
-			clientConfiguration.setProxyPassword(proxySetting.getPassword());
-		}
-		return clientConfiguration;
-	}
+    public AmazonEC2Client getAmazonEC2Client(Proxy proxy) {
+        if (getAccessKey() != null && getAccessKey().trim().length() > 0 && getSecretKey() != null && getSecretKey().trim().length() > 0) {
+            AmazonEC2Client client;
+            ClientConfiguration clientConfiguration = getClientConfiguration(proxy);
+            if (getIsSessionCredential()) {
+                client = new AmazonEC2Client(new BasicSessionCredentials(getAccessKey(), getSecretKey(), getAwsSessionToken()));
+            } else {
+                if (clientConfiguration != null) {
+                    client = new AmazonEC2Client(new BasicAWSCredentials(getAccessKey(), getSecretKey()), clientConfiguration);
+                } else {
+                    client = new AmazonEC2Client(new BasicAWSCredentials(getAccessKey(), getSecretKey()));
+
+                }
+            }
+
+            if (getRegionId() != null && getRegionId().trim().length() > 0) {
+                Region r = RegionUtils.getRegion(getRegionId());
+                if (r != null) {
+                    client.setRegion(r);
+                }
+            }
+            return client;
+        }
+        return null;
+    }
+
+    private ClientConfiguration getClientConfiguration(Proxy proxy) {
+        ClientConfiguration clientConfiguration = null;
+        AWSProxySetting proxySetting = ProxyUtils.getProxySetting(proxy);
+        if (proxySetting != null) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(proxySetting.getHost());
+            clientConfiguration.setProxyPort(proxySetting.getPort());
+            clientConfiguration.setProxyUsername(proxySetting.getUserName());
+            clientConfiguration.setProxyPassword(proxySetting.getPassword());
+        }
+        return clientConfiguration;
+    }
 
 }

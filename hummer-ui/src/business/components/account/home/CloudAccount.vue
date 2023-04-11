@@ -66,7 +66,7 @@
       </el-card>
 
       <!--Create account-->
-      <el-drawer class="rtl" :title="$t('account.create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('account.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div v-loading="cloudResult.loading">
           <div v-for="(form, index) in addAccountForm" :key="index">
@@ -90,8 +90,14 @@
                 <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
                   <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
                 </el-form-item>
-                <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
+                <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean' && tmp.inputType !== 'token'" :label="tmp.label">
                   <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+                </el-form-item>
+                <el-form-item v-if="tmp.inputType == 'boolean'" :label="tmp.label">
+                  <el-switch v-model="tmp.input" @change="switchSessionToken(tmp.input)"></el-switch>
+                </el-form-item>
+                <el-form-item v-if="tmp.inputType === 'token' && tokenSwitch" :label="tmp.label" style="margin-bottom: 29px">
+                  <el-input type="textarea" @input="change($event)" :rows="10" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
                 </el-form-item>
               </div>
               <el-form-item v-if="form.isProxy && form.pluginId && iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -177,7 +183,7 @@
       <!--Create account-->
 
       <!--Update account-->
-      <el-drawer class="rtl" :title="$t('account.update')" :visible.sync="updateVisible" size="50%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('account.update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <div v-loading="cloudResult.loading">
           <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
@@ -200,8 +206,14 @@
               <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
                 <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
               </el-form-item>
-              <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
+              <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean' && tmp.inputType !== 'token'" :label="tmp.label">
                 <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
+              </el-form-item>
+              <el-form-item v-if="tmp.inputType == 'boolean'" :label="tmp.label">
+                <el-switch v-model="tmp.input" @change="switchSessionToken(tmp.input)"></el-switch>
+              </el-form-item>
+              <el-form-item v-if="tmp.inputType === 'token' && tokenSwitch" :label="tmp.label" style="margin-bottom: 29px">
+                <el-input type="textarea" @input="change($event)" :rows="10" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
               </el-form-item>
             </div>
             <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -508,6 +520,7 @@ const columnOptions = [
         ],
         checkAll: true,
         isIndeterminate: false,
+        tokenSwitch: false,
       }
     },
     watch: {
@@ -717,7 +730,7 @@ const columnOptions = [
           }
           let data = {}, key = {};
           for (let tmp of item.tmpList) {
-            key[tmp.name] = tmp.input.trim();
+            key[tmp.name] = tmp.input;
           }
           data["credential"] = JSON.stringify(key);
           data["name"] = item.name;
@@ -876,6 +889,9 @@ const columnOptions = [
           let concatArr = this.checkedGroups.concat(arr);
           this.checkedGroups = Array.from(concatArr);
         }
+      },
+      switchSessionToken(tokenSwitch) {
+        this.tokenSwitch = tokenSwitch;
       },
     },
     computed: {

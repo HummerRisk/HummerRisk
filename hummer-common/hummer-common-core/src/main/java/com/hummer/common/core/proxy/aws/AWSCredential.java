@@ -3,7 +3,7 @@ package com.hummer.common.core.proxy.aws;
 public class AWSCredential {
 	private String accessKey;
 	private String secretKey;
-	private String isSessionCredential;
+	private Boolean isSessionCredential;
 	private String awsSessionToken;
 
 	public String getAwsSessionToken() {
@@ -14,12 +14,12 @@ public class AWSCredential {
 		this.awsSessionToken = awsSessionToken;
 	}
 
-	public String getIsSessionCredential() {
+	public Boolean getSessionCredential() {
 		return isSessionCredential;
 	}
 
-	public void setIsSessionCredential(String isSessionCredential) {
-		this.isSessionCredential = isSessionCredential;
+	public void setSessionCredential(Boolean sessionCredential) {
+		isSessionCredential = sessionCredential;
 	}
 
 	public String getAccessKey() {
@@ -36,7 +36,7 @@ public class AWSCredential {
 	}
 
 	public Boolean checkIsSessionCredential(){
-		if(this.isSessionCredential.equals("True")){
+		if(this.isSessionCredential){
 			return true;
 		}else {
 			return false;
