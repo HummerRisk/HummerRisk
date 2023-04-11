@@ -134,9 +134,7 @@
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'fail') as `fail`,
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'warn') as `warn`,
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'info') as `info`,
-        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'pass') as `pass`,
-        (select IFNULL(sum(tj.return_sum), 0) from cloud_task tj where tj.account_id = t.cloud_native_id) as `cloud_return_sum`,
-        (select IFNULL(sum(tj.resources_sum), 0) from cloud_task tj where tj.account_id = t.cloud_native_id) as `cloud_resources_sum`
+        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'pass') as `pass`
         FROM cloud_native_result t
         left join user u on t.apply_user = u.id
         left join cloud_native t1 on t1.id = t.cloud_native_id
@@ -336,9 +334,7 @@
         (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'fail') as `fail`,
         (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'warn') as `warn`,
         (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'info') as `info`,
-        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'pass') as `pass`,
-        (select IFNULL(sum(tj.return_sum), 0) from cloud_task tj where tj.account_id = t.cloud_native_id) as `cloud_return_sum`,
-        (select IFNULL(sum(tj.resources_sum), 0) from cloud_task tj where tj.account_id = t.cloud_native_id) as `cloud_resources_sum`
+        (select count(*) from cloud_native_result_kubench tj where tj.result_id = t.id and LOWER(tj.severity) = 'pass') as `pass`
         FROM cloud_native_result t
         <where>
             <if test="resultId != null">

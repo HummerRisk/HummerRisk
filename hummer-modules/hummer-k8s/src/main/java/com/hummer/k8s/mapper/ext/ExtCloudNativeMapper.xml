@@ -156,6 +156,8 @@
         t1.update_time as scan_time,
         t1.return_sum,
         t1.return_config_sum,
+        t1.cloud_return_sum,
+        t1.cloud_resources_sum,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'critical') as `critical`,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'high') as `high`,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'medium') as `medium`,
@@ -169,9 +171,7 @@
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'fail') as `fail`,
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'warn') as `warn`,
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'info') as `info`,
-        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'pass') as `pass`,
-        (select IFNULL(sum(tj.return_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_return_sum`,
-        (select IFNULL(sum(tj.resources_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_resources_sum`
+        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'pass') as `pass`
         from cloud_native as t
         left join user on t.creator = user.id
         left join proxy p on t.proxy_id = p.id

@@ -606,13 +606,6 @@ public class K8sService {
 
             if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
 
-                if (ruleGroups.size() > 0) {
-                    ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
-                    scanGroupRequest.setAccountId(request.getId());
-                    scanGroupRequest.setGroups(ruleGroups);
-                    cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
-                }
-
                 Integer scanId = systemProviderService.insertScanHistory(cloudNative);
                 List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
                 CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
@@ -636,7 +629,12 @@ public class K8sService {
                     result.setRuleGroups(JSON.toJSONString(ruleGroups));
                     cloudNativeResultMapper.insertSelective(result);
 
-
+                    if (ruleGroups.size() > 0) {
+                        ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
+                        scanGroupRequest.setAccountId(request.getId());
+                        scanGroupRequest.setGroups(ruleGroups);
+                        cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
+                    }
 
                     saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
                     operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
@@ -650,17 +648,19 @@ public class K8sService {
             if (ruleGroups.size() > 0) {
                 if (StringUtils.isNotBlank(request.getResultId())) {
 
-                    ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
-                    scanGroupRequest.setAccountId(request.getId());
-                    scanGroupRequest.setGroups(ruleGroups);
-                    cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
-
                     CloudNativeResultWithBLOBs result = cloudNativeResultMapper.selectByPrimaryKey(request.getResultId());
                     result.setUpdateTime(System.currentTimeMillis());
                     result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                     result.setRuleGroups(JSON.toJSONString(ruleGroups));
                     result.setScanGroups(JSON.toJSONString(scans));
+                    result.setCloudResourcesSum(0L);
+                    result.setCloudReturnSum(0L);
                     cloudNativeResultMapper.updateByPrimaryKeySelective(result);
+
+                    ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
+                    scanGroupRequest.setAccountId(request.getId());
+                    scanGroupRequest.setGroups(ruleGroups);
+                    cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
 
                     saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_rule_result", "", true, loginUser);
 
@@ -670,11 +670,6 @@ public class K8sService {
                 } else {
 
                     if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-
-                        ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
-                        scanGroupRequest.setAccountId(request.getId());
-                        scanGroupRequest.setGroups(ruleGroups);
-                        cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
 
                         Integer scanId = systemProviderService.insertScanHistory(cloudNative);
                         List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
@@ -698,6 +693,11 @@ public class K8sService {
                             result.setScanGroups(JSON.toJSONString(scans));
                             result.setRuleGroups(JSON.toJSONString(ruleGroups));
                             cloudNativeResultMapper.insertSelective(result);
+
+                            ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
+                            scanGroupRequest.setAccountId(request.getId());
+                            scanGroupRequest.setGroups(ruleGroups);
+                            cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
 
                             saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_rule_result", "", true, loginUser);
                             operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
