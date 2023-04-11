@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.io.IOException;
 import java.util.List;
@@ -160,7 +160,7 @@ public class K8sController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -200,7 +200,7 @@ public class K8sController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "getCloudNativeResult/{resultId}")
     public CloudNativeResultDTO getCloudNativeResult(@PathVariable String resultId) {
         return k8sService.getCloudNativeResult(resultId);
@@ -214,7 +214,7 @@ public class K8sController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "getCloudNativeResultWithBLOBs/topo/{accountId}")
     public CloudNativeResultWithBLOBs topoResult(@PathVariable String accountId) {
         return k8sService.topoResult(accountId);
@@ -236,7 +236,7 @@ public class K8sController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "log/topo/{accountId}")
     public List<CloudNativeResultLogWithBLOBs> topoLog(@PathVariable String accountId) {
         return k8sService.topoLog(accountId);

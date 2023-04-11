@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class AccountController {
         return accountService.getAccount(id);
     }
 
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "syncAll")
     public boolean syncAllCloudAccount() {
         try {
@@ -119,7 +119,7 @@ public class AccountController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("string2PrettyFormat")
     public String string2PrettyFormat(@RequestBody AccountWithBLOBs accountWithBLOBs) {
         return accountService.string2PrettyFormat(accountWithBLOBs.getRegions());

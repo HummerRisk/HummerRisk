@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
@@ -78,7 +78,7 @@ public class UserController {
         return userService.getUserList();
     }
 
-    @ApiIgnore
+    @Hidden
     @PostMapping("/update/current")
     public UserDTO updateCurrentUser(@RequestBody User user) throws Exception {
         userService.updateUser(user);
@@ -107,14 +107,14 @@ public class UserController {
     /**
      * 管理员修改用户密码
      */
-    @ApiIgnore
+    @Hidden
     @PostMapping("/special/password")
     public int updateUserPassword(@RequestBody EditPassWordRequest request) throws Exception {
         return userService.updateUserPassword(request, tokenService.getLoginUser());
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping("/search/{condition}")
     public List<User> searchUser(@PathVariable String condition) {
         return userService.searchUser(condition);

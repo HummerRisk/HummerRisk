@@ -12,11 +12,11 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
-@ApiIgnore
+@Hidden
 @RestController
 @RequestMapping(value = "cloudResource")
 public class CloudResourceController {

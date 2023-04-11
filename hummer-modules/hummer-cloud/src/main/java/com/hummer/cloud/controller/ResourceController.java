@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -76,7 +76,7 @@ public class ResourceController {
         return resourceService.getResource(id);
     }
 
-    @ApiIgnore
+    @Hidden
     @PostMapping("getElement")
     public String getElement(@RequestBody String element) {
         String result;
@@ -89,7 +89,7 @@ public class ResourceController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping("fix/{id}")
     public ResourceWithBLOBs fixResource(@PathVariable String id) throws Exception {
         return resourceService.operatingResource(id, "fix", tokenService.getLoginUser());
@@ -135,7 +135,7 @@ public class ResourceController {
                 .body(bytes);
     }
 
-    @ApiIgnore
+    @Hidden
     @PostMapping("string2PrettyFormat")
     public String string2PrettyFormat(@RequestBody JsonRequest jsonRequest) {
         try {

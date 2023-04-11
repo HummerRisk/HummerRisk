@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -178,7 +178,7 @@ public class ImageController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<ImageResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -187,14 +187,14 @@ public class ImageController {
 
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "getImageResultDto/{resultId}")
     public HistoryImageReportDTO getImageResultDto(@PathVariable String resultId) {
         return imageService.getImageResultDto(resultId);
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "getImageResult/{resultId}")
     public ImageResultDTO getImageResult(@PathVariable String resultId) {
         return imageService.getImageResult(resultId);
@@ -221,7 +221,7 @@ public class ImageController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<ImageResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
