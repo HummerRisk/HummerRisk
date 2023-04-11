@@ -57,17 +57,11 @@
           </el-tooltip>
         </el-table-column>
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('commons.compliance_scan_statistics')" prop="returnSum" sortable show-overflow-tooltip min-width="150">
-          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+          <el-tooltip class="item txt-click" effect="dark" :content="$t('history.resource_result')" placement="top">
             <span v-if="scope.row.cloudReturnSum == null && scope.row.cloudResourcesSum == null"> N/A</span>
-            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum == 0)">
+            <span>
               <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
               <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
-            </span>
-            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum > 0)">
-              <el-link type="primary" class="text-click">
-                <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
-                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
-              </el-link>
             </span>
           </el-tooltip>
         </el-table-column>
