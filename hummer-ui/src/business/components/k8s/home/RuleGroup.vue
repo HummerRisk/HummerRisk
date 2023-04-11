@@ -62,13 +62,11 @@
                       <i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
                     </el-dropdown-menu>
                     <el-dropdown-menu slot="dropdown" v-if="!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>

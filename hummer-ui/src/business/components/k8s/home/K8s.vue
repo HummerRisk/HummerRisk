@@ -1166,7 +1166,7 @@ export default {
       }).catch(error => error);
     },
     goCloudResource (params) {
-      if (params.cloudReturnSum == 0) {
+      if (params.cloudResourcesSum == 0) {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
@@ -1192,10 +1192,6 @@ export default {
     goKubenchResource (params) {
       if (!params.resultId) {
         this.$warning(this.$t('resource.i18n_no_warn'));
-        return;
-      }
-      if (params.returnConfigSum == 0) {
-        this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
       let p = '/k8s/resultkubenchdetails/' + params.resultId;

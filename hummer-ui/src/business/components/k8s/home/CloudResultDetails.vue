@@ -565,7 +565,7 @@ import {
   cloudTaskLogByIdUrl,
   cloudTaskManualListUrl
 } from "@/api/cloud/account/account";
-import {resourceTypesUrl, ruleReScansUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
+import {resourceTypesUrl, ruleReScansK8sUrl, ruleReScanK8sUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
 
 //列表展示与隐藏
@@ -1033,7 +1033,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(ruleReScansUrl + item.id, response => {
+            this.$get(ruleReScansK8sUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -1047,7 +1047,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
+            this.$get(ruleReScanK8sUrl + item.id + "/" + item.accountId, response => {
               if (response.success) {
                 this.search();
               }

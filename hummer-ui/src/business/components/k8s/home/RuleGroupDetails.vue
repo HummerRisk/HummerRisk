@@ -397,7 +397,6 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
   cloudResourceListUrl,
-  resourceAccountDeleteUrl,
   resourceK8sSourceUrl,
   resourceRegionDataUrl,
   resourceRuleDataUrl,
@@ -411,7 +410,7 @@ import {
   cloudTaskLogByIdUrl,
   cloudTaskManualListUrl
 } from "@/api/cloud/account/account";
-import {resourceTypesUrl, ruleReScansUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
+import {resourceTypesUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
 
 //列表展示与隐藏

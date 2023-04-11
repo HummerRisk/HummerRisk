@@ -206,10 +206,22 @@ public class RuleController {
         ruleService.reScans(accountId);
     }
 
+    @Operation(summary = "批量重新检测")
+    @GetMapping("reScansK8s/{accountId}")
+    public void reScansK8s(@PathVariable String accountId) throws Exception {
+        ruleService.reScansK8s(accountId);
+    }
+
     @Hidden
     @GetMapping("reScan/{taskId}/{accountId}")
     public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
         ruleService.reScan(taskId, accountId, tokenService.getLoginUser());
+    }
+
+    @Hidden
+    @GetMapping("reScanK8s/{taskId}/{accountId}")
+    public void reScanK8s(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
+        ruleService.reScanK8s(taskId, accountId, tokenService.getLoginUser());
     }
 
     @Operation(summary = "执行检测")

@@ -29,6 +29,10 @@ export const ruleReScanUrl = "/cloud/rule/reScan/";
 
 export const ruleReScansUrl = "/cloud/rule/reScans/";
 
+export const ruleReScanK8sUrl = "/cloud/rule/reScanK8s/";
+
+export const ruleReScansK8sUrl = "/cloud/rule/reScansK8s/";
+
 export const ruleGroupDeleteUrl = "/cloud/rule/group/delete/";
 
 export const ruleInspectionReportsUrl = "/cloud/rule/ruleInspectionReports/";

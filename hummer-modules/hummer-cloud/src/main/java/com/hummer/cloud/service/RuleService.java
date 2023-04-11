@@ -560,6 +560,18 @@ public class RuleService {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
+    public void reScansK8s(String accountId) throws Exception {
+        List<String> status = Arrays.stream(new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()}).collect(Collectors.toList());
+        CloudTaskExample example = new CloudTaskExample();
+        example.createCriteria().andAccountIdEqualTo(accountId).andStatusNotIn(status);
+        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(example);
+        for (CloudTask cloudTask : cloudTaskList) {
+            cloudTask.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public String reScan(String taskId, String accountId, LoginUser loginUser) throws Exception {
         CloudTaskItemExample example = new CloudTaskItemExample();
         example.createCriteria().andTaskIdEqualTo(taskId);
@@ -569,6 +581,18 @@ public class RuleService {
         if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
         Integer scanId = systemProviderService.insertScanHistory(account);
         return this.dealTask(rule, account, scanId, null, loginUser);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
+    public String reScanK8s(String taskId, String accountId, LoginUser loginUser) throws Exception {
+        CloudTaskItemExample example = new CloudTaskItemExample();
+        example.createCriteria().andTaskIdEqualTo(taskId);
+        List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(example);
+        CloudNative cloudNative = k8sProviderService.cloudNative(accountId);
+        RuleDTO rule = getRuleDtoById(cloudTaskItems.get(0).getRuleId(), accountId);
+        if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
+        Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+        return this.dealK8sTask(rule, cloudNative, scanId, null, loginUser);
     }
 
     private void scanGroups(String accountId, Integer scanId, String groupId, LoginUser loginUser) {
