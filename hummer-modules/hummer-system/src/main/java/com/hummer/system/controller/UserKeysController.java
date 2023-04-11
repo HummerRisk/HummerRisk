@@ -16,7 +16,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Objects;
@@ -59,13 +59,13 @@ public class UserKeysController {
         userKeyService.deleteUserKey(id);
     }
 
-    @ApiIgnore
+    @Hidden
     @GetMapping("active/{id}")
     public void activeUserKey(@PathVariable String id) {
         userKeyService.activeUserKey(id);
     }
 
-    @ApiIgnore
+    @Hidden
     @GetMapping("disable/{id}")
     public void disabledUserKey(@PathVariable String id) {
         userKeyService.disableUserKey(id);

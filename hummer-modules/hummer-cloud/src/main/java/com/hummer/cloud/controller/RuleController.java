@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class RuleController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "listByAccountId/{accountId}")
     public List<Rule> listByAccountId(@PathVariable String accountId) {
         return ruleService.getRulesByAccountId(accountId);
@@ -142,7 +142,7 @@ public class RuleController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "getRuleByTaskId/{taskId}")
     public RuleDTO getRuleByTaskId(@PathVariable String taskId) throws Exception {
         return ruleService.getRuleByTaskId(taskId);
@@ -182,13 +182,13 @@ public class RuleController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "all/ruleInspectionReport")
     public List<RuleInspectionReport> getRuleInspectionReport() {
         return ruleService.getRuleInspectionReportList(new RuleInspectionReportRequest());
     }
 
-    @ApiIgnore
+    @Hidden
     @GetMapping(value = "getResourceTypesById/{ruleId}")
     public String getResourceTypesById(@PathVariable String ruleId) {
         return ruleService.getResourceTypesById(ruleId);
@@ -206,7 +206,7 @@ public class RuleController {
         ruleService.reScans(accountId);
     }
 
-    @ApiIgnore
+    @Hidden
     @GetMapping("reScan/{taskId}/{accountId}")
     public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
         ruleService.reScan(taskId, accountId, tokenService.getLoginUser());
@@ -239,14 +239,14 @@ public class RuleController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("groups")
     public List<GroupDTO> groups(@RequestPart(value = "selectIds") List<String> ids) {
         return ruleService.groups(ids);
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping("groupsByAccountId/{pluginId}")
     public List<RuleGroup> groupsByAccountId(@PathVariable String pluginId) {
         return ruleService.groupsByAccountId(pluginId);
