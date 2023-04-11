@@ -30,6 +30,12 @@ spring:
       host: ${HMR_REDIS_HOST}
       port: ${HMR_REDIS_PORT}
       password: ${HMR_REDIS_PASSWORD}
+      # 连接超时时间（毫秒）
+      timeout: 10000
+      # 连接池中的最小空闲连接 默认 0, 修改为1
+      lettuce:
+        pool:
+          min-idle: 1
 
 #admin monitor
 management:
