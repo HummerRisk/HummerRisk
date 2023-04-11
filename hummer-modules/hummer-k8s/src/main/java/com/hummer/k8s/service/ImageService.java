@@ -184,7 +184,7 @@ public class ImageService {
                         }
                         imageRepoItem.setRepoId(imageRepo.getId());
 
-                        imageRepoItem.setPath("hub.docker.com" + "/" + namespace + "/" + repositoryName + ":" + tagStr);
+                        imageRepoItem.setPath("docker.io" + "/" + namespace + "/" + repositoryName + ":" + tagStr);
                         imageRepoItemMapper.insertSelective(imageRepoItem);
                         i++;
                     }
