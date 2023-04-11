@@ -93,11 +93,11 @@
                 <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean' && tmp.inputType !== 'token'" :label="tmp.label">
                   <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
                 </el-form-item>
-                <el-form-item v-if="tmp.inputType == 'boolean'" :label="tmp.label">
-                  <el-switch v-model="tmp.input" @change="switchSessionToken(tmp.input)"></el-switch>
-                </el-form-item>
                 <el-form-item v-if="tmp.inputType === 'token' && tokenSwitch" :label="tmp.label" style="margin-bottom: 29px">
                   <el-input type="textarea" @input="change($event)" :rows="10" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+                </el-form-item>
+                <el-form-item v-if="tmp.inputType == 'boolean'" :label="tmp.label">
+                  <el-switch v-model="tmp.input" @change="switchSessionToken(tmp.input)"></el-switch>
                 </el-form-item>
               </div>
               <el-form-item v-if="form.isProxy && form.pluginId && iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -209,11 +209,11 @@
               <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean' && tmp.inputType !== 'token'" :label="tmp.label">
                 <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
               </el-form-item>
-              <el-form-item v-if="tmp.inputType == 'boolean'" :label="tmp.label">
-                <el-switch v-model="tmp.input" @change="switchSessionToken(tmp.input)"></el-switch>
-              </el-form-item>
               <el-form-item v-if="tmp.inputType === 'token' && tokenSwitch" :label="tmp.label" style="margin-bottom: 29px">
                 <el-input type="textarea" @input="change($event)" :rows="10" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+              </el-form-item>
+              <el-form-item v-if="tmp.inputType == 'boolean'" :label="tmp.label">
+                <el-switch v-model="tmp.input" @change="switchSessionToken(tmp.input)"></el-switch>
               </el-form-item>
             </div>
             <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -541,6 +541,7 @@ const columnOptions = [
       create() {
         this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
         this.createVisible = true;
+        this.tokenSwitch = false;
         this.activePlugin();
         this.activeProxy();
       },
@@ -701,7 +702,6 @@ const columnOptions = [
           this.tmpList = fromJson.data;
           if (type === 'edit') {
             let credentials = typeof(this.item.credential) === 'string'?JSON.parse(this.item.credential):this.item.credential;
-            console.log(credentials, this.tmpList)
             for (let tmp of this.tmpList) {
               if (credentials[tmp.name] === undefined) {
                 tmp.input = tmp.defaultValue?tmp.defaultValue:"";
@@ -709,6 +709,10 @@ const columnOptions = [
                 // 编辑时不显示密钥信息，新增时才显示，防止泄露。
                 if (tmp.inputType !== 'password') {
                   tmp.input = credentials[tmp.name];
+                }
+                // aws
+                if (tmp.name === 'isSessionCredential') {
+                  this.tokenSwitch = tmp.input;
                 }
               }
             }
