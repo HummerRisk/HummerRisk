@@ -184,7 +184,7 @@ public class ImageService {
                         }
                         imageRepoItem.setRepoId(imageRepo.getId());
 
-                        imageRepoItem.setPath("hub.docker.com" + "/" + namespace + "/" + repositoryName + ":" + tagStr);
+                        imageRepoItem.setPath("docker.io" + "/" + namespace + "/" + repositoryName + ":" + tagStr);
                         imageRepoItemMapper.insertSelective(imageRepoItem);
                         i++;
                     }
@@ -227,7 +227,8 @@ public class ImageService {
             imageRepoSyncLog.setSum(i);
             imageRepoSyncLogMapper.insertSelective(imageRepoSyncLog);
         } catch (Exception e) {
-            LogUtil.error(e.getMessage());
+            e.printStackTrace();
+            LogUtil.error("镜像同步失败",e);
             imageRepoSyncLog.setRepoId(imageRepo.getId());
             imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
             imageRepoSyncLog.setOperator(loginUser.getUserName());
@@ -839,7 +840,7 @@ public class ImageService {
             image.setUpdateTime(System.currentTimeMillis());
             image.setCreator(loginUser.getUserId());
             image.setType("repo");
-            image.setImageUrl(request.getPath().split(":")[0]);
+            image.setImageUrl(request.getPath().replace(":" + request.getTag(), ""));
             image.setImageTag(request.getTag());
             image.setPluginIcon("docker.png");
             image.setIsImageRepo(true);
@@ -896,24 +897,29 @@ public class ImageService {
                     String push_time = arti.getString("push_time");
                     long size = arti.getLong("size");
                     JSONObject extra_attrs = arti.getJSONObject("extra_attrs");
-                    String architecture = extra_attrs.getString("architecture");
+                    String architecture = "";
+                    if(extra_attrs != null){
+                        architecture= extra_attrs.getString("architecture");
+                    }
                     JSONArray tags = arti.getJSONArray("tags");
-                    List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
-                    for (JSONObject tag : tagList) {
-                        String tagStr = tag.getString("name");
-                        ImageRepoItem imageRepoItem = new ImageRepoItem();
-                        imageRepoItem.setId(UUIDUtil.newUUID());
-                        imageRepoItem.setProject(projectName);
-                        imageRepoItem.setRepository(repName);
-                        imageRepoItem.setTag(tagStr);
-                        imageRepoItem.setDigest(digest);
-                        imageRepoItem.setRepoId(imageRepo.getId());
-                        imageRepoItem.setPushTime(push_time);
-                        imageRepoItem.setArch(architecture);
-                        imageRepoItem.setSize(changeFlowFormat(size));
-                        imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + projectName + "/" + repName + ":" + tagStr);
-                        imageRepoItemMapper.insertSelective(imageRepoItem);
-                        i++;
+                    if(tags != null){
+                        List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
+                        for (JSONObject tag : tagList) {
+                            String tagStr = tag.getString("name");
+                            ImageRepoItem imageRepoItem = new ImageRepoItem();
+                            imageRepoItem.setId(UUIDUtil.newUUID());
+                            imageRepoItem.setProject(projectName);
+                            imageRepoItem.setRepository(repName);
+                            imageRepoItem.setTag(tagStr);
+                            imageRepoItem.setDigest(digest);
+                            imageRepoItem.setRepoId(imageRepo.getId());
+                            imageRepoItem.setPushTime(push_time);
+                            imageRepoItem.setArch(architecture);
+                            imageRepoItem.setSize(changeFlowFormat(size));
+                            imageRepoItem.setPath(path.replaceAll("https://", "").replaceAll("http://", "") + "/" + projectName + "/" + repName + ":" + tagStr);
+                            imageRepoItemMapper.insertSelective(imageRepoItem);
+                            i++;
+                        }
                     }
                 }
             }

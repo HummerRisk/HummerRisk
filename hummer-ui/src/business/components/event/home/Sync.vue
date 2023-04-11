@@ -90,7 +90,7 @@
     <el-drawer class="rtl" :title="$t('event.event_sync')" :visible.sync="showSync" size="50%"
                :before-close="handleClose" direction="rtl"
                :destroy-on-close="true">
-      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small">
+      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small" v-loading="viewResult.loading">
         <el-form-item :label="$t('event.cloud_account')" ref="accountId" prop="accountId">
           <el-select filterable :clearable="true" style="width: 100%;" v-model="eventFrom.accountId"
                      :placeholder="$t('event.cloud_account')" @change="changeFormRegion">
@@ -139,7 +139,6 @@
           @cancel="cancel"
           @confirm="confirm"/>
       </el-form>
-
     </el-drawer>
     <!--sync-->
 
@@ -217,6 +216,7 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       pickerMinDate: "",
       eventFrom: {
         accountId: "",
@@ -450,7 +450,7 @@ export default {
       })
       this.logForm.account = account
       let url = cloudEventSyncLogRegionListUrl + logId;
-      this.result = this.$post(url, {}, response => {
+      this.viewResult = this.$post(url, {}, response => {
         this.logForm.regionLogs = response.data;
         this.logVisible = true
       });

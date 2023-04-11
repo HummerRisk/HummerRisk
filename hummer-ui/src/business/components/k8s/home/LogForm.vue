@@ -165,15 +165,21 @@
       <el-tab-pane label="KubeBench" v-if="logForm.kubeBench">
         <codemirror ref="cmEditor" v-model="logForm.kubeBench" class="code-mirror" :options="cmOptions" />
       </el-tab-pane>
+      <el-tab-pane label="RuleGroup" v-if="logForm.cloudNativeId">
+        <rule-group-details :accountId="logForm.cloudNativeId"/>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
 
+import RuleGroupDetails from "./RuleGroupDetails";
+
 /* eslint-disable */
 export default {
   components: {
+    RuleGroupDetails,
   },
   props: {
     logForm: {}

@@ -27,9 +27,9 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="repo" v-if="checkedColumnNames.includes('repo')" :label="$t('image.image_repo_url')" min-width="200"/>
+        <el-table-column prop="repo" v-if="checkedColumnNames.includes('repo')" :label="$t('image.image_repo_url')" min-width="220"/>
         <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('image.image_repo_user_name')" min-width="110"/>
-        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="120" :label="$t('image.image_repo_status')"
+        <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="130" :label="$t('image.image_repo_status')"
                          column-key="status"
                          :filters="statusFilters"
                          :filter-method="filterStatus">
@@ -56,37 +56,39 @@
     <!--Create imageRepo-->
     <el-drawer class="rtl" :title="$t('image.repo_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
-        <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
-          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
-            <el-option
-              v-for="item in plugins"
-              :key="item.value"
-              :label="item.id"
-              :value="item.value">
-              <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ item.id }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
-          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
-          <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_password')" ref="password" prop="password">
-          <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
-        </el-form-item>
-      </el-form>
-      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
-      <div style="margin: 10px;">
-        <dialog-footer
-          @cancel="createVisible = false"
-          @confirm="saveRepo('form')"/>
+      <div v-loading="viewResult.loading">
+        <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+          <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
+            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
+              <el-option
+                v-for="item in plugins"
+                :key="item.value"
+                :label="item.id"
+                :value="item.value">
+                <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.id }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
+            <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
+            <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_password')" ref="password" prop="password">
+            <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
+          </el-form-item>
+        </el-form>
+        <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
+        <div style="margin: 10px;">
+          <dialog-footer
+            @cancel="createVisible = false"
+            @confirm="saveRepo('form')"/>
+        </div>
       </div>
     </el-drawer>
     <!--Create imageRepo-->
@@ -94,37 +96,39 @@
     <!--Update imageRepo-->
     <el-drawer class="rtl" :title="$t('image.repo_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
-        <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
-          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
-            <el-option
-              v-for="item in plugins"
-              :key="item.value"
-              :label="item.id"
-              :value="item.value">
-              <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
-              &nbsp;&nbsp; {{ item.id }}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
-          <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
-          <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>
-        </el-form-item>
-        <el-form-item :label="$t('image.image_repo_password')" ref="password" prop="password">
-          <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
-        </el-form-item>
-      </el-form>
-      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
-      <div style="margin: 10px;">
-        <dialog-footer
-          @cancel="updateVisible = false"
-          @confirm="editRepo('form')"/>
+      <div v-loading="viewResult.loading">
+        <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+          <el-form-item :label="$t('image.image_repo_name')" ref="name" prop="name">
+            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
+              <el-option
+                v-for="item in plugins"
+                :key="item.value"
+                :label="item.id"
+                :value="item.value">
+                <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.id }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_url')" ref="repo" prop="repo">
+            <el-input v-model="form.repo" autocomplete="off" :placeholder="$t('image.image_repo_url_desc')"/>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_user_name')" ref="userName" prop="userName">
+            <el-input v-model="form.userName" autocomplete="off" :placeholder="$t('image.image_repo_user_name')"/>
+          </el-form-item>
+          <el-form-item :label="$t('image.image_repo_password')" ref="password" prop="password">
+            <el-input v-model="form.password" autocomplete="off" :placeholder="$t('image.image_repo_password')" show-password/>
+          </el-form-item>
+        </el-form>
+        <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
+        <div style="margin: 10px;">
+          <dialog-footer
+            @cancel="updateVisible = false"
+            @confirm="editRepo('form')"/>
+        </div>
       </div>
     </el-drawer>
     <!--Update imageRepo-->
@@ -132,56 +136,58 @@
     <!--Image list-->
     <el-drawer class="rtl image-list" :title="$t('image.image_list')" :visible.sync="imageVisible" size="90%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
-      <table-header :condition.sync="condition" @search="handleList"
-                    @scan="saveAddAll" :scanTip="$t('image.one_scan')"
-                    @setting="setting" :settingTip="$t('image.batch_settings_repo')"
-                    :show-name="false" :show-scan="true" :show-setting="true"
-                    :items="items2" :columnNames="columnNames2" :show-sync="true" @sync="handleSync"
-                    :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
-                    @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
-      <hide-table
-      :table-data="imageData"
-      @sort-change="sort"
-      @filter-change="filter"
-      @select-all="select"
-      @select="select"
-      >
-        <el-table-column type="selection" min-width="40">
-        </el-table-column>
-        <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="project" :label="'Project'" v-if="checkedColumnNames2.includes('project')" min-width="110" v-slot:default="scope">
-          {{ scope.row.project?scope.row.project:'N/A' }}
-        </el-table-column>
-        <el-table-column prop="repository" v-if="checkedColumnNames2.includes('repository')" :label="'Repository'" min-width="150">
-        </el-table-column>
-        <el-table-column prop="path" v-if="checkedColumnNames2.includes('path')" :label="'ImagePath'" min-width="250">
-        </el-table-column>
-        <el-table-column min-width="90" v-if="checkedColumnNames2.includes('size')" :label="'Size'" prop="size" v-slot:default="scope">
-          {{ scope.row.size?scope.row.size:'--' }}
-        </el-table-column>
-        <el-table-column min-width="90" v-if="checkedColumnNames2.includes('arch')" :label="'Arch'" prop="arch" v-slot:default="scope">
-          {{ scope.row.arch?scope.row.arch:'--' }}
-        </el-table-column>
-        <el-table-column min-width="150" v-if="checkedColumnNames2.includes('pushTime')" :label="'PushTime'" prop="pushTime" v-slot:default="scope">
-          {{ scope.row.pushTime?scope.row.pushTime:'--' }}
-        </el-table-column>
-        <el-table-column min-width="110" :label="$t('task.task_k8s')" v-if="checkedColumnNames2.includes('platform')" prop="platform" v-slot:default="scope">
-          <el-button v-if="scope.row.imageRepoItemK8sDTOList.length > 0" slot="reference" size="mini" type="warning" plain @click="showK8s(scope.row)">
-            {{ $t('k8s.platform') }}
-          </el-button>
-          <el-button v-if="scope.row.imageRepoItemK8sDTOList.length == 0" slot="reference" size="mini" type="primary" plain>
-            {{ 'N/A' }}
-          </el-button>
-        </el-table-column>
-        <el-table-column min-width="60" :label="$t('commons.operating')" fixed="right">
-          <template v-slot:default="scope">
-            <table-operators :buttons="buttons3" :row="scope.row"/>
-          </template>
-        </el-table-column>
-      </hide-table>
-      <table-pagination :change="handleList" :current-page.sync="imagePage" :page-size.sync="imageSize" :total="imageTotal"/>
-      <div>
+      <div v-loading="viewResult.loading">
+        <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
+        <table-header :condition.sync="condition" @search="handleList"
+                      @scan="saveAddAll" :scanTip="$t('image.one_scan')"
+                      @setting="setting" :settingTip="$t('image.batch_settings_repo')"
+                      :show-name="false" :show-scan="true" :show-setting="true"
+                      :items="items2" :columnNames="columnNames2" :show-sync="true" @sync="handleSync"
+                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+        <hide-table
+        :table-data="imageData"
+        @sort-change="sort"
+        @filter-change="filter"
+        @select-all="select"
+        @select="select"
+        >
+          <el-table-column type="selection" min-width="40">
+          </el-table-column>
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="project" :label="'Project'" v-if="checkedColumnNames2.includes('project')" min-width="110" v-slot:default="scope">
+            {{ scope.row.project?scope.row.project:'N/A' }}
+          </el-table-column>
+          <el-table-column prop="repository" v-if="checkedColumnNames2.includes('repository')" :label="'Repository'" min-width="150">
+          </el-table-column>
+          <el-table-column prop="path" v-if="checkedColumnNames2.includes('path')" :label="'ImagePath'" min-width="250">
+          </el-table-column>
+          <el-table-column min-width="90" v-if="checkedColumnNames2.includes('size')" :label="'Size'" prop="size" v-slot:default="scope">
+            {{ scope.row.size?scope.row.size:'--' }}
+          </el-table-column>
+          <el-table-column min-width="90" v-if="checkedColumnNames2.includes('arch')" :label="'Arch'" prop="arch" v-slot:default="scope">
+            {{ scope.row.arch?scope.row.arch:'--' }}
+          </el-table-column>
+          <el-table-column min-width="150" v-if="checkedColumnNames2.includes('pushTime')" :label="'PushTime'" prop="pushTime" v-slot:default="scope">
+            {{ scope.row.pushTime?scope.row.pushTime:'--' }}
+          </el-table-column>
+          <el-table-column min-width="110" :label="$t('task.task_k8s')" v-if="checkedColumnNames2.includes('platform')" prop="platform" v-slot:default="scope">
+            <el-button v-if="scope.row.imageRepoItemK8sDTOList.length > 0" slot="reference" size="mini" type="warning" plain @click="showK8s(scope.row)">
+              {{ $t('k8s.platform') }}
+            </el-button>
+            <el-button v-if="scope.row.imageRepoItemK8sDTOList.length == 0" slot="reference" size="mini" type="primary" plain>
+              {{ 'N/A' }}
+            </el-button>
+          </el-table-column>
+          <el-table-column min-width="60" :label="$t('commons.operating')" fixed="right">
+            <template v-slot:default="scope">
+              <table-operators :buttons="buttons3" :row="scope.row"/>
+            </template>
+          </el-table-column>
+        </hide-table>
+        <table-pagination :change="handleList" :current-page.sync="imagePage" :page-size.sync="imageSize" :total="imageTotal"/>
+      </div>
+      <div v-loading="viewResult.loading">
         <el-drawer
           class="rtl"
           size="60%"
@@ -207,7 +213,7 @@
             @confirm="innerK8s = false"/>
         </el-drawer>
       </div>
-      <div>
+      <div v-loading="viewResult.loading">
         <el-drawer
           class="rtl"
           size="60%"
@@ -263,7 +269,7 @@
             @confirm="saveAdd()"/>
         </el-drawer>
       </div>
-      <div>
+      <div v-loading="viewResult.loading">
         <el-drawer
           class="rtl"
           size="60%"
@@ -284,7 +290,7 @@
             @confirm="saveSetting()"/>
         </el-drawer>
       </div>
-      <div>
+      <div v-loading="viewResult.loading">
         <el-drawer
             class="rtl"
             size="80%"
@@ -447,6 +453,7 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       createVisible: false,
       updateVisible: false,
       imageVisible: false,
@@ -616,7 +623,7 @@ export default {
       this.$forceUpdate();
     },
     setting() {
-      this.$get(imageRepoSettingUrl + this.handleItem.id, response => {
+      this.viewResult = this.$get(imageRepoSettingUrl + this.handleItem.id, response => {
         let repoOld = response.data?response.data.repoOld:this.imageData[0].path.split('/')[0];
         let repo = response.data?response.data.repo:'';
         this.settingForm.repoId = this.handleItem.id;
@@ -666,7 +673,7 @@ export default {
     editRepo(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post(editImageRepoUrl, this.form, () => {
+          this.viewResult = this.$post(editImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
             this.updateVisible = false;
@@ -679,8 +686,7 @@ export default {
     saveRepo(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          console.log(this.form)
-          this.result = this.$post(addImageRepoUrl, this.form, () => {
+          this.viewResult = this.$post(addImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
             this.createVisible = false;
@@ -708,7 +714,7 @@ export default {
         this.handleItem = item;
       }
       this.imageCondition.repoId = this.handleItem.id;
-      this.$post(repoItemListUrl + this.imagePage + "/" + this.imageSize, this.imageCondition, response => {
+      this.viewResult = this.$post(repoItemListUrl + this.imagePage + "/" + this.imageSize, this.imageCondition, response => {
         let data = response.data;
         this.imageTotal = data.itemCount;
         this.imageData = data.listObject;
@@ -718,7 +724,7 @@ export default {
     },
     handleSync() {
       let url = repoSyncListUrl + '/' + this.syncPage + '/' + this.syncSize;
-      this.$post(url, {repoId: this.repoId}, response => {
+      this.viewResult = this.$post(url, {repoId: this.repoId}, response => {
         let data = response.data;
         this.syncData = data.listObject;
         this.syncTotal = data.itemCount;
@@ -738,7 +744,7 @@ export default {
       this.syncVisible = false;
     },
     initSboms() {
-      this.result = this.$post(allSbomListUrl, {},response => {
+      this.viewResult = this.$post(allSbomListUrl, {},response => {
         this.sboms = response.data;
       });
     },
@@ -746,13 +752,13 @@ export default {
       let params = {
         sbomId: item.sbomId
       };
-      await this.$post(allSbomVersionListUrl, params,response => {
+      this.viewResult = await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
       });
     },
     //查询代理
     activeProxy() {
-      this.result = this.$get(proxyListAllUrl, response => {
+      this.viewResult = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
@@ -767,7 +773,7 @@ export default {
       this.innerAdd = true;
     },
     async initSbom(params) {
-      await this.$post(allSbomVersionListUrl, params,response => {
+      this.viewResult = await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
         if(this.versions && this.versions.length > 0) this.addForm.sbomVersionId = this.versions[0].id;
       });
@@ -775,7 +781,7 @@ export default {
     saveSetting() {
       this.$refs['settingForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post(imageRepoSettingUrl, this.settingForm, response => {
+          this.viewResult = this.$post(imageRepoSettingUrl, this.settingForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.success'));
               this.settingVisible = false;
@@ -790,7 +796,7 @@ export default {
     saveAdd() {
       this.$refs['addForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post(scanImageRepoUrl, this.addForm, response => {
+          this.viewResult = this.$post(scanImageRepoUrl, this.addForm, response => {
             if (response.success) {
               this.$success(this.$t('schedule.event_start'));
               this.innerAdd = false;
@@ -817,7 +823,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$request({
+            this.viewResult = this.$request({
               method: 'POST',
               url: scanImagesRepoUrl,
               data: Array.from(this.selectIds),

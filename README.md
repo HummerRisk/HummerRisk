@@ -81,8 +81,14 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 1.  准备一台不小于 4 核 8 G 内存的 64 位 Linux 主机；
 2.  以 root 用户执行如下命令一键安装 HummerRisk。
 
+全球：
 ```sh
 curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quick_start.sh | sh
+```
+
+中国大陆：
+```sh
+curl -sSL https://download.hummerrisk.com/hummerrisk/hummerrisk/releases/download/latest/quick_start.sh | sh
 ```
 
 ## 帮助文档
@@ -101,11 +107,11 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 
 ## 微信群
 
-<img src="http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/contact_me_qr.png" width="156" height="156" alt="">
+![微信群](./hummer-ui/src/assets/img/readme/contact_me_qr.png)
 
 ## 公众号
 
-<img src="http://hummerrisk-1312321453.cos.ap-beijing.myqcloud.com/qrcode_gongzhonghao.jpeg" width="156" height="156" alt="">
+![公众号](./hummer-ui/src/assets/img/readme/qrcode_gongzhonghao.jpeg)
 
 ## 安全说明
 
@@ -116,13 +122,13 @@ curl -sSL https://github.com/HummerRisk/HummerRisk/releases/latest/download/quic
 ## 技术栈
 
 - [Vue](https://vuejs.org/)：使用了 Vue.js 作为前端技术栈
-- [Spring Boot](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)：使用了 Spring Boot 作为后端技术栈
+- [Spring Cloud](https://spring.io/projects/spring-cloud)：使用了 Spring Cloud 作为微服务框架
 - [MySQL](https://www.mysql.com/)：使用了 MySQL 作为数据库引擎
 - [Cloud Custodian](https://cloudcustodian.io/)：使用了 Cloud Custodian 作为云平台检测引擎
 - [Prowler](https://prowler.pro/)：使用了 Prowler 作为 AWS 检测引擎
 - [Trivy](https://github.com/aquasecurity/trivy)：使用了 Trivy 作为云原生检测引擎
 - [Kube-Bench](https://github.com/aquasecurity/kube-bench)：使用了 Kube-Bench 作为 CIS Kubernetes Benchmark 检测工具
-- [Element](https://element.eleme.cn/#/)：使用了 Element 提供的优秀组件库
+- [Element](https://element.eleme.cn/#/)：使用了 Element 作为桌面端组件库
 
 ## License & Copyright
 

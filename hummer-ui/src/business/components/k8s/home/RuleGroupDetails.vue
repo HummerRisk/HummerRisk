@@ -1,20 +1,12 @@
 <template>
   <main-container v-loading="result.loading">
 
-    <el-card class="table-card el-row-card">
-      <el-row type="flex" justify="space-between" align="middle">
-        <span class="operate-button">
-          <el-button  icon="el-icon-back" @click="back">{{ $t('k8s.back_resource') }}</el-button>
-        </span>
-      </el-row>
-    </el-card>
-
     <div id="pdfDom">
 
       <el-card class="table-card el-row-card" v-if="source">
         <h2 style="font-size: 18px;">{{ 'Kubernetes' }}</h2>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="6">
             <div class="grid-content">
               <el-row>
                 <el-col :span="8">
@@ -36,19 +28,19 @@
           <el-col :span="1">
             <div class="split"></div>
           </el-col>
-          <el-col :span="15" class="el-cloud-row">
+          <el-col :span="17" class="el-cloud-row">
             <!-- 第一行 -->
             <el-row>
-              <el-col :span="4">
+              <el-col :span="5">
                 <span style="color: #909090;font-size: 16px;">{{ $t('k8s.name') }}</span>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="7">
                 <span style="font-size: 16px;">{{ source.name }}</span>
               </el-col>
-              <el-col :span="4">
+              <el-col :span="5">
                 <span style="color: #909090;font-size: 16px;">{{ $t('k8s.platform') }}</span>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="7">
                 <span style="font-size: 16px;">
                   <img v-if="source.pluginIcon" :src="require(`@/assets/img/platform/${source.pluginIcon}`)"
                        style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -58,16 +50,16 @@
             </el-row>
             <!-- 第二行 -->
             <el-row>
-              <el-col :span="4">
+              <el-col :span="5">
                 <span style="color: #909090;font-size: 16px;">{{ $t('resource.i18n_not_compliance') }}</span>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="7">
                 <span style="font-size: 16px;">{{ source.returnSum }} / {{ source.resourcesSum }}</span>
               </el-col>
-              <el-col :span="4">
+              <el-col :span="5">
                 <span style="color: #909090;font-size: 16px;">{{ $t('resource.status') }}</span>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="7">
                     <span style="font-size: 16px;">
                       <span style="color: #579df8;" v-if="source.resultStatus === 'APPROVED'">
                         <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
@@ -95,26 +87,16 @@
             </el-row>
             <!-- 第三行 -->
             <el-row>
-              <el-col :span="4">
+              <el-col :span="5">
                 <span style="color: #909090;font-size: 16px;">{{ $t('account.create_time') }}</span>
               </el-col>
-              <el-col :span="8">
-                <span style="font-size: 16px;">{{ source.createTime | timestampFormatDate }}</span>
+              <el-col :span="7">
+                <span style="font-size: 16px;" v-if="source.createTime">{{ source.createTime | timestampFormatDate }}</span>
+                <span style="font-size: 16px;" v-else>{{ '--' }}</span>
               </el-col>
-              <el-col :span="4">
-                <span style="color: #909090;font-size: 16px;">{{ $t('commons.operating') }}</span>
+              <el-col :span="5">
               </el-col>
-              <el-col :span="8">
-              <span style="font-size: 16px;">
-                 <el-tooltip class="item" effect="dark" :content="$t('resource.scan')" placement="top">
-                    <el-button type="primary" size="mini" @click="handleScans(source)" circle><i
-                      class="el-icon-refresh-right"></i></el-button>
-                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
-                  <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i
-                    class="el-icon-delete"></i></el-button>
-                </el-tooltip>
-              </span>
+              <el-col :span="7">
               </el-col>
             </el-row>
           </el-col>
@@ -160,31 +142,31 @@
           </span>
           </el-table-column>
           <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('taskName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
-            <el-link type="primary" :underline="false" class="md-primary text-click" @click="showTaskDetail(scope.row)">
+            <span class="md-primary text-click">
               {{ scope.row.taskName }}
-            </el-link>
+            </span>
           </el-table-column>
           <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('severity')" :label="$t('rule.severity')" min-width="110"
                            :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true" show-overflow-tooltip>
             <severity-type :row="scope.row"></severity-type>
           </el-table-column>
           <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+            <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+            <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+            <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
+            <el-button plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
               <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
+            <el-button plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
               <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
             </el-button>
-            <el-button @click="showTaskLog(scope.row)" plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
+            <el-button plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
@@ -207,14 +189,9 @@
                   style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
             <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
           </el-table-column>
-          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip fixed="right">
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="110" :label="$t('commons.operating')" fixed="right" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <table-operators :buttons="rule_buttons" :row="scope.row"/>
             </template>
           </el-table-column>
         </hide-table>
@@ -396,11 +373,6 @@
                 <span>{{ scope.row.createTime | timestampFormatDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column min-width="90" :label="$t('commons.operating')" show-overflow-tooltip>
-              <template v-slot:default="scope">
-                <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
-              </template>
-            </el-table-column>
           </hide-table>
           <table-pagination :change="resourceSearch" :current-page.sync="resourcePage" :page-size.sync="resourceSize" :total="resourceTotal"/>
 
@@ -552,7 +524,7 @@ import CenterChart from "@/business/components/common/components/CenterChart";
 import ResultLog from "./ResultLog";
 import {_filter, _sort} from "@/common/js/utils";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
-import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
+import ResultReadOnly from "./ResultReadOnly";
 import {RESOURCE_CONFIGS, RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
@@ -665,6 +637,9 @@ export default {
     HideTable,
     TableSearchRight,
   },
+  props: {
+    accountId: "",
+  },
   data() {
     return {
       result: {},
@@ -677,7 +652,6 @@ export default {
       condition: {
         components: RESULT_CONFIGS
       },
-      accountId: "",
       direction: 'rtl',
       tagSelect: [],
       resourceTypes: [],
@@ -691,22 +665,6 @@ export default {
           tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
         }
-      ],
-      rule_buttons: [
-        {
-          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
-          exec: this.showSeverityDetail
-        },
-        {
-          tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "primary",
-          exec: this.handleScan
-        }
-      ],
-      resource_buttons: [
-        {
-          tip: this.$t('rule.suggestion'), icon: "el-icon-share", type: "primary",
-          exec: this.handleSuggestion
-        },
       ],
       logVisible: false,
       detailVisible: false,
@@ -859,21 +817,6 @@ export default {
     handleSuggestion(item) {
       window.open(item.suggestion,'_blank','');
     },
-    handleDelete(obj) {
-      this.$alert(this.$t('account.delete_confirm') + obj.name + this.$t('resource.resource_result') + " ？", '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.result = this.$get(resourceAccountDeleteUrl + obj.id, res => {
-              setTimeout(function () {
-                window.location.reload()
-              }, 2000);
-              this.$success(this.$t('commons.delete_success'));
-            });
-          }
-        }
-      });
-    },
     async search() {
       await this.$get(resourceK8sSourceUrl + this.accountId, response => {
         this.source = response.data;
@@ -1006,62 +949,6 @@ export default {
         return '';
       }
     },
-    showTaskLog(cloudTask) {
-      let showLogTaskId = cloudTask.id;
-      let url = "";
-      if (showLogTaskId) {
-        url = cloudTaskLogByIdUrl;
-      }
-      this.logForm.cloudTaskItemLogDTOs = [];
-      this.logForm.showLogTaskId = showLogTaskId;
-      this.$get(url + showLogTaskId, response => {
-        this.logForm.cloudTaskItemLogDTOs = response.data;
-        this.logVisible = true;
-      });
-    },
-    showTaskDetail(item) {
-      this.detailForm = {};
-      this.$get(cloudTaskDetailUrl + item.id, response => {
-        if (response.success) {
-          this.detailForm = response.data;
-          this.detailVisible = true;
-        }
-      });
-    },
-    handleClose() {
-      this.logVisible = false;
-      this.detailVisible = false;
-      this.visible =  false;
-      this.regulationVisible = false;
-    },
-    handleScans(item) {
-      this.$alert(this.$t('resource.handle_scans'), '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.$get(ruleReScansUrl + item.id, response => {
-              if (response.success) {
-                this.search();
-              }
-            });
-          }
-        }
-      });
-    },
-    handleScan(item) {
-      this.$alert(this.$t('resource.handle_scans'), '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
-              if (response.success) {
-                this.search();
-              }
-            });
-          }
-        }
-      });
-    },
     showCodemirror() {
       setTimeout(() => {
         this.$refs.cmEditor.codemirror.refresh();
@@ -1174,11 +1061,6 @@ export default {
       }
       this.resourceSearch();
     },
-    back () {
-      this.$router.push({
-        path: '/k8s/k8s',
-      }).catch(error => error);
-    },
   },
   computed: {
     codemirror() {
@@ -1186,7 +1068,6 @@ export default {
     }
   },
   mounted() {
-    this.accountId = this.$route.params.id;
     this.init();
     this.timer = setInterval(this.getStatus, 10000);
   },

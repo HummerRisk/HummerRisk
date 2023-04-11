@@ -217,10 +217,11 @@ public class K8sService {
             }
 
             if (url.endsWith("/")) {
-                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName();
+                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
             } else {
-                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName();
+                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
             }
+
             Map<String, String> param = new HashMap<>();
             param.put("Accept", CloudNativeConstants.Accept);
             param.put("Authorization", token);
@@ -433,7 +434,7 @@ public class K8sService {
                 cloudNativeSourceRbacRelationExample.createCriteria().andK8sIdEqualTo(cloudNative.getId());
                 cloudNativeSourceRbacRelationMapper.deleteByExample(cloudNativeSourceRbacRelationExample);
 
-                for(CloudNativeSource ca : cloudNativeSources) {
+                for (CloudNativeSource ca : cloudNativeSources) {
                     CloudNativeSourceImageExample cloudNativeSourceImageExample = new CloudNativeSourceImageExample();
                     cloudNativeSourceImageExample.createCriteria().andSourceIdEqualTo(ca.getId());
                     cloudNativeSourceImageMapper.deleteByExample(cloudNativeSourceImageExample);
@@ -579,7 +580,13 @@ public class K8sService {
             CloudNativeSourceExample cloudNativeSourceExample1 = new CloudNativeSourceExample();
             cloudNativeSourceExample1.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo(CloudNativeConstants.K8S_TYPE.RoleBinding.name());
             List<CloudNativeSourceWithBLOBs> roleBindings = cloudNativeSourceMapper.selectByExampleWithBLOBs(cloudNativeSourceExample1);
-            roleBindings.stream().forEach(b -> {try {saveRoleBinding(b);} catch (Exception e) {LogUtil.error(e.getMessage());}});
+            roleBindings.stream().forEach(b -> {
+                try {
+                    saveRoleBinding(b);
+                } catch (Exception e) {
+                    LogUtil.error(e.getMessage());
+                }
+            });
             //Rbac 拓扑图数据处理 end
         });
     }
@@ -593,38 +600,42 @@ public class K8sService {
     }
 
     public void scan(CloudNativeRequest request, LoginUser loginUser) throws Exception {
-        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(request.getId());
-        Integer scanId = systemProviderService.insertScanHistory(cloudNative);
-        if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-            List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
-            CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
+        List<String> scans = request.getGroups();
+        if (scans.size() > 0) {
+            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(request.getId());
+            Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+            if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+                List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
+                CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
-            deleteRescanResultByCloudNativeId(request.getId());
+                deleteRescanResultByCloudNativeId(request.getId());
 
-            for (CloudNativeRule rule : ruleList) {
-                BeanUtils.copyBean(result, cloudNative);
-                result.setId(UUIDUtil.newUUID());
-                result.setCloudNativeId(request.getId());
-                result.setApplyUser(loginUser.getUserId());
-                result.setCreateTime(System.currentTimeMillis());
-                result.setUpdateTime(System.currentTimeMillis());
-                result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-                result.setUserName(loginUser.getUserName());
-                result.setRuleId(rule.getId());
-                result.setRuleName(rule.getName());
-                result.setRuleDesc(rule.getDescription());
-                result.setSeverity(rule.getSeverity());
-                result.setScanGroups(JSON.toJSONString(request.getGroups()));
-                cloudNativeResultMapper.insertSelective(result);
+                for (CloudNativeRule rule : ruleList) {
+                    BeanUtils.copyBean(result, cloudNative);
+                    result.setId(UUIDUtil.newUUID());
+                    result.setCloudNativeId(request.getId());
+                    result.setApplyUser(loginUser.getUserId());
+                    result.setCreateTime(System.currentTimeMillis());
+                    result.setUpdateTime(System.currentTimeMillis());
+                    result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                    result.setUserName(loginUser.getUserName());
+                    result.setRuleId(rule.getId());
+                    result.setRuleName(rule.getName());
+                    result.setRuleDesc(rule.getDescription());
+                    result.setSeverity(rule.getSeverity());
+                    result.setScanGroups(JSON.toJSONString(scans));
+                    cloudNativeResultMapper.insertSelective(result);
 
-                saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
-                operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+                    saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
+                    operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
 
-                systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
+                    systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
 
-                systemProviderService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                    systemProviderService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                }
             }
         }
+
     }
 
     public String reScan(String id, LoginUser loginUser) throws Exception {
@@ -726,15 +737,15 @@ public class K8sService {
             for (Object o : jsonArray) {
                 String obj = (String) o;
                 switch (obj) {
-                    case "vuln" :
+                    case "vuln":
                         long count = saveResultItem(result);
                         result.setReturnSum(count);
                         continue;
-                    case "config" :
+                    case "config":
                         long sum = saveResultConfigItem(result);
                         result.setReturnConfigSum(sum);
                         continue;
-                    case "kubench" :
+                    case "kubench":
                         String kubeBench = scanKubeBench(cloudNative, result.getId());
                         result.setKubeBench(kubeBench);
                 }
@@ -771,27 +782,31 @@ public class K8sService {
                 createKubench(k8sRequest, example, cloudNative);
             }
 
-            CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
+            List<CloudNativeSource> cloudNativeSources = cloudNativeSourceMapper.selectByExample(example);
 
-            if (cloudNativeSource == null) {
+            if (cloudNativeSources.size() == 0) {
                 return "";
             }
 
-            if (url.endsWith("/")) {
-                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
-            } else {
-                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
+            for (CloudNativeSource cloudNativeSource : cloudNativeSources) {
+                if (url.endsWith("/")) {
+                    url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
+                } else {
+                    url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
+                }
+                Map<String, String> param = new HashMap<>();
+                param.put("Accept", CloudNativeConstants.Accept);
+                param.put("Authorization", token);
+                String reponse = HttpClientUtil.HttpGet(url, param);
+                if (!reponse.contains("unable to retrieve container logs for docker")) {
+                    saveKubenchResultItem(reponse, resultId);
+                    return reponse;
+                }
             }
-            Map<String, String> param = new HashMap<>();
-            param.put("Accept", CloudNativeConstants.Accept);
-            param.put("Authorization", token);
-            String reponse = HttpClientUtil.HttpGet(url, param);
-            saveKubenchResultItem(reponse, resultId);
-            return reponse;
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
-        return "";
+        return "Unable to retrieve container logs for docker, Kubebench job 对应的 SourceName 已经过期失效。";
     }
 
     void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws Exception {
@@ -1414,7 +1429,7 @@ public class K8sService {
                             link.setTarget(resourceSource.getOrder().toString());
                             link.setCreateTime(System.currentTimeMillis());
                             List<CloudNativeSourceRbacLink> cloudNativeSourceRbacLinks = checkLink(link);
-                            if(cloudNativeSourceRbacLinks.size() == 0) {
+                            if (cloudNativeSourceRbacLinks.size() == 0) {
                                 cloudNativeSourceRbacLinkMapper.insertSelective(link);
                             }
 
@@ -1424,7 +1439,7 @@ public class K8sService {
                             int i = 0;
                             for (Object obj2 : verbsArray) {
                                 String rela = (String) obj2;
-                                if(i == 0) {
+                                if (i == 0) {
                                     relations = rela;
                                 } else {
                                     relations = relations + "/" + rela;
@@ -1439,7 +1454,7 @@ public class K8sService {
                             relation.setName(relations);
                             relation.setCreateTime(System.currentTimeMillis());
                             List<CloudNativeSourceRbacRelation> cloudNativeSourceRbacRelations = checkRela(relation);
-                            if(cloudNativeSourceRbacRelations.size() == 0) {
+                            if (cloudNativeSourceRbacRelations.size() == 0) {
                                 cloudNativeSourceRbacRelationMapper.insertSelective(relation);
                             }
                         }
@@ -1475,7 +1490,7 @@ public class K8sService {
                             link.setTarget(resourceSource.getOrder().toString());
                             link.setCreateTime(System.currentTimeMillis());
                             List<CloudNativeSourceRbacLink> cloudNativeSourceRbacLinks = checkLink(link);
-                            if(cloudNativeSourceRbacLinks.size() == 0) {
+                            if (cloudNativeSourceRbacLinks.size() == 0) {
                                 cloudNativeSourceRbacLinkMapper.insertSelective(link);
                             }
 
@@ -1485,7 +1500,7 @@ public class K8sService {
                             int i = 0;
                             for (Object obj2 : verbsArray) {
                                 String rela = (String) obj2;
-                                if(i == 0) {
+                                if (i == 0) {
                                     relations = rela;
                                 } else {
                                     relations = relations + "/" + rela;
@@ -1500,7 +1515,7 @@ public class K8sService {
                             relation.setName(relations);
                             relation.setCreateTime(System.currentTimeMillis());
                             List<CloudNativeSourceRbacRelation> cloudNativeSourceRbacRelations = checkRela(relation);
-                            if(cloudNativeSourceRbacRelations.size() == 0) {
+                            if (cloudNativeSourceRbacRelations.size() == 0) {
                                 cloudNativeSourceRbacRelationMapper.insertSelective(relation);
                             }
                         }
@@ -1627,7 +1642,7 @@ public class K8sService {
                             }
                         }
                     }
-                    if(saNumbers == 0) {
+                    if (saNumbers == 0) {
                         CloudNativeSourceRbacLink link = new CloudNativeSourceRbacLink();
                         String linkId = UUIDUtil.newUUID();
                         link.setId(linkId);

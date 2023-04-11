@@ -84,7 +84,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('commons.operating')" min-width="100" show-overflow-tooltip fixed="right">
+        <el-table-column :label="$t('commons.operating')" min-width="50" show-overflow-tooltip fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -359,10 +359,10 @@ export default {
       innerDrawer: false,
       script: '',
       buttons: [
-        {
-          tip: this.$t('resource.resource_result'), icon: "el-icon-s-data", type: "success",
-          exec: this.handleOpen
-        },
+        // {
+        //   tip: this.$t('resource.resource_result'), icon: "el-icon-s-data", type: "success",
+        //   exec: this.handleOpen
+        // },
         {
           tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete

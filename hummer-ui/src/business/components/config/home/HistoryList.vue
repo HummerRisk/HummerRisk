@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')"
                          min-width="80" show-overflow-tooltip/>
-        <el-table-column :label="$t('resource.resource_result')" min-width="100" show-overflow-tooltip fixed="right">
+        <el-table-column :label="$t('commons.operating')" min-width="50" show-overflow-tooltip fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -353,10 +353,10 @@ export default {
       innerDrawer: false,
       script: '',
       buttons: [
-        {
-          tip: this.$t('resource.resource_result'), icon: "el-icon-s-data", type: "success",
-          exec: this.handleOpen
-        },
+        // {
+        //   tip: this.$t('resource.resource_result'), icon: "el-icon-s-data", type: "success",
+        //   exec: this.handleOpen
+        // },
         {
           tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
