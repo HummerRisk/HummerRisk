@@ -17,6 +17,7 @@ import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
+import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
@@ -71,6 +72,8 @@ public class OrderService {
     private ISystemProviderService systemProviderService;
     @DubboReference
     private IOperationLogService operationLogService;
+    @DubboReference
+    private IK8sProviderService k8sProviderService;
 
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId, loginUser);
@@ -193,6 +196,130 @@ public class OrderService {
         }
         //向首页活动添加操作信息
         operationLogService.log(loginUser, taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        return cloudTask;
+    }
+
+    public CloudTask createK8sTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
+        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId, loginUser);
+        String taskId = cloudTask.getId();
+
+        String script = quartzTaskDTO.getScript();
+        JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = (JSONObject) o;
+            String key = "${{" + jsonObject.getString("key") + "}}";
+            if (script.contains(key)) {
+                script = script.replace(key, jsonObject.getString("defaultValue"));
+            }
+        }
+
+        this.deleteTaskItems(taskId);
+        List<String> resourceTypes = new ArrayList();
+        for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
+            for (String regionId : selectTag.getRegions()) {
+                CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
+                String uuid = UUIDUtil.newUUID();
+                taskItemWithBLOBs.setId(uuid);
+                taskItemWithBLOBs.setTaskId(taskId);
+                taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
+                taskItemWithBLOBs.setCustomData(script);
+                taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
+                taskItemWithBLOBs.setSeverity(quartzTaskDTO.getSeverity());
+                taskItemWithBLOBs.setCreateTime(cloudTask.getCreateTime());
+                taskItemWithBLOBs.setAccountId(selectTag.getAccountId());
+                CloudNative cloudNative = k8sProviderService.cloudNative(selectTag.getAccountId());
+                taskItemWithBLOBs.setAccountUrl(cloudNative.getPluginIcon());
+                taskItemWithBLOBs.setAccountLabel(cloudNative.getName());
+                taskItemWithBLOBs.setRegionId(regionId);
+                taskItemWithBLOBs.setRegionName(PlatformUtils.tranforRegionId2RegionName(regionId, cloudTask.getPluginId()));
+                taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
+                cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
+
+                systemProviderService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+
+                final String finalScript = script;
+                commonThreadPool.addTask(() -> {
+                    String sc = "";
+                    String dirPath = "";
+                    try {
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml", false);
+                    } catch (Exception e) {
+                        LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + regionId, e.getMessage());
+                    }
+                    Yaml yaml = new Yaml();
+                    Map map = null;
+                    try {
+                        map = (Map) yaml.load(new FileInputStream(dirPath + "/policy.yml"));
+                    } catch (FileNotFoundException e) {
+                        LogUtil.error(e.getMessage());
+                    }
+                    if (map != null) {
+                        List<Map> list = (List) map.get("policies");
+                        for (Map m : list) {
+                            String dirName = m.get("name").toString();
+                            String resourceType = m.get("resource").toString();
+
+                            if (!PlatformUtils.checkAvailableRegion(cloudNative.getPluginId(), resourceType, regionId)) {
+                                continue;
+                            }
+
+                            CloudTaskItemResourceWithBLOBs taskItemResource = new CloudTaskItemResourceWithBLOBs();
+                            taskItemResource.setTaskId(taskId);
+                            taskItemResource.setTaskItemId(taskItemWithBLOBs.getId());
+                            taskItemResource.setDirName(dirName);
+                            taskItemResource.setResourceType(resourceType);
+                            taskItemResource.setResourceName(dirName);
+
+                            //包含actions
+                            Map<String, Object> paramMap = new HashMap<>();
+                            paramMap.put("policies", Collections.singletonList(m));
+                            taskItemResource.setResourceCommandAction(yaml.dump(paramMap));
+
+                            //不包含actions
+                            m.remove("actions");
+                            paramMap.put("policies", Collections.singletonList(m));
+                            taskItemResource.setResourceCommand(yaml.dump(paramMap));
+                            cloudTaskItemResourceMapper.insertSelective(taskItemResource);
+
+                            try {
+                                HistoryCloudTaskResourceWithBLOBs historyCloudTaskResourceWithBLOBs = new HistoryCloudTaskResourceWithBLOBs();
+                                BeanUtils.copyBean(historyCloudTaskResourceWithBLOBs, taskItemResource);
+                                systemProviderService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            resourceTypes.add(resourceType);
+                        }
+
+                        map.put("policies", list);
+                        sc = yaml.dump(map);
+                        taskItemWithBLOBs.setDetails(sc);
+                        cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
+
+                        try {
+                            systemProviderService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
+                        cloudResourceItemExample.createCriteria().andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andResourceTypeIn(resourceTypes);
+                        long resourceSum = cloudResourceItemMapper.countByExample(cloudResourceItemExample);
+                        cloudTask.setResourcesSum(resourceSum);
+                        cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
+                        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+                        try {
+                            systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+        }
+        //向首页活动添加操作信息
+        operationLogService.log(loginUser, taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_start_k8s_rule_result");
         return cloudTask;
     }
 

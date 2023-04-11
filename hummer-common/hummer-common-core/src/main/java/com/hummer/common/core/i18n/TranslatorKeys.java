@@ -52,8 +52,9 @@ public class TranslatorKeys {
                     "i18n_already_k8s_operator",
                     "i18n_fs_messageorder",
                     "i18n_k8s_account",
-                    "i18n_namespace"
-
+                    "i18n_namespace",
+                    "i18n_start_k8s_rule_result",
+                    "i18n_end_k8s_rule_result"
             ));
 
 }

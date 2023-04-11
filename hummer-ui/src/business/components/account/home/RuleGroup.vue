@@ -279,7 +279,7 @@
       <!--Create sync-->
       <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form v-loading="groupResult.loading" :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
+        <el-form v-loading="groupResult.loading" :model="scanForm" label-position="right" label-width="150px" size="small" ref="form" style="margin-top: 20px;">
           <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('account.please_choose_account')">
               <el-option

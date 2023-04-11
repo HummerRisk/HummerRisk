@@ -151,14 +151,7 @@
         t1.rule_id,
         t1.rule_name,
         t1.rule_desc,
-        CASE
-        WHEN (t1.result_status in ('APPROVED', 'PROCESSING')) or
-             (('APPROVED' in (select ct.status from cloud_task ct where t.id = ct.account_id)) or ('PROCESSING' in (select ct.status from cloud_task ct where t.id = ct.account_id)))
-            THEN 'APPROVED'
-        WHEN (t1.result_status in ('ERROR')) THEN 'ERROR'
-        WHEN (t1.result_status in ('WARNING')) THEN 'WARNING'
-        ELSE 'FINISHED'
-        END AS result_status,
+        t1.result_status,
         t1.severity,
         t1.update_time as scan_time,
         t1.return_sum,

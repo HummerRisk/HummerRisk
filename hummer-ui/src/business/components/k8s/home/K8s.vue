@@ -519,8 +519,7 @@ import {
   updateK8sUrl
 } from "@/api/k8s/k8s/k8s";
 import {saveAs} from "@/common/js/FileSaver";
-import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import {groupsByAccountId} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -1283,26 +1282,18 @@ export default {
           if (action === 'confirm') {
             let params1 = {
               id: this.accountWithGroup.id,
-              groups: this.checkedScans
+              resultId: this.accountWithGroup.resultId?this.accountWithGroup.resultId:"",
+              k8sGroups: this.checkedScans,
+              ruleGroups: this.checkedGroups
             }
             this.groupResult = this.$post(scanK8sUrl, params1,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.search();
+                this.scanVisible = false;
               } else {
                 this.$error(response.message);
               }
-              if (this.checkedGroups.length > 0) {
-                let params = {
-                  accountId: this.accountWithGroup.id,
-                  groups: this.checkedGroups
-                }
-                this.groupResult = this.$post(ruleScanUrl, params, () => {
-                  this.$success(this.$t('account.i18n_hr_create_success'));
-                  this.search();
-                });
-              }
-              this.scanVisible = false;
             });
           }
         }

@@ -46,7 +46,11 @@ public class CloudNativeRequest {
 
     private Map<String, Object> combine;
 
-    private List<String> groups;
+    private String resultId;
+
+    private List<String> k8sGroups;
+
+    private List<Integer> ruleGroups;
 
     public String getId() {
         return id;
@@ -144,11 +148,27 @@ public class CloudNativeRequest {
         this.userName = userName;
     }
 
-    public List<String> getGroups() {
-        return groups;
+    public List<String> getK8sGroups() {
+        return k8sGroups;
     }
 
-    public void setGroups(List<String> groups) {
-        this.groups = groups;
+    public void setK8sGroups(List<String> k8sGroups) {
+        this.k8sGroups = k8sGroups;
+    }
+
+    public List<Integer> getRuleGroups() {
+        return ruleGroups;
+    }
+
+    public void setRuleGroups(List<Integer> ruleGroups) {
+        this.ruleGroups = ruleGroups;
+    }
+
+    public String getResultId() {
+        return resultId;
+    }
+
+    public void setResultId(String resultId) {
+        this.resultId = resultId;
     }
 }
