@@ -25,7 +25,7 @@
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 24px; height: 24px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.name }} {{scope.row.pluginIcon}}
+                 &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
         </el-table-column>
@@ -882,7 +882,6 @@ export default {
     this.search();
     this.activeProxy();
     this.activeRepo();
-    this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {

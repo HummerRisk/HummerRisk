@@ -802,7 +802,7 @@ export default {
               this.innerAdd = false;
               this.imageVisible = false;
               this.$router.push({
-                path: '/image/result',
+                path: '/image/image',
                 query: {
                   date: new Date().getTime()
                 },
