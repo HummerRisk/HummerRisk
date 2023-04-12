@@ -24,8 +24,8 @@
         <el-table-column prop="name" :label="$t('image.image_name')" v-if="checkedColumnNames.includes('name')" min-width="180" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.name }}
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 24px; height: 24px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.name }} {{scope.row.pluginIcon}}
               </span>
           </template>
         </el-table-column>
@@ -157,7 +157,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              &nbsp;&nbsp; {{ item.name + '|' + item.repo }}
+              &nbsp;&nbsp; {{ item.name + ':' + item.repo }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -260,7 +260,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              &nbsp;&nbsp; {{ item.name + '|' + item.repo }}
+              &nbsp;&nbsp; {{ item.name + ':' + item.repo }}
             </el-option>
           </el-select>
         </el-form-item>
