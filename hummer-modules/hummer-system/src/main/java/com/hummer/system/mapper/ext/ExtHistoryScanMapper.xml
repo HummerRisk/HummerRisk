@@ -204,6 +204,9 @@
             <if test="request.id != null and request.id != ''">
                 and t.id = #{request.id}
             </if>
+            <if test="request.imageId != null and request.imageId != ''">
+                and t.image_id = #{request.imageId}
+            </if>
             <if test="request.name != null and request.name != ''">
                 and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
@@ -311,6 +314,9 @@
 
             <if test="request.id != null and request.id != ''">
                 and t.id = #{request.id}
+            </if>
+            <if test="request.codeId != null and request.codeId != ''">
+                and t.code_id = #{request.codeId}
             </if>
             <if test="request.name != null and request.name != ''">
                 and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
@@ -423,6 +429,9 @@
             <if test="request.id != null and request.id != ''">
                 and t.id = #{request.id}
             </if>
+            <if test="request.serverId != null and request.serverId != ''">
+                and s.id = #{request.serverId}
+            </if>
             <if test="request.serverName != null and request.serverName != ''">
                 and LOWER(t.server_name) like CONCAT('%',LOWER(#{request.serverName}),'%')
             </if>
@@ -529,6 +538,9 @@
 
             <if test="request.id != null and request.id != ''">
                 and t.id = #{request.id}
+            </if>
+            <if test="request.fsId != null and request.fsId != ''">
+                and t.fs_id = #{request.fsId}
             </if>
             <if test="request.name != null and request.name != ''">
                 and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
@@ -650,6 +662,9 @@
                 </include>
             </if>
 
+            <if test="request.cloudNativeId != null and request.cloudNativeId != ''">
+                and t.cloud_native_id = #{request.cloudNativeId}
+            </if>
             <if test="request.name != null and request.name != ''">
                 and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
@@ -717,6 +732,9 @@
                 </include>
             </if>
 
+            <if test="request.configId != null and request.configId != ''">
+                and t.config_id = #{request.configId}
+            </if>
             <if test="request.name != null and request.name != ''">
                 and LOWER(t.name) like CONCAT('%', LOWER(#{request.name}),'%')
             </if>
