@@ -18,7 +18,7 @@
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
-                    <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                    <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
                       <div slot="error" class="image-slot">
                         <i class="el-icon-picture-outline"></i>
                       </div>
