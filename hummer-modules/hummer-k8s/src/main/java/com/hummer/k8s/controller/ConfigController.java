@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.io.IOException;
 import java.util.List;
@@ -107,7 +107,7 @@ public class ConfigController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

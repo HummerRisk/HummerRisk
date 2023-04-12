@@ -176,18 +176,30 @@ public class ResourceCreateService {
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
+
+                    CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
+                    if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
+                        historyScanTask.setStatus(cloudTask.getStatus());
+                        historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
+                        historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
+                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
+                    }
+
                     CloudNativeResult cloudNativeResult = k8sProviderService.cloudNativeResult(historyScanTask.getTaskId());
                     if (cloudNativeResult != null && historyScanStatus.contains(cloudNativeResult.getResultStatus())) {
                         historyScanTask.setStatus(cloudNativeResult.getResultStatus());
                         historyScanTask.setResourcesSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
                         historyScanTask.setReturnSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
                         historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeResult, TaskEnum.k8sAccount.getType()));
-                    } else {
+                    }
+
+                    if (cloudTask == null && cloudNativeResult == null) {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
                         historyScanTask.setReturnSum(0L);
                         historyScanTask.setScanScore(100);
                     }
+
                     historyScanTask.setOutput(jsonArray.toJSONString());
                     historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {

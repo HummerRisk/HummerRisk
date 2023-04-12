@@ -38,10 +38,6 @@ public class HistoryCloudNativeResultDTO extends HistoryCloudNativeResultWithBLO
 
     private Long scanTime;
 
-    private String cloudResourcesSum;
-
-    private String cloudReturnSum;
-
     public String getCritical() {
         return critical;
     }
@@ -162,19 +158,4 @@ public class HistoryCloudNativeResultDTO extends HistoryCloudNativeResultWithBLO
         this.scanTime = scanTime;
     }
 
-    public String getCloudResourcesSum() {
-        return cloudResourcesSum;
-    }
-
-    public void setCloudResourcesSum(String cloudResourcesSum) {
-        this.cloudResourcesSum = cloudResourcesSum;
-    }
-
-    public String getCloudReturnSum() {
-        return cloudReturnSum;
-    }
-
-    public void setCloudReturnSum(String cloudReturnSum) {
-        this.cloudReturnSum = cloudReturnSum;
-    }
 }

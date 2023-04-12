@@ -2,6 +2,7 @@ package com.hummer.cloud.api;
 
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
+import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.system.api.model.LoginUser;
 
@@ -52,5 +53,13 @@ public interface ICloudProviderService {
     int updateCloudAccount(AccountWithBLOBs account) throws Exception;
 
     int deleteCloudAccount(String id);
+
+    long handleK8sTask(String accountId);
+
+    long getResourceSum(String accountId);
+
+    long getReturnSum(String accountId);
+
+    void scanK8s(ScanGroupRequest request, CloudNative cloudNative, LoginUser loginUser) throws Exception;
 
 }

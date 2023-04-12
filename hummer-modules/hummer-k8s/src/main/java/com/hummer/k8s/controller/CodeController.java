@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.io.IOException;
 import java.util.List;
@@ -151,7 +151,7 @@ public class CodeController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping(value = "resultList/{goPage}/{pageSize}")
     public Pager<List<CodeResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -179,7 +179,7 @@ public class CodeController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("resultItemList/{goPage}/{pageSize}")
     public Pager<List<CodeResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

@@ -114,6 +114,8 @@
         <result column="vulnerability_report" jdbcType="LONGVARCHAR" property="vulnerabilityReport" />
         <result column="config_audit_report" jdbcType="LONGVARCHAR" property="configAuditReport" />
         <result column="kube_bench" jdbcType="LONGVARCHAR" property="kubeBench" />
+        <result column="cloud_resources_sum" jdbcType="BIGINT" property="cloudResourcesSum" />
+        <result column="cloud_return_sum" jdbcType="BIGINT" property="cloudReturnSum" />
     </resultMap>
 
     <select id="resultList" parameterType="com.hummer.common.core.domain.request.k8s.K8sResultRequest" resultMap="resultListBaseResultMap">
@@ -319,14 +321,6 @@
     <select id="getCloudNativeResult" parameterType="java.lang.String" resultMap="resultListBaseResultMap">
         SELECT
         t.*,
-        CASE
-        WHEN (t.result_status in ('APPROVED', 'PROCESSING')) or
-        (('APPROVED' in (select ct.status from cloud_task ct where t.cloud_native_id = ct.account_id)) or ('PROCESSING' in (select ct.status from cloud_task ct where t.cloud_native_id = ct.account_id)))
-        THEN 'APPROVED'
-        WHEN (t.result_status in ('ERROR')) THEN 'ERROR'
-        WHEN (t.result_status in ('WARNING')) THEN 'WARNING'
-        ELSE 'FINISHED'
-        END AS result_status,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'critical') as `critical`,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'high') as `high`,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t.id and LOWER(tj.severity) = 'medium') as `medium`,

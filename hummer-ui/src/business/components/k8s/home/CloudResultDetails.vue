@@ -370,18 +370,10 @@
             <!-- 展开 end -->
             <el-table-column type="index" min-width="40"/>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="150">
-              {{ scope.row.hummerId }}
+              <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/> {{ scope.row.hummerId }}
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
               {{ scope.row.resourceType }}
-            </el-table-column>
-            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('k8s.namespace')" min-width="130">
-              <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ scope.row.regionName }}
-              </span>
-              </template>
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
                              :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
@@ -573,7 +565,7 @@ import {
   cloudTaskLogByIdUrl,
   cloudTaskManualListUrl
 } from "@/api/cloud/account/account";
-import {resourceTypesUrl, ruleReScansUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
+import {resourceTypesUrl, ruleReScansK8sUrl, ruleReScanK8sUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
 
 //列表展示与隐藏
@@ -756,6 +748,8 @@ export default {
       resourcePage: 1,
       resourceSize: 10,
       resourceTotal: 0,
+      regulationData: [],
+      regulationVisible: false,
       string2Key: "",
       string2PrettyFormat: "",
       visible: false,
@@ -1039,7 +1033,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(ruleReScansUrl + item.id, response => {
+            this.$get(ruleReScansK8sUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -1053,7 +1047,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
+            this.$get(ruleReScanK8sUrl + item.id + "/" + item.accountId, response => {
               if (response.success) {
                 this.search();
               }
@@ -1173,6 +1167,14 @@ export default {
         this.resourceCondition.taskId = row.id;
       }
       this.resourceSearch();
+    },
+    showSeverityDetail(item) {
+      this.$get(resourceRegulationUrl + item.ruleId, response => {
+        if (response.success) {
+          this.regulationData = response.data;
+          this.regulationVisible = true;
+        }
+      });
     },
     back () {
       this.$router.push({

@@ -65,16 +65,18 @@ public class ResourceCreateService {
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
     @Autowired
     private CommonThreadPool commonThreadPool;
+    @Autowired
+    private K8sCreateService k8sCreateService;
     @DubboReference
     private ISystemProviderService systemProviderService;
 
     //云资源检测
     @XxlJob("cloudTasksJobHandler")
     public void cloudTasksJobHandler() throws Exception {
-        //云资源检测
+        //云规则检测
         final CloudTaskExample cloudTaskExample = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = cloudTaskExample.createCriteria();
-        criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdNotIn(PlatformUtils.getK8sPlugin());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
@@ -105,6 +107,42 @@ public class ResourceCreateService {
                 });
             });
         }
+
+        //K8s 规则检测
+        final CloudTaskExample cloudTaskExample2 = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria2 = cloudTaskExample2.createCriteria();
+        criteria2.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdIn(PlatformUtils.getK8sPlugin());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        cloudTaskExample2.setOrderByClause("create_time limit 10");
+        List<CloudTask> cloudTaskList2 = cloudTaskMapper.selectByExample(cloudTaskExample2);
+        if (CollectionUtils.isNotEmpty(cloudTaskList2)) {
+            cloudTaskList2.forEach(task2 -> {
+                LogUtil.info("handling k8sRuleTask: {}", toJSONString(task2));
+                final CloudTask cloudTaskToBeProceed2;
+                try {
+                    cloudTaskToBeProceed2 = BeanUtils.copyBean(new CloudTask(), task2);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(cloudTaskToBeProceed2.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(cloudTaskToBeProceed2.getId(), cloudTaskToBeProceed2.getId());
+                commonThreadPool.addTask(() -> {
+                    try {
+                        k8sCreateService.handleTask(cloudTaskToBeProceed2);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(cloudTaskToBeProceed2.getId());
+                    }
+                });
+            });
+        }
+
     }
 
     //对象存储
@@ -354,15 +392,9 @@ public class ResourceCreateService {
                 resourceWithBLOBs.setResourceCommandAction(taskItemResource.getResourceCommandAction());
                 ResourceWithBLOBs resource = resourceService.saveResource(resourceWithBLOBs, taskItem, cloudTask, taskItemResource);
                 LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
-                if (!PlatformUtils.isSupportNative(resource.getPluginId())) {
-                    orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
-                                    + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
-                            true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
-                } else {
-                    orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_k8s_account" + ": " + resource.getPluginName() + "，"
-                                    + "i18n_namespace" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
-                            true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
-                }
+                orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
+                                + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
+                        true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
 
                 //执行完删除返回目录文件，以便于下一次操作覆盖
                 String deleteResourceDir = "rm -rf " + dirPath;

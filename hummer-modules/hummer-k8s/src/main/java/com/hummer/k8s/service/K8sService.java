@@ -12,13 +12,12 @@ import com.hummer.common.core.domain.request.image.ImageRequest;
 import com.hummer.common.core.domain.request.k8s.*;
 import com.hummer.common.core.domain.request.k8s.rbac.Links;
 import com.hummer.common.core.domain.request.k8s.rbac.Nodes;
+import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.k8s.K8sSource;
-import com.hummer.common.core.proxy.kubesphere.KubeSphereRequest;
-import com.hummer.common.core.proxy.rancher.RancherRequest;
 import com.hummer.common.core.utils.*;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.*;
@@ -298,6 +297,7 @@ public class K8sService {
                     account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
+                    reinstallOperator(account.getId(), loginUser);
                 }
                 //检验kube-bench
                 ValidateDTO kubenchStatusValidate = validateKubenchStatus(account);
@@ -305,6 +305,7 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
+                    reinstallKubench(account.getId(), loginUser);
                 }
                 cloudNativeMapper.insertSelective(account);
 
@@ -312,8 +313,6 @@ public class K8sService {
                 BeanUtils.copyBean(accountWithBLOBs, account);
                 cloudProviderService.insertCloudAccount(accountWithBLOBs);
 
-                reinstallOperator(account.getId(), loginUser);
-                reinstallKubench(account.getId(), loginUser);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return valid;
             }
@@ -600,41 +599,168 @@ public class K8sService {
     }
 
     public void scan(CloudNativeRequest request, LoginUser loginUser) throws Exception {
-        List<String> scans = request.getGroups();
-        if (scans.size() > 0) {
-            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(request.getId());
-            Integer scanId = systemProviderService.insertScanHistory(cloudNative);
-            if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
-                List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
-                CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
+        List<String> scans = request.getK8sGroups();
+        List<Integer> ruleGroups = request.getRuleGroups();
+        CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(request.getId());
 
-                deleteRescanResultByCloudNativeId(request.getId());
+        if (StringUtils.isNotBlank(request.getResultId())) {
+            if (scans.size() > 0) {
+                if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
 
-                for (CloudNativeRule rule : ruleList) {
-                    BeanUtils.copyBean(result, cloudNative);
-                    result.setId(UUIDUtil.newUUID());
-                    result.setCloudNativeId(request.getId());
-                    result.setApplyUser(loginUser.getUserId());
-                    result.setCreateTime(System.currentTimeMillis());
+                    CloudNativeResultWithBLOBs result = cloudNativeResultMapper.selectByPrimaryKey(request.getResultId());
+
                     result.setUpdateTime(System.currentTimeMillis());
                     result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
                     result.setUserName(loginUser.getUserName());
-                    result.setRuleId(rule.getId());
-                    result.setRuleName(rule.getName());
-                    result.setRuleDesc(rule.getDescription());
-                    result.setSeverity(rule.getSeverity());
                     result.setScanGroups(JSON.toJSONString(scans));
-                    cloudNativeResultMapper.insertSelective(result);
 
-                    saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
-                    operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+                    if (ruleGroups.size() > 0) {
+                        ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
+                        scanGroupRequest.setAccountId(request.getId());
+                        scanGroupRequest.setGroups(ruleGroups);
+                        result.setCloudResourcesSum(0L);
+                        result.setCloudReturnSum(0L);
+                        result.setRuleGroups(JSON.toJSONString(ruleGroups));
+                        cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
+                    }
 
-                    systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
+                    cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
-                    systemProviderService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                    saveCloudNativeResultLog(result.getId(), "i18n_restart_k8s_result", "", true, loginUser);
+
+                    operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_restart_k8s_result");
+
+                    systemProviderService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                }
+            } else {
+                if (ruleGroups.size() > 0) {
+                    if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+
+                        Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+                        List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
+                        CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
+
+                        deleteRescanResultByCloudNativeId(request.getId());
+
+                        for (CloudNativeRule rule : ruleList) {
+                            BeanUtils.copyBean(result, cloudNative);
+                            result.setId(UUIDUtil.newUUID());
+                            result.setCloudNativeId(request.getId());
+                            result.setApplyUser(loginUser.getUserId());
+                            result.setCreateTime(System.currentTimeMillis());
+                            result.setUpdateTime(System.currentTimeMillis());
+                            result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                            result.setUserName(loginUser.getUserName());
+                            result.setRuleId(rule.getId());
+                            result.setRuleName(rule.getName());
+                            result.setRuleDesc(rule.getDescription());
+                            result.setSeverity(rule.getSeverity());
+                            result.setScanGroups(JSON.toJSONString(scans));
+                            result.setRuleGroups(JSON.toJSONString(ruleGroups));
+                            cloudNativeResultMapper.insertSelective(result);
+
+                            ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
+                            scanGroupRequest.setAccountId(request.getId());
+                            scanGroupRequest.setGroups(ruleGroups);
+                            cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
+
+                            saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_rule_result", "", true, loginUser);
+                            operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+
+                            systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
+
+                            systemProviderService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                        }
+                    }
+                }
+            }
+        } else {
+            if (scans.size() > 0) {
+                if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+
+                    Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+                    List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
+                    CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
+
+                    deleteRescanResultByCloudNativeId(request.getId());
+
+                    for (CloudNativeRule rule : ruleList) {
+                        BeanUtils.copyBean(result, cloudNative);
+                        result.setId(UUIDUtil.newUUID());
+                        result.setCloudNativeId(request.getId());
+                        result.setApplyUser(loginUser.getUserId());
+                        result.setCreateTime(System.currentTimeMillis());
+                        result.setUpdateTime(System.currentTimeMillis());
+                        result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                        result.setUserName(loginUser.getUserName());
+                        result.setRuleId(rule.getId());
+                        result.setRuleName(rule.getName());
+                        result.setRuleDesc(rule.getDescription());
+                        result.setSeverity(rule.getSeverity());
+                        result.setScanGroups(JSON.toJSONString(scans));
+                        result.setRuleGroups(JSON.toJSONString(ruleGroups));
+                        cloudNativeResultMapper.insertSelective(result);
+
+                        if (ruleGroups.size() > 0) {
+                            ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
+                            scanGroupRequest.setAccountId(request.getId());
+                            scanGroupRequest.setGroups(ruleGroups);
+                            cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
+                        }
+
+                        saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_result", "", true, loginUser);
+                        operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+
+                        systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
+
+                        systemProviderService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                    }
+                }
+            } else {
+                if (ruleGroups.size() > 0) {
+                    if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
+
+                        Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+                        List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
+                        CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
+
+                        deleteRescanResultByCloudNativeId(request.getId());
+
+                        for (CloudNativeRule rule : ruleList) {
+                            BeanUtils.copyBean(result, cloudNative);
+                            result.setId(UUIDUtil.newUUID());
+                            result.setCloudNativeId(request.getId());
+                            result.setApplyUser(loginUser.getUserId());
+                            result.setCreateTime(System.currentTimeMillis());
+                            result.setUpdateTime(System.currentTimeMillis());
+                            result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+                            result.setUserName(loginUser.getUserName());
+                            result.setRuleId(rule.getId());
+                            result.setRuleName(rule.getName());
+                            result.setRuleDesc(rule.getDescription());
+                            result.setSeverity(rule.getSeverity());
+                            result.setScanGroups(JSON.toJSONString(scans));
+                            result.setRuleGroups(JSON.toJSONString(ruleGroups));
+                            cloudNativeResultMapper.insertSelective(result);
+
+                            ScanGroupRequest scanGroupRequest = new ScanGroupRequest();
+                            scanGroupRequest.setAccountId(request.getId());
+                            scanGroupRequest.setGroups(ruleGroups);
+                            cloudProviderService.scanK8s(scanGroupRequest, cloudNative, loginUser);
+
+                            saveCloudNativeResultLog(result.getId(), "i18n_start_k8s_rule_result", "", true, loginUser);
+
+                            operationLogService.log(loginUser, result.getId(), result.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_start_k8s_result");
+
+                            systemProviderService.insertScanTaskHistory(result, scanId, cloudNative.getId(), TaskEnum.k8sAccount.getType());
+
+                            systemProviderService.insertHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));
+                        }
+                    }
                 }
             }
         }
+
 
     }
 
@@ -657,103 +783,72 @@ public class K8sService {
 
     public void createScan(CloudNativeResultWithBLOBs result, LoginUser loginUser) throws Exception {
         try {
-            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(result.getCloudNativeId());
-            if (StringUtils.equalsIgnoreCase(PlatformUtils.k8s, cloudNative.getPluginId())) {
-                K8sRequest k8sRequest = new K8sRequest();
-                k8sRequest.setCredential(cloudNative.getCredential());
-                String token = "Bearer " + k8sRequest.getToken();
-                String url = k8sRequest.getUrl();
-                if (url.endsWith("/")) {
-                    url = url + CloudNativeConstants.URL2;
-                } else {
-                    url = url + CloudNativeConstants.URL1;
-                }
-                Map<String, String> param = new HashMap<>();
-                param.put("Accept", CloudNativeConstants.Accept);
-                param.put("Authorization", token);
-                String reponse1 = HttpClientUtil.HttpGet(url, param);
-                result.setConfigAuditReport(reponse1);
-                String url2 = k8sRequest.getUrl();
-                if (url2.endsWith("/")) {
-                    url2 = url2 + CloudNativeConstants.URL4;
-                } else {
-                    url2 = url2 + CloudNativeConstants.URL3;
-                }
-                String reponse2 = HttpClientUtil.HttpGet(url2, param);
-                result.setVulnerabilityReport(reponse2);
-            } else if (StringUtils.equalsIgnoreCase(PlatformUtils.rancher, cloudNative.getPluginId())) {
-                RancherRequest rancherRequest = new RancherRequest();
-                rancherRequest.setCredential(cloudNative.getCredential());
-                String token = "Bearer " + rancherRequest.getToken();
-                String url = rancherRequest.getUrl();
-                if (url.endsWith("/")) {
-                    url = url + CloudNativeConstants.URL2;
-                } else {
-                    url = url + CloudNativeConstants.URL1;
-                }
-                Map<String, String> param = new HashMap<>();
-                param.put("Accept", CloudNativeConstants.Accept);
-                param.put("Authorization", token);
-                String reponse1 = HttpClientUtil.HttpGet(url, param);
-                result.setConfigAuditReport(reponse1);
-                String url2 = rancherRequest.getUrl();
-                if (url2.endsWith("/")) {
-                    url2 = url2 + CloudNativeConstants.URL4;
-                } else {
-                    url2 = url2 + CloudNativeConstants.URL3;
-                }
-                String reponse2 = HttpClientUtil.HttpGet(url2, param);
-                result.setVulnerabilityReport(reponse2);
-            } else if (StringUtils.equalsIgnoreCase(PlatformUtils.openshift, cloudNative.getPluginId())) {
 
-            } else if (StringUtils.equalsIgnoreCase(PlatformUtils.kubesphere, cloudNative.getPluginId())) {
-                KubeSphereRequest kubeSphereRequest = new KubeSphereRequest();
-                kubeSphereRequest.setCredential(cloudNative.getCredential());
-                String token = "Bearer " + kubeSphereRequest.getToken();
-                String url = kubeSphereRequest.getUrl();
-                if (url.endsWith("/")) {
-                    url = url + CloudNativeConstants.URL2;
+            List<String> ruleGroups = JSONArray.parseArray(result.getRuleGroups()).toJavaList(String.class);
+            ;
+
+            if (ruleGroups.size() > 0) {
+                //如果K8s规则检测没完成，先不其他检测
+                long num = cloudProviderService.handleK8sTask(result.getCloudNativeId());
+                if (num > 0) {
+                    return;
                 } else {
-                    url = url + CloudNativeConstants.URL1;
+                    result.setCloudReturnSum(cloudProviderService.getReturnSum(result.getCloudNativeId()));
+                    result.setCloudResourcesSum(cloudProviderService.getResourceSum(result.getCloudNativeId()));
                 }
-                Map<String, String> param = new HashMap<>();
-                param.put("Accept", CloudNativeConstants.Accept);
-                param.put("Authorization", token);
-                String reponse1 = HttpClientUtil.HttpGet(url, param);
-                result.setConfigAuditReport(reponse1);
-                String url2 = kubeSphereRequest.getUrl();
-                if (url2.endsWith("/")) {
-                    url2 = url2 + CloudNativeConstants.URL4;
-                } else {
-                    url2 = url2 + CloudNativeConstants.URL3;
-                }
-                String reponse2 = HttpClientUtil.HttpGet(url2, param);
-                result.setVulnerabilityReport(reponse2);
             }
+
+            CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(result.getCloudNativeId());
+            JSONArray scanGroups = JSONArray.parseArray(result.getScanGroups());
+
+            if (scanGroups.size() > 0) {
+                for (Object o : scanGroups) {
+                    String obj = (String) o;
+                    K8sRequest k8sRequest = new K8sRequest();
+                    k8sRequest.setCredential(cloudNative.getCredential());
+                    String token = "Bearer " + k8sRequest.getToken();
+                    Map<String, String> param = new HashMap<>();
+                    param.put("Accept", CloudNativeConstants.Accept);
+                    param.put("Authorization", token);
+                    switch (obj) {
+                        case "vuln":
+                            String url2 = k8sRequest.getUrl();
+                            if (url2.endsWith("/")) {
+                                url2 = url2 + CloudNativeConstants.URL4;
+                            } else {
+                                url2 = url2 + CloudNativeConstants.URL3;
+                            }
+                            String reponse2 = HttpClientUtil.HttpGet(url2, param);
+                            result.setVulnerabilityReport(reponse2);
+                            long count = saveResultItem(result);
+                            result.setReturnSum(count);
+                            continue;
+                        case "config":
+                            String url = k8sRequest.getUrl();
+                            if (url.endsWith("/")) {
+                                url = url + CloudNativeConstants.URL2;
+                            } else {
+                                url = url + CloudNativeConstants.URL1;
+                            }
+                            String reponse1 = HttpClientUtil.HttpGet(url, param);
+                            result.setConfigAuditReport(reponse1);
+                            long sum = saveResultConfigItem(result);
+                            result.setReturnConfigSum(sum);
+                            continue;
+                        case "kubench":
+                            String kubeBench = scanKubeBench(cloudNative, result.getId());
+                            result.setKubeBench(kubeBench);
+                    }
+                }
+            }
+
             result.setUpdateTime(System.currentTimeMillis());
             result.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
-
-            JSONArray jsonArray = JSONArray.parseArray(result.getScanGroups());
-            for (Object o : jsonArray) {
-                String obj = (String) o;
-                switch (obj) {
-                    case "vuln":
-                        long count = saveResultItem(result);
-                        result.setReturnSum(count);
-                        continue;
-                    case "config":
-                        long sum = saveResultConfigItem(result);
-                        result.setReturnConfigSum(sum);
-                        continue;
-                    case "kubench":
-                        String kubeBench = scanKubeBench(cloudNative, result.getId());
-                        result.setKubeBench(kubeBench);
-                }
-            }
 
             cloudNativeResultMapper.updateByPrimaryKeySelective(result);
 
             systemProviderService.createCloudNativeMessageOrder(result);
+
             saveCloudNativeResultLog(result.getId(), "i18n_end_k8s_result", "", true, loginUser);
 
             systemProviderService.updateHistoryCloudNativeResult(BeanUtils.copyBean(new HistoryCloudNativeResultWithBLOBs(), result));

@@ -39,7 +39,7 @@ import static com.alibaba.fastjson.JSON.parseArray;
 //@Service
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class RuleService   {
+public class RuleService {
 
     @Autowired
     @Lazy
@@ -540,7 +540,27 @@ public class RuleService   {
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
+    public void scanK8s(ScanGroupRequest request, CloudNative cloudNative, LoginUser loginUser) throws Exception {
+        Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+        for (Integer groupId : request.getGroups()) {
+            this.scanK8sGroups(cloudNative, scanId, groupId.toString(), loginUser);
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void reScans(String accountId) throws Exception {
+        List<String> status = Arrays.stream(new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()}).collect(Collectors.toList());
+        CloudTaskExample example = new CloudTaskExample();
+        example.createCriteria().andAccountIdEqualTo(accountId).andStatusNotIn(status);
+        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(example);
+        for (CloudTask cloudTask : cloudTaskList) {
+            cloudTask.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
+    public void reScansK8s(String accountId) throws Exception {
         List<String> status = Arrays.stream(new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()}).collect(Collectors.toList());
         CloudTaskExample example = new CloudTaskExample();
         example.createCriteria().andAccountIdEqualTo(accountId).andStatusNotIn(status);
@@ -563,6 +583,18 @@ public class RuleService   {
         return this.dealTask(rule, account, scanId, null, loginUser);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
+    public String reScanK8s(String taskId, String accountId, LoginUser loginUser) throws Exception {
+        CloudTaskItemExample example = new CloudTaskItemExample();
+        example.createCriteria().andTaskIdEqualTo(taskId);
+        List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(example);
+        CloudNative cloudNative = k8sProviderService.cloudNative(accountId);
+        RuleDTO rule = getRuleDtoById(cloudTaskItems.get(0).getRuleId(), accountId);
+        if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
+        Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+        return this.dealK8sTask(rule, cloudNative, scanId, null, loginUser);
+    }
+
     private void scanGroups(String accountId, Integer scanId, String groupId, LoginUser loginUser) {
         try {
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
@@ -571,6 +603,19 @@ public class RuleService   {
             List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(accountId, groupId);
             for (RuleDTO rule : ruleDTOS) {
                 this.dealTask(rule, account, scanId, messageOrderId, loginUser);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+    }
+
+    private void scanK8sGroups(CloudNative cloudNative, Integer scanId, String groupId, LoginUser loginUser) {
+        try {
+            String messageOrderId = systemProviderService.createK8sMessageOrder(cloudNative);
+
+            List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(cloudNative.getId(), groupId);
+            for (RuleDTO rule : ruleDTOS) {
+                this.dealK8sTask(rule, cloudNative, scanId, messageOrderId, loginUser);
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
@@ -594,8 +639,8 @@ public class RuleService   {
 
     private String dealTask(RuleDTO rule, AccountWithBLOBs account, Integer scanId, String messageOrderId, LoginUser loginUser) {
         try {
-            if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(),rule.getId(),
-                            new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})){
+            if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(), rule.getId(),
+                    new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})) {
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
                 BeanUtils.copyBean(quartzTaskDTO, rule);
                 List<SelectTag> selectTags = new LinkedList<>();
@@ -621,9 +666,43 @@ public class RuleService   {
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId, loginUser);
-                if(scanId!=null) {
+                if (scanId != null) {
                     if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
                         systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                    }
+                }
+                return cloudTask.getId();
+            } else {
+                systemProviderService.deleteScanTaskHistory(scanId);
+                LogUtil.warn(rule.getName() + ": " + Translator.get("i18n_disabled_rules_not_scanning"));
+            }
+        } catch (Exception e) {
+            HRException.throwException(e.getMessage());
+        }
+        return "";
+    }
+
+    private String dealK8sTask(RuleDTO rule, CloudNative cloudNative, Integer scanId, String messageOrderId, LoginUser loginUser) {
+        try {
+            if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(cloudNative.getId(), rule.getId(),
+                    new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})) {
+                QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
+                BeanUtils.copyBean(quartzTaskDTO, rule);
+                List<SelectTag> selectTags = new LinkedList<>();
+                SelectTag s = new SelectTag();
+                s.setAccountId(cloudNative.getId());
+                List<String> regions = new ArrayList<>();
+                regions.add("all-namespcace");
+                s.setRegions(regions);
+                selectTags.add(s);
+                quartzTaskDTO.setSelectTags(selectTags);
+                quartzTaskDTO.setType("manual");
+                quartzTaskDTO.setAccountId(cloudNative.getId());
+                quartzTaskDTO.setTaskName(rule.getName());
+                CloudTask cloudTask = cloudTaskService.saveK8sManualTask(quartzTaskDTO, messageOrderId, loginUser);
+                if (scanId != null) {
+                    if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
+                        systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.k8sAccount.getType());
                     }
                 }
                 return cloudTask.getId();
@@ -710,7 +789,7 @@ public class RuleService   {
         }
     }
 
-    public void scanByGroup(String groupId, String accountId, LoginUser loginUser){
+    public void scanByGroup(String groupId, String accountId, LoginUser loginUser) {
         scanGroups(accountId, null, groupId, loginUser);
     }
 }

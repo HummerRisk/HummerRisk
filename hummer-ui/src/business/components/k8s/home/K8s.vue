@@ -519,8 +519,7 @@ import {
   updateK8sUrl
 } from "@/api/k8s/k8s/k8s";
 import {saveAs} from "@/common/js/FileSaver";
-import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import {groupsByAccountId} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -718,7 +717,6 @@ export default {
         lineNumbers: true,
         line: true,
         indentWithTabs: true,
-        location: "",
       },
       checkedColumnNames: columnOptions.map((ele) => ele.props),
       columnNames: columnOptions,
@@ -1167,7 +1165,7 @@ export default {
       }).catch(error => error);
     },
     goCloudResource (params) {
-      if (params.cloudReturnSum == 0) {
+      if (params.cloudResourcesSum == 0) {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
@@ -1193,10 +1191,6 @@ export default {
     goKubenchResource (params) {
       if (!params.resultId) {
         this.$warning(this.$t('resource.i18n_no_warn'));
-        return;
-      }
-      if (params.returnConfigSum == 0) {
-        this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
       let p = '/k8s/resultkubenchdetails/' + params.resultId;
@@ -1283,26 +1277,18 @@ export default {
           if (action === 'confirm') {
             let params1 = {
               id: this.accountWithGroup.id,
-              groups: this.checkedScans
+              resultId: this.accountWithGroup.resultId?this.accountWithGroup.resultId:"",
+              k8sGroups: this.checkedScans,
+              ruleGroups: this.checkedGroups
             }
             this.groupResult = this.$post(scanK8sUrl, params1,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
+                this.scanVisible = false;
                 this.search();
               } else {
                 this.$error(response.message);
               }
-              if (this.checkedGroups.length > 0) {
-                let params = {
-                  accountId: this.accountWithGroup.id,
-                  groups: this.checkedGroups
-                }
-                this.groupResult = this.$post(ruleScanUrl, params, () => {
-                  this.$success(this.$t('account.i18n_hr_create_success'));
-                  this.search();
-                });
-              }
-              this.scanVisible = false;
             });
           }
         }
@@ -1336,9 +1322,13 @@ export default {
       }
     },
   },
-  activated() {
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror;
+    }
+  },
+  created() {
     this.init();
-    this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {

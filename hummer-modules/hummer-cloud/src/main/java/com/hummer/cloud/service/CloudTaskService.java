@@ -76,6 +76,15 @@ public class CloudTaskService {
         }
     }
 
+    public CloudTask saveK8sManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId, LoginUser loginUser) {
+        try {
+            this.validateYaml(quartzTaskDTO);
+            return orderService.createK8sTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId, loginUser);
+        } catch (Exception e) {
+            throw new HRException(e.getMessage());
+        }
+    }
+
     public boolean morelTask(String taskId) {
         try {
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
@@ -296,5 +305,40 @@ public class CloudTaskService {
         });
     }
 
+    public long handleK8sTask(String accountId) {
+        final CloudTaskExample cloudTaskExample = new CloudTaskExample();
+        cloudTaskExample.createCriteria().andAccountIdEqualTo(accountId).andStatusNotIn(Arrays.asList(CloudTaskConstants.TASK_STATUS.FINISHED.toString(),
+                CloudTaskConstants.TASK_STATUS.ERROR.toString(), CloudTaskConstants.TASK_STATUS.WARNING.toString()));
+        long countK8sScan = cloudTaskMapper.countByExample(cloudTaskExample);
+        return countK8sScan;
+    }
+
+    public long getResourceSum(String accountId) {
+        long num = 0;
+        CloudTaskExample example = new CloudTaskExample();
+        example.createCriteria().andAccountIdEqualTo(accountId);
+        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(example);
+        for (CloudTask task : cloudTasks) {
+            if (task.getResourcesSum() != null) {
+                int resourceSum = extCloudTaskMapper.getResourceSum(task.getId());
+                num += resourceSum;
+            }
+        }
+        return num;
+    }
+
+    public long getReturnSum(String accountId) {
+        long num = 0;
+        CloudTaskExample example = new CloudTaskExample();
+        example.createCriteria().andAccountIdEqualTo(accountId);
+        List<CloudTask> cloudTasks = cloudTaskMapper.selectByExample(example);
+        for (CloudTask task : cloudTasks) {
+            if (task.getReturnSum() != null) {
+                int returnSum = extCloudTaskMapper.getReturnSum(task.getId());
+                num += returnSum;
+            }
+        }
+        return num;
+    }
 
 }

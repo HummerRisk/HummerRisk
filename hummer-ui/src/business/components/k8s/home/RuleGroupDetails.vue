@@ -347,18 +347,10 @@
             <!-- 展开 end -->
             <el-table-column type="index" min-width="40"/>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="150">
-              {{ scope.row.hummerId }}
+              <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/> {{ scope.row.hummerId }}
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
               {{ scope.row.resourceType }}
-            </el-table-column>
-            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('k8s.namespace')" min-width="130">
-              <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{ scope.row.regionName }}
-              </span>
-              </template>
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
                              :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
@@ -376,138 +368,12 @@
           </hide-table>
           <table-pagination :change="resourceSearch" :current-page.sync="resourcePage" :page-size.sync="resourceSize" :total="resourceTotal"/>
 
-          <!--file-->
-          <el-drawer class="rtl" :title="string2Key" :visible.sync="visible"  size="80%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-            <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-          </el-drawer>
-          <!--file-->
-
         </el-card>
         <!-- result second -->
 
       </el-card>
 
     </div>
-
-    <!--Task log-->
-    <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="65%"
-               :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <result-log :row="logForm"></result-log>
-      <template v-slot:footer>
-        <dialog-footer
-          @cancel="logVisible = false"
-          @confirm="logVisible = false"/>
-      </template>
-    </el-drawer>
-    <!--Task log-->
-
-    <!--Task detail-->
-    <el-drawer v-if="detailVisible" :close-on-click-modal="false" class="rtl" :visible.sync="detailVisible" size="60%"
-               :show-close="false" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <div slot="title" class="dialog-title">
-        <span>{{ $t('resource.i18n_detail') }}</span>
-        <i class="el-icon-close el-icon-close-detail" @click="detailVisible=false"></i>
-      </div>
-      <el-form :model="detailForm" label-position="right" label-width="120px" size="small" :rules="rule"
-               ref="detailForm">
-        <el-form-item class="el-form-item-dev">
-          <el-tabs type="border-card" @tab-click="showCodemirror">
-            <el-tab-pane>
-              <span slot="label"><i class="el-icon-reading"></i> {{ $t('rule.rule') }}</span>
-              <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item :label="$t('account.cloud_platform')" v-if="detailForm.pluginIcon">
-                        <span>
-                          <img :src="require(`@/assets/img/platform/${detailForm.pluginIcon}`)"
-                               style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                           &nbsp;&nbsp; {{ detailForm.pluginName }}
-                        </span>
-                </el-form-item>
-                <el-form-item :label="$t('rule.rule_name')">
-                  <el-tooltip class="item" effect="dark" :content="detailForm.taskName" placement="top-start">
-                    <span v-if="detailForm.taskName" class="view-text">{{ detailForm.taskName }}</span>
-                  </el-tooltip>
-                </el-form-item>
-                <el-form-item :label="$t('resource.i18n_task_type')" v-if="detailForm.ruleTags">
-                      <span>
-                        <template v-for="tag in tagSelect">
-                          <span :key="tag.tagKey" v-if="detailForm.ruleTags.indexOf(tag.tagKey) > -1"> {{
-                              tag.tagName
-                            }}</span>
-                        </template>
-                        <template v-for="type in resourceTypes">
-                          <span :key="type.value"
-                                v-if="detailForm.resourceTypes.indexOf(type.value) > -1"> [{{ type.value }}]</span>
-                        </template>
-                      </span>
-                </el-form-item>
-                <el-form-item :label="$t('rule.severity')">
-                  <severity-type :row="detailForm"></severity-type>
-                </el-form-item>
-                <el-form-item :label="$t('resource.status')">
-                  <el-button plain size="mini" type="primary" v-if="detailForm.status === 'UNCHECKED'">
-                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                  </el-button>
-                  <el-button plain size="mini" type="primary" v-else-if="detailForm.status === 'APPROVED'">
-                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                  </el-button>
-                  <el-button plain size="mini" type="primary" v-else-if="detailForm.status === 'PROCESSING'">
-                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                  </el-button>
-                  <el-button plain size="mini" type="success" v-else-if="detailForm.status === 'FINISHED'">
-                    <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                  </el-button>
-                  <el-button plain size="mini" type="danger" v-else-if="detailForm.status === 'ERROR'">
-                    <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-                  </el-button>
-                  <el-button plain size="mini" type="warning" v-else-if="detailForm.status === 'WARNING'">
-                    <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-                  </el-button>
-                </el-form-item>
-                <el-form-item :label="$t('account.creator')">
-                  <span>{{ detailForm.applyUser }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('account.create_time')">
-                  <span>{{ detailForm.createTime | timestampFormatDate }}</span>
-                </el-form-item>
-              </el-form>
-              <div style="color: red;margin-left: 10px;">
-                注: {{ detailForm.description }}
-              </div>
-            </el-tab-pane>
-            <el-tab-pane>
-              <span slot="label"><i class="el-icon-info"></i> {{ $t('rule.rule_detail') }}</span>
-              <codemirror ref="cmEditor" v-model="detailForm.customData" class="code-mirror" :options="cmOptions"/>
-            </el-tab-pane>
-          </el-tabs>
-        </el-form-item>
-      </el-form>
-    </el-drawer>
-    <!--Task detail-->
-
-    <!--regulation report-->
-    <el-drawer class="rtl" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-      <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
-        <el-row class="el-row-c">
-          <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
-          <el-col :span="16"><span>{{ data.project }}</span></el-col>
-        </el-row>
-        <el-row class="el-row-c">
-          <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.security_level') }}</span></el-col>
-          <el-col :span="16"><span>{{ data.itemSortFirstLevel }}</span></el-col>
-        </el-row>
-        <el-row class="el-row-c">
-          <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.control_point') }}</span></el-col>
-          <el-col :span="16"><span>{{ data.itemSortSecondLevel }}</span></el-col>
-        </el-row>
-        <el-row class="el-row-c">
-          <el-col :span="8"><span style="color: #215d9a;">{{ $t('resource.suggestions_for_improvement') }} <i class="el-icon-question"></i></span></el-col>
-          <el-col :span="16"><span>{{ data.improvement }}</span></el-col>
-        </el-row>
-      </el-card>
-    </el-drawer>
-    <!--regulation report-->
 
   </main-container>
 </template>
@@ -531,7 +397,6 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
   cloudResourceListUrl,
-  resourceAccountDeleteUrl,
   resourceK8sSourceUrl,
   resourceRegionDataUrl,
   resourceRuleDataUrl,
@@ -545,7 +410,7 @@ import {
   cloudTaskLogByIdUrl,
   cloudTaskManualListUrl
 } from "@/api/cloud/account/account";
-import {resourceTypesUrl, ruleReScansUrl, ruleReScanUrl} from "@/api/cloud/rule/rule";
+import {resourceTypesUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
 
 //列表展示与隐藏
@@ -670,6 +535,8 @@ export default {
       detailVisible: false,
       logForm: {cloudTaskItemLogDTOs: []},
       detailForm: {},
+      regulationData: [],
+      regulationVisible: false,
       rule: {
         pluginId: [
           {required: true, message: this.$t('user.input_id'), trigger: 'blur'},
@@ -1060,6 +927,14 @@ export default {
         this.resourceCondition.taskId = row.id;
       }
       this.resourceSearch();
+    },
+    showSeverityDetail(item) {
+      this.$get(resourceRegulationUrl + item.ruleId, response => {
+        if (response.success) {
+          this.regulationData = response.data;
+          this.regulationVisible = true;
+        }
+      });
     },
   },
   computed: {

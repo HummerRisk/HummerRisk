@@ -5,6 +5,7 @@ import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
+import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -163,6 +164,26 @@ public class CloudProviderService implements ICloudProviderService {
     @Override
     public int deleteCloudAccount(String id) {
         return accountMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public long handleK8sTask(String accountId) {
+        return cloudTaskService.handleK8sTask(accountId);
+    }
+
+    @Override
+    public long getResourceSum(String accountId) {
+        return cloudTaskService.getResourceSum(accountId);
+    }
+
+    @Override
+    public long getReturnSum(String accountId) {
+        return cloudTaskService.getReturnSum(accountId);
+    }
+
+    @Override
+    public void scanK8s(ScanGroupRequest request, CloudNative cloudNative, LoginUser loginUser) throws Exception {
+        ruleService.scanK8s(request, cloudNative, loginUser);
     }
 
 }

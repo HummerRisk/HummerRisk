@@ -151,18 +151,13 @@
         t1.rule_id,
         t1.rule_name,
         t1.rule_desc,
-        CASE
-        WHEN (t1.result_status in ('APPROVED', 'PROCESSING')) or
-             (('APPROVED' in (select ct.status from cloud_task ct where t.id = ct.account_id)) or ('PROCESSING' in (select ct.status from cloud_task ct where t.id = ct.account_id)))
-            THEN 'APPROVED'
-        WHEN (t1.result_status in ('ERROR')) THEN 'ERROR'
-        WHEN (t1.result_status in ('WARNING')) THEN 'WARNING'
-        ELSE 'FINISHED'
-        END AS result_status,
+        t1.result_status,
         t1.severity,
         t1.update_time as scan_time,
         t1.return_sum,
         t1.return_config_sum,
+        t1.cloud_return_sum,
+        t1.cloud_resources_sum,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'critical') as `critical`,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'high') as `high`,
         (select count(*) from cloud_native_result_item tj where tj.result_id = t1.id and LOWER(tj.severity) = 'medium') as `medium`,
@@ -176,9 +171,7 @@
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'fail') as `fail`,
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'warn') as `warn`,
         (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'info') as `info`,
-        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'pass') as `pass`,
-        (select IFNULL(sum(tj.return_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_return_sum`,
-        (select IFNULL(sum(tj.resources_sum), 0) from cloud_task tj where tj.account_id = t.id) as `cloud_resources_sum`
+        (select count(tj.id) from cloud_native_result_kubench tj where tj.result_id = t1.id and LOWER(tj.severity) = 'pass') as `pass`
         from cloud_native as t
         left join user on t.creator = user.id
         left join proxy p on t.proxy_id = p.id

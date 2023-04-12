@@ -29,7 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.io.BufferedOutputStream;
 import java.io.FilterInputStream;
@@ -218,7 +218,7 @@ public class OssController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping("support/bucketAddforOssId/{ossId}")
     public BucketKeyValueItem bucketAddforOssId(@PathVariable String ossId) throws Exception {
         return ossService.bucketAddforOssId(ossId);
@@ -239,7 +239,7 @@ public class OssController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @GetMapping("groups/{pluginId}")
     public List<RuleGroup> groups(@PathVariable String pluginId) {
         return ossService.groups(pluginId);
@@ -267,7 +267,7 @@ public class OssController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("manual/list/{goPage}/{pageSize}")
     public Pager<List<CloudTask>> getManualTasks(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ManualRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -276,7 +276,7 @@ public class OssController {
     }
 
     @I18n
-    @ApiIgnore
+    @Hidden
     @PostMapping("resource/list/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

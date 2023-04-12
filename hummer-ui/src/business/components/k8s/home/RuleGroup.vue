@@ -62,13 +62,11 @@
                       <i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
                     </el-dropdown-menu>
                     <el-dropdown-menu slot="dropdown" v-if="!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
@@ -277,7 +275,7 @@
       <!--Create sync-->
       <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
+        <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form" style="margin-top: 20px;">
           <el-form-item :label="$t('k8s.k8s_platform')" :rules="{required: true, message: $t('k8s.k8s_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('k8s.k8s_platform')">
               <el-option
@@ -772,7 +770,7 @@ const columnOptions2 = [
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
           this.$router.push({
-            path: '/k8s/result',
+            path: '/k8s/k8s',
           }).catch(error => error);
         });
       },

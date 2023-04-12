@@ -1,12 +1,13 @@
 package com.hummer.common.core.domain.request.rule;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author harris
  */
-public class ScanGroupRequest {
+public class ScanGroupRequest implements Serializable {
 
     private List<Integer> groups;
 

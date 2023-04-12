@@ -5,11 +5,11 @@ import com.hummer.system.message.MessageDetail;
 import com.hummer.system.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
-@ApiIgnore
+@Hidden
 @RestController
 @RequestMapping("notice")
 public class NoticeController {

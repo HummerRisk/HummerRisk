@@ -2,9 +2,7 @@ package com.hummer.common.core.handler;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import springfox.documentation.annotations.ApiIgnore;
 
-@ApiIgnore
 public class ResultHolder {
     public ResultHolder() {
         this.success = true;

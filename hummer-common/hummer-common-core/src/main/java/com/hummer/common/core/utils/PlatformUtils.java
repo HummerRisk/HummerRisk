@@ -91,8 +91,6 @@ import io.fabric8.kubernetes.api.model.NamespaceList;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.models.V1Namespace;
-import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1NodeList;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1419,4 +1417,33 @@ public class PlatformUtils {
         }
         return false;
     }
+
+    /**
+     * 获取K8s相关参数
+     *
+     * @param account
+     * @param region
+     * @return
+     */
+    public final static Map<String, String> getK8sAccount(CloudNative cloudNative, String region, Proxy proxy) {
+        Map<String, String> map = new HashMap<>();
+        switch (cloudNative.getPluginId()) {
+            case k8s:
+                map.put("type", k8s);
+                K8sCredential k8sCredential = new Gson().fromJson(cloudNative.getCredential(), K8sCredential.class);
+                map.put("url", k8sCredential.getUrl());
+                map.put("token", k8sCredential.getToken());
+                map.put("region", region);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + cloudNative.getPluginId());
+        }
+        map.put("proxyType", proxy != null ? proxy.getProxyType() : "");
+        map.put("proxyIp", proxy != null ? proxy.getProxyIp() : "");
+        map.put("proxyPort", proxy != null ? proxy.getProxyPort() : "");
+        map.put("proxyName", proxy != null ? proxy.getProxyName() : "");
+        map.put("proxyPassword", proxy != null ? proxy.getProxyPassword() : "");
+        return map;
+    }
+
 }

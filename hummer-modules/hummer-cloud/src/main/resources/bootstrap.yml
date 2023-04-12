@@ -42,6 +42,12 @@ spring:
       host: ${HMR_REDIS_HOST}
       port: ${HMR_REDIS_PORT}
       password: ${HMR_REDIS_PASSWORD}
+      # 连接超时时间（毫秒）
+      timeout: 10000
+      # 连接池中的最小空闲连接 默认 0, 修改为1
+      lettuce:
+        pool:
+          min-idle: 1
 
 #dubbo 配置
 dubbo:
@@ -54,7 +60,7 @@ dubbo:
     # 由于使用的是spring-cloud，因此这里使用spring-cloud的
     address: nacos://${HMR_NACOS_SERVER_ADDR}:8848
   provider:
-    timeout: 60000
+    timeout: 1200000
     retries: 5
   scan:
     # 配置需要扫描的注解包
@@ -64,6 +70,7 @@ dubbo:
     qos-port: 22223
   consumer:
     check: false
+    timeout: 1200000
 
 #xxl-job 配置
 xxl:

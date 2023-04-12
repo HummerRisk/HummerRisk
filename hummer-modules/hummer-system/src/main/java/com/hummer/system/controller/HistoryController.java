@@ -16,11 +16,11 @@ import com.hummer.system.service.HistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
-@ApiIgnore
+@Hidden
 @RestController
 @RequestMapping(value = "history")
 public class HistoryController {
