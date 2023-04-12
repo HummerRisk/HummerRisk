@@ -224,7 +224,12 @@ public class SshUtil {
                 LogUtil.info("Scp finished.");
 
                 //执行检测
-                result = executeSshd(session, "sudo sh " + remotePath + "/" + fileName);
+                result = executeSshd(session, "sudo bash " + remotePath + "/" + fileName);
+
+                if (result.contains("sh: bash: not found")) {
+                    //执行检测
+                    result = executeSshd(session, "sudo sh " + remotePath + "/" + fileName);
+                }
                 //检测完清理文件
                 executeSshd(session, "sudo rm -rf " + remotePath + "/" + fileName);
 
