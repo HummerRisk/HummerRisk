@@ -291,7 +291,7 @@ public class ImageService {
             request.setPluginIcon("docker.png");
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
                 ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
-                request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
+                request.setImageUrl(imageRepoItem.getPath().replace(":" + imageRepoItem.getTag(), ""));
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
             }
@@ -320,7 +320,7 @@ public class ImageService {
             request.setPluginIcon("docker.png");
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
                 ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
-                request.setImageUrl(imageRepoItem.getPath().split(":")[0]);
+                request.setImageUrl(imageRepoItem.getPath().replace(":" + imageRepoItem.getTag(), ""));
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
             }

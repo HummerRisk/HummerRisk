@@ -157,7 +157,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              &nbsp;&nbsp; {{ item.name + ':' + item.repo }}
+              &nbsp;&nbsp; {{ item.name + '|' + item.repo }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -260,7 +260,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id">
-              &nbsp;&nbsp; {{ item.name + ':' + item.repo }}
+              &nbsp;&nbsp; {{ item.name + '|' + item.repo }}
             </el-option>
           </el-select>
         </el-form-item>
