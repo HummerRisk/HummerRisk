@@ -22,7 +22,7 @@
         <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('image.image_repo_name')" min-width="160">
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/repo/${scope.row.pluginIcon}`)" style="width: 30px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/repo/${scope.row.pluginIcon}`)" style="width: 24px; height: 24px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
