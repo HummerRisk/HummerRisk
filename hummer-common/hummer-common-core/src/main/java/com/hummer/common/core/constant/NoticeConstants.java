@@ -19,7 +19,6 @@ public interface NoticeConstants {
         String EXECUTE_SUCCESSFUL = "EXECUTE_SUCCESSFUL";
         String EXECUTE_FAILED = "EXECUTE_FAILED";
         String EXECUTE_CLOUD = "EXECUTE_CLOUD";
-        String EXECUTE_VULN = "EXECUTE_VULN";
         String EXECUTE_SERVER = "EXECUTE_SERVER";
         String EXECUTE_K8S = "EXECUTE_K8S";
         String EXECUTE_CONFIG = "EXECUTE_CONFIG";

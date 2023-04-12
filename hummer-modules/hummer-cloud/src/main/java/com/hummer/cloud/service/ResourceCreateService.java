@@ -253,12 +253,7 @@ public class ResourceCreateService {
             }
             if (!taskItemWithBLOBs.isEmpty() && successCount == 0)
                 throw new Exception("Faild to handle all taskItems, taskId: " + cloudTask.getId());
-            String taskStatus;
-            if (StringUtils.equalsIgnoreCase(cloudTask.getType(), CloudTaskConstants.TaskType.quartz.name())) {
-                taskStatus = CloudTaskConstants.TASK_STATUS.RUNNING.toString();
-            } else {
-                taskStatus = CloudTaskConstants.TASK_STATUS.FINISHED.toString();
-            }
+            String taskStatus = CloudTaskConstants.TASK_STATUS.FINISHED.toString();
             if (successCount != taskItemWithBLOBs.size()) {
                 taskStatus = CloudTaskConstants.TASK_STATUS.WARNING.toString();
             }

@@ -344,6 +344,48 @@ public class NoticeCreateService {
                 } else {
                     return;
                 }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8SRULE.name(), messageOrder.getScanType())) {
+                subject = "i18n_k8s_messageorder";
+                List<CloudTask> cloudTasks = cloudProviderService.getTopTasksForEmail(messageOrder);
+                if (cloudTasks.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCloud(messageOrder);
+                    for (CloudTask cloudTask : cloudTasks) {
+                        if (cloudTask.getReturnSum() == null) {
+                            sendTask(messageOrder);
+                            return;
+                        }
+                    }
+
+                    returnSum = cloudProviderService.getReturnSumForEmail(messageOrder);
+                    resourcesSum = cloudProviderService.getResourcesSumForEmail(messageOrder);
+                    details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+                    name = cloudProviderService.selectAccount(cloudTasks.get(0).getAccountId()).getName();
+                    String event = NoticeConstants.Event.EXECUTE_K8S;
+
+                    Map<String, Object> paramMap = new HashMap<>();
+                    paramMap.put("resources", cloudTasks);
+                    paramMap.put("returnSum", returnSum);
+                    paramMap.put("resourcesSum", resourcesSum);
+                    paramMap.put("name", name);
+                    paramMap.put("critical", metricChartDTO.getCritical());
+                    paramMap.put("high", metricChartDTO.getHigh());
+                    paramMap.put("medium", metricChartDTO.getMedium());
+                    paramMap.put("low", metricChartDTO.getLow());
+                    NoticeModel noticeModel = NoticeModel.builder()
+                            .successContext(successContext)
+                            .successMailTemplate("SuccessfulNotification")
+                            .failedContext(failedContext)
+                            .failedMailTemplate("FailedNotification")
+                            .event(event)
+                            .subject(subject)
+                            .paramMap(paramMap)
+                            .webhookUrls(webhookUrls)
+                            .build();
+                    noticeSendService.send(noticeModel);
+
+                } else {
+                    return;
+                }
             } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
                 List<ServerResultDTO> serverResults = extNoticeMapper.getTopServerTasksForEmail(messageOrder);
                 if (serverResults.size() != 0) {
