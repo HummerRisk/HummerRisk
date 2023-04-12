@@ -412,6 +412,7 @@ public class ConfigService {
 
         //插入resultJsons
         JSONObject jsonG = JSONObject.parseObject(result.getResultJson());
+        if (jsonG == null) return 0;
         JSONArray resultJsons = JSONArray.parseArray(jsonG.getString("Results"));
         int i = 0;
         if(resultJsons != null) {

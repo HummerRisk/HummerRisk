@@ -207,26 +207,27 @@ public class K8sService {
 
             CloudNativeSourceExample example = new CloudNativeSourceExample();
             example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
-            CloudNativeSource cloudNativeSource = cloudNativeSourceMapper.selectByExample(example).get(0);
+            List<CloudNativeSource> cloudNativeSources = cloudNativeSourceMapper.selectByExample(example);
 
-            if (cloudNativeSource == null) {
-                validateDTO.setFlag(false);
-                validateDTO.setMessage("Verification failed!");
-                return validateDTO;
+            for (CloudNativeSource cloudNativeSource : cloudNativeSources) {
+                if (url.endsWith("/")) {
+                    url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
+                } else {
+                    url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
+                }
+                Map<String, String> param = new HashMap<>();
+                param.put("Accept", CloudNativeConstants.Accept);
+                param.put("Authorization", token);
+                boolean valid = HttpClientUtil.kubenchStatus(url, param);
+                if (valid) {
+                    validateDTO.setFlag(valid);
+                    validateDTO.setMessage("Verification : " + valid);
+                    return validateDTO;
+                }
             }
 
-            if (url.endsWith("/")) {
-                url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
-            } else {
-                url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
-            }
-
-            Map<String, String> param = new HashMap<>();
-            param.put("Accept", CloudNativeConstants.Accept);
-            param.put("Authorization", token);
-            boolean valid = HttpClientUtil.kubenchStatus(url, param);
-            validateDTO.setFlag(valid);
-            validateDTO.setMessage("Verification : " + valid);
+            validateDTO.setFlag(false);
+            validateDTO.setMessage("Verification failed!");
             return validateDTO;
         } catch (Exception e) {
             validateDTO.setFlag(false);
@@ -297,7 +298,6 @@ public class K8sService {
                     account.setOperatorStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setOperatorStatus(CloudAccountConstants.Status.INVALID.name());
-                    reinstallOperator(account.getId(), loginUser);
                 }
                 //检验kube-bench
                 ValidateDTO kubenchStatusValidate = validateKubenchStatus(account);
@@ -305,7 +305,6 @@ public class K8sService {
                     account.setKubenchStatus(CloudAccountConstants.Status.VALID.name());
                 } else {
                     account.setKubenchStatus(CloudAccountConstants.Status.INVALID.name());
-                    reinstallKubench(account.getId(), loginUser);
                 }
                 cloudNativeMapper.insertSelective(account);
 
@@ -313,6 +312,8 @@ public class K8sService {
                 BeanUtils.copyBean(accountWithBLOBs, account);
                 cloudProviderService.insertCloudAccount(accountWithBLOBs);
 
+                reinstallOperator(account.getId(), loginUser);
+                reinstallKubench(account.getId(), loginUser);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.CREATE, "i18n_create_cloud_native");
                 return valid;
             }
