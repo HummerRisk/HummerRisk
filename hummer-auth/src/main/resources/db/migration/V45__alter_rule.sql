@@ -17,9 +17,17 @@ ALTER TABLE `cloud_native_result` ADD `cloud_resources_sum` bigint DEFAULT 0 COM
 
 ALTER TABLE `cloud_native_result` ADD `cloud_return_sum` bigint DEFAULT 0 COMMENT '输出检测结果资源数';
 
+ALTER TABLE `cloud_native_result` ADD `k8s_scan_status` varchar(45) DEFAULT NULL COMMENT 'K8sScan("vuln", "config", "kubench")检测状态';
+
+ALTER TABLE `cloud_native_result` ADD `k8s_rule_status` varchar(45) DEFAULT NULL COMMENT 'K8sRuleScan 检测状态';
+
 ALTER TABLE `history_cloud_native_result` ADD `cloud_resources_sum` bigint DEFAULT 0 COMMENT 'K8s 资源总量';
 
 ALTER TABLE `history_cloud_native_result` ADD `cloud_return_sum` bigint DEFAULT 0 COMMENT '输出检测结果资源数';
+
+ALTER TABLE `history_cloud_native_result` ADD `k8s_scan_status` varchar(45) DEFAULT NULL COMMENT 'K8sScan("vuln", "config", "kubench")检测状态';
+
+ALTER TABLE `history_cloud_native_result` ADD `k8s_rule_status` varchar(45) DEFAULT NULL COMMENT 'K8sRuleScan 检测状态';
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('0e94c51b-eec8-4995-8f2e-aeff41c6047c', 'Aliyun Redis 实例白名单配置检测', 1, 'HighRisk', 'Aliyun 账号下 Redis 实例白名单不存在高危 IP，符合视为“合规”，否则视为“不合规”', 'policies:\n    #Aliyun 账号下 Redis 实例白名单是否存在高危 IP，符合视为“合规”，否则视为“不合规”\n    - name: aliyun-redis-security-ip\n      resource: aliyun.redis\n      filters:\n        - type: security-ip\n          value: \"${{value}}\"', '[{\"defaultValue\":\"0.0.0.0/0\",\"name\":\"高危IP，多个 IP 用“;”分隔\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('1246c507-716e-4700-a4b4-9b441ed543fe', 'Aliyun Redis 实例高危命令检测', 1, 'HighRisk', 'Aliyun 账号下 Redis 实例禁用高危命令，符合视为“合规”，否则视为“不合规”', 'policies:\n    #Aliyun 账号下 Redis 实例禁用高危命令，符合视为“合规”，否则视为“不合规”\n    - name: aliyun-redis-high-risk-command\n      resource: aliyun.redis\n      filters:\n        - type: high-risk-command\n          value: \"${{value}}\"', '[{\"key\":\"value\",\"name\":\"高危命令，多个命令用“,”分隔\",\"defaultValue\":\"flushdb, flushall, config,keys\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
