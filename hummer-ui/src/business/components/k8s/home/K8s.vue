@@ -60,7 +60,7 @@
           <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
-          <el-button @click="noWarnLog(scope.row)" plain size="medium" type="info" v-else-if="scope.row.resultStatus === null">
+          <el-button @click="noWarnLog(scope.row)" plain size="mini" type="info" v-else-if="scope.row.resultStatus === null">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
           </el-button>
         </el-table-column>

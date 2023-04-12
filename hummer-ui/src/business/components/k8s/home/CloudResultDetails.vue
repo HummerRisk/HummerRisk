@@ -110,10 +110,6 @@
                     <el-button type="primary" size="mini" @click="handleScans(source)" circle><i
                       class="el-icon-refresh-right"></i></el-button>
                  </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
-                  <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i
-                    class="el-icon-delete"></i></el-button>
-                </el-tooltip>
               </span>
               </el-col>
             </el-row>
