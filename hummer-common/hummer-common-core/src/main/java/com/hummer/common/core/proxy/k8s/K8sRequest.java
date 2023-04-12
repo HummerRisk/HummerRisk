@@ -39,8 +39,7 @@ public class K8sRequest extends Request {
     private  final String name = "trivy-operator";
     private  final String namespace = "trivy-system";
     private  final String chart = "hummer/trivy-operator";
-    private  final String version = "0.12.1";
-
+    private  final String version = "0.13.0";
     private  final String url = "http://registry.hummercloud.com/repository/charts";
 
     public K8sRequest() {
@@ -139,14 +138,34 @@ public class K8sRequest extends Request {
     public void createOperatorChart() throws Exception {
         try {
 
+//            helm install trivy-operator hummer/trivy-operator \
+//            --namespace trivy-system \
+//            --set trivy.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/trivy" \
+//            --set trivy.dbRepository="reg.hummercloud.com/trivy/trivy-db" \
+//            --set trivy.dbRepositoryInsecure="true" \
+//            --set trivy.ignoreUnfixed=true \
+//            --set trivy.skipUpdate=true \
+//            --set image.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator" \
+//            --set nodeCollector.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/node-collector" \
+//            --create-namespace
+
+//            String repoName = "hummer";
+//            String name = "trivy-operator";
+//            String namespace = "trivy-system";
+//            String chart = "hummer/trivy-operator";
+//            String version = "0.13.0";
+//            String url = "http://registry.hummercloud.com/repository/charts";
+
             JsonObject jsonObjectBuilder = new JsonObjectBuilder()
                     .set("apiVersion", "app.alauda.io/v1alpha1")
                     .set("kind", "HelmRequest")
                     .set("trivy.mode", "ClientServer")
-                    .set("trivy.serverURL", k8sCredential.getIp() + ":" + k8sCredential.getPort())
-                    .set("image.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator")
-                    .set("trivy.ignoreUnfixed", true)
                     .set("trivy.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy")
+                    .set("trivy.dbRepository", "reg.hummercloud.com/trivy/trivy-db")
+                    .set("trivy.dbRepositoryInsecure", true)
+                    .set("trivy.ignoreUnfixed", true)
+                    .set("trivy.skipUpdate", true)
+                    .set("image.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator")
                     .set("nodeCollector.repository", "registry.cn-beijing.aliyuncs.com/hummerrisk/node-collector")
                     .set("metadata", new JsonObjectBuilder().set("name", name).build())
                     .set("spec", new JsonObjectBuilder()
@@ -812,6 +831,49 @@ public class K8sRequest extends Request {
                 }
                 cloudNativeSource.setSourceName(v1StatefulSet.getMetadata().getName());
                 cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.StatefulSet.name());
+                list.add(cloudNativeSource);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+        k8sSource.setK8sSource(list);
+        k8sSource.setK8sSourceImage(k8sSourceImage);
+        return k8sSource;
+    }
+
+    public K8sSource getReplicaSet(CloudNative cloudNative) throws IOException, ApiException {
+        K8sSource k8sSource = new K8sSource();
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
+        List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            AppsV1Api apiInstance = new AppsV1Api(apiClient);
+            V1ReplicaSetList result = apiInstance.listReplicaSetForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            for (V1ReplicaSet v1ReplicaSet : result.getItems()) {
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(Objects.requireNonNull(v1ReplicaSet.getMetadata()).getNamespace() != null ? v1ReplicaSet.getMetadata().getNamespace() : "");
+                JSONObject jsonObject;
+                try {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ReplicaSet);
+                } catch (Exception e) {
+                    jsonObject = (JSONObject) JSON.toJSON(v1ReplicaSet.getMetadata());
+                }
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
+                V1ReplicaSetSpec spec = v1ReplicaSet.getSpec();
+                List<V1Container> v1Containers = null;
+                if (spec != null) {
+                    v1Containers = spec.getTemplate().getSpec().getContainers();
+                    for (V1Container v1Container : v1Containers) {
+                        CloudNativeSourceImage cloudNativeSourceImage = new CloudNativeSourceImage();
+                        cloudNativeSourceImage.setImage(v1Container.getImage());
+                        cloudNativeSourceImage.setCreateTime(System.currentTimeMillis());
+                        cloudNativeSourceImage.setSourceId(cloudNativeSource.getId());
+                        k8sSourceImage.add(cloudNativeSourceImage);
+                    }
+                }
+                cloudNativeSource.setSourceName(v1ReplicaSet.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.ReplicaSet.name());
                 list.add(cloudNativeSource);
             }
         } catch (Exception e) {
