@@ -697,12 +697,14 @@ export default {
         '\n' +
         'helm install trivy-operator hummer/trivy-operator \\\n' +
         '--namespace trivy-system \\\n' +
-        '--set trivy.mode="ClientServer" \\\n' +
-        '--set trivy.serverURL="http://<hummerrisk-trivy-server-ip>:4975" \\\n' +
-        '--set image.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator" \\\n' +
-        '--set trivy.ignoreUnfixed=true \\\n' +
         '--set trivy.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/trivy" \\\n' +
-        '--create-namespace\n' +
+        '--set trivy.dbRepository="reg.hummercloud.com/trivy/trivy-db" \\\n' +
+        '--set trivy.dbRepositoryInsecure="true" \\\n' +
+        '--set trivy.ignoreUnfixed=true \\\n' +
+        '--set trivy.skipUpdate=true \\\n' +
+        '--set image.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/trivy-operator" \\\n' +
+        '--set nodeCollector.repository="registry.cn-beijing.aliyuncs.com/hummerrisk/node-collector" \\\n' +
+        '--create-namespace \\\n' +
         '\n' +
         '# 4.检测operator是否启动成功\n' +
         'kubectl get pod -A|grep trivy-operator\n' +
@@ -1297,6 +1299,7 @@ export default {
     initGroups(pluginId) {
       this.result = this.$get(groupsByAccountId + pluginId,response => {
         this.groups = response.data;
+        this.scanVisible = true;
       });
     },
     openScanGroup(account) {
@@ -1306,7 +1309,6 @@ export default {
       }
       this.accountWithGroup = account;
       this.initGroups(account.pluginId);
-      this.scanVisible = true;
     },
     handleCheckAllByAccount() {
       if (this.checkedGroups.length === this.groups.length) {
