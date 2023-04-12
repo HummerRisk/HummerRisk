@@ -549,7 +549,7 @@ import {
   cloudResourceListUrl,
   resourceAccountDeleteUrl,
   resourceK8sSourceUrl,
-  resourceRegionDataUrl,
+  resourceRegionDataUrl, resourceRegulationUrl,
   resourceRuleDataUrl,
   resourceSeverityDataUrl,
   resourceTypeDataUrl,
@@ -1173,9 +1173,16 @@ export default {
       });
     },
     back () {
-      this.$router.push({
-        path: '/k8s/k8s',
-      }).catch(error => error);
+      let path = this.$route.path;
+      if (path.indexOf("/k8s") >= 0) {
+        this.$router.push({
+          path: '/k8s/k8s',
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        this.$router.push({
+          path: '/resource/K8sResult',
+        }).catch(error => error);
+      }
     },
   },
   computed: {

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtRuleTagMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.RuleTag">
-    </resultMap>
 
     <sql id="condition">
         <choose>
@@ -71,6 +69,13 @@
             </include>
         </if>
     </sql>
+
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.domain.RuleTag">
+        <id column="tag_key" jdbcType="VARCHAR" property="tagKey" />
+        <result column="tag_name" jdbcType="VARCHAR" property="tagName" />
+        <result column="_index" jdbcType="INTEGER" property="index" />
+        <result column="flag" jdbcType="BIT" property="flag" />
+    </resultMap>
 
     <select id="list" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.request.rule.RuleTagRequest">
         select

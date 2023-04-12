@@ -62,7 +62,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="140" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="60" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -216,17 +216,9 @@ export default {
       detailForm: {},
       buttons: [
         {
-          tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
-          exec: this.handleScans
-        },
-        {
           tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
           exec: this.handleDownload
         },
-        {
-          tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
-          exec: this.handleDelete
-        }
       ],
       cmOptions: {
         tabSize: 4,
