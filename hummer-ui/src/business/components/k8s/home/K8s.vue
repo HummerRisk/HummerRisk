@@ -717,7 +717,6 @@ export default {
         lineNumbers: true,
         line: true,
         indentWithTabs: true,
-        location: "",
       },
       checkedColumnNames: columnOptions.map((ele) => ele.props),
       columnNames: columnOptions,
@@ -1218,7 +1217,6 @@ export default {
       this.$warning(item.name + this.$t('resource.i18n_no_warn'));
     },
     getStatus () {
-      console.log(11111)
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
@@ -1249,12 +1247,10 @@ export default {
     checkStatus (tableData) {
       let sum = 0;
       for (let row of tableData) {
-        console.log(row.resultStatus)
         if (row.resultStatus && row.resultStatus != 'ERROR' && row.resultStatus != 'FINISHED' && row.resultStatus != 'WARNING') {
           sum++;
         }
       }
-      console.log(3343, sum)
       return sum == 0;
     },
     handleDownload(item) {
@@ -1288,8 +1284,8 @@ export default {
             this.groupResult = this.$post(scanK8sUrl, params1,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
-                this.search();
                 this.scanVisible = false;
+                this.search();
               } else {
                 this.$error(response.message);
               }
@@ -1326,9 +1322,13 @@ export default {
       }
     },
   },
-  activated() {
+  computed: {
+    codemirror() {
+      return this.$refs.cmEditor.codemirror;
+    }
+  },
+  created() {
     this.init();
-    this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {

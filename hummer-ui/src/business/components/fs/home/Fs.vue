@@ -722,9 +722,8 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  activated() {
+  created() {
     this.init();
-    this.location = window.location.href.split("#")[0];
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {
