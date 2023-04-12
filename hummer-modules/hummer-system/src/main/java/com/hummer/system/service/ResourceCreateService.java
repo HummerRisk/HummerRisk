@@ -6,6 +6,7 @@ import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.utils.BeanUtils;
+import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.*;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -91,22 +92,13 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(cloudTask.getStatus());
                         historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
                         historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
-                    } else {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                    CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
-                    if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
-                        historyScanTask.setStatus(cloudTask.getStatus());
-                        historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
-                        historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.vulnAccount.getType()));
+
+                        if (PlatformUtils.isSupportNative(cloudTask.getPluginId())) {
+                            historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.k8sRuleAccount.getType()));
+                        } else {
+                            historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
+                        }
+
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);

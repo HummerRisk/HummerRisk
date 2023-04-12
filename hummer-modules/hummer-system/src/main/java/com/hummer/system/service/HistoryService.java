@@ -14,7 +14,6 @@ import com.hummer.common.core.domain.request.image.ImageResultRequest;
 import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
-import com.hummer.common.core.utils.PlatformUtils;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.*;
@@ -160,13 +159,6 @@ public class HistoryService {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
-                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                            CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
-                            Account account = cloudProviderService.selectAccount(historyScanTask.getAccountId());
-                            if(cloudTask == null || account == null) {
-                                historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                                historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
-                            }
                         } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
                             ServerResult serverResult = k8sProviderService.serverResult(historyScanTask.getTaskId());
                             Server server = k8sProviderService.server(historyScanTask.getAccountId());
@@ -234,11 +226,7 @@ public class HistoryService {
             String accountId = "";
             if (obj.getClass() == Account.class || obj.getClass() == AccountWithBLOBs.class) {
                 accountId = ((Account) obj).getId();
-                if (PlatformUtils.isSupportCloudAccount(((Account) obj).getPluginId())) {
-                    map.put("accountType", TaskEnum.cloudAccount.getType());
-                } else {
-                    map.put("accountType", TaskEnum.vulnAccount.getType());
-                }
+                map.put("accountType", TaskEnum.cloudAccount.getType());
             } else if(obj.getClass() == Server.class || obj.getClass() == ServerDTO.class) {
                 accountId = ((Server) obj).getId();
                 map.put("accountType", TaskEnum.serverAccount.getType());
@@ -305,6 +293,25 @@ public class HistoryService {
             return score;
         }
         if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.cloudAccount.getType())) {
+
+            CloudTask cloudTask = (CloudTask) task;
+            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId()): "0.0");
+            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+
+            HistoryCloudTaskExample example = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
+            long high = historyCloudTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("MediumRisk");
+            long mediuml = historyCloudTaskMapper.countByExample(example);
+            criteria.andSeverityEqualTo("LowRisk");
+            long low = historyCloudTaskMapper.countByExample(example);
+
+            long sum = 5 * high + 3 * mediuml + 2 * low;
+            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
+
+        } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sRuleAccount.getType())) {
 
             CloudTask cloudTask = (CloudTask) task;
             Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");

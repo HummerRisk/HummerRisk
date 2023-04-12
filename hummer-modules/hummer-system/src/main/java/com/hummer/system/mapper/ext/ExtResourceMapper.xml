@@ -5,7 +5,6 @@
     <select id="resultPercentByCloud" resultType="java.lang.String">
         select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
         from cloud_task t
-        join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="severity != null and severity != ''">
                 AND t.severity = #{severity}
