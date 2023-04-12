@@ -130,7 +130,7 @@
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
-                <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 25px; height: 16px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/code/${item.id}`)" style="width: 24px; height: 24px; vertical-align:middle" alt=""/>
                 &nbsp;&nbsp; {{ item.name }}
               </el-option>
             </el-select>
