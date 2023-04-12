@@ -1,5 +1,5 @@
 <template>
-  <hr-chart :options="options"></hr-chart>
+  <hr-chart :options="options" :width="140" :height="140"></hr-chart>
 </template>
 
 <script>
@@ -156,7 +156,7 @@ export default {
 .echarts {
   margin: 0;
   padding: 0;
-  max-width: 150px;
-  max-height: 100px;
+  max-width: 200px;
+  max-height: 133px;
 }
 </style>
