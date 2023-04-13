@@ -802,7 +802,7 @@ export default {
               this.innerAdd = false;
               this.imageVisible = false;
               this.$router.push({
-                path: '/image/result',
+                path: '/image/image',
                 query: {
                   date: new Date().getTime()
                 },
@@ -835,7 +835,7 @@ export default {
                 this.imageVisible = false;
                 this.$success(this.$t('account.success'));
                 this.$router.push({
-                  path: '/image/result',
+                  path: '/image/image',
                   query: {
                     date: new Date().getTime()
                   },

@@ -58,17 +58,11 @@
           </el-tooltip>
         </el-table-column>
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('commons.compliance_scan_statistics')" prop="returnSum" sortable show-overflow-tooltip min-width="150">
-          <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
+          <el-tooltip class="item txt-click" effect="dark" :content="$t('history.resource_result')" placement="top">
             <span v-if="scope.row.cloudReturnSum == null && scope.row.cloudResourcesSum == null"> N/A</span>
-            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum == 0)">
+            <span @click="goCloudResource(scope.row)">
               <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
               <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
-            </span>
-            <span v-if="(scope.row.cloudReturnSum != null) && (scope.row.cloudResourcesSum > 0)">
-              <el-link type="primary" class="text-click" @click="goCloudResource(scope.row)">
-                <span style="background-color: #ad1414;color: white;padding: 3px;">{{ 'Risk:' }}{{ scope.row.cloudReturnSum }}</span>
-                <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'Sum:' }}{{ scope.row.cloudResourcesSum }}</span>
-              </el-link>
             </span>
           </el-tooltip>
         </el-table-column>
@@ -97,7 +91,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="130" :label="$t('commons.operating')" fixed="right">
+        <el-table-column min-width="60" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
           </template>
@@ -261,17 +255,9 @@ export default {
       detailForm: {},
       buttons: [
         {
-          tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
-          exec: this.handleScans
-        },
-        {
           tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
           exec: this.handleDownload
         },
-        {
-          tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
-          exec: this.handleDelete
-        }
       ],
       cmOptions: {
         tabSize: 4,
@@ -406,54 +392,30 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let path = this.$route.path;
-      if (path.indexOf("/k8s") >= 0) {
-        let p = '/k8s/resultdetails/' + params.id;
-        this.$router.push({
-          path: p
-        }).catch(error => error);
-      } else if (path.indexOf("/resource") >= 0) {
-        let p = '/resource/K8sResultdetails/' + params.id;
-        this.$router.push({
-          path: p
-        }).catch(error => error);
-      }
+      let p = '/resource/K8sResultdetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
     goConfigResource (params) {
       if (params.returnConfigSum == 0) {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let path = this.$route.path;
-      if (path.indexOf("/k8s") >= 0) {
-        let p = '/k8s/resultconfigdetails/' + params.id;
-        this.$router.push({
-          path: p
-        }).catch(error => error);
-      } else if (path.indexOf("/resource") >= 0) {
-        let p = '/resource/K8sResultConfigdetails/' + params.id;
-        this.$router.push({
-          path: p
-        }).catch(error => error);
-      }
+      let p = '/resource/K8sResultConfigdetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
     goKubenchResource (params) {
       if (params.returnConfigSum == 0) {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let path = this.$route.path;
-      if (path.indexOf("/k8s") >= 0) {
-        let p = '/k8s/resultkubenchdetails/' + params.id;
-        this.$router.push({
-          path: p
-        }).catch(error => error);
-      } else if (path.indexOf("/resource") >= 0) {
-        let p = '/resource/K8sResultKubenchdetails/' + params.id;
-        this.$router.push({
-          path: p
-        }).catch(error => error);
-      }
+      let p = '/resource/K8sResultKubenchdetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
     async showResultLog (result) {
       this.result = this.$get(logK8sUrl + result.id, response => {
@@ -480,6 +442,16 @@ export default {
       }, error => {
         console.log("下载报错", error);
       });
+    },
+    goCloudResource (params) {
+      if (params.cloudResourcesSum == 0) {
+        this.$warning(this.$t('resource.no_resources_allowed'));
+        return;
+      }
+      let p = '/resource/K8sResultClouddetails/' + params.id;
+      this.$router.push({
+        path: p
+      }).catch(error => error);
     },
   },
   activated() {

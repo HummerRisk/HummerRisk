@@ -26,7 +26,7 @@
                         <center-chart v-if="!!source.scanScore" :row="source.scanScore"></center-chart>
                       </el-tooltip>
                     </span>
-                  <span v-else>
+                    <span v-else>
                       <img style="width: 150px;height: 100px;" :src="require(`@/assets/img/gif/loading.gif`)" alt=""/>
                     </span>
                 </el-col>
@@ -110,10 +110,6 @@
                     <el-button type="primary" size="mini" @click="handleScans(source)" circle><i
                       class="el-icon-refresh-right"></i></el-button>
                  </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
-                  <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i
-                    class="el-icon-delete"></i></el-button>
-                </el-tooltip>
               </span>
               </el-col>
             </el-row>
@@ -553,7 +549,7 @@ import {
   cloudResourceListUrl,
   resourceAccountDeleteUrl,
   resourceK8sSourceUrl,
-  resourceRegionDataUrl,
+  resourceRegionDataUrl, resourceRegulationUrl,
   resourceRuleDataUrl,
   resourceSeverityDataUrl,
   resourceTypeDataUrl,
@@ -1177,9 +1173,16 @@ export default {
       });
     },
     back () {
-      this.$router.push({
-        path: '/k8s/k8s',
-      }).catch(error => error);
+      let path = this.$route.path;
+      if (path.indexOf("/k8s") >= 0) {
+        this.$router.push({
+          path: '/k8s/k8s',
+        }).catch(error => error);
+      } else if (path.indexOf("/resource") >= 0) {
+        this.$router.push({
+          path: '/resource/K8sResult',
+        }).catch(error => error);
+      }
     },
   },
   computed: {

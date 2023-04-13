@@ -237,6 +237,7 @@ public class PlatformUtils {
             case aws:
                 String awsAccessKey = params.get("accessKey");
                 String awsSecretKey = params.get("secretKey");
+                String sessionToken = params.get("sessionToken");
                 if (StringUtils.equalsIgnoreCase(custodian, ScanTypeConstants.prowler.name())) {
                     String defaultConfig = "[default]" + "\n"
                             + "region=" + region + "\n";
@@ -248,7 +249,10 @@ public class PlatformUtils {
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }
                 pre = "AWS_ACCESS_KEY_ID=" + awsAccessKey + " " +
-                        "AWS_SECRET_ACCESS_KEY=" + awsSecretKey + " " +
+                       "AWS_SECRET_ACCESS_KEY=" + awsSecretKey + " "
+                        +(
+                        StringUtils.isEmpty(sessionToken)?""
+                                :("AWS_SESSION_TOKEN=" + sessionToken+" ")) +
                         "AWS_DEFAULT_REGION=" + region + " ";
                 break;
             case azure:
@@ -417,6 +421,7 @@ public class PlatformUtils {
                 AWSCredential awsCredential = new Gson().fromJson(account.getCredential(), AWSCredential.class);
                 map.put("accessKey", awsCredential.getAccessKey());
                 map.put("secretKey", awsCredential.getSecretKey());
+                map.put("sessionToken",awsCredential.getAwsSessionToken());
                 map.put("region", region);
                 break;
             case azure:

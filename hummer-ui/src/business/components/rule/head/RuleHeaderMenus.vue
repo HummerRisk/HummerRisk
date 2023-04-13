@@ -8,7 +8,7 @@
           </el-menu-item>
 
           <el-menu-item :index="'/rule/rulegroup'">
-            {{ $t("rule.rule_set") }}
+            {{ $t("history.rule_set") }}
           </el-menu-item>
 
           <el-menu-item :index="'/rule/regulation'">
@@ -21,6 +21,10 @@
 
           <el-menu-item :index="'/rule/serverRule'">
             {{ $t("server.server_rule") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/rule/k8sRule'">
+            {{ $t("k8s.k8s_rule") }}
           </el-menu-item>
 
         </el-menu>

@@ -53,6 +53,11 @@
               {{ situationInfo.statefulSets }}
             </el-link>
           </el-descriptions-item>
+          <el-descriptions-item label="ReplicaSet" label-class-name="my-label" content-class-name="my-content">
+            <el-link class="my-content" @click="searchBySource('ReplicaSet')">
+              {{ situationInfo.replicaSets }}
+            </el-link>
+          </el-descriptions-item>
           <el-descriptions-item label="CronJob" label-class-name="my-label" content-class-name="my-content">
             <el-link class="my-content" @click="searchBySource('CronJob')">
               {{ situationInfo.cronJobs }}

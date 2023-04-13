@@ -1,5 +1,5 @@
 <template>
-  <div class="ch-mar" v-if="logForm.vulnerabilityReport || logForm.configAuditReport">
+  <div class="ch-mar">
     <el-tabs type="border-card" @tab-click="showCodemirror">
       <el-tab-pane label="VulnerabilityReport" v-if="logForm.vulnerabilityReport">
         <div class="ch-mar-top">
@@ -165,7 +165,7 @@
       <el-tab-pane label="KubeBench" v-if="logForm.kubeBench">
         <codemirror ref="cmEditor" v-model="logForm.kubeBench" class="code-mirror" :options="cmOptions" />
       </el-tab-pane>
-      <el-tab-pane label="RuleGroup" v-if="logForm.cloudNativeId">
+      <el-tab-pane label="RuleGroup" v-if="logForm.cloudReturnSum !== 0">
         <rule-group-details :accountId="logForm.cloudNativeId"/>
       </el-tab-pane>
     </el-tabs>

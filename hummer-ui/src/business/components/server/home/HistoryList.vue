@@ -446,7 +446,6 @@ const columnOptions = [
           this.condition.serverId = null;
         }
         this.result = await this.$post(url, this.condition, response => {
-          console.log(response)
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;

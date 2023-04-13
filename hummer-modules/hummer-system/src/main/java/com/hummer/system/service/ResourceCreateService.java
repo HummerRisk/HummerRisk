@@ -92,21 +92,7 @@ public class ResourceCreateService {
                         historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
                         historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
                         historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
-                    } else {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.vulnAccount.getType())) {
-                    CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
-                    if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
-                        historyScanTask.setStatus(cloudTask.getStatus());
-                        historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
-                        historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.vulnAccount.getType()));
+
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
@@ -182,7 +168,7 @@ public class ResourceCreateService {
                         historyScanTask.setStatus(cloudTask.getStatus());
                         historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
                         historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
+                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.k8sRuleAccount.getType()));
                     }
 
                     CloudNativeResult cloudNativeResult = k8sProviderService.cloudNativeResult(historyScanTask.getTaskId());
@@ -229,6 +215,5 @@ public class ResourceCreateService {
         }
 
     }
-
 
 }

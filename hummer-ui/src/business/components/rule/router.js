@@ -18,6 +18,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),
     },
     {
+      path: "k8sRule",
+      name: "k8sRuleToRule",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/k8s/home/Rule'),
+    },
+    {
       path: "imageRule",
       name: "imageRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Rule'),

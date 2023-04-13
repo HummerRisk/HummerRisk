@@ -32,6 +32,8 @@ public class SituationDTO {
 
     private String statefulSets;
 
+    private String replicaSets;
+
     private String cronJobs;
 
     private String jobs;
@@ -240,5 +242,13 @@ public class SituationDTO {
 
     public void setClusterRoleBindings(String clusterRoleBindings) {
         this.clusterRoleBindings = clusterRoleBindings;
+    }
+
+    public String getReplicaSets() {
+        return replicaSets;
+    }
+
+    public void setReplicaSets(String replicaSets) {
+        this.replicaSets = replicaSets;
     }
 }

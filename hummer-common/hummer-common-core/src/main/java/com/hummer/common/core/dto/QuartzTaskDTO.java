@@ -18,7 +18,7 @@ public class QuartzTaskDTO extends Rule {
 
     private List<SelectTag> SelectTags = new LinkedList<>();
 
-    private String AccountId;
+    private String accountId;
 
     private String regions;
 
@@ -55,11 +55,11 @@ public class QuartzTaskDTO extends Rule {
     }
 
     public String getAccountId() {
-        return AccountId;
+        return accountId;
     }
 
     public void setAccountId(String accountId) {
-        AccountId = accountId;
+        this.accountId = accountId;
     }
 
     public String getRegions() {

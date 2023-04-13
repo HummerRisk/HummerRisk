@@ -220,7 +220,7 @@ public interface ParamConstants {
         public final static String color = "#409EFF";
         public final static Integer cycle = 30;
         public final static List<Boolean> ids = Arrays.asList(true, false, false, false, false, false, false, false);
-        public final static List<String> types = Arrays.asList("cloudAccount", "vulnAccount", "serverAccount", "k8sAccount", "imageAccount", "configAccount", "fsAccount");
+        public final static List<String> types = Arrays.asList("cloudAccount", "serverAccount", "k8sAccount", "imageAccount", "configAccount", "fsAccount");
         public final static List<String> users = Arrays.asList("admin");
 
     }

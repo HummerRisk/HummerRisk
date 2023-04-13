@@ -258,6 +258,14 @@
                 </if>
                 ) as statefulSets,
                 (
+                SELECT IFNULL(count(t.id), 0) as replicaSets
+                from cloud_native_source t
+                where t.source_type = 'ReplicaSet'
+                <if test="cloudNativeId != null and cloudNativeId != ''">
+                    and t.cloud_native_id like CONCAT('%', #{cloudNativeId},'%')
+                </if>
+                ) as replicaSets,
+                (
                 SELECT IFNULL(count(t.id), 0) as cronJobs
                 from cloud_native_source t
                 where t.source_type = 'CronJob'

@@ -8,11 +8,11 @@ import com.hummer.common.core.constant.ScanConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.MetricChartDTO;
 import com.hummer.common.core.dto.ServerResultDTO;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.CommonBeanFactory;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.k8s.api.IK8sProviderService;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.system.mapper.MessageOrderItemMapper;
 import com.hummer.system.mapper.MessageOrderMapper;
 import com.hummer.system.mapper.WebMsgMapper;
@@ -99,7 +99,7 @@ public class NoticeCreateService {
 
     }
 
-    public void handleMessageOrder(MessageOrder messageOrder) {
+    public void handleMessageOrder(MessageOrder messageOrder) throws Exception {
         String messageOrderId = messageOrder.getId();
         MessageOrderItemExample messageOrderItemExample = new MessageOrderItemExample();
         messageOrderItemExample.createCriteria().andMessageOrderIdEqualTo(messageOrderId);
@@ -120,7 +120,7 @@ public class NoticeCreateService {
                 }
             }
             if (!messageOrderItemList.isEmpty() && successCount == 0) {
-                LogUtil.error("Faild to handle all messageOrderItemList, messageOrderId: " + messageOrderId);
+                LogUtil.error("Faild to handle all messageOrderItemList(messageOrderItemList.isNotEmpty() && successCount == 0), messageOrderId: " + messageOrderId);
                 return;
             }
 
@@ -152,7 +152,7 @@ public class NoticeCreateService {
             MessageOrder messageOrder = messageOrderMapper.selectByPrimaryKey(item.getMessageOrderId());
             String scanType = messageOrder.getScanType();
 
-            if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), scanType)) {
+            if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), scanType) || StringUtils.equals(ScanConstants.SCAN_TYPE.K8SRULE.name(), scanType)) {
                 CloudTask cloudTask = cloudProviderService.selectCloudTask(item.getTaskId());
                 if (cloudTask == null) {
                     item.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
@@ -283,119 +283,52 @@ public class NoticeCreateService {
         }
     }
 
-    private void sendTask(MessageOrder messageOrder) {
-        SystemParameterService systemParameterService = CommonBeanFactory.getBean(SystemParameterService.class);
-        NoticeSendService noticeSendService = CommonBeanFactory.getBean(NoticeSendService.class);
+    private void sendTask(MessageOrder messageOrder) throws Exception {
+        try {
+            SystemParameterService systemParameterService = CommonBeanFactory.getBean(SystemParameterService.class);
+            NoticeSendService noticeSendService = CommonBeanFactory.getBean(NoticeSendService.class);
 
-        WebhookExample webhookExample = new WebhookExample();
-        webhookExample.createCriteria().andStatusEqualTo(true);
-        List<Webhook> webhooks = webhookMapper.selectByExample(webhookExample);
-        List<String> webhookUrls = webhooks.stream().map(Webhook::getWebhook).collect(Collectors.toList());
+            WebhookExample webhookExample = new WebhookExample();
+            webhookExample.createCriteria().andStatusEqualTo(true);
+            List<Webhook> webhooks = webhookMapper.selectByExample(webhookExample);
+            List<String> webhookUrls = webhooks.stream().map(Webhook::getWebhook).collect(Collectors.toList());
 
-        assert systemParameterService != null;
-        assert noticeSendService != null;
+            assert systemParameterService != null;
+            assert noticeSendService != null;
 
-        String successContext = "success";
-        String failedContext = "failed";
-        String subject = "i18n_cloud_messageorder";
-        String details = "", name = "";
-        int returnSum = 0, resourcesSum = 0;
+            String successContext = "success";
+            String failedContext = "failed";
+            String subject = "i18n_cloud_messageorder";
+            String details = "", name = "";
+            int returnSum = 0, resourcesSum = 0;
 
-        if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
-            subject = "i18n_cloud_messageorder";
-            List<CloudTask> cloudTasks = cloudProviderService.getTopTasksForEmail(messageOrder);
-            if (cloudTasks.size() != 0) {
-                MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCloud(messageOrder);
-                for (CloudTask cloudTask : cloudTasks) {
-                    if (cloudTask.getReturnSum() == null) {
-                        sendTask(messageOrder);
-                        return;
+            if (StringUtils.equals(ScanConstants.SCAN_TYPE.CLOUD.name(), messageOrder.getScanType())) {
+                subject = "i18n_cloud_messageorder";
+                List<CloudTask> cloudTasks = cloudProviderService.getTopTasksForEmail(messageOrder);
+                if (cloudTasks.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCloud(messageOrder);
+                    for (CloudTask cloudTask : cloudTasks) {
+                        if (cloudTask.getReturnSum() == null) {
+                            sendTask(messageOrder);
+                            return;
+                        }
                     }
-                }
 
-                returnSum = cloudProviderService.getReturnSumForEmail(messageOrder);
-                resourcesSum = cloudProviderService.getResourcesSumForEmail(messageOrder);
-                details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
-                name = cloudProviderService.selectAccount(cloudTasks.get(0).getAccountId()).getName();
-                String event = NoticeConstants.Event.EXECUTE_CLOUD;
-
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("resources", cloudTasks);
-                paramMap.put("returnSum", returnSum);
-                paramMap.put("resourcesSum", resourcesSum);
-                paramMap.put("name", name);
-                paramMap.put("critical", metricChartDTO.getCritical());
-                paramMap.put("high", metricChartDTO.getHigh());
-                paramMap.put("medium", metricChartDTO.getMedium());
-                paramMap.put("low", metricChartDTO.getLow());
-                NoticeModel noticeModel = NoticeModel.builder()
-                        .successContext(successContext)
-                        .successMailTemplate("SuccessfulNotification")
-                        .failedContext(failedContext)
-                        .failedMailTemplate("FailedNotification")
-                        .event(event)
-                        .subject(subject)
-                        .paramMap(paramMap)
-                        .webhookUrls(webhookUrls)
-                        .build();
-                noticeSendService.send(noticeModel);
-
-            }
-        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
-            List<ServerResultDTO> serverResults = extNoticeMapper.getTopServerTasksForEmail(messageOrder);
-            if (serverResults.size() != 0) {
-                MetricChartDTO metricChartDTO = extNoticeMapper.metricChartServer(messageOrder);
-
-                subject = "i18n_server_messageorder";
-                returnSum = extNoticeMapper.serverSum(messageOrder);
-                details = "i18n_resource_manage " + returnSum;
-                Server server = k8sProviderService.server(serverResults.get(0).getServerId());
-                name = server.getName() + "(" + server.getIp() + ":" + server.getPort() + ")";
-                String event = NoticeConstants.Event.EXECUTE_SERVER;
-
-                Map<String, Object> paramMap = new HashMap<>();
-                paramMap.put("resources", serverResults);
-                paramMap.put("returnSum", returnSum);
-                paramMap.put("name", name);
-                paramMap.put("critical", metricChartDTO.getCritical());
-                paramMap.put("high", metricChartDTO.getHigh());
-                paramMap.put("medium", metricChartDTO.getMedium());
-                paramMap.put("low", metricChartDTO.getLow());
-                NoticeModel noticeModel = NoticeModel.builder()
-                        .successContext(successContext)
-                        .successMailTemplate("SuccessfulNotification")
-                        .failedContext(failedContext)
-                        .failedMailTemplate("FailedNotification")
-                        .event(event)
-                        .subject(subject)
-                        .paramMap(paramMap)
-                        .webhookUrls(webhookUrls)
-                        .build();
-                noticeSendService.send(noticeModel);
-            }
-        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
-            List<ImageResultItem> imageResultItems = extNoticeMapper.getTopImageTasksForEmail(messageOrder);
-            if (imageResultItems.size() != 0) {
-                MetricChartDTO metricChartDTO = extNoticeMapper.metricChartImage(messageOrder);
-                ImageResultExample example = new ImageResultExample();
-                example.createCriteria().andIdEqualTo(imageResultItems.get(0).getResultId());
-                List<ImageResult> imageResults = k8sProviderService.imageResults(example);
-                if (imageResults.size() != 0) {
-                    subject = "i18n_image_messageorder";
-                    returnSum = extNoticeMapper.imageSum(messageOrder);
-                    details = "i18n_resource_manage " + returnSum;
-                    name = k8sProviderService.image(imageResults.get(0).getImageId()).getName();
-                    String event = NoticeConstants.Event.EXECUTE_IMAGE;
+                    returnSum = cloudProviderService.getReturnSumForEmail(messageOrder);
+                    resourcesSum = cloudProviderService.getResourcesSumForEmail(messageOrder);
+                    details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+                    name = cloudProviderService.selectAccount(cloudTasks.get(0).getAccountId()).getName();
+                    String event = NoticeConstants.Event.EXECUTE_CLOUD;
 
                     Map<String, Object> paramMap = new HashMap<>();
-                    paramMap.put("resources", imageResultItems);
+                    paramMap.put("resources", cloudTasks);
                     paramMap.put("returnSum", returnSum);
+                    paramMap.put("resourcesSum", resourcesSum);
                     paramMap.put("name", name);
                     paramMap.put("critical", metricChartDTO.getCritical());
                     paramMap.put("high", metricChartDTO.getHigh());
                     paramMap.put("medium", metricChartDTO.getMedium());
                     paramMap.put("low", metricChartDTO.getLow());
-                    paramMap.put("unknown", metricChartDTO.getUnknown());
                     NoticeModel noticeModel = NoticeModel.builder()
                             .successContext(successContext)
                             .successMailTemplate("SuccessfulNotification")
@@ -407,107 +340,37 @@ public class NoticeCreateService {
                             .webhookUrls(webhookUrls)
                             .build();
                     noticeSendService.send(noticeModel);
+
+                } else {
+                    return;
                 }
-            }
-        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
-            List<CodeResultItem> codeResultItems = extNoticeMapper.getTopCodeTasksForEmail(messageOrder);
-            if (codeResultItems.size() != 0) {
-                MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCode(messageOrder);
-                CodeResultExample example = new CodeResultExample();
-                example.createCriteria().andIdEqualTo(codeResultItems.get(0).getResultId());
-                List<CodeResult> codeResults = k8sProviderService.codeResults(example);
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8SRULE.name(), messageOrder.getScanType())) {
+                subject = "i18n_k8s_messageorder";
+                List<CloudTask> cloudTasks = cloudProviderService.getTopTasksForEmail(messageOrder);
+                if (cloudTasks.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCloud(messageOrder);
+                    for (CloudTask cloudTask : cloudTasks) {
+                        if (cloudTask.getReturnSum() == null) {
+                            sendTask(messageOrder);
+                            return;
+                        }
+                    }
 
-                if (codeResults.size() != 0) {
-                    subject = "i18n_code_messageorder";
-                    returnSum = extNoticeMapper.codeSum(messageOrder);
-                    details = "i18n_resource_manage " + returnSum;
-                    name = k8sProviderService.code(codeResults.get(0).getCodeId()).getName();
-                    String event = NoticeConstants.Event.EXECUTE_CODE;
-
-                    Map<String, Object> paramMap = new HashMap<>();
-                    paramMap.put("resources", codeResultItems);
-                    paramMap.put("returnSum", returnSum);
-                    paramMap.put("name", name);
-                    paramMap.put("critical", metricChartDTO.getCritical());
-                    paramMap.put("high", metricChartDTO.getHigh());
-                    paramMap.put("medium", metricChartDTO.getMedium());
-                    paramMap.put("low", metricChartDTO.getLow());
-                    paramMap.put("unknown", metricChartDTO.getUnknown());
-                    NoticeModel noticeModel = NoticeModel.builder()
-                            .successContext(successContext)
-                            .successMailTemplate("SuccessfulNotification")
-                            .failedContext(failedContext)
-                            .failedMailTemplate("FailedNotification")
-                            .event(event)
-                            .subject(subject)
-                            .paramMap(paramMap)
-                            .webhookUrls(webhookUrls)
-                            .build();
-                    noticeSendService.send(noticeModel);
-                }
-
-            }
-        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
-            List<CloudNativeConfigResultItem> configResultItems = extNoticeMapper.getTopConfigTasksForEmail(messageOrder);
-            if (configResultItems.size() != 0) {
-                MetricChartDTO metricChartDTO = extNoticeMapper.metricChartConfig(messageOrder);
-                CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
-                example.createCriteria().andIdEqualTo(configResultItems.get(0).getResultId());
-                List<CloudNativeConfigResult> cloudNativeConfigResults = k8sProviderService.cloudNativeConfigResults(example);
-
-                if (cloudNativeConfigResults.size() != 0) {
-                    subject = "i18n_config_messageorder";
-                    returnSum = extNoticeMapper.configSum(messageOrder);
-                    details = "i18n_resource_manage " + returnSum;
-                    name = k8sProviderService.cloudNativeConfig(cloudNativeConfigResults.get(0).getConfigId()).getName();
-                    String event = NoticeConstants.Event.EXECUTE_CONFIG;
-
-                    Map<String, Object> paramMap = new HashMap<>();
-                    paramMap.put("resources", configResultItems);
-                    paramMap.put("returnSum", returnSum);
-                    paramMap.put("name", name);
-                    paramMap.put("critical", metricChartDTO.getCritical());
-                    paramMap.put("high", metricChartDTO.getHigh());
-                    paramMap.put("medium", metricChartDTO.getMedium());
-                    paramMap.put("low", metricChartDTO.getLow());
-                    paramMap.put("unknown", metricChartDTO.getUnknown());
-                    NoticeModel noticeModel = NoticeModel.builder()
-                            .successContext(successContext)
-                            .successMailTemplate("SuccessfulNotification")
-                            .failedContext(failedContext)
-                            .failedMailTemplate("FailedNotification")
-                            .event(event)
-                            .subject(subject)
-                            .paramMap(paramMap)
-                            .webhookUrls(webhookUrls)
-                            .build();
-                    noticeSendService.send(noticeModel);
-                }
-
-            }
-        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
-            List<CloudNativeResultItem> k8sResultItems = extNoticeMapper.getTopK8sTasksForEmail(messageOrder);
-            if (k8sResultItems.size() != 0) {
-                MetricChartDTO metricChartDTO = extNoticeMapper.metricChartK8s(messageOrder);
-                CloudNativeResultExample example = new CloudNativeResultExample();
-                example.createCriteria().andIdEqualTo(k8sResultItems.get(0).getResultId());
-                List<CloudNativeResult> cloudNativeResults = k8sProviderService.cloudNativeResults(example);
-                if (cloudNativeResults.size() != 0) {
-                    subject = "i18n_k8s_messageorder";
-                    returnSum = extNoticeMapper.k8sSum(messageOrder);
-                    details = "i18n_resource_manage " + returnSum;
-                    name = k8sProviderService.cloudNative(cloudNativeResults.get(0).getCloudNativeId()).getName();
+                    returnSum = cloudProviderService.getReturnSumForEmail(messageOrder);
+                    resourcesSum = cloudProviderService.getResourcesSumForEmail(messageOrder);
+                    details = "i18n_cloud_messageorder_sum" + returnSum + "/" + resourcesSum;
+                    name = cloudProviderService.selectAccount(cloudTasks.get(0).getAccountId()).getName();
                     String event = NoticeConstants.Event.EXECUTE_K8S;
 
                     Map<String, Object> paramMap = new HashMap<>();
-                    paramMap.put("resources", k8sResultItems);
+                    paramMap.put("resources", cloudTasks);
                     paramMap.put("returnSum", returnSum);
+                    paramMap.put("resourcesSum", resourcesSum);
                     paramMap.put("name", name);
                     paramMap.put("critical", metricChartDTO.getCritical());
                     paramMap.put("high", metricChartDTO.getHigh());
                     paramMap.put("medium", metricChartDTO.getMedium());
                     paramMap.put("low", metricChartDTO.getLow());
-                    paramMap.put("unknown", metricChartDTO.getUnknown());
                     NoticeModel noticeModel = NoticeModel.builder()
                             .successContext(successContext)
                             .successMailTemplate("SuccessfulNotification")
@@ -519,31 +382,30 @@ public class NoticeCreateService {
                             .webhookUrls(webhookUrls)
                             .build();
                     noticeSendService.send(noticeModel);
+
+                } else {
+                    return;
                 }
-            }
-        } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
-            List<FileSystemResultItem> fsResultItems = extNoticeMapper.getTopFsTasksForEmail(messageOrder);
-            if (fsResultItems.size() != 0) {
-                MetricChartDTO metricChartDTO = extNoticeMapper.metricChartFs(messageOrder);
-                FileSystemResultExample example = new FileSystemResultExample();
-                example.createCriteria().andIdEqualTo(fsResultItems.get(0).getResultId());
-                List<FileSystemResult> fileSystemResults = k8sProviderService.fileSystemResults(example);
-                if (fileSystemResults.size() != 0) {
-                    subject = "i18n_fs_messageorder";
-                    returnSum = extNoticeMapper.fsSum(messageOrder);
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.SERVER.name(), messageOrder.getScanType())) {
+                List<ServerResultDTO> serverResults = extNoticeMapper.getTopServerTasksForEmail(messageOrder);
+                if (serverResults.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartServer(messageOrder);
+
+                    subject = "i18n_server_messageorder";
+                    returnSum = extNoticeMapper.serverSum(messageOrder);
                     details = "i18n_resource_manage " + returnSum;
-                    name = k8sProviderService.fileSystem(fileSystemResults.get(0).getFsId()).getName();
-                    String event = NoticeConstants.Event.EXECUTE_FS;
+                    Server server = k8sProviderService.server(serverResults.get(0).getServerId());
+                    name = server.getName() + "(" + server.getIp() + ":" + server.getPort() + ")";
+                    String event = NoticeConstants.Event.EXECUTE_SERVER;
 
                     Map<String, Object> paramMap = new HashMap<>();
-                    paramMap.put("resources", fsResultItems);
+                    paramMap.put("resources", serverResults);
                     paramMap.put("returnSum", returnSum);
                     paramMap.put("name", name);
                     paramMap.put("critical", metricChartDTO.getCritical());
                     paramMap.put("high", metricChartDTO.getHigh());
                     paramMap.put("medium", metricChartDTO.getMedium());
                     paramMap.put("low", metricChartDTO.getLow());
-                    paramMap.put("unknown", metricChartDTO.getUnknown());
                     NoticeModel noticeModel = NoticeModel.builder()
                             .successContext(successContext)
                             .successMailTemplate("SuccessfulNotification")
@@ -555,29 +417,237 @@ public class NoticeCreateService {
                             .webhookUrls(webhookUrls)
                             .build();
                     noticeSendService.send(noticeModel);
+                } else {
+                    return;
                 }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.IMAGE.name(), messageOrder.getScanType())) {
+                List<ImageResultItem> imageResultItems = extNoticeMapper.getTopImageTasksForEmail(messageOrder);
+                if (imageResultItems.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartImage(messageOrder);
+                    ImageResultExample example = new ImageResultExample();
+                    example.createCriteria().andIdEqualTo(imageResultItems.get(0).getResultId());
+                    List<ImageResult> imageResults = k8sProviderService.imageResults(example);
+                    if (imageResults.size() != 0) {
+                        subject = "i18n_image_messageorder";
+                        returnSum = extNoticeMapper.imageSum(messageOrder);
+                        details = "i18n_resource_manage " + returnSum;
+                        name = k8sProviderService.image(imageResults.get(0).getImageId()).getName();
+                        String event = NoticeConstants.Event.EXECUTE_IMAGE;
+
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("resources", imageResultItems);
+                        paramMap.put("returnSum", returnSum);
+                        paramMap.put("name", name);
+                        paramMap.put("critical", metricChartDTO.getCritical());
+                        paramMap.put("high", metricChartDTO.getHigh());
+                        paramMap.put("medium", metricChartDTO.getMedium());
+                        paramMap.put("low", metricChartDTO.getLow());
+                        paramMap.put("unknown", metricChartDTO.getUnknown());
+                        NoticeModel noticeModel = NoticeModel.builder()
+                                .successContext(successContext)
+                                .successMailTemplate("SuccessfulNotification")
+                                .failedContext(failedContext)
+                                .failedMailTemplate("FailedNotification")
+                                .event(event)
+                                .subject(subject)
+                                .paramMap(paramMap)
+                                .webhookUrls(webhookUrls)
+                                .build();
+                        noticeSendService.send(noticeModel);
+                    } else {
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CODE.name(), messageOrder.getScanType())) {
+                List<CodeResultItem> codeResultItems = extNoticeMapper.getTopCodeTasksForEmail(messageOrder);
+                if (codeResultItems.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartCode(messageOrder);
+                    CodeResultExample example = new CodeResultExample();
+                    example.createCriteria().andIdEqualTo(codeResultItems.get(0).getResultId());
+                    List<CodeResult> codeResults = k8sProviderService.codeResults(example);
+
+                    if (codeResults.size() != 0) {
+                        subject = "i18n_code_messageorder";
+                        returnSum = extNoticeMapper.codeSum(messageOrder);
+                        details = "i18n_resource_manage " + returnSum;
+                        name = k8sProviderService.code(codeResults.get(0).getCodeId()).getName();
+                        String event = NoticeConstants.Event.EXECUTE_CODE;
+
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("resources", codeResultItems);
+                        paramMap.put("returnSum", returnSum);
+                        paramMap.put("name", name);
+                        paramMap.put("critical", metricChartDTO.getCritical());
+                        paramMap.put("high", metricChartDTO.getHigh());
+                        paramMap.put("medium", metricChartDTO.getMedium());
+                        paramMap.put("low", metricChartDTO.getLow());
+                        paramMap.put("unknown", metricChartDTO.getUnknown());
+                        NoticeModel noticeModel = NoticeModel.builder()
+                                .successContext(successContext)
+                                .successMailTemplate("SuccessfulNotification")
+                                .failedContext(failedContext)
+                                .failedMailTemplate("FailedNotification")
+                                .event(event)
+                                .subject(subject)
+                                .paramMap(paramMap)
+                                .webhookUrls(webhookUrls)
+                                .build();
+                        noticeSendService.send(noticeModel);
+                    } else {
+                        return;
+                    }
+
+                } else {
+                    return;
+                }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.CONFIG.name(), messageOrder.getScanType())) {
+                List<CloudNativeConfigResultItem> configResultItems = extNoticeMapper.getTopConfigTasksForEmail(messageOrder);
+                if (configResultItems.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartConfig(messageOrder);
+                    CloudNativeConfigResultExample example = new CloudNativeConfigResultExample();
+                    example.createCriteria().andIdEqualTo(configResultItems.get(0).getResultId());
+                    List<CloudNativeConfigResult> cloudNativeConfigResults = k8sProviderService.cloudNativeConfigResults(example);
+
+                    if (cloudNativeConfigResults.size() != 0) {
+                        subject = "i18n_config_messageorder";
+                        returnSum = extNoticeMapper.configSum(messageOrder);
+                        details = "i18n_resource_manage " + returnSum;
+                        name = k8sProviderService.cloudNativeConfig(cloudNativeConfigResults.get(0).getConfigId()).getName();
+                        String event = NoticeConstants.Event.EXECUTE_CONFIG;
+
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("resources", configResultItems);
+                        paramMap.put("returnSum", returnSum);
+                        paramMap.put("name", name);
+                        paramMap.put("critical", metricChartDTO.getCritical());
+                        paramMap.put("high", metricChartDTO.getHigh());
+                        paramMap.put("medium", metricChartDTO.getMedium());
+                        paramMap.put("low", metricChartDTO.getLow());
+                        paramMap.put("unknown", metricChartDTO.getUnknown());
+                        NoticeModel noticeModel = NoticeModel.builder()
+                                .successContext(successContext)
+                                .successMailTemplate("SuccessfulNotification")
+                                .failedContext(failedContext)
+                                .failedMailTemplate("FailedNotification")
+                                .event(event)
+                                .subject(subject)
+                                .paramMap(paramMap)
+                                .webhookUrls(webhookUrls)
+                                .build();
+                        noticeSendService.send(noticeModel);
+                    } else {
+                        return;
+                    }
+
+                } else {
+                    return;
+                }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.K8S.name(), messageOrder.getScanType())) {
+                List<CloudNativeResultItem> k8sResultItems = extNoticeMapper.getTopK8sTasksForEmail(messageOrder);
+                if (k8sResultItems.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartK8s(messageOrder);
+                    CloudNativeResultExample example = new CloudNativeResultExample();
+                    example.createCriteria().andIdEqualTo(k8sResultItems.get(0).getResultId());
+                    List<CloudNativeResult> cloudNativeResults = k8sProviderService.cloudNativeResults(example);
+                    if (cloudNativeResults.size() != 0) {
+                        subject = "i18n_k8s_messageorder";
+                        returnSum = extNoticeMapper.k8sSum(messageOrder);
+                        details = "i18n_resource_manage " + returnSum;
+                        name = k8sProviderService.cloudNative(cloudNativeResults.get(0).getCloudNativeId()).getName();
+                        String event = NoticeConstants.Event.EXECUTE_K8S;
+
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("resources", k8sResultItems);
+                        paramMap.put("returnSum", returnSum);
+                        paramMap.put("name", name);
+                        paramMap.put("critical", metricChartDTO.getCritical());
+                        paramMap.put("high", metricChartDTO.getHigh());
+                        paramMap.put("medium", metricChartDTO.getMedium());
+                        paramMap.put("low", metricChartDTO.getLow());
+                        paramMap.put("unknown", metricChartDTO.getUnknown());
+                        NoticeModel noticeModel = NoticeModel.builder()
+                                .successContext(successContext)
+                                .successMailTemplate("SuccessfulNotification")
+                                .failedContext(failedContext)
+                                .failedMailTemplate("FailedNotification")
+                                .event(event)
+                                .subject(subject)
+                                .paramMap(paramMap)
+                                .webhookUrls(webhookUrls)
+                                .build();
+                        noticeSendService.send(noticeModel);
+                    } else {
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            } else if (StringUtils.equals(ScanConstants.SCAN_TYPE.FS.name(), messageOrder.getScanType())) {
+                List<FileSystemResultItem> fsResultItems = extNoticeMapper.getTopFsTasksForEmail(messageOrder);
+                if (fsResultItems.size() != 0) {
+                    MetricChartDTO metricChartDTO = extNoticeMapper.metricChartFs(messageOrder);
+                    FileSystemResultExample example = new FileSystemResultExample();
+                    example.createCriteria().andIdEqualTo(fsResultItems.get(0).getResultId());
+                    List<FileSystemResult> fileSystemResults = k8sProviderService.fileSystemResults(example);
+                    if (fileSystemResults.size() != 0) {
+                        subject = "i18n_fs_messageorder";
+                        returnSum = extNoticeMapper.fsSum(messageOrder);
+                        details = "i18n_resource_manage " + returnSum;
+                        name = k8sProviderService.fileSystem(fileSystemResults.get(0).getFsId()).getName();
+                        String event = NoticeConstants.Event.EXECUTE_FS;
+
+                        Map<String, Object> paramMap = new HashMap<>();
+                        paramMap.put("resources", fsResultItems);
+                        paramMap.put("returnSum", returnSum);
+                        paramMap.put("name", name);
+                        paramMap.put("critical", metricChartDTO.getCritical());
+                        paramMap.put("high", metricChartDTO.getHigh());
+                        paramMap.put("medium", metricChartDTO.getMedium());
+                        paramMap.put("low", metricChartDTO.getLow());
+                        paramMap.put("unknown", metricChartDTO.getUnknown());
+                        NoticeModel noticeModel = NoticeModel.builder()
+                                .successContext(successContext)
+                                .successMailTemplate("SuccessfulNotification")
+                                .failedContext(failedContext)
+                                .failedMailTemplate("FailedNotification")
+                                .event(event)
+                                .subject(subject)
+                                .paramMap(paramMap)
+                                .webhookUrls(webhookUrls)
+                                .build();
+                        noticeSendService.send(noticeModel);
+                    } else {
+                        return;
+                    }
+                } else {
+                    return;
+                }
+
             }
 
-        }
-
-        LogUtil.warn(Translator.get("i18n_start_msg") + messageOrder.getAccountName());
-        WebMsg msg = new WebMsg();
-        MessageOrderItemExample example = new MessageOrderItemExample();
-        example.createCriteria().andMessageOrderIdEqualTo(messageOrder.getId());
-        List<MessageOrderItem> list = messageOrderItemMapper.selectByExample(example);
-        if (list.size() > 0) {
-            JSONArray jsonArray = new JSONArray();
-            for (MessageOrderItem item : list) {
-                jsonArray.add(item.getTaskId());
+            LogUtil.warn(Translator.get("i18n_start_msg") + messageOrder.getAccountName());
+            WebMsg msg = new WebMsg();
+            MessageOrderItemExample example = new MessageOrderItemExample();
+            example.createCriteria().andMessageOrderIdEqualTo(messageOrder.getId());
+            List<MessageOrderItem> list = messageOrderItemMapper.selectByExample(example);
+            if (list.size() > 0) {
+                JSONArray jsonArray = new JSONArray();
+                for (MessageOrderItem item : list) {
+                    jsonArray.add(item.getTaskId());
+                }
+                msg.setResultId(jsonArray.toJSONString());
             }
-            msg.setResultId(jsonArray.toJSONString());
+            msg.setStatus(false);
+            msg.setType(subject);
+            msg.setCreateTime(System.currentTimeMillis());
+            msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" + messageOrder.getStatus() + " " + details);
+            msg.setScanType(messageOrder.getScanType());
+            webMsgMapper.insertSelective(msg);
+            LogUtil.warn(Translator.get("i18n_end_msg") + messageOrder.getAccountName());
+        } catch (Exception e) {
+            throw new Exception(e);
         }
-        msg.setStatus(false);
-        msg.setType(subject);
-        msg.setCreateTime(System.currentTimeMillis());
-        msg.setContent(subject + "【" + messageOrder.getAccountName() + "】" + messageOrder.getStatus() + " " + details);
-        msg.setScanType(messageOrder.getScanType());
-        webMsgMapper.insertSelective(msg);
-        LogUtil.warn(Translator.get("i18n_end_msg") + messageOrder.getAccountName());
     }
 }

@@ -164,7 +164,7 @@ public class NoticeService {
         messageOrder.setAccountName(cloudNative.getName());
         messageOrder.setCreateTime(System.currentTimeMillis());
         messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
-        messageOrder.setScanType(ScanConstants.SCAN_TYPE.K8S.name());
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.K8SRULE.name());
         messageOrderMapper.insertSelective(messageOrder);
         return uuid;
     }
