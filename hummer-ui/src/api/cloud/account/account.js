@@ -64,3 +64,5 @@ export const resourceSummaryToReport = "/cloud/cloudResource/summary";
 export const resourceTaskCountUrl = "/cloud/cloudResource/task/count/";
 
 export const resourceRiskListUrl = "/cloud/cloudResource/risk/list/";
+
+export const deleteAccountsUrl = "/cloud/account/deletes";
