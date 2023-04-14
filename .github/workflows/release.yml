@@ -59,11 +59,19 @@ jobs:
             curl -sSL https://download.hummerrisk.com/hummerrisk/hummerrisk/releases/download/latest/quick_start.sh | sh
             ```
             
-            如果您已经部署旧版本，可通过如下命令一键升级至最新版本:
+            v0.1.0-v0.10.x 版本为 SpringBoot 单机版，之间可以互相升级:
+            ```sh
+              # 升级
+              hrctl upgrade v0.10.x
+            ```
+            
+            v1.x.x 版本为 SpringCloud 微服务版，不可由单机版直接升级:
+            如果您已经部署 v1.x.x 旧版本，可通过如下命令一键升级至最新版本:
             ```sh
               # 升级
               hrctl upgrade v1.0.0
             ```
+            
             # 产品文档
             点击 [完整文档](https://docs.hummerrisk.com/) 查看完整的安装和使用文档
             
