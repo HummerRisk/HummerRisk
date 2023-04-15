@@ -6,8 +6,8 @@
                            :title="$t('account.cloud_account_list')"
                            @create="create" :createTip="$t('account.create')"
                            @validate="validate" :validateTip="$t('account.one_validate')"
-                           :show-validate="true" :show-create="true" :show-delete="true"
-                           :items="items" :columnNames="columnNames" @delete="deleteBatch"
+                           :show-validate="true" :show-create="true"
+                           :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                            :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                            @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
 

@@ -726,10 +726,22 @@ public class RuleService {
         return ruleGroup;
     }
 
-    public int deleteRuleGroupById(Integer id) {
-        return ruleGroupMapper.deleteByPrimaryKey(id);
+    public void deleteRuleGroupById(Integer id, LoginUser loginUser) {
+        RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(id);
+        ruleGroupMapper.deleteByPrimaryKey(id);
+        operationLogService.log(loginUser, ruleGroup.getId().toString(), ruleGroup.getName(), ResourceTypeConstants.RULE_GROUP.name(), ResourceOperation.DELETE, "i18n_delete_cloud_account");
+
     }
 
+    public void deleteGroups(List<Integer> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteRuleGroupById(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
     public List<GroupDTO> groups(List<String> ids) {
         List<GroupDTO> groupDTOS = new LinkedList<>();
         for (String id : ids) {

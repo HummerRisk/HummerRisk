@@ -71,3 +71,5 @@ export const allCloudRuleGroupsUrl = "/cloud/rule/allCloudRuleGroups";
 
 export const allCloudResourceTypesUrl = "/cloud/rule/all/cloudResourceTypes";
 
+export const deleteGroupsUrl = "/cloud/rule/deleteGroups";
+

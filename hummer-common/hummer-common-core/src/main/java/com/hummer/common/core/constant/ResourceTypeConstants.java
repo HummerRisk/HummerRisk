@@ -10,6 +10,7 @@ public enum ResourceTypeConstants {
     CLOUD_NATIVE_CONFIG,
     RULE,
     RULE_TAG,
+    RULE_GROUP,
     RESOURCE,
     TASK,
     SYSTEM,

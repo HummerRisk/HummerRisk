@@ -104,7 +104,7 @@ export default {
     deleteTip: {
       type: String,
       default() {
-        return this.$t('commons.delete');
+        return this.$t('oss.delete_batch');
       }
     },
     showOpen: {
