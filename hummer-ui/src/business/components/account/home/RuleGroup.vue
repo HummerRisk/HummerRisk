@@ -321,8 +321,10 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  bindRuleUrl, deleteGroupsUrl,
-  ruleAllBindListUrl, ruleGroupDeleteUrl,
+  bindRuleUrl,
+  deleteGroupsUrl,
+  ruleAllBindListUrl,
+  ruleGroupDeleteUrl,
   ruleGroupListUrl,
   ruleGroupSaveUrl,
   ruleGroupUpdateUrl,
@@ -331,7 +333,7 @@ import {
   scanByGroupUrl
 } from "@/api/cloud/rule/rule";
 import {cloudPluginUrl} from "@/api/system/system";
-import {cloudListByGroupUrl, deleteAccountsUrl} from "@/api/cloud/account/account";
+import {cloudListByGroupUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
