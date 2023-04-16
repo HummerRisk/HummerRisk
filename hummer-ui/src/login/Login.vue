@@ -36,6 +36,10 @@
                 {{$t('commons.welcome')}}
               </div>
               <div class="form">
+                <el-form-item v-slot:default style="margin: 0;">
+                  <el-radio-group>
+                  </el-radio-group>
+                </el-form-item>
                 <el-form-item prop="username">
                   <el-input v-model="form.username" :placeholder="$t('commons.login_username')" autofocus
                             autocomplete="off"/>
