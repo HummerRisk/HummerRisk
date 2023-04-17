@@ -15,9 +15,8 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.ServerService;
-import io.swagger.annotations.Api;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
@@ -156,7 +155,7 @@ public class ServerController {
     @Operation(summary = "删除主机规则")
     @GetMapping(value = "deleteServerRule/{id}")
     public void deleteServerRule(@PathVariable String id) throws Exception {
-        serverService.deleteServerRule(id);
+        serverService.deleteServerRule(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "主机规则启用")
