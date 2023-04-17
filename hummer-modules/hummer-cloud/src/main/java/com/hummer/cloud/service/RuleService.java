@@ -731,6 +731,9 @@ public class RuleService {
         //内置规则组不可以被删除
         if(!ruleGroup.getFlag()) {
             ruleGroupMapper.deleteByPrimaryKey(id);
+            RuleGroupMappingExample example = new RuleGroupMappingExample();
+            example.createCriteria().andGroupIdEqualTo(id.toString());
+            ruleGroupMappingMapper.deleteByExample(example);
             operationLogService.log(loginUser, ruleGroup.getId().toString(), ruleGroup.getName(), ResourceTypeConstants.RULE_GROUP.name(), ResourceOperation.DELETE, "i18n_delete_delete_rule_group");
         }
     }
