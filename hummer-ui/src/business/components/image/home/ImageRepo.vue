@@ -623,7 +623,7 @@ export default {
       this.$forceUpdate();
     },
     setting() {
-      this.viewResult = this.$get(imageRepoSettingUrl + this.handleItem.id, response => {
+      this.viewResult = this.$get(imageRepoSettingUrl + "/" + this.handleItem.id, response => {
         let repoOld = response.data?response.data.repoOld:this.imageData[0].path.split('/')[0];
         let repo = response.data?response.data.repo:'';
         this.settingForm.repoId = this.handleItem.id;
