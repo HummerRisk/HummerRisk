@@ -728,9 +728,11 @@ public class RuleService {
 
     public void deleteRuleGroupById(Integer id, LoginUser loginUser) {
         RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(id);
-        ruleGroupMapper.deleteByPrimaryKey(id);
-        operationLogService.log(loginUser, ruleGroup.getId().toString(), ruleGroup.getName(), ResourceTypeConstants.RULE_GROUP.name(), ResourceOperation.DELETE, "i18n_delete_delete_rule_group");
-
+        //内置规则组不可以被删除
+        if(!ruleGroup.getFlag()) {
+            ruleGroupMapper.deleteByPrimaryKey(id);
+            operationLogService.log(loginUser, ruleGroup.getId().toString(), ruleGroup.getName(), ResourceTypeConstants.RULE_GROUP.name(), ResourceOperation.DELETE, "i18n_delete_delete_rule_group");
+        }
     }
 
     public void deleteGroups(List<Integer> ids, LoginUser loginUser) throws Exception {
@@ -742,7 +744,7 @@ public class RuleService {
             }
         });
     }
-    
+
     public List<GroupDTO> groups(List<String> ids) {
         List<GroupDTO> groupDTOS = new LinkedList<>();
         for (String id : ids) {
