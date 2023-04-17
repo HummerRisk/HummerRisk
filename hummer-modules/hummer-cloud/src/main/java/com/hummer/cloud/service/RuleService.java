@@ -311,6 +311,10 @@ public class RuleService {
 
     public void deleteRule(String id, LoginUser loginUser) {
         Rule rule = ruleMapper.selectByPrimaryKey(id);
+
+        //内置规则不可以删除
+        if(rule.getFlag()) return;
+
         ResourceRuleExample resourceItemRuleExample = new ResourceRuleExample();
         resourceItemRuleExample.createCriteria().andRuleIdEqualTo(id);
         List<ResourceRule> list = resourceRuleMapper.selectByExample(resourceItemRuleExample);
@@ -328,6 +332,16 @@ public class RuleService {
         } else {
             HRException.throwException(Translator.get("i18n_compliance_rule_useage_error"));
         }
+    }
+
+    public void deleteRules(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteRule(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})

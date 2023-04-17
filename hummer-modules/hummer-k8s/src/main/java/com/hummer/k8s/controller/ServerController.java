@@ -352,5 +352,11 @@ public class ServerController {
         serverService.deleteServers(selectIds, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "批量删除主机规则")
+    @PostMapping("deleteServerRules")
+    public void deleteServerRules(@RequestBody List<String> selectIds) throws Exception {
+        serverService.deleteServerRules(selectIds, tokenService.getLoginUser());
+    }
+
 
 }

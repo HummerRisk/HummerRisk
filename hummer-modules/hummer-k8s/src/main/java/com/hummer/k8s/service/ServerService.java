@@ -624,9 +624,15 @@ public class ServerService {
         return serverRuleMapper.updateByPrimaryKeySelective(record);
     }
 
-    public void deleteServerRule(String id) throws Exception {
+    public void deleteServerRule(String id, LoginUser loginUser) throws Exception {
+        ServerRule serverRule = serverRuleMapper.selectByPrimaryKey(id);
+
+        //内置规则不可以删除
+        if(serverRule.getFlag()) return;
+
         deleteRuleTag(null, id);
         serverRuleMapper.deleteByPrimaryKey(id);
+        operationLogService.log(loginUser, serverRule.getName(), id, ResourceTypeConstants.RULE.name(), ResourceOperation.DELETE, "i18n_delete_rule");
     }
 
     public int changeStatus(ServerRule rule) throws Exception {
@@ -990,6 +996,16 @@ public class ServerService {
         ids.forEach(id -> {
             try {
                 deleteServer(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
+    public void deleteServerRules(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteServerRule(id, loginUser);
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }

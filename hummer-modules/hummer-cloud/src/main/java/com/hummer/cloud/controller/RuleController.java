@@ -134,6 +134,12 @@ public class RuleController {
         ruleService.deleteRule(id, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "批量删除规则")
+    @PostMapping("deleteRules")
+    public void deleteRules(@RequestBody List<String> selectIds) throws Exception {
+        ruleService.deleteRules(selectIds, tokenService.getLoginUser());
+    }
+
     @I18n
     @Operation(summary = "规则详情")
     @GetMapping(value = "get/{ruleId}")
