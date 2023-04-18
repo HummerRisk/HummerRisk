@@ -1,7 +1,7 @@
 ## 系统模块
 
 ~~~
-com.hummer     
+HummerRisk    
 ├── hummer-ui                                          // 前端框架 [80]
 ├── hummer-flyway                                      // 数据迁移 [9000]
 ├── hummer-gateway                                     // 网关模块 [8080]
