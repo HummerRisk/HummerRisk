@@ -6,7 +6,9 @@ com.hummer
 ├── hummer-flyway                                      // 数据迁移 [9000]
 ├── hummer-gateway                                     // 网关模块 [8080]
 ├── hummer-auth                                        // 认证中心 [9200]
-├── hummer-dubbo-api                                   // 接口模块
+├── hummer-api                                         // 接口模块
+│       └── hummer-api-cloud                           // 混合云接口
+│       └── hummer-api-k8s                             // 云原生接口
 │       └── hummer-api-system                          // 系统接口
 ├── hummer-common                                      // 通用模块
 │       └── hummer-common-core                         // 核心模块
