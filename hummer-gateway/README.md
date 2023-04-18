@@ -74,5 +74,5 @@ com.hummer
 - hmr-monitor [9100]
 - hmr-mysql [3306]
 - hmr-nacos [8848, 9848]
-- hmr-rdis [6379]
+- hmr-redis [6379]
 - hmr-job [8084]
