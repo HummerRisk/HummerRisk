@@ -300,6 +300,16 @@ public class CloudSyncService {
         cloudResourceSyncItemLogMapper.deleteByExample(cloudResourceSyncItemLogExample);
     }
 
+    public void deleteLogs(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteSync(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public CloudTopology cloudTopology() {
         return extCloudResourceSyncMapper.cloudTopology();
     }
