@@ -7,7 +7,7 @@
                       @create="create" :createTip="$t('k8s.k8s_create')"
                       @validate="validate" :validateTip="$t('account.one_validate')"
                       :show-validate="true" :show-create="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -502,6 +502,7 @@ import LogForm from "@/business/components/k8s/home/LogForm";
 import {nativePluginUrl, pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
 import {
   addK8sUrl,
+  deleteK8ssUrl,
   deleteK8sUrl,
   getCloudNativeResultUrl,
   getCloudNativeResultWithBLOBsUrl,
@@ -1322,6 +1323,30 @@ export default {
         let concatArr = this.checkedGroups.concat(arr);
         this.checkedGroups = Array.from(concatArr);
       }
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('account.k8s'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('account.k8s') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteK8ssUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {

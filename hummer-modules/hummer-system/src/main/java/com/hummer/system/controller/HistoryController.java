@@ -63,6 +63,12 @@ public class HistoryController {
         historyService.codeDeleteHistoryResult(id);
     }
 
+    @Operation(summary = "批量删除部署检测历史记录")
+    @PostMapping("deleteCodeHistoryResults")
+    public void deleteCodeHistoryResults(@RequestBody List<String> selectIds) throws Exception {
+        historyService.deleteCodeHistoryResults(selectIds);
+    }
+
     @I18n
     @Operation(summary = "部署检测历史记录")
     @PostMapping("configHistory/{goPage}/{pageSize}")
@@ -71,10 +77,16 @@ public class HistoryController {
         return PageUtils.setPageInfo(page, historyService.configHistory(request));
     }
 
-    @Operation(summary = "删除检测历史记录")
+    @Operation(summary = "删除部署检测历史记录")
     @GetMapping("configDeleteHistoryResult/{id}")
     public void configDeleteHistoryResult(@PathVariable String id) throws Exception {
         historyService.configDeleteHistoryResult(id);
+    }
+
+    @Operation(summary = "批量删除部署检测历史记录")
+    @PostMapping("deleteConfigHistoryResults")
+    public void deleteConfigHistoryResults(@RequestBody List<String> selectIds) throws Exception {
+        historyService.deleteConfigHistoryResults(selectIds);
     }
 
     @I18n
@@ -91,6 +103,12 @@ public class HistoryController {
         historyService.fsDeleteHistoryResult(id);
     }
 
+    @Operation(summary = "批量删除文件系统检测历史记录")
+    @PostMapping("deleteFsHistoryResults")
+    public void deleteFsHistoryResults(@RequestBody List<String> selectIds) throws Exception {
+        historyService.deleteFsHistoryResults(selectIds);
+    }
+
     @I18n
     @Operation(summary = "镜像检测历史记录")
     @PostMapping("imageHistory/{goPage}/{pageSize}")
@@ -99,10 +117,16 @@ public class HistoryController {
         return PageUtils.setPageInfo(page, historyService.imageHistory(request));
     }
 
-    @Operation(summary = "删除检测历史记录")
+    @Operation(summary = "删除镜像检测历史记录")
     @GetMapping("imageDeleteHistoryResult/{id}")
     public void imageDeleteHistoryResult(@PathVariable String id) throws Exception {
         historyService.imageDeleteHistoryResult(id);
+    }
+
+    @Operation(summary = "批量删除镜像检测历史记录")
+    @PostMapping("deleteImageHistoryResults")
+    public void deleteImageHistoryResults(@RequestBody List<String> selectIds) throws Exception {
+        historyService.deleteImageHistoryResults(selectIds);
     }
 
     @I18n
@@ -113,10 +137,16 @@ public class HistoryController {
         return PageUtils.setPageInfo(page, historyService.k8sHistory(request));
     }
 
-    @Operation(summary = "删除检测历史记录")
+    @Operation(summary = "删除K8s检测历史记录")
     @GetMapping("k8sDeleteHistoryResult/{id}")
     public void k8sDeleteHistoryResult(@PathVariable String id) throws Exception {
         historyService.k8sDeleteHistoryResult(id);
+    }
+
+    @Operation(summary = "批量删除K8s检测历史记录")
+    @PostMapping("deleteK8sHistoryResults")
+    public void deleteK8sHistoryResults(@RequestBody List<String> selectIds) throws Exception {
+        historyService.deleteK8sHistoryResults(selectIds);
     }
 
 }

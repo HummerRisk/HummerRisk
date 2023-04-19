@@ -1252,6 +1252,16 @@ public class K8sService {
         });
     }
 
+    public void deleteK8ss(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                delete(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public MetricChartDTO metricChart(String resultId) {
         return extCloudNativeResultMapper.metricChart(resultId);
     }

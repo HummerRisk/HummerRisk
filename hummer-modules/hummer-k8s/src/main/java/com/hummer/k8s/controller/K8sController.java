@@ -415,4 +415,11 @@ public class K8sController {
         k8sService.deleteSyncLogs(selectIds);
     }
 
+    @Operation(summary = "批量删除K8s账号")
+    @PostMapping("deleteK8ss")
+    public void deleteK8ss(@RequestBody List<String> selectIds) throws Exception {
+        k8sService.deleteK8ss(selectIds, tokenService.getLoginUser());
+    }
+
+
 }

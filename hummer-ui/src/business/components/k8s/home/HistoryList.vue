@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :items="items" :columnNames="columnNames" :showName="false"
+                      :items="items" :columnNames="columnNames" :showName="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
                       @handleCheckAllChange="handleCheckAllChange"/>
@@ -16,6 +16,8 @@
           @select-all="select"
           @select="select"
       >
+        <el-table-column type="selection" min-width="40">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('k8s.name')" min-width="160" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -345,7 +347,7 @@ import TableOperators from "@/business/components/common/components/TableOperato
 import LogForm from "@/business/components/k8s/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import CodeDiff from 'vue-code-diff';
-import {k8sHistoryUrl, k8sDeleteHistoryResultUrl} from "@/api/system/history";
+import {k8sHistoryUrl, k8sDeleteHistoryResultUrl, deleteK8sHistoryResultsUrl} from "@/api/system/history";
 import {
   getCloudNativeResultWithBLOBsUrl,
   historyResultConfigItemListUrl,
@@ -425,6 +427,7 @@ export default {
     return {
       result: {},
       tags: [],
+      selectIds: new Set(),
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -500,6 +503,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     init() {
       this.search();
@@ -627,6 +634,30 @@ export default {
         if (this.logForm.configAuditReport) this.logForm.configAuditReport = JSON.parse(this.logForm.configAuditReport);
       });
       this.logVisible = true;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('account.k8s'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('account.k8s') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteK8sHistoryResultsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   created() {
