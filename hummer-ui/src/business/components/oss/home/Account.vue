@@ -7,7 +7,7 @@
                       @create="create" :createTip="$t('oss.create')"
                       @validate="validate" :validateTip="$t('account.one_validate')"
                       :show-validate="true" :show-create="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -112,8 +112,8 @@
 
     <!--oss account-->
     <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <div v-loading="cloudResult.loading">
+               :destroy-on-close="true" v-loading="cloudResult.loading">
+      <div>
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
           <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" :disabled="ossTitle!=$t('oss.create')" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
@@ -176,7 +176,7 @@
 
     <!--oss log-->
     <el-drawer class="rtl" :title="$t('oss.log_list')" :visible.sync="logVisible" size="65%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>
@@ -232,7 +232,7 @@
 
     <!--oss bucket-->
     <el-drawer class="rtl" :title="$t('oss.oss_bucket')" :visible.sync="bucketVisible" size="90%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <table-header :condition.sync="bucketCondition" @search="searchBuckets"
                     :show-name="false"
                     :items="items2" :columnNames="columnNames2"
@@ -320,7 +320,6 @@
           </el-table-column>
         </el-table>
       </el-drawer>
-
     </el-drawer>
     <!--oss bucket-->
 
@@ -329,8 +328,8 @@
                :modal-append-to-body="false"
                :title="$t('account.scan_group_quick')"
                :visible.sync="scanVisible"
-               class="" width="70%">
-      <div v-loading="groupResult.loading">
+               class="" width="70%" v-loading="groupResult.loading">
+      <div>
         <el-card class="box-card el-box-card">
           <div slot="header" class="clearfix">
               <span>
@@ -363,7 +362,7 @@ import MainContainer from "@/business/components/common/components/MainContainer
 import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {OSS_BUCKET_CONFIGS, OSS_CONFIGS} from "@/business/components/common/components/search/search-components";
+import {OSS_CONFIGS, OSS_BUCKET_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver";
 import Regions from "@/business/components/account/home/Regions";
@@ -376,6 +375,7 @@ import {
   ossBatchSyncUrl,
   ossBucketListUrl,
   ossChangeAccountUrl,
+  ossDeleteAccountsUrl,
   ossDownloadObjectUrl,
   ossGroupsUrl,
   ossIamStrategyUrl,
@@ -492,6 +492,7 @@ export default {
       result: {},
       cloudResult: {},
       groupResult: {},
+      viewResult: {},
       condition: {
         components: OSS_CONFIGS
       },
@@ -807,7 +808,7 @@ export default {
       });
     },
     showLog (item) {
-      this.result = this.$get(ossLogUrl + item.id, response => {
+      this.viewResult = this.$get(ossLogUrl + item.id, response => {
         this.logData = response.data;
         this.logForm = item;
       });
@@ -864,20 +865,20 @@ export default {
     showBuckets(item) {
       this.ossId = item.id;
       this.searchBuckets();
-      this.bucketVisible = true;
     },
     searchBuckets() {
       let url = ossBucketListUrl + this.bucketPage + "/" + this.bucketPageSize;
       this.bucketCondition.ossId = this.ossId;
-      this.result = this.$post(url, this.bucketCondition, response => {
+      this.viewResult = this.$post(url, this.bucketCondition, response => {
         let data = response.data;
         this.bucketTotal = data.itemCount;
         this.bucketData = data.listObject;
+        this.bucketVisible = true;
       });
     },
     showObject(bucket) {
       this.path = '/';
-      this.result = this.$get(ossObjectsUrl + bucket.id, response => {
+      this.viewResult = this.$get(ossObjectsUrl + bucket.id, response => {
         this.objectData = response.data;
         this.innerDrawer = true;
       });
@@ -885,7 +886,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post(ossObjectsUrl + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
+        this.viewResult = this.$post(ossObjectsUrl + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
           this.objectData = response.data;
           this.innerDrawer = true;
         });
@@ -962,7 +963,7 @@ export default {
       this.scanVisible = true;
     },
     initGroups(pluginId) {
-      this.result = this.$get(ossGroupsUrl + pluginId,response => {
+      this.groupResult = this.$get(ossGroupsUrl + pluginId,response => {
         this.groups = response.data;
       });
     },
@@ -1009,13 +1010,37 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$download(ossDownloadObjectUrl + item.bucketId, {
+            this.viewResult = this.$download(ossDownloadObjectUrl + item.bucketId, {
               objectId: item.id
             }, response => {
               let blob = new Blob([response.data], {type: "'application/octet-stream'"});
               saveAs(blob, item.objectName);
             }, error => {
               console.log("下载报错", error);
+            });
+          }
+        }
+      });
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('oss.oss_account'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('oss.oss_account') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.viewResult = this.$request({
+              method: 'POST',
+              url: ossDeleteAccountsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('account.success'));
+              this.search();
             });
           }
         }

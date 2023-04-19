@@ -213,6 +213,15 @@ public class OssService {
         ossLogMapper.deleteByExample(example);
     }
 
+    public void deleteAccounts(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteOss(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
     public List<OssLogWithBLOBs> getLogList(String ossId) {
         OssLogExample example = new OssLogExample();
         example.createCriteria().andOssIdEqualTo(ossId);

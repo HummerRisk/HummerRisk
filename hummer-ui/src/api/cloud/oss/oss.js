@@ -65,3 +65,5 @@ export const ossResourceListUrl = "/cloud/oss/resource/list/";
 
 export const ossTopInfoUrl = "/cloud/oss/topInfo";
 
+export const ossDeleteAccountsUrl = "/cloud/oss/deleteAccounts";
+
