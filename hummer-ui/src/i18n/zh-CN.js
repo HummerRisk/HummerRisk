@@ -233,6 +233,7 @@ export default {
     vuln_scan: '漏洞检测',
     config_scan: '配置审计',
     kubench_scan: 'CIS Benchmark',
+    deleted: '已删除',
   },
   workspace: {
     create: '创建工作空间',

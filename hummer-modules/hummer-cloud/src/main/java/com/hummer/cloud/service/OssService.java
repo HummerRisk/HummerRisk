@@ -222,6 +222,7 @@ public class OssService {
             }
         });
     }
+
     public List<OssLogWithBLOBs> getLogList(String ossId) {
         OssLogExample example = new OssLogExample();
         example.createCriteria().andOssIdEqualTo(ossId);

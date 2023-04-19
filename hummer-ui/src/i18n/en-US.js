@@ -233,6 +233,7 @@ export default {
     vuln_scan: 'Vulnerability detection',
     config_scan: 'Configuration Audit',
     kubench_scan: 'CIS Benchmark',
+    deleted: 'Deleted',
   },
   workspace: {
     create:'Create a workspace',

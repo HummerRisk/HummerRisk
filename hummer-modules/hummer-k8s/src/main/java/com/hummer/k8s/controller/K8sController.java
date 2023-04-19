@@ -409,4 +409,10 @@ public class K8sController {
         return k8sService.listByGroup(pluginId);
     }
 
+    @Operation(summary = "批量删除K8s资源同步日志")
+    @PostMapping("deleteSyncLogs")
+    public void deleteSyncLogs(@RequestBody List<String> selectIds) throws Exception {
+        k8sService.deleteSyncLogs(selectIds);
+    }
+
 }

@@ -1242,6 +1242,16 @@ public class K8sService {
         cloudNativeSourceSyncLogMapper.deleteByPrimaryKey(id);
     }
 
+    public void deleteSyncLogs(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteSyncLog(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public MetricChartDTO metricChart(String resultId) {
         return extCloudNativeResultMapper.metricChart(resultId);
     }
