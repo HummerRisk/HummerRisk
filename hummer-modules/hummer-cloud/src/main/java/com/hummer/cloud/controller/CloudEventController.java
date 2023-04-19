@@ -124,4 +124,10 @@ public class CloudEventController {
         return cloudEventService.ipAccessChart(ip,startDate,endDate);
     }
 
+    @Operation(summary = "批量删除云事件同步日志")
+    @PostMapping("deleteLogs")
+    public void deleteLogs(@RequestBody List<Integer> selectIds) throws Exception {
+        cloudEventService.deleteLogs(selectIds);
+    }
+
 }

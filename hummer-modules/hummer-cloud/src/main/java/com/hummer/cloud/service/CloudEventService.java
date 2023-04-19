@@ -795,5 +795,15 @@ public class CloudEventService {
         return chartDTO;
     }
 
+    public void deleteLogs(List<Integer> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteCloudEventSyncLog(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
 
 }
