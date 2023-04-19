@@ -558,6 +558,16 @@ public class HistoryService {
         historyServerResultMapper.deleteByPrimaryKey(id);
     }
 
+    public void deleteServerHistoryResults(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                serverDeleteHistoryResult(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public void codeDeleteHistoryResult(String id) throws Exception {
         historyCodeResultMapper.deleteByPrimaryKey(id);
     }

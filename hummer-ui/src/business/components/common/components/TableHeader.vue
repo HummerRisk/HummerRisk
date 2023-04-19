@@ -261,7 +261,7 @@ import htmlToPdf from "@/common/js/htmlToPdf";
         htmlToPdf.getPdf(this.htmlTitle);
       },
       deleteSelect() {
-        this.$emit('deleteSelect');
+        this.$emit('delete');
       },
       handleCheckAllChange(val) {
         this.$emit('handleCheckAllChange', val);

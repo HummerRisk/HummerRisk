@@ -357,5 +357,17 @@ public class ServerController {
         serverService.deleteServerRules(selectIds, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "批量删除统一凭据")
+    @PostMapping("deleteCertificates")
+    public void deleteCertificates(@RequestBody List<String> selectIds) throws Exception {
+        serverService.deleteCertificates(selectIds, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "批量删除主机检测结果")
+    @PostMapping("deleteResults")
+    public void deleteResults(@RequestBody List<String> selectIds) throws Exception {
+        serverService.deleteResults(selectIds, tokenService.getLoginUser());
+    }
+
 
 }

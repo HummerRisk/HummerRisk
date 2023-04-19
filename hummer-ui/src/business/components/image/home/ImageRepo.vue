@@ -833,7 +833,7 @@ export default {
             }, res => {
               if (res.success) {
                 this.imageVisible = false;
-                this.$success(this.$t('account.success'));
+                this.$success(this.$t('commons.success'));
                 this.$router.push({
                   path: '/image/image',
                   query: {

@@ -784,7 +784,7 @@ const columnOptions2 = [
                   'Content-Type': undefined
                 }
               }, res => {
-                this.$success(this.$t('account.success'));
+                this.$success(this.$t('commons.success'));
                 this.search();
               });
             }

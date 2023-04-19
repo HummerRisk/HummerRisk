@@ -86,3 +86,7 @@ export const serverScanByGroupUrl = "/k8s/server/scanByGroup/";
 export const deleteServersUrl = "/k8s/server/deleteServers";
 
 export const deleteServerRulesUrl = "/k8s/server/deleteServerRules";
+
+export const deleteServerCertificatesUrl = "/k8s/server/deleteCertificates";
+
+export const deleteServerResultsUrl = "/k8s/server/deleteResults";

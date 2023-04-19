@@ -9,7 +9,7 @@
         </el-tabs>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('server.result_list')" v-if="activeName === 'first'"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         <table-header :condition.sync="serverCondition" @search="search"
@@ -36,6 +36,8 @@
 <!--          </template>-->
 <!--        </el-table-column >-->
         <!-- 展开 end -->
+        <el-table-column type="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="serverName" v-if="checkedColumnNames.includes('serverName')" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
         <el-table-column prop="ip" v-if="checkedColumnNames.includes('ip')" :label="'IP'" min-width="130" show-overflow-tooltip></el-table-column>
@@ -174,7 +176,7 @@
 
     <!--Result log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="75%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>
@@ -254,7 +256,7 @@
 
     <!--Result details-->
     <el-drawer class="rtl" :title="$t('server.result')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-table border :data="serverResultDetails" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
@@ -415,6 +417,7 @@ import {SERVER_RESULT_CONFIGS, SERVER_RESULT_CONFIGS2} from "@/business/componen
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
+  deleteServerResultsUrl,
   deleteServerResultUrl,
   getServerResultUrl,
   resultServerListUrl,
@@ -526,12 +529,14 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       condition: {
         components: SERVER_RESULT_CONFIGS
       },
       serverCondition: {
         components: SERVER_RESULT_CONFIGS2
       },
+      selectIds: new Set(),
       tableData: [],
       serverData: [],
       currentPage: 1,
@@ -550,7 +555,7 @@ export default {
       buttons: [
         {
           tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
-          exec: this.handleScans
+          exec: this.handleScan
         },
         {
           tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
@@ -641,6 +646,10 @@ export default {
       this.checkAll2 = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     //查询列表
     search() {
@@ -699,21 +708,21 @@ export default {
     },
     showResultLog (result) {
       this.logForm = result;
-      this.$get(serverLogUrl + result.id, response => {
+      this.viewResult = this.$get(serverLogUrl + result.id, response => {
         this.logData = response.data;
         this.logVisible = true;
       });
-      this.$get(getServerResultUrl + result.id, response => {
+      this.viewResult = this.$get(getServerResultUrl + result.id, response => {
         this.logForm = response.data;
       });
     },
     showDetailLog (result) {
       this.logForm = result;
-      this.$get(serverLogUrl + result.id, response => {
+      this.viewResult = this.$get(serverLogUrl + result.id, response => {
         this.logData = response.data;
         this.innerVisible = true;
       });
-      this.$get(getServerResultUrl + result.id, response => {
+      this.viewResult = this.$get(getServerResultUrl + result.id, response => {
         this.logForm = response.data;
       });
     },
@@ -724,12 +733,12 @@ export default {
     innerClose() {
       this.innerVisible = false;
     },
-    handleScans (item) {
+    handleScan (item) {
       this.$alert(this.$t('resource.handle_scans'), '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(serverReScanUrl + item.id, response => {
+            this.result = this.$get(serverReScanUrl + item.id, response => {
               if (response.success) {
                 this.search();
               }
@@ -777,6 +786,30 @@ export default {
     handleList(data) {
       this.serverResultDetails = data.serverResultDTOS;
       this.detailsVisible = true;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('server.server_result'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('server.server_result') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteServerResultsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {

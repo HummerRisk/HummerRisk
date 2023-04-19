@@ -43,6 +43,12 @@ public class HistoryController {
         historyService.serverDeleteHistoryResult(id);
     }
 
+    @Operation(summary = "批量删除主机检测历史记录")
+    @PostMapping("deleteServerHistoryResults")
+    public void deleteServerHistoryResults(@RequestBody List<String> selectIds) throws Exception {
+        historyService.deleteServerHistoryResults(selectIds);
+    }
+
     @I18n
     @Operation(summary = "源码检测历史记录")
     @PostMapping("codeHistory/{goPage}/{pageSize}")

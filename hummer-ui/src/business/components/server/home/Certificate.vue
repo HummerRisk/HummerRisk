@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('server.certificate_list')"
                       @create="create" :createTip="$t('server.create_certificate')"
-                      :show-create="true"
+                      :show-create="true" @delete="deleteBatch" :show-delete="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -18,6 +18,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('commons.name')" min-width="150" show-overflow-tooltip></el-table-column>
         <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('commons.description')" min-width="160" show-overflow-tooltip></el-table-column>
@@ -51,7 +53,7 @@
 
     <!--Create Certificate-->
     <el-drawer class="rtl" :title="$t('server.create_certificate')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
         <el-form-item :label="$t('commons.name')" prop="name">
           <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('commons.name')"/>
@@ -96,7 +98,7 @@
 
     <!--Update Certificate-->
     <el-drawer class="rtl" :title="$t('server.update_certificate')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="updateForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateForm">
         <el-form-item :label="$t('commons.name')" prop="name">
           <el-input v-model="updateForm.name" autocomplete="off" :placeholder="$t('commons.name')"/>
@@ -140,7 +142,13 @@ import {_filter, _sort} from "@/common/js/utils";
 import {SERVER_CERTIFICATE_CONFIGS} from "../../common/components/search/search-components";
 import ServerKeyUpload from "@/business/components/server/head/ServerKeyUpload";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {addCertificateUrl, certificateListUrl, deleteCertificateUrl, editCertificateUrl} from "@/api/k8s/server/server";
+import {
+  addCertificateUrl,
+  certificateListUrl,
+  deleteCertificateUrl,
+  deleteServerCertificatesUrl,
+  editCertificateUrl
+} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -187,9 +195,11 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       condition: {
         components: SERVER_CERTIFICATE_CONFIGS
       },
+      selectIds: new Set(),
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -282,6 +292,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     create() {
       this.createForm = { isPublicKey: 'no' };
@@ -351,7 +365,7 @@ export default {
                 "Content-Type": 'multipart/form-data'
               }
             };
-            this.result = this.$request(axiosRequestConfig, (res) => {
+            this.viewResult = this.$request(axiosRequestConfig, (res) => {
               if (res.success) {
                 this.$success(this.$t('commons.save_success'));
                 this.search();
@@ -375,7 +389,7 @@ export default {
                 "Content-Type": 'multipart/form-data'
               }
             };
-            this.result = this.$request(axiosRequestConfig, (res) => {
+            this.viewResult = this.$request(axiosRequestConfig, (res) => {
               if (res.success) {
                 this.$success(this.$t('commons.save_success'));
                 this.search();
@@ -386,10 +400,34 @@ export default {
         }
       });
     },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('server.certificate'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('server.certificate') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteServerCertificatesUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
+    },
   },
   computed: {
     codemirror() {
-      return this.$refs.cmEditor.codemirror
+      return this.$refs.cmEditor.codemirror;
     }
   },
   created() {

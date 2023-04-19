@@ -286,7 +286,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.viewResult = this.$request({
+            this.result = this.$request({
               method: 'POST',
               url: deleteK8sSyncLogsUrl,
               data: Array.from(this.selectIds),
@@ -294,7 +294,7 @@ export default {
                 'Content-Type': undefined
               }
             }, res => {
-              this.$success(this.$t('account.success'));
+              this.$success(this.$t('commons.success'));
               this.search();
             });
           }

@@ -3,6 +3,8 @@ export const serverHistoryUrl = "/system/history/serverHistory/";
 
 export const serverDeleteHistoryResultUrl = "/system/history/serverDeleteHistoryResult/";
 
+export const deleteServerHistoryResultsUrl = "/system/history/deleteServerHistoryResults";
+
 export const codeHistoryUrl = "/system/history/codeHistory/";
 
 export const codeDeleteHistoryResultUrl = "/system/history/codeDeleteHistoryResult/";

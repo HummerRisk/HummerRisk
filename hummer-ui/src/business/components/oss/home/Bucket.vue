@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('oss.oss_bucket')"
                       @create="create" :createTip="$t('oss.create_bucket')"
-                      @deleteSelect="deleteSelect" :show-delete="true" :show-create="true"
+                      @delete="deleteSelect" :show-delete="true" :show-create="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>

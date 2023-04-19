@@ -4,7 +4,7 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :items="items" :columnNames="columnNames" :showName="false"
+                      :items="items" :columnNames="columnNames" :showName="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -23,12 +23,10 @@
             {{ scope.row.ip }} : {{ scope.row.port }}
           </el-table-column>
           <el-table-column prop="ruleName" :label="$t('server.rule_name')" v-if="checkedColumnNames.includes('ruleName')" min-width="160" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="isSeverity" :label="$t('server.is_severity')" v-if="checkedColumnNames.includes('severity')" min-width="100" show-overflow-tooltip v-slot:default="scope">
-            <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
-              <span v-if="scope.row.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
-              <span v-if="scope.row.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
-              <span v-if="scope.row.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('resource.i18n_has_warn') }}</span>
-            </el-tooltip>
+          <el-table-column min-width="100" v-if="checkedColumnNames.includes('severity')" :label="$t('server.severity')" column-key="severity">
+            <template v-slot:default="{row}">
+              <rule-type :row="row"/>
+            </template>
           </el-table-column>
           <el-table-column prop="type" :label="$t('commons.type')" v-if="checkedColumnNames.includes('type')" min-width="70" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -69,7 +67,7 @@
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('commons.operating')" min-width="90" show-overflow-tooltip fixed="right">
+          <el-table-column :label="$t('commons.operating')" min-width="50" show-overflow-tooltip fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
@@ -112,7 +110,7 @@
 
       <!--Result log-->
       <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="75%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-row class="el-form-item-dev" v-if="logData.length == 0">
           <span>{{ $t('resource.i18n_no_data') }}<br></span>
         </el-row>
@@ -274,8 +272,11 @@ import TableHeader from "@/business/components/common/components/TableHeader";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
 import CodeDiff from 'vue-code-diff';
-import {getServerResultUrl, serverLogUrl} from "@/api/k8s/server/server";
-import {serverHistoryUrl, serverDeleteHistoryResultUrl} from "@/api/system/history";
+import {
+  getServerResultUrl,
+  serverLogUrl
+} from "@/api/k8s/server/server";
+import {serverHistoryUrl, serverDeleteHistoryResultUrl, deleteServerHistoryResultsUrl} from "@/api/system/history";
 import {SERVER_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 
 //列表展示与隐藏
@@ -346,6 +347,7 @@ const columnOptions = [
     data() {
       return {
         result: {},
+        viewResult: {},
         tags: [],
         tableData: [],
         currentPage: 1,
@@ -506,12 +508,36 @@ const columnOptions = [
       },
       showResultLog (result) {
         this.logForm = result;
-        this.$get(serverLogUrl + result.id, response => {
+        this.viewResult = this.$get(serverLogUrl + result.id, response => {
           this.logData = response.data;
           this.logVisible = true;
         });
-        this.$get(getServerResultUrl + result.id, response => {
+        this.viewResult = this.$get(getServerResultUrl + result.id, response => {
           this.logForm = response.data;
+        });
+      },
+      deleteBatch() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('commons.please_select') + this.$t('server.server_result'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('server.server_result') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteServerHistoryResultsUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('commons.success'));
+                this.search();
+              });
+            }
+          }
         });
       },
     },
