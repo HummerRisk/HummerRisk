@@ -91,8 +91,8 @@
     <!--sync-->
     <el-drawer class="rtl" :title="$t('event.event_sync')" :visible.sync="showSync" size="50%"
                :before-close="handleClose" direction="rtl"
-               :destroy-on-close="true">
-      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small" v-loading="viewResult.loading">
+               :destroy-on-close="true" v-loading="viewResult.loading">
+      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small">
         <el-form-item :label="$t('event.cloud_account')" ref="accountId" prop="accountId">
           <el-select filterable :clearable="true" style="width: 100%;" v-model="eventFrom.accountId"
                      :placeholder="$t('event.cloud_account')" @change="changeFormRegion">
@@ -350,7 +350,7 @@ export default {
         this.$error(this.$t('event.error'))
         return
       }
-      this.result = this.$post(cloudEventSyncUrl, this.eventFrom, response => {
+      this.viewResult = this.$post(cloudEventSyncUrl, this.eventFrom, response => {
         this.showSync = false
         this.search()
       })

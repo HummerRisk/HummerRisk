@@ -80,7 +80,7 @@
 
     <!--Create sync-->
     <el-drawer class="rtl" :title="$t('k8s.sync_log_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('event.cloud_account')" :rules="{required: true, message: $t('event.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" filterable :clearable="true" v-model="form.id" :placeholder="$t('event.cloud_account')">
@@ -190,6 +190,7 @@ export default {
       credential: {},
       logForm: {cloudTaskItemLogDTOs: []},
       result: {},
+      viewResult: {},
       condition: {
         components: SITUATION_LOG_CONFIGS
       },
@@ -301,7 +302,7 @@ export default {
       });
     },
     saveSync() {
-      this.result = this.$get(cloudSyncUrl + this.form.id,response => {
+      this.viewResult = this.$get(cloudSyncUrl + this.form.id,response => {
         this.search();
         this.handleClose();
       });

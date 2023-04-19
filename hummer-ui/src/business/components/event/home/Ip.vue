@@ -43,77 +43,75 @@
 
     <!--ip detail-->
     <el-drawer class="rtl ip-list" :title="$t('event.ip_detail')" :visible.sync="detailVisible" size="75%" :before-close="handleClose" direction="rtl"
-               :destroy-on-close="true">
-      <div v-loading="viewResult.loading">
-        <ip-chart :ip = "currentChartIp" :days="chartDays"/>
-        <el-tabs v-model="activeName" @tab-click="showCodemirror" style="margin: 20px;">
-          <el-tab-pane :label="$t('event.event_audit')" name="first">
-            <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.id" :title="detail.eventName"  style="margin-top: 20px;" :column="2" :labelStyle="labelStyle" :contentStyle="contentStyle" border>
-              <el-descriptions-item>
-                <template slot="label">
-                  <i class="el-icon-s-grid"></i>
-                  {{$t('event.cloud_account')}}
-                </template>
-                <img :src="require(`@/assets/img/platform/${ getAccountIcon(detail.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                {{getAccountName(detail.cloudAccountId)}}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template slot="label">
-                  <i class="el-icon-location-outline"></i>
-                  {{$t('event.region')}}
-                </template>
-                {{detail.regionName}}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template slot="label">
-                  <i class="el-icon-tickets"></i>
-                  {{$t('event.event_name')}}
-                </template>
-                {{detail.eventName}}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template slot="label">
-                  <i class="el-icon-time"></i>
-                  {{$t('event.event_time')}}
-                </template>
-                {{ detail.eventTime | timestampFormatDate }}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template slot="label">
-                  <i class="el-icon-s-flag"></i>
-                  {{$t('event.event_id')}}
-                </template>
-                {{detail.eventId}}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template slot="label">
-                  <i class="el-icon-link"></i>
-                  {{$t('event.event_source')}}
-                </template>
-                {{detail.eventSource}}
-              </el-descriptions-item>
-              <el-descriptions-item>
-                <template slot="label">
-                  <i class="el-icon-position"></i>
-                  {{$t('event.source_ip')}}
-                </template>
-                {{detail.sourceIpAddress}}
-              </el-descriptions-item>
-              <el-descriptions-item >
-                <template slot="label">
-                  <i class="el-icon-user"></i>
-                  {{$t('event.user_name')}}
-                </template>
-                {{detail.userName}}
-              </el-descriptions-item>
-            </el-descriptions>
-            <table-pagination :change="searchDetail" :current-page.sync="detailCurrentPage" :page-size.sync="detailPageSize" :total="detailTotal"/>
-          </el-tab-pane>
-          <el-tab-pane :label="$t('event.event_insight')" name="second">
-            <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+               :destroy-on-close="true" v-loading="viewResult.loading">
+      <ip-chart :ip = "currentChartIp" :days="chartDays"/>
+      <el-tabs v-model="activeName" @tab-click="showCodemirror" style="margin: 20px;">
+        <el-tab-pane :label="$t('event.event_audit')" name="first">
+          <el-descriptions class="margin-top" v-for="detail in details" :key = "detail.id" :title="detail.eventName"  style="margin-top: 20px;" :column="2" :labelStyle="labelStyle" :contentStyle="contentStyle" border>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-s-grid"></i>
+                {{$t('event.cloud_account')}}
+              </template>
+              <img :src="require(`@/assets/img/platform/${ getAccountIcon(detail.cloudAccountId)}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+              {{getAccountName(detail.cloudAccountId)}}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-location-outline"></i>
+                {{$t('event.region')}}
+              </template>
+              {{detail.regionName}}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-tickets"></i>
+                {{$t('event.event_name')}}
+              </template>
+              {{detail.eventName}}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-time"></i>
+                {{$t('event.event_time')}}
+              </template>
+              {{ detail.eventTime | timestampFormatDate }}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-s-flag"></i>
+                {{$t('event.event_id')}}
+              </template>
+              {{detail.eventId}}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-link"></i>
+                {{$t('event.event_source')}}
+              </template>
+              {{detail.eventSource}}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template slot="label">
+                <i class="el-icon-position"></i>
+                {{$t('event.source_ip')}}
+              </template>
+              {{detail.sourceIpAddress}}
+            </el-descriptions-item>
+            <el-descriptions-item >
+              <template slot="label">
+                <i class="el-icon-user"></i>
+                {{$t('event.user_name')}}
+              </template>
+              {{detail.userName}}
+            </el-descriptions-item>
+          </el-descriptions>
+          <table-pagination :change="searchDetail" :current-page.sync="detailCurrentPage" :page-size.sync="detailPageSize" :total="detailTotal"/>
+        </el-tab-pane>
+        <el-tab-pane :label="$t('event.event_insight')" name="second">
+          <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
+        </el-tab-pane>
+      </el-tabs>
     </el-drawer>
     <!--ip detail-->
 
