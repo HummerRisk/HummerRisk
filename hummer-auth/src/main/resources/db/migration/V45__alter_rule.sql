@@ -55,3 +55,5 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('5b843546-c1a5-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('5b843546-c1a5-44b0-aa4f-f38590a34e73', @groupId2);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0e94c51b-eec8-4995-8f2e-aeff41c6047c', @groupId1);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0e94c51b-eec8-4995-8f2e-aeff41c6047c', @groupId2);
+
+alter table `cloud_event` modify column `resource_name` varchar(128) DEFAULT NULL  COMMENT '资源名称';
