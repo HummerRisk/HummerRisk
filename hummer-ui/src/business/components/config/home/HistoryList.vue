@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :items="items" :columnNames="columnNames" :showName="false"
+                      :items="items" :columnNames="columnNames" :showName="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
                       @handleCheckAllChange="handleCheckAllChange"/>
@@ -92,7 +92,7 @@
 
     <!--History statistics-->
     <el-drawer class="rtl" :title="$t('resource.i18n_not_compliance')" :visible.sync="statisticsList" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <div>
         <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort"
@@ -131,7 +131,7 @@
 
     <!--History status-->
     <el-drawer class="rtl" :title="$t('resource.i18n_resource_scanning_log')" :visible.sync="logVisible" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -188,7 +188,7 @@
 
     <!--History output list-->
     <el-drawer class="rtl" :title="$t('commons.history')" :visible.sync="visibleList" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <div>
         <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort"
@@ -248,7 +248,7 @@
 
     <!--History Compared-->
     <el-dialog :title="$t('dashboard.online_comparison')" width="90%" :visible.sync="innerDrawer"
-               :close-on-click-modal="false">
+               :close-on-click-modal="false" v-loading="viewResult.loading">
       <el-form>
         <code-diff
             :old-string="oldStr"
@@ -276,7 +276,7 @@ import LogForm from "@/business/components/config/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {CONFIG_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import CodeDiff from 'vue-code-diff';
-import {configHistoryUrl, configDeleteHistoryResultUrl} from "@/api/system/history";
+import {configHistoryUrl, configDeleteHistoryResultUrl, deleteConfigHistoryResultsUrl} from "@/api/system/history";
 import {
   configMetricChartUrl,
   getCloudNativeConfigResultUrl,
@@ -337,6 +337,7 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       tags: [],
       tableData: [],
       currentPage: 1,
@@ -472,7 +473,7 @@ export default {
     },
     async outputListDataSearch() {
       let item = this.outputListSearchData;
-      await this.$post(configHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {cloudNativeId: item.cloudNativeId}, response => {
+      this.viewResult = await this.$post(configHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {cloudNativeId: item.cloudNativeId}, response => {
         let data = response.data;
         this.outputListTotal = data.itemCount;
         this.outputListData = data.listObject;
@@ -498,24 +499,48 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      this.result = this.$post(historyResultItemListUrl, {resultId: params.id}, response => {
+      this.viewResult = this.$post(historyResultItemListUrl, {resultId: params.id}, response => {
         let data = response.data;
         this.statisticsData = data;
         this.statisticsList = true;
       });
-      this.result = this.$get(configMetricChartUrl + this.resultId, response => {
+      this.viewResult = this.$get(configMetricChartUrl + this.resultId, response => {
         this.content = response.data;
       });
     },
     showResultLog(result) {
-      this.result = this.$get(logConfigUrl + result.id, response => {
+      this.viewResult = this.$get(logConfigUrl + result.id, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getCloudNativeConfigResultUrl + result.id, response => {
+      this.viewResult = this.$get(getCloudNativeConfigResultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
       });
       this.logVisible = true;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('config.config_settings'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('config.config_settings') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteConfigHistoryResultsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   created() {

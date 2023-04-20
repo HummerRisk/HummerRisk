@@ -4,7 +4,7 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('config.config_result_list')"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -16,6 +16,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="name" :label="$t('config.name')" v-if="checkedColumnNames.includes('name')" min-width="130" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -73,7 +75,7 @@
 
     <!--Result log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>
@@ -152,6 +154,7 @@ import {
   getCloudNativeConfigResultUrl,
   logConfigUrl
 } from "@/api/k8s/config/config";
+import {deleteConfigHistoryResultsUrl} from "@/api/system/history";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -199,9 +202,11 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       condition: {
         components: CONFIG_RESULT_CONFIGS
       },
+      selectIds: new Set(),
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -263,6 +268,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     //查询列表
     search() {
@@ -320,10 +329,10 @@ export default {
       this.init();
     },
     showResultLog (result) {
-      this.result = this.$get(logConfigUrl + result.id, response => {
+      this.viewResult = this.$get(logConfigUrl + result.id, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getCloudNativeConfigResultUrl + result.id, response => {
+      this.viewResult = this.$get(getCloudNativeConfigResultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
       });
@@ -332,20 +341,6 @@ export default {
     handleClose() {
       this.logVisible=false;
       this.detailVisible=false;
-    },
-    handleScans (item) {
-      this.$alert(this.$t('resource.handle_scans'), '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.$get(configReScanUrl + item.id, response => {
-              if (response.success) {
-                this.search();
-              }
-            });
-          }
-        }
-      });
     },
     handleDelete(obj) {
       this.$alert(this.$t('image.delete_confirm') + this.$t('image.result') + " ？", '', {
@@ -400,6 +395,30 @@ export default {
       }
       document.execCommand("copy");
       document.body.removeChild(input);
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('config.config_settings'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('config.config_settings') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteConfigHistoryResultsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {

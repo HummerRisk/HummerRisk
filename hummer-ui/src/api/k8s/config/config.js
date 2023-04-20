@@ -40,3 +40,5 @@ export const configAllListUrl = "/k8s/config/allList";
 
 export const configTopInfoUrl = "/k8s/config/topInfo";
 
+export const deleteConfigsUrl = "/k8s/config/deleteConfigs";
+

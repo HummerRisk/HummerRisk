@@ -192,4 +192,10 @@ public class ConfigController {
         return configService.historyResultItemList(request);
     }
 
+    @Operation(summary = "批量删除部署配置")
+    @PostMapping("deleteConfigs")
+    public void deleteConfigs(@RequestBody List<String> selectIds) throws Exception {
+        configService.deleteConfigs(selectIds, tokenService.getLoginUser());
+    }
+
 }

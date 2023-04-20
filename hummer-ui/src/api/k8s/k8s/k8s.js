@@ -99,6 +99,6 @@ export const k8sListByGroupUrl = "/k8s/k8s/listByGroup/";
 
 export const deleteK8sSyncLogsUrl = "/k8s/k8s/deleteSyncLogs";
 
-export const deleteK8ssUrl = "/k8s/server/deleteK8ss";
+export const deleteK8ssUrl = "/k8s/k8s/deleteK8ss";
 
 

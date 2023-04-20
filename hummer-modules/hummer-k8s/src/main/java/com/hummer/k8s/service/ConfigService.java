@@ -537,4 +537,14 @@ public class ConfigService {
         systemProviderService.deleteHistoryCloudNativeConfigResult(id);
     }
 
+    public void deleteConfigs(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                delete(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
 }
