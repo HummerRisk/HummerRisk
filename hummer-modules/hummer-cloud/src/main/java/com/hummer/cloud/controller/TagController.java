@@ -29,12 +29,14 @@ public class TagController {
         return ruleService.getRuleTags();
     }
 
+    @I18n
     @Operation(summary = "新增规则标签")
     @RequestMapping(value = "rule/save")
     public RuleTag saveRuleTag(@RequestBody RuleTag ruleTag) {
         return ruleService.saveRuleTag(ruleTag, tokenService.getLoginUser());
     }
 
+    @I18n
     @Operation(summary = "修改规则标签")
     @RequestMapping(value = "rule/update")
     public RuleTag updateRuleTag(@RequestBody RuleTag ruleTag) {
@@ -46,4 +48,11 @@ public class TagController {
     public int deleteRuleTags(@PathVariable String tagkey) throws Exception {
         return ruleService.deleteRuleTagByTagKey(tagkey, tokenService.getLoginUser());
     }
+
+    @Operation(summary = "批量删除规则标签")
+    @PostMapping("deleteRuleTags")
+    public void deleteRuleTags(@RequestBody List<String> selectIds) throws Exception {
+        ruleService.deleteRuleTags(selectIds, tokenService.getLoginUser());
+    }
+
 }

@@ -6,7 +6,7 @@
                         :title="$t('rule.rule_tag_list')"
                         @create="create" :createTip="$t('rule.create_tag')"
                         :show-create="true"
-                        :items="items" :columnNames="columnNames"
+                        :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                         :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
@@ -18,6 +18,8 @@
           @select-all="select"
           @select="select"
         >
+          <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+          </el-table-column>
           <el-table-column type="index" min-width="40"></el-table-column>
           <el-table-column prop="tagKey" v-if="checkedColumnNames.includes('tagKey')" :label="$t('rule.tag_key')" min-width="150" show-overflow-tooltip></el-table-column>
           <el-table-column prop="tagName" :label="$t('rule.tag_name')" v-if="checkedColumnNames.includes('tagName')" min-width="150" show-overflow-tooltip></el-table-column>
@@ -44,7 +46,7 @@
 
       <!--Create ruleTag-->
       <el-drawer class="rtl" :title="$t('rule.create_tag')" :visible.sync="createVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
           <el-form-item :label="$t('rule.tag_key')" prop="tagKey">
             <el-input v-model="createForm.tagKey" autocomplete="off" :placeholder="$t('commons.please_input')"/>
@@ -64,7 +66,7 @@
 
       <!--Update ruleTag-->
       <el-drawer class="rtl" :title="$t('rule.update_tag')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="updateForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateForm">
             <el-form-item :label="$t('rule.tag_key')" prop="tagKey">
               <el-input v-model="updateForm.tagKey" :disabled="true" autocomplete="off" :placeholder="$t('commons.please_input')"/>
@@ -84,7 +86,7 @@
 
       <!--Info ruleTag-->
       <el-drawer class="rtl" :title="$t('rule.update_tag')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="updateForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
           <el-form-item :label="$t('rule.tag_key')" prop="tagKey">
             {{ updateForm.tagKey }}
@@ -101,7 +103,7 @@
 
       <!--rule list-->
       <el-drawer class="rtl" :title="$t('rule.rule_list')" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-table border :data="ruleForm" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select">
           <el-table-column type="index" min-width="40"/>
@@ -156,7 +158,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_TAG_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {cloudTagRuleDeleteUrl, cloudTagRuleSaveUrl, cloudTagRuleUpdateUrl} from "@/api/cloud/account/account";
-import {ruleListUrl, ruleTagListUrl} from "@/api/cloud/rule/rule";
+import {deleteRuleTagsUrl, ruleListUrl, ruleTagListUrl} from "@/api/cloud/rule/rule";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -198,6 +200,7 @@ const columnOptions = [
     data() {
       return {
         result: {},
+        viewResult: {},
         condition: {
           components: RULE_TAG_CONFIGS
         },
@@ -321,7 +324,7 @@ const columnOptions = [
         };
         condition.combine = {ruleTag: {operator: 'in', value: item.tagKey }};
         let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
-        this.result = this.$post(url, condition, response => {
+        this.viewResult = this.$post(url, condition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
           this.ruleForm = data.listObject;
@@ -393,7 +396,7 @@ const columnOptions = [
               let params = item;
               params.flag = item.flag ? item.flag : false;
               let url = type == "createForm" ? cloudTagRuleSaveUrl : cloudTagRuleUpdateUrl;
-              this.result = this.$post(url, params, response => {
+              this.viewResult = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;
                 this.updateVisible =  false;
@@ -410,6 +413,30 @@ const columnOptions = [
         } else {
           return '';
         }
+      },
+      deleteBatch() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('commons.please_select') + this.$t('rule.rule_tag'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('rule.rule_tag') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteRuleTagsUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('commons.success'));
+                this.search();
+              });
+            }
+          }
+        });
       },
     },
     created() {

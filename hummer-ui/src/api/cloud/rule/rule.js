@@ -75,3 +75,4 @@ export const deleteGroupsUrl = "/cloud/rule/deleteGroups";
 
 export const deleteRulesUrl = "/cloud/rule/deleteRules";
 
+export const deleteRuleTagsUrl = "/cloud/tag/deleteRuleTags";

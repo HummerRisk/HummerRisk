@@ -510,12 +510,24 @@ public class RuleService {
     }
 
     public int deleteRuleTagByTagKey(String tagkey, LoginUser loginUser) {
+        RuleTag ruleTag = ruleTagMapper.selectByPrimaryKey(tagkey);
+        if(ruleTag.getFlag()) return 0;
         RuleTagMappingExample example = new RuleTagMappingExample();
         example.createCriteria().andTagKeyEqualTo(tagkey);
         List<RuleTagMapping> list = ruleTagMappingMapper.selectByExample(example);
         if (!list.isEmpty()) HRException.throwException(Translator.get("i18n_not_allowed"));
         operationLogService.log(loginUser, tagkey, tagkey, ResourceTypeConstants.RULE_TAG.name(), ResourceOperation.DELETE, "i18n_delete_rule_tag");
         return ruleTagMapper.deleteByPrimaryKey(tagkey);
+    }
+
+    public void deleteRuleTags(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteRuleTagByTagKey(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
     }
 
     public List<Map<String, String>> getAllResourceTypes() {
