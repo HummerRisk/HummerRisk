@@ -561,4 +561,14 @@ public class CodeService {
         systemProviderService.deleteHistoryCodeResult(id);
     }
 
+    public void deleteCodes(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteCode(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
 }

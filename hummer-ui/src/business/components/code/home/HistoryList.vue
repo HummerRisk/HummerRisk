@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :items="items" :columnNames="columnNames" :showName="false"
+                      :items="items" :columnNames="columnNames" :showName="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
                       @handleCheckAllChange="handleCheckAllChange"/>
@@ -24,7 +24,7 @@
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)"
-                     style="width: 40px; height: 25px; vertical-align:middle" alt=""/>
+                     style="width: 25px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
@@ -90,7 +90,7 @@
 
     <!--History statistics-->
     <el-drawer class="rtl" :title="$t('resource.i18n_not_compliance')" :visible.sync="statisticsList" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <div>
         <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort"
@@ -125,7 +125,7 @@
 
     <!--History status-->
     <el-drawer class="rtl" :title="$t('resource.i18n_resource_scanning_log')" :visible.sync="logVisible" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -183,7 +183,7 @@
 
     <!--History output list-->
     <el-drawer class="rtl" :title="$t('commons.history')" :visible.sync="visibleList" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <div>
         <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort"
@@ -242,7 +242,7 @@
 
     <!--History Compared-->
     <el-dialog :title="$t('dashboard.online_comparison')" width="90%" :visible.sync="innerDrawer"
-               :close-on-click-modal="false">
+               :close-on-click-modal="false" v-loading="viewResult.loading">
       <el-form>
         <code-diff
             :old-string="oldStr"
@@ -269,8 +269,13 @@ import TableOperators from "@/business/components/common/components/TableOperato
 import LogForm from "@/business/components/code/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import CodeDiff from 'vue-code-diff';
-import {codeHistoryUrl, codeDeleteHistoryResultUrl} from "@/api/system/history";
-import {codeMetricChartUrl, getCodeResultUrl, historyResultItemListUrl, logCodeUrl} from "@/api/k8s/code/code";
+import {codeHistoryUrl, codeDeleteHistoryResultUrl, deleteCodeHistoryResultsUrl} from "@/api/system/history";
+import {
+  codeMetricChartUrl,
+  getCodeResultUrl,
+  historyResultItemListUrl,
+  logCodeUrl
+} from "@/api/k8s/code/code";
 import {CODE_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 
 //列表展示与隐藏
@@ -326,6 +331,7 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       condition: {
         components: CODE_RESULT_CONFIGS
       },
@@ -459,7 +465,7 @@ export default {
     },
     async outputListDataSearch() {
       let item = this.outputListSearchData;
-      await this.$post(codeHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {codeId: item.codeId}, response => {
+      this.viewResult = await this.$post(codeHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {codeId: item.codeId}, response => {
         let data = response.data;
         this.outputListTotal = data.itemCount;
         this.outputListData = data.listObject;
@@ -485,24 +491,48 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      this.result = this.$post(historyResultItemListUrl, {resultId: params.id}, response => {
+      this.viewResult = this.$post(historyResultItemListUrl, {resultId: params.id}, response => {
         let data = response.data;
         this.statisticsData = data;
         this.statisticsList = true;
       });
-      this.result = this.$get(codeMetricChartUrl + this.resultId, response => {
+      this.viewResult = this.$get(codeMetricChartUrl + this.resultId, response => {
         this.content = response.data;
       });
     },
     showResultLog(result) {
-      this.result = this.$get(logCodeUrl + result.id, response => {
+      this.viewResult = this.$get(logCodeUrl + result.id, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getCodeResultUrl + result.id, response => {
+      this.viewResult = this.$get(getCodeResultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
       });
       this.logVisible = true;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('code.history'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('code.history') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteCodeHistoryResultsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   created() {
