@@ -20,7 +20,7 @@
         <el-table-column prop="name" :label="$t('code.name')" v-if="checkedColumnNames.includes('name')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 40px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 25px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>

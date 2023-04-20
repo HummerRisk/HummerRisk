@@ -4,7 +4,7 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('config.config_result_list')"
-                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
+                      :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -16,8 +16,6 @@
         @select-all="select"
         @select="select"
       >
-        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
-        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="name" :label="$t('config.name')" v-if="checkedColumnNames.includes('name')" min-width="130" show-overflow-tooltip>
           <template v-slot:default="scope">
