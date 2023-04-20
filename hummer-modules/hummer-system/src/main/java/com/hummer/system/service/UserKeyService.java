@@ -87,6 +87,16 @@ public class UserKeyService {
         userKeyMapper.updateByPrimaryKeySelective(userKeys);
     }
 
+    public void deleteApiKeys(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteUserKey(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public UserKey getUserKey(String accessKey) {
         UserKeyExample userKeyExample = new UserKeyExample();
         userKeyExample.createCriteria().andAccessKeyEqualTo(accessKey).andStatusEqualTo(ApiKeyConstants.ACTIVE.name());

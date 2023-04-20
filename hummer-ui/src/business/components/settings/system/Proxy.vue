@@ -127,7 +127,13 @@ import TableOperatorButton from "../../common/components/TableOperatorButton";
 import {_filter, _sort, listenGoBack, removeGoBackListener} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {PROXY_CONFIGS} from "../../common/components/search/search-components";
-import {addProxyUrl, deleteProxyUrl, deleteUsersUrl, proxyListUrl, updateProxyUrl} from "@/api/system/system";
+import {
+  addProxyUrl,
+  deleteProxysUrl,
+  deleteProxyUrl,
+  proxyListUrl,
+  updateProxyUrl
+} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -358,7 +364,7 @@ const columnOptions = [
             if (action === 'confirm') {
               this.result = this.$request({
                 method: 'POST',
-                url: deleteUsersUrl,
+                url: deleteProxysUrl,
                 data: Array.from(this.selectIds),
                 headers: {
                   'Content-Type': undefined

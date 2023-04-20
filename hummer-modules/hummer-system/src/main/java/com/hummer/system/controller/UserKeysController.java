@@ -70,4 +70,10 @@ public class UserKeysController {
     public void disabledUserKey(@PathVariable String id) {
         userKeyService.disableUserKey(id);
     }
+
+    @Operation(summary = "批量删除API Keys")
+    @PostMapping("deleteApiKeys")
+    public void deleteApiKeys(@RequestBody List<String> selectIds) throws Exception {
+        userKeyService.deleteApiKeys(selectIds);
+    }
 }

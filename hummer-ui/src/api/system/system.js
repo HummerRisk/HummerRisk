@@ -121,4 +121,6 @@ export const deleteUsersUrl = "/system/user/deleteUsers";
 
 export const deleteProxysUrl = "/system/proxy/deleteProxys";
 
+export const deleteApiKeysUrl = "/system/user/key/deleteApiKeys";
+
 

@@ -4,8 +4,8 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :create-tip="$t('commons.create') + ' API Keys'" title="API Keys" :show-create="true"
-                      :items="items" :columnNames="columnNames" :show-open="false" @create="create" :show-filter="false"
-                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      :items="items" :columnNames="columnNames" :show-open="false" @create="create" :show-filter="false" :show-delete-name="false"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate" @delete="deleteBatch" :show-delete="true"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
@@ -16,6 +16,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="accessKey" v-if="checkedColumnNames.includes('accessKey')" label="Access Key" min-width="200">
           <template v-slot:default="scope">
@@ -83,6 +85,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {USER_KEY_CONFIGS} from "../../common/components/search/search-components";
 import TableHeader from "@/business/components/common/components/TableHeader";
 import {
+  deleteApiKeysUrl,
   userKeyActiveUrl,
   userKeyDeleteUrl,
   userKeyDisableUrl,
@@ -132,6 +135,7 @@ export default {
   data() {
     return {
       result: {},
+      selectIds: new Set(),
       updateVisible: false,
       editPasswordVisible: false,
       apiKeysVisible: false,
@@ -178,6 +182,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     sort(column) {
       _sort(column, this.condition);
@@ -252,6 +260,30 @@ export default {
       setTimeout(() => {
         row[visible] = false;
       }, 1000);
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + ' API Keys');
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + ' API Keys' + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteApiKeysUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   }
 }
