@@ -4,8 +4,8 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('user.create')" :title="$t('system.user_list')" :show-create="true"
-                      :items="items" :columnNames="columnNames" :show-open="false"
+                      :create-tip="$t('user.create')" :title="$t('system.user_list')" :show-create="true" :show-delete-name="false"
+                      :items="items" :columnNames="columnNames" :show-open="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -17,6 +17,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="id" v-if="checkedColumnNames.includes('id')" label="ID" min-width="100"/>
         <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('commons.name')" min-width="110"/>
@@ -65,7 +67,7 @@
 
     <!--Create user-->
     <el-drawer class="rtl" :title="$t('user.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="120px" size="small" :rules="rule" ref="createUserForm">
         <el-form-item label="ID" prop="id">
           <el-input v-model="form.id" autocomplete="off" :placeholder="$t('user.input_id_placeholder')"/>
@@ -110,7 +112,7 @@
 
     <!--Modify user information in system settings-->
     <el-drawer class="rtl" :title="$t('user.modify')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true"
-               :validate-on-rule-change="true" v-loading="result.loading">
+               :validate-on-rule-change="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateUserForm">
         <el-form-item label="ID" prop="id">
           <el-input v-model="form.id" autocomplete="off" :disabled="true"/>
@@ -149,7 +151,7 @@
 
     <!--Changing user password in system settings-->
     <el-drawer class="rtl" :title="$t('member.edit_password')" :visible.sync="editPasswordVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="ruleForm" label-position="right" label-width="120px" size="small" :rules="rule"
                ref="editPasswordForm" class="demo-ruleForm">
         <el-form-item :label="$t('member.new_password')" prop="newpassword">
@@ -180,6 +182,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {USER_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {
   roleAllUrl,
+  deleteUsersUrl,
   userRoleAllUrl,
   userSpecialAddUrl,
   userSpecialDeleteUrl,
@@ -259,12 +262,9 @@ const columnOptions = [
     },
     data() {
       return {
-        queryPath: userSpecialListUrl,
-        deletePath: userSpecialDeleteUrl,
-        createPath: userSpecialAddUrl,
-        updatePath: userSpecialUpdateUrl,
-        editPasswordPath: userSpecialPasswordUrl,
         result: {},
+        viewResult: {},
+        selectIds: new Set(),
         createVisible: false,
         updateVisible: false,
         editPasswordVisible: false,
@@ -392,6 +392,10 @@ const columnOptions = [
         this.checkAll = val;
       },
       select(selection) {
+        this.selectIds.clear();
+        selection.forEach(s => {
+          this.selectIds.add(s.id)
+        });
       },
       sort(column) {
         _sort(column, this.condition);
@@ -410,7 +414,7 @@ const columnOptions = [
         this.updateVisible = true;
         this.form = Object.assign({roles: [{id: ''}]}, row);
         if (row.id) {
-          this.$get(userRoleAllUrl + encodeURIComponent(row.id), response => {
+          this.viewResult = this.$get(userRoleAllUrl + encodeURIComponent(row.id), response => {
             let data = response.data;
             this.$set(this.form, "roles", data);
           });
@@ -432,7 +436,7 @@ const columnOptions = [
           cancelButtonText: this.$t('commons.cancel'),
           type: 'warning'
         }).then(() => {
-          this.result = this.$get(this.deletePath + encodeURIComponent(row.id), () => {
+          this.result = this.$get(userSpecialDeleteUrl + encodeURIComponent(row.id), () => {
             this.$success(this.$t('commons.delete_success'));
             this.search();
           });
@@ -443,7 +447,7 @@ const columnOptions = [
       createUser(createUserForm) {
         this.$refs[createUserForm].validate(valid => {
           if (valid) {
-            this.result = this.$post(this.createPath, this.form, () => {
+            this.viewResult = this.$post(userSpecialAddUrl, this.form, () => {
               this.$success(this.$t('commons.save_success'));
               this.search();
               this.createVisible = false;
@@ -456,7 +460,7 @@ const columnOptions = [
       updateUser(updateUserForm) {
         this.$refs[updateUserForm].validate(valid => {
           if (valid) {
-            this.result = this.$post(this.updatePath, this.form, () => {
+            this.viewResult = this.$post(userSpecialUpdateUrl, this.form, () => {
               this.$success(this.$t('commons.modify_success'));
               this.updateVisible = false;
               this.search();
@@ -469,7 +473,7 @@ const columnOptions = [
       editUserPassword(editPasswordForm) {
         this.$refs[editPasswordForm].validate(valid => {
           if (valid) {
-            this.result = this.$post(this.editPasswordPath, this.ruleForm, () => {
+            this.viewResult = this.$post(userSpecialPasswordUrl, this.ruleForm, () => {
               this.$success(this.$t('commons.modify_success'));
               this.editPasswordVisible = false;
               this.search();
@@ -481,7 +485,7 @@ const columnOptions = [
         })
       },
       search() {
-        this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
+        this.result = this.$post(this.buildPagePath(userSpecialListUrl), this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
@@ -507,7 +511,7 @@ const columnOptions = [
         this.updateVisible =  false;
       },
       changeSwitch(row) {
-        this.$post(userSpecialUpdateStatusUrl, row, () => {
+        this.viewResult = this.$post(userSpecialUpdateStatusUrl, row, () => {
           this.$success(this.$t('commons.modify_success'));
         })
       },
@@ -518,7 +522,7 @@ const columnOptions = [
         this.multipleSelection = val;
       },
       getAllRole() {
-        this.$get(roleAllUrl, response => {
+        this.viewResult = this.$get(roleAllUrl, response => {
           this.userRole = response.data;
         })
       },
@@ -575,7 +579,31 @@ const columnOptions = [
           }
           return value;
         })
-      }
+      },
+      deleteBatch() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('commons.please_select') + this.$t('role.user'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('role.user') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteUsersUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('commons.success'));
+                this.search();
+              });
+            }
+          }
+        });
+      },
     }
   }
 </script>

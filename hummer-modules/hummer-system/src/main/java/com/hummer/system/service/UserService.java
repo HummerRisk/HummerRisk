@@ -354,6 +354,16 @@ public class UserService {
         return extUserMapper.getDefaultLanguage(key);
     }
 
+    public void deleteUsers(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteUser(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public List<User> searchUser(String condition) {
         return extUserMapper.searchUser(condition);
     }

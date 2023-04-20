@@ -117,4 +117,6 @@ export const pluginK8sScanUrl = "/system/plugin/k8sScan";
 
 export const unReadCountUrl = "/system/webmsg/unReadCount";
 
+export const deleteUsersUrl = "/system/user/deleteUsers";
+
 

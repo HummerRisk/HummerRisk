@@ -113,7 +113,6 @@ public class UserController {
         return userService.updateUserPassword(request, tokenService.getLoginUser());
     }
 
-    @I18n
     @Hidden
     @GetMapping("/search/{condition}")
     public List<User> searchUser(@PathVariable String condition) {
@@ -121,9 +120,16 @@ public class UserController {
     }
 
     /*Get default language*/
+    @Hidden
     @GetMapping(value = "/language")
     public String getDefaultLanguage() {
         return userService.getDefaultLanguage();
+    }
+
+    @Operation(summary = "批量删除用户")
+    @PostMapping("deleteUsers")
+    public void deleteUsers(@RequestBody List<String> selectIds) throws Exception {
+        userService.deleteUsers(selectIds, tokenService.getLoginUser());
     }
 
 }
