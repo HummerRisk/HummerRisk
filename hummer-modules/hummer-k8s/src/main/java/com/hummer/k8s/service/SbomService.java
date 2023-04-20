@@ -317,4 +317,14 @@ public class SbomService {
         return str;
     }
 
+    public void deleteProjects(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteSbom(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
 }

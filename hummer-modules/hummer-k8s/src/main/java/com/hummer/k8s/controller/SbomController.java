@@ -212,4 +212,10 @@ public class SbomController {
         return sbomService.download(request);
     }
 
+    @Operation(summary = "批量删除项目")
+    @PostMapping("deleteProjects")
+    public void deleteProjects(@RequestBody List<String> selectIds) throws Exception {
+        sbomService.deleteProjects(selectIds, tokenService.getLoginUser());
+    }
+
 }

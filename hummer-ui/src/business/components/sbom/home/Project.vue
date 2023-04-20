@@ -6,7 +6,7 @@
                       :title="$t('sbom.project_list')"
                       @create="create" :createTip="$t('sbom.sbom_create')"
                       :show-create="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -18,6 +18,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('sbom.name')" min-width="140" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -56,7 +58,7 @@
 
     <!--Create sbom-->
     <el-drawer class="rtl" :title="$t('sbom.sbom_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="addForm" label-position="right" label-width="150px" size="small" ref="addForm" :rules="rule">
         <el-form-item :label="$t('sbom.name')" ref="name" prop="name">
           <el-input v-model="addForm.name" autocomplete="off" :placeholder="$t('sbom.name')"/>
@@ -78,7 +80,7 @@
 
     <!--Update sbom-->
     <el-drawer class="rtl" :title="$t('sbom.sbom_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('sbom.name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('sbom.name')"/>
@@ -100,7 +102,7 @@
 
     <!--Sbom version-->
     <el-drawer class="rtl" :title="$t('sbom.project_version')" :visible.sync="versionVisible" size="90%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-card class="table-card">
         <template v-slot:header>
           <version-table-header :title="$t('sbom.project_version_list')" @search="searchVersion"
@@ -248,6 +250,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   addSbomUrl,
   addSbomVersionUrl,
+  deleteProjectsUrl,
   deleteSbomUrl,
   deleteSbomVersionUrl,
   sbomListUrl,
@@ -306,9 +309,11 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       condition: {
         components: SBOM_CONFIGS
       },
+      selectIds: new Set(),
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -424,6 +429,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     create() {
       this.addForm = {};
@@ -473,7 +482,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get(deleteSbomVersionUrl + obj.id, () => {
+            this.viewResult = this.$get(deleteSbomVersionUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -496,7 +505,7 @@ export default {
     save(){
       this.$refs['addForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post(addSbomUrl, this.addForm, response => {
+          this.viewResult = this.$post(addSbomUrl, this.addForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -512,7 +521,7 @@ export default {
     edit(){
       this.$refs['form'].validate(valid => {
         if (valid) {
-          this.result = this.$post(updateSbomUrl, this.form, response => {
+          this.viewResult = this.$post(updateSbomUrl, this.form, response => {
             if (response.success) {
               this.$success(this.$t('commons.update_success'));
               this.search();
@@ -529,7 +538,7 @@ export default {
       this.$refs['addVersionForm'].validate(valid => {
         if (valid) {
           this.addVersionForm.sbomId = this.sbomId;
-          this.result = this.$post(addSbomVersionUrl, this.addVersionForm, response => {
+          this.viewResult = this.$post(addSbomVersionUrl, this.addVersionForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.searchVersion();
@@ -545,7 +554,7 @@ export default {
     editVersion(){
       this.$refs['editVersionForm'].validate(valid => {
         if (valid) {
-          this.result = this.$post(updateSbomVersionUrl, this.editVersionForm, response => {
+          this.viewResult = this.$post(updateSbomVersionUrl, this.editVersionForm, response => {
             if (response.success) {
               this.$success(this.$t('commons.update_success'));
               this.searchVersion();
@@ -560,7 +569,7 @@ export default {
     searchVersion() {
       let url = sbomVersionListUrl + this.versionPage + "/" + this.versionPageSize;
       let params = {sbomId: this.sbomId};
-      this.result = this.$post(url, params, response => {
+      this.viewResult = this.$post(url, params, response => {
         let data = response.data;
         this.versionTotal = data.itemCount;
         this.versionTableData = data.listObject;
@@ -576,7 +585,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(sbomScanUrl + item.id,response => {
+            this.viewResult = this.$get(sbomScanUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start') + this.$t('sbom.event_start'));
               } else {
@@ -594,7 +603,7 @@ export default {
     },
     handleSetting(item) {
       this.sbomVersionId = item.id;
-      this.$get(codeUnBindListUrl,response => {
+      this.viewResult = this.$get(codeUnBindListUrl,response => {
         this.codeData = [];
         for(let data of response.data) {
           this.codeData.push({
@@ -603,7 +612,7 @@ export default {
           });
         }
       });
-      this.$get(imageUnBindListUrl,response => {
+      this.viewResult = this.$get(imageUnBindListUrl,response => {
         this.imageData = [];
         for(let data of response.data) {
           this.imageData.push({
@@ -612,7 +621,7 @@ export default {
           });
         }
       });
-      this.$get(fsUnBindListUrl,response => {
+      this.viewResult = this.$get(fsUnBindListUrl,response => {
         this.fsData = [];
         for(let data of response.data) {
           this.fsData.push({
@@ -621,19 +630,19 @@ export default {
           });
         }
       });
-      this.$get(codeAllBindListUrl + item.id,response => {
+      this.viewResult = this.$get(codeAllBindListUrl + item.id,response => {
         this.codeValue = [];
         for(let data of response.data) {
           this.codeValue.push(data.id);
         }
       });
-      this.$get(imageAllBindListUrl + item.id,response => {
+      this.viewResult = this.$get(imageAllBindListUrl + item.id,response => {
         this.imageValue = [];
         for(let data of response.data) {
           this.imageValue.push(data.id);
         }
       });
-      this.$get(fsAllBindListUrl + item.id,response => {
+      this.viewResult = this.$get(fsAllBindListUrl + item.id,response => {
         this.fsValue = [];
         for(let data of response.data) {
           this.fsValue.push(data.id);
@@ -648,7 +657,7 @@ export default {
         sbomId: this.sbomId,
         sbomVersionId: this.sbomVersionId,
       };
-      this.$post(settingVersionUrl, params,response => {
+      this.viewResult = this.$post(settingVersionUrl, params,response => {
         this.$success(this.$t('organization.integration.successful_operation'));
         this.innerSettingVersion = false;
         this.searchVersion();
@@ -656,6 +665,30 @@ export default {
     },
     filterMethod(query, item) {
       return item.label.indexOf(query) > -1;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('sbom.project'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('sbom.project') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteProjectsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   activated() {

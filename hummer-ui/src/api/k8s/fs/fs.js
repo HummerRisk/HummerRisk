@@ -45,4 +45,4 @@ export const fsAllBindListUrl = "/k8s/fs/allBindList/";
 
 export const addFsUrl = "/k8s/fs/addFs";
 
-export const deleteFssUrl = "/k8s/config/deleteFss";
+export const deleteFssUrl = "/k8s/fs/deleteFss";
