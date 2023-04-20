@@ -319,4 +319,16 @@ public class ImageController {
         return imageService.getImageRepoSetting(repoId);
     }
 
+    @Operation(summary = "批量删除镜像仓库")
+    @PostMapping("deleteImageRepos")
+    public void deleteImageRepos(@RequestBody List<String> selectIds) throws Exception {
+        imageService.deleteImageRepos(selectIds, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "批量删除镜像")
+    @PostMapping("deleteImages")
+    public void deleteImages(@RequestBody List<String> selectIds) throws Exception {
+        imageService.deleteImages(selectIds, tokenService.getLoginUser());
+    }
+
 }

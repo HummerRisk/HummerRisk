@@ -520,10 +520,10 @@ export default {
     },
     deleteBatch() {
       if (this.selectIds.size === 0) {
-        this.$warning(this.$t('commons.please_select') + this.$t('config.config_settings'));
+        this.$warning(this.$t('commons.please_select') + this.$t('config.history'));
         return;
       }
-      this.$alert(this.$t('oss.delete_batch') + this.$t('config.config_settings') + " ？", '', {
+      this.$alert(this.$t('oss.delete_batch') + this.$t('config.history') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {

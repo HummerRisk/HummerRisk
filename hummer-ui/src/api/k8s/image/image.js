@@ -79,3 +79,7 @@ export const imageUnBindListUrl = "/k8s/image/unBindList";
 
 export const imageAllBindListUrl = "/k8s/image/allBindList/";
 
+export const deleteImageReposUrl = "/k8s/config/deleteImageRepos";
+
+export const deleteImagesUrl = "/k8s/config/deleteImages";
+

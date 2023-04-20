@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :items="items" :columnNames="columnNames" :show-name="false"
+                      :items="items" :columnNames="columnNames" :show-name="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
                       @handleCheckAllChange="handleCheckAllChange"/>
@@ -75,7 +75,7 @@
 
       <!--History statistics-->
       <el-drawer class="rtl" :title="$t('resource.i18n_not_compliance')" :visible.sync="statisticsList" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <div>
           <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="2%"/>
@@ -107,7 +107,7 @@
 
       <!--History status-->
       <el-drawer class="rtl" :title="$t('resource.i18n_resource_scanning_log')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-row class="el-form-item-dev" v-if="logData.length == 0">
           <span>{{ $t('resource.i18n_no_data') }}<br></span>
         </el-row>
@@ -161,7 +161,7 @@
 
       <!--History output list-->
       <el-drawer class="rtl" :title="$t('commons.history')" :visible.sync="visibleList" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="40"/>
@@ -213,7 +213,7 @@
       <!--History output list-->
 
       <!--History Compared-->
-      <el-dialog :title="$t('dashboard.online_comparison')" width="90%" :visible.sync="innerDrawer" :close-on-click-modal="false">
+      <el-dialog :title="$t('dashboard.online_comparison')" width="90%" :visible.sync="innerDrawer" :close-on-click-modal="false" v-loading="viewResult.loading">
         <el-form>
           <code-diff
             :old-string="oldStr"
@@ -302,6 +302,7 @@ const columnOptions = [
     data() {
       return {
         result: {},
+        viewResult: {},
         condition: {
           components: IMAGE_RESULT_CONFIGS
         },
@@ -436,7 +437,7 @@ const columnOptions = [
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post(imageHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
+        this.viewResult = await this.$post(imageHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;
@@ -472,14 +473,38 @@ const columnOptions = [
         });
       },
       showResultLog (result) {
-        this.result = this.$get(logImageUrl + result.id, response => {
+        this.viewResult = this.$get(logImageUrl + result.id, response => {
           this.logData = response.data;
         });
-        this.result = this.$get(getImageResultWithBLOBsUrl + result.id, response => {
+        this.viewResult = this.$get(getImageResultWithBLOBsUrl + result.id, response => {
           this.logForm = response.data;
           this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
         });
         this.logVisible = true;
+      },
+      deleteBatch() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('commons.please_select') + this.$t('image.history'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('image.history') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteImageHistoryResultsUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('commons.success'));
+                this.search();
+              });
+            }
+          }
+        });
       },
     },
     created() {

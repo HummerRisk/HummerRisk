@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('image.image_list')"
                       @create="create" :createTip="$t('image.create')"
-                      :show-create="true"
+                      :show-create="true" @delete="deleteBatch" :show-delete="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -118,7 +118,7 @@
 
     <!--Create image-->
     <el-drawer class="rtl" :title="$t('image.create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
@@ -221,7 +221,7 @@
 
     <!--Update image-->
     <el-drawer class="rtl" :title="$t('image.update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
@@ -324,7 +324,7 @@
 
     <!--Result log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -404,7 +404,7 @@ import {IMAGE_CONFIGS} from "@/business/components/common/components/search/sear
 import {
   addImageUrl,
   allImageReposUrl,
-  changeImageUrl,
+  changeImageUrl, deleteImageReposUrl,
   deleteImageUrl,
   getImageResultUrl,
   getImageResultWithBLOBsUrl,
@@ -491,11 +491,9 @@ export default {
   },
   data() {
     return {
-      queryPath: imageListUrl,
-      deletePath: deleteImageUrl,
-      createPath: addImageUrl,
-      updatePath: updateImageUrl,
       result: {},
+      viewResult: {},
+      selectIds: new Set(),
       createVisible: false,
       updateVisible: false,
       editPasswordVisible: false,
@@ -597,6 +595,10 @@ export default {
       window.open('http://www.cnnvd.org.cn/','_blank','');
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     create() {
       this.form = {type: 'image'};
@@ -607,13 +609,13 @@ export default {
       this.createVisible = true;
     },
     async initSbom(params) {
-      await this.$post(allSbomVersionListUrl, params,response => {
+      this.viewResult = await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
         if(this.versions && this.versions.length > 0) this.form.sbomVersionId = this.versions[0].id;
       });
     },
     initSboms() {
-      this.result = this.$post(allSbomListUrl, {},response => {
+      this.viewResult = this.$post(allSbomListUrl, {},response => {
         this.sboms = response.data;
       });
     },
@@ -621,7 +623,7 @@ export default {
       let params = {
         sbomId: item.sbomId
       };
-      this.result = this.$post(allSbomVersionListUrl, params,response => {
+      this.viewResult = this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
       });
     },
@@ -674,13 +676,13 @@ export default {
           formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
           let axiosRequestConfig = {
             method: "POST",
-            url: this.createPath,
+            url: addImageUrl,
             data: formData,
             headers: {
               "Content-Type": 'multipart/form-data'
             }
           };
-          this.result = this.$request(axiosRequestConfig, () => {
+          this.viewResult = this.$request(axiosRequestConfig, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
             this.createVisible = false;
@@ -700,13 +702,13 @@ export default {
           formData.append("request", new Blob([JSON.stringify(this.form)], {type: "application/json"}));
           let axiosRequestConfig = {
             method: "POST",
-            url: this.updatePath,
+            url: updateImageUrl,
             data: formData,
             headers: {
               "Content-Type": 'multipart/form-data'
             }
           };
-          this.result = this.$request(axiosRequestConfig, (res) => {
+          this.viewResult = this.$request(axiosRequestConfig, (res) => {
             if (res.success) {
               this.$success(this.$t('commons.save_success'));
               this.search();
@@ -728,7 +730,7 @@ export default {
       this.changeImage(row.repoId);
     },
     search() {
-      this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
+      this.result = this.$post(this.buildPagePath(imageListUrl), this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
@@ -744,13 +746,13 @@ export default {
     },
     //查询代理
     activeProxy() {
-      this.result = this.$get(proxyListAllUrl, response => {
+      this.viewResult = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
     //查询仓库
     activeRepo() {
-      this.result = this.$get(allImageReposUrl, response => {
+      this.viewResult = this.$get(allImageReposUrl, response => {
         this.repos = response.data;
       });
     },
@@ -771,7 +773,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get(this.deletePath + obj.id, response => {
+            this.result = this.$get(deleteImageUrl + obj.id, response => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -783,7 +785,7 @@ export default {
       this.tarFile = file;
     },
     changeImage(id) {
-      this.$post(changeImageUrl, {repoId: id}, response => {
+      this.viewResult = this.$post(changeImageUrl, {repoId: id}, response => {
         this.images = response.data;
       });
     },
@@ -791,10 +793,10 @@ export default {
       this.$warning(item.name + this.$t('resource.i18n_no_warn'));
     },
     showResultLog(result) {
-      this.result = this.$get(imageLogUrl + result.resultId, response => {
+      this.viewResult = this.$get(imageLogUrl + result.resultId, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getImageResultWithBLOBsUrl + result.resultId, response => {
+      this.viewResult = this.$get(getImageResultWithBLOBsUrl + result.resultId, response => {
         this.logForm = response.data;
         this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
       });
@@ -871,6 +873,30 @@ export default {
       }
       document.execCommand("copy");
       document.body.removeChild(input);
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('k8s.image'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('k8s.image') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteImagesUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {
