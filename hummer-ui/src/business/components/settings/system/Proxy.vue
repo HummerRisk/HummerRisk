@@ -4,8 +4,8 @@
     <el-card class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
-                      :create-tip="$t('proxy.create')" :title="$t('commons.proxy')" :show-create="true"
-                      :items="items" :columnNames="columnNames" :show-open="false"
+                      :create-tip="$t('proxy.create')" :title="$t('commons.proxy')" :show-create="true" :show-delete-name="false"
+                      :items="items" :columnNames="columnNames" :show-open="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -17,6 +17,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="proxyType" v-if="checkedColumnNames.includes('proxyType')" :label="$t('commons.proxy_type')" min-width="100"/>
         <el-table-column prop="proxyIp" v-if="checkedColumnNames.includes('proxyIp')" label="Proxy IP" min-width="100"/>
@@ -125,7 +127,7 @@ import TableOperatorButton from "../../common/components/TableOperatorButton";
 import {_filter, _sort, listenGoBack, removeGoBackListener} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {PROXY_CONFIGS} from "../../common/components/search/search-components";
-import {addProxyUrl, deleteProxyUrl, proxyListUrl, updateProxyUrl} from "@/api/system/system";
+import {addProxyUrl, deleteProxyUrl, deleteUsersUrl, proxyListUrl, updateProxyUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -175,11 +177,9 @@ const columnOptions = [
     },
     data() {
       return {
-        queryPath: proxyListUrl,
-        deletePath: deleteProxyUrl,
-        createPath: addProxyUrl,
-        updatePath: updateProxyUrl,
         result: {},
+        viewResult: {},
+        selectIds: new Set(),
         createVisible: false,
         updateVisible: false,
         multipleSelection: [],
@@ -256,6 +256,10 @@ const columnOptions = [
         this.checkAll = val;
       },
       select(selection) {
+        this.selectIds.clear();
+        selection.forEach(s => {
+          this.selectIds.add(s.id)
+        });
       },
       sort(column) {
         _sort(column, this.condition);
@@ -281,7 +285,7 @@ const columnOptions = [
           cancelButtonText: this.$t('commons.cancel'),
           type: 'warning'
         }).then(() => {
-          this.result = this.$get(this.deletePath + encodeURIComponent(row.id), () => {
+          this.result = this.$get(deleteProxyUrl + encodeURIComponent(row.id), () => {
             this.$success(this.$t('commons.delete_success'));
             this.search();
           });
@@ -292,7 +296,7 @@ const columnOptions = [
       createProxy(createProxyForm) {
         this.$refs[createProxyForm].validate(valid => {
           if (valid) {
-            this.result = this.$post(this.createPath, this.form, () => {
+            this.viewResult = this.$post(addProxyUrl, this.form, () => {
               this.$success(this.$t('commons.save_success'));
               this.search();
               this.createVisible = false;
@@ -305,7 +309,7 @@ const columnOptions = [
       updateProxy(updateProxyForm) {
         this.$refs[updateProxyForm].validate(valid => {
           if (valid) {
-            this.result = this.$post(this.updatePath, this.form, () => {
+            this.viewResult = this.$post(updateProxyUrl, this.form, () => {
               this.$success(this.$t('commons.modify_success'));
               this.updateVisible = false;
               this.search();
@@ -316,7 +320,7 @@ const columnOptions = [
         })
       },
       search() {
-        this.result = this.$post(this.buildPagePath(this.queryPath), this.condition, response => {
+        this.result = this.$post(this.buildPagePath(proxyListUrl), this.condition, response => {
           let data = response.data;
           this.total = data.itemCount;
           this.tableData = data.listObject;
@@ -342,6 +346,30 @@ const columnOptions = [
         } else {
           return '';
         }
+      },
+      deleteBatch() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('commons.please_select') + this.$t('commons.proxy'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('commons.proxy') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteUsersUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('commons.success'));
+                this.search();
+              });
+            }
+          }
+        });
       },
     }
   }

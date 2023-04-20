@@ -119,4 +119,6 @@ export const unReadCountUrl = "/system/webmsg/unReadCount";
 
 export const deleteUsersUrl = "/system/user/deleteUsers";
 
+export const deleteProxysUrl = "/system/proxy/deleteProxys";
+
 
