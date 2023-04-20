@@ -254,6 +254,16 @@ public class AccountService {
         operationLogService.log(loginUser, accountId, accountWithBLOBs.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_account");
     }
 
+    public void deletes(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                delete(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public Object getRegions(String id) {
         try {
             ValidateDTO flag = validate(id);

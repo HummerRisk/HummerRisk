@@ -6,7 +6,7 @@
                         :title="$t('rule.rule_set_list')" @more="more" @menu="menu"
                         @create="create" :createTip="$t('rule.create_rule_set')"
                         :show-create="true" :show-list="true" :listStatus="listStatus"
-                        :items="items" :columnNames="columnNames"
+                        :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                         :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         </template>
@@ -87,6 +87,8 @@
           @select-all="select"
           @select="select"
         >
+          <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
+          </el-table-column>
           <el-table-column type="index" min-width="40"/>
           <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('rule.rule_set_name')" min-width="180" show-overflow-tooltip></el-table-column>
           <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('commons.description')" min-width="600" show-overflow-tooltip></el-table-column>
@@ -315,7 +317,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  bindRuleUrl,
+  bindRuleUrl, deleteGroupsUrl,
   k8sRuleListUrl,
   ruleAllBindListUrl,
   ruleGroupDeleteUrl,
@@ -772,6 +774,30 @@ const columnOptions2 = [
           this.$router.push({
             path: '/k8s/k8s',
           }).catch(error => error);
+        });
+      },
+      deleteBatch() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('commons.please_select') + this.$t('rule.rule_set'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('rule.rule_set') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteGroupsUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('commons.success'));
+                this.search();
+              });
+            }
+          }
         });
       },
     },

@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('event.event_sync')" :show-create="true"
                       @create="create" :createTip="$t('event.sync')"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll2" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
                       @handleCheckAllChange="handleCheckAllChange"/>
@@ -17,6 +17,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -89,8 +91,8 @@
     <!--sync-->
     <el-drawer class="rtl" :title="$t('event.event_sync')" :visible.sync="showSync" size="50%"
                :before-close="handleClose" direction="rtl"
-               :destroy-on-close="true">
-      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small" v-loading="viewResult.loading">
+               :destroy-on-close="true" v-loading="viewResult.loading">
+      <el-form :model="eventFrom" label-position="right" label-width="120px" size="small">
         <el-form-item :label="$t('event.cloud_account')" ref="accountId" prop="accountId">
           <el-select filterable :clearable="true" style="width: 100%;" v-model="eventFrom.accountId"
                      :placeholder="$t('event.cloud_account')" @change="changeFormRegion">
@@ -158,12 +160,14 @@ import Regions from "@/business/components/event/home/Regions";
 import {_filter, _sort} from "@/common/js/utils";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
+  cloudEventDeleteLogsUrl,
   cloudEventSyncLogDeleteUrl,
   cloudEventSyncLogListUrl,
   cloudEventSyncLogRegionListUrl,
   cloudEventSyncUrl
 } from "@/api/cloud/event/event";
 import {allListUrl} from "@/api/cloud/account/account";
+import {syncDeleteLogsUrl} from "@/api/cloud/sync/sync";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -226,6 +230,7 @@ export default {
       checkAll: false,
       showSync: false,
       syncLog: '',
+      selectIds: new Set(),
       logVisible: false,
       dateTime: [],
       currentAccount: '',
@@ -316,6 +321,10 @@ export default {
       this.checkAll2 = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     reset() {
       this.dateTime = []
@@ -341,7 +350,7 @@ export default {
         this.$error(this.$t('event.error'))
         return
       }
-      this.result = this.$post(cloudEventSyncUrl, this.eventFrom, response => {
+      this.viewResult = this.$post(cloudEventSyncUrl, this.eventFrom, response => {
         this.showSync = false
         this.search()
       })
@@ -489,6 +498,30 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.search();
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('dashboard.tasks'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('dashboard.tasks') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: cloudEventDeleteLogsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
 }

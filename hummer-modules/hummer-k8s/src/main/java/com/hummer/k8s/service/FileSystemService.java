@@ -586,4 +586,14 @@ public class FileSystemService {
         systemProviderService.deleteHistoryFsResult(id);
     }
 
+    public void deleteFss(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteFs(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
 }

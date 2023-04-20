@@ -6,7 +6,7 @@
                       :title="$t('fs.fs_settings_list')"
                       @create="create" :createTip="$t('fs.fs_create')"
                       :show-create="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -95,7 +95,7 @@
 
     <!--Create fs-->
     <el-drawer class="rtl" :title="$t('fs.fs_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="addAccountForm" label-position="right" label-width="150px" size="medium" :rules="rule" ref="addAccountForm">
           <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="addAccountForm.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(addAccountForm)">
@@ -150,7 +150,7 @@
 
     <!--Update fs-->
     <el-drawer class="rtl" :title="$t('code.code_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
@@ -205,7 +205,7 @@
 
     <!--Result log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>
@@ -279,6 +279,7 @@ import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 import {proxyListAllUrl} from "@/api/system/system";
 import {
   addFsUrl,
+  deleteFssUrl,
   deleteFsUrl,
   fsDownloadUrl,
   fsListUrl,
@@ -361,9 +362,11 @@ export default {
     return {
       credential: {},
       result: {},
+      viewResult: {},
       condition: {
         components: FS_CONFIGS
       },
+      selectIds: new Set(),
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -459,6 +462,10 @@ export default {
       window.open('http://www.cnnvd.org.cn/','_blank','');
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     create() {
       this.addAccountForm = {};
@@ -470,13 +477,13 @@ export default {
       this.activeProxy();
     },
     async initSbom(params) {
-      await this.$post(allSbomVersionListUrl, params,response => {
+      this.viewResult = await this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
         if(this.versions && this.versions.length > 0) this.addAccountForm.sbomVersionId = this.versions[0].id;
       });
     },
     initSboms() {
-      this.result = this.$post(allSbomListUrl, {},response => {
+      this.viewResult = this.$post(allSbomListUrl, {},response => {
         this.sboms = response.data;
       });
     },
@@ -484,13 +491,13 @@ export default {
       let params = {
         sbomId: item.sbomId
       };
-      this.result = this.$post(allSbomVersionListUrl, params,response => {
+      this.viewResult = this.$post(allSbomVersionListUrl, params,response => {
         this.versions = response.data;
       });
     },
     //查询代理
     activeProxy() {
-      this.result = this.$get(proxyListAllUrl, response => {
+      this.viewResult = this.$get(proxyListAllUrl, response => {
         this.proxys = response.data;
       });
     },
@@ -567,7 +574,7 @@ export default {
               "Content-Type": 'multipart/form-data'
             }
           };
-          this.result = this.$request(axiosRequestConfig, response => {
+          this.viewResult = this.$request(axiosRequestConfig, response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -599,7 +606,7 @@ export default {
               "Content-Type": 'multipart/form-data'
             }
           };
-          this.result = this.$request(axiosRequestConfig, (response) => {
+          this.viewResult = this.$request(axiosRequestConfig, (response) => {
             if (response.success) {
               this.$success(this.$t('commons.update_success'));
               this.search();
@@ -619,7 +626,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(scanFsUrl + item.id,response => {
+            this.result = this.$get(scanFsUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.search();
@@ -636,7 +643,7 @@ export default {
         this.$warning(this.$t('resource.i18n_no_warn'));
         return;
       }
-      this.$post(fsDownloadUrl, {
+      this.result = this.$post(fsDownloadUrl, {
         id: item.resultId
       }, response => {
         if (response.success) {
@@ -673,10 +680,10 @@ export default {
       }).catch(error => error);
     },
     showResultLog (result) {
-      this.result = this.$get(logFsUrl + result.resultId, response => {
+      this.viewResult = this.$get(logFsUrl + result.resultId, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getFsResultUrl + result.resultId, response => {
+      this.viewResult = this.$get(getFsResultUrl + result.resultId, response => {
         this.logForm = response.data;
         this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
       });
@@ -715,6 +722,30 @@ export default {
         }
       }
       return sum == 0;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('fs.file_system'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('fs.file_system') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteFssUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {

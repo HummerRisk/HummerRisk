@@ -11,4 +11,6 @@ export const cloudTopologyUrl = "/cloud/cloud/sync/cloudTopology";
 
 export const syncResourceTypeListUrl = "/cloud/cloud/sync/resourceType/list/";
 
+export const syncDeleteLogsUrl = "/cloud/cloud/sync/deleteLogs";
+
 

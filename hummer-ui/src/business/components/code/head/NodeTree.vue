@@ -22,7 +22,7 @@
       <span class="custom-tree-node father" @click="handleNodeSelect(node)">
 
        <span v-if="data.pluginIcon">
-          <img :src="require(`@/assets/img/code/${data.pluginIcon}`)" style="width: 25px; height: 16px; vertical-align:middle" alt=""/>
+          <img :src="require(`@/assets/img/code/${data.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
         </span>
         <span class="node-icon" v-else>
           <i class="iconfont icon-ruanjiankaifabao"/>

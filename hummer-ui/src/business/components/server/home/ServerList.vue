@@ -6,7 +6,7 @@
                         :title="$t('server.server_list')" class="table-header-l"
                         @create="create" :createTip="$t('server.server_create')" :showValidateName="false" :show-delete="true"
                         @validate="validate" :validateTip="$t('server.one_validate')" :showDeleteName="false"
-                        :show-validate="true" :show-scan="false" :show-create="true" :show-filter="false" @deleteSelect="deleteServers"
+                        :show-validate="true" :show-scan="false" :show-create="true" :show-filter="false" @delete="deleteServers"
                         :items="items" :columnNames="columnNames" :show-open="false" :show-upload="true" @upload="upload"
                         :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                         @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -867,7 +867,7 @@ const columnOptions = [
                   'Content-Type': undefined
                 }
               }, res => {
-                this.$success(this.$t('account.success'));
+                this.$success(this.$t('commons.success'));
                 this.search();
               });
             }

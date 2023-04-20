@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('k8s.sync_log_list')"
                       @create="create" :createTip="$t('k8s.sync_log_create')"
-                      :show-create="true"
+                      :show-create="true" @delete="deleteBatch" :show-delete="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -18,12 +18,14 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames.includes('k8sName')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.k8sName }}
+                <img v-if="scope.row.pluginIcon" :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.k8sName?scope.row.k8sName:$t('dashboard.accounts') + $t('commons.deleted') }}
               </span>
           </template>
         </el-table-column>
@@ -61,7 +63,7 @@
 
     <!--Create sync-->
     <el-drawer class="rtl" :title="$t('k8s.sync_log_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" filterable :clearable="true" v-model="form.id" :placeholder="$t('k8s.please_choose_k8s')">
@@ -98,7 +100,13 @@ import {_filter, _sort} from "@/common/js/utils";
 import {K8S_SITUATION_LOG_CONFIGS} from "../../common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {allCloudNativeListUrl, deleteK8sSyncLogUrl, syncK8sListUrl, syncK8sSourceUrl} from "@/api/k8s/k8s/k8s";
+import {
+  allCloudNativeListUrl,
+  deleteK8sSyncLogsUrl,
+  deleteK8sSyncLogUrl,
+  syncK8sListUrl,
+  syncK8sSourceUrl
+} from "@/api/k8s/k8s/k8s";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -150,9 +158,11 @@ export default {
     return {
       credential: {},
       result: {},
+      viewResult: {},
       condition: {
         components: K8S_SITUATION_LOG_CONFIGS
       },
+      selectIds: new Set(),
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -209,6 +219,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     create() {
       this.form = {};
@@ -220,7 +234,7 @@ export default {
       });
     },
     saveSync() {
-      this.result = this.$get(syncK8sSourceUrl + this.form.id,response => {
+      this.viewResult = this.$get(syncK8sSourceUrl + this.form.id,response => {
         this.$success(this.$t('k8s.notes'));
         this.search();
         this.handleClose();
@@ -262,6 +276,30 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.search();
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('resource.sync_log'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('resource.sync_log') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteK8sSyncLogsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   created() {

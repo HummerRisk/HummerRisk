@@ -7,7 +7,7 @@
                            @create="create" :createTip="$t('account.create')"
                            @validate="validate" :validateTip="$t('account.one_validate')"
                            :show-validate="true" :show-create="true"
-                           :items="items" :columnNames="columnNames"
+                           :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                            :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                            @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
 
@@ -341,6 +341,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   accountListUrl,
   addAccountUrl,
+  deleteAccountsUrl,
   deleteAccountUrl,
   iamStrategyUrl,
   selectIdsValidateUrl,
@@ -896,6 +897,30 @@ const columnOptions = [
       },
       switchSessionToken(tokenSwitch) {
         this.tokenSwitch = tokenSwitch;
+      },
+      deleteBatch() {
+        if (this.selectIds.size === 0) {
+          this.$warning(this.$t('account.please_choose_account'));
+          return;
+        }
+        this.$alert(this.$t('oss.delete_batch') + this.$t('account.cloud_account') + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              this.result = this.$request({
+                method: 'POST',
+                url: deleteAccountsUrl,
+                data: Array.from(this.selectIds),
+                headers: {
+                  'Content-Type': undefined
+                }
+              }, res => {
+                this.$success(this.$t('commons.success'));
+                this.search();
+              });
+            }
+          }
+        });
       },
     },
     computed: {

@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('oss.oss_bucket')"
                       @create="create" :createTip="$t('oss.create_bucket')"
-                      @deleteSelect="deleteSelect" :deleteTip="$t('oss.delete_batch')" :show-delete="true" :show-create="true"
+                      @delete="deleteSelect" :show-delete="true" :show-create="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -163,8 +163,8 @@
 
     <!--create oss bucket-->
     <el-drawer class="rtl" :title="ossTitle" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <div v-loading="ossResult.loading">
+               :destroy-on-close="true" v-loading="ossResult.loading">
+      <div>
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
           <el-form-item :label="$t('oss.bucket_name')" :rules="{required: true, message: $t('oss.bucket_name') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-input type="text" v-model="form.bucketName" @input="change($event)" autocomplete="off" :placeholder="$t('oss.bucket_name')"/>
@@ -467,7 +467,7 @@ export default {
     showObject(bucket) {
       this.path = '/';
       this.bucketOss = bucket;
-      this.result = this.$get(ossObjectsUrl + bucket.id, response => {
+      this.ossResult = this.$get(ossObjectsUrl + bucket.id, response => {
         this.objectData = response.data;
         this.bucketVisible = true;
       });
@@ -475,7 +475,7 @@ export default {
     getObjects(path) {
       if (path !== '' && path !== 'none') {
         this.path = path;
-        this.result = this.$post(ossObjectsUrl + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
+        this.ossResult = this.$post(ossObjectsUrl + this.thisObject.bucketId, { "path" : path=="/"?"":path}, response => {
           this.objectData = response.data;
           this.bucketVisible = true;
         });
@@ -500,14 +500,14 @@ export default {
     },
     //查询对象存储账号
     activeAccount() {
-      this.result = this.$get(ossAllListUrl, response => {
+      this.ossResult = this.$get(ossAllListUrl, response => {
         let data = response.data;
         this.accounts =  data;
       });
     },
     //选择插件查询对象存储账号信息
     changeAccount (ossId){
-      this.$get(bucketAddforOssIdUrl + ossId,response => {
+      this.ossResult = this.$get(bucketAddforOssIdUrl + ossId,response => {
         this.bucketParams = response.data;
       });
     },

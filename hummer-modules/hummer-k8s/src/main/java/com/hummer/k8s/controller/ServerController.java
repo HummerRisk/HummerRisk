@@ -15,9 +15,8 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.ServerService;
-import io.swagger.annotations.Api;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
@@ -156,7 +155,7 @@ public class ServerController {
     @Operation(summary = "删除主机规则")
     @GetMapping(value = "deleteServerRule/{id}")
     public void deleteServerRule(@PathVariable String id) throws Exception {
-        serverService.deleteServerRule(id);
+        serverService.deleteServerRule(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "主机规则启用")
@@ -350,6 +349,24 @@ public class ServerController {
     @PostMapping("deleteServers")
     public void deleteServers(@RequestBody List<String> selectIds) throws Exception {
         serverService.deleteServers(selectIds, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "批量删除主机规则")
+    @PostMapping("deleteServerRules")
+    public void deleteServerRules(@RequestBody List<String> selectIds) throws Exception {
+        serverService.deleteServerRules(selectIds, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "批量删除统一凭据")
+    @PostMapping("deleteCertificates")
+    public void deleteCertificates(@RequestBody List<String> selectIds) throws Exception {
+        serverService.deleteCertificates(selectIds, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "批量删除主机检测结果")
+    @PostMapping("deleteResults")
+    public void deleteResults(@RequestBody List<String> selectIds) throws Exception {
+        serverService.deleteResults(selectIds, tokenService.getLoginUser());
     }
 
 

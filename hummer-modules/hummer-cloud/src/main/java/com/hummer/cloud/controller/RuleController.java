@@ -134,6 +134,12 @@ public class RuleController {
         ruleService.deleteRule(id, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "批量删除规则")
+    @PostMapping("deleteRules")
+    public void deleteRules(@RequestBody List<String> selectIds) throws Exception {
+        ruleService.deleteRules(selectIds, tokenService.getLoginUser());
+    }
+
     @I18n
     @Operation(summary = "规则详情")
     @GetMapping(value = "get/{ruleId}")
@@ -246,8 +252,14 @@ public class RuleController {
 
     @Operation(summary = "删除规则组")
     @GetMapping(value = "group/delete/{id}")
-    public int deleteRuleGroup(@PathVariable Integer id) {
-        return ruleService.deleteRuleGroupById(id);
+    public void deleteRuleGroup(@PathVariable Integer id) {
+        ruleService.deleteRuleGroupById(id, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "批量删除规则组")
+    @PostMapping("deleteGroups")
+    public void deleteGroups(@RequestBody List<Integer> selectIds) throws Exception {
+        ruleService.deleteGroups(selectIds, tokenService.getLoginUser());
     }
 
     @I18n

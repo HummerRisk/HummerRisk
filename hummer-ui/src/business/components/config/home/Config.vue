@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('config.config_settings_list')"
                       @create="create" :createTip="$t('config.config_create')"
-                      :show-create="true"
+                      :show-create="true" @delete="deleteBatch" :show-delete="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -101,7 +101,7 @@
 
     <!--Create k8s config-->
     <el-drawer class="rtl" :title="$t('config.config_create')" :visible.sync="createVisible" size="75%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('config.name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('config.name')"/>
@@ -156,7 +156,7 @@
 
     <!--Update k8s config-->
     <el-drawer class="rtl" :title="$t('config.config_update')" :visible.sync="updateVisible" size="75%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form" :rules="rule">
         <el-form-item :label="$t('config.name')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('config.name')"/>
@@ -211,7 +211,7 @@
 
     <!--Result log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>
@@ -289,7 +289,7 @@ import {allCloudNativeSource2YamlListUrl} from "@/api/k8s/k8s/k8s";
 import {
   addConfigUrl,
   configDownloadUrl,
-  configListUrl,
+  configListUrl, deleteConfigsUrl,
   deleteConfigUrl,
   getCloudNativeConfigResultUrl,
   logConfigUrl,
@@ -364,6 +364,7 @@ export default {
     return {
       credential: {},
       result: {},
+      viewResult: {},
       condition: {
         components: CONFIG_CONFIGS
       },
@@ -553,7 +554,7 @@ export default {
     save(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post(addConfigUrl, this.form, () => {
+          this.viewResult = this.$post(addConfigUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.createVisible = false;
             this.search();
@@ -564,7 +565,7 @@ export default {
     update(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.result = this.$post(updateConfigUrl, this.form, () => {
+          this.viewResult = this.$post(updateConfigUrl, this.form, () => {
             this.$success(this.$t('commons.update_success'));
             this.updateVisible = false;
             this.search();
@@ -598,7 +599,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(scanConfigUrl + item.id,response => {
+            this.result = this.$get(scanConfigUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.search();
@@ -632,7 +633,7 @@ export default {
         this.$warning(this.$t('resource.i18n_no_warn'));
         return;
       }
-      this.$post(configDownloadUrl, {
+      this.result = this.$post(configDownloadUrl, {
         id: item.resultId
       }, response => {
         if (response.success) {
@@ -689,14 +690,38 @@ export default {
       this.$warning(item.name + this.$t('resource.i18n_no_warn'));
     },
     showResultLog (result) {
-      this.result = this.$get(logConfigUrl + result.resultId, response => {
+      this.viewResult = this.$get(logConfigUrl + result.resultId, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getCloudNativeConfigResultUrl + result.resultId, response => {
+      this.viewResult = this.$get(getCloudNativeConfigResultUrl + result.resultId, response => {
         this.logForm = response.data;
         this.logForm.resultJson = JSON.parse(this.logForm.resultJson);
       });
       this.logVisible = true;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('config.config_settings'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('config.config_settings') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteConfigsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {

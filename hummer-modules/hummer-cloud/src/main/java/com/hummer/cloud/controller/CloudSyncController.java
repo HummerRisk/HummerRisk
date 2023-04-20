@@ -70,4 +70,10 @@ public class CloudSyncController {
         return cloudSyncService.cloudTopology();
     }
 
+    @Operation(summary = "批量删除同步日志")
+    @PostMapping("deleteLogs")
+    public void deleteLogs(@RequestBody List<String> selectIds) throws Exception {
+        cloudSyncService.deleteLogs(selectIds);
+    }
+
 }

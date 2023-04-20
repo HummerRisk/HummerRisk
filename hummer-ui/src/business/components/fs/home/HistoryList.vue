@@ -3,7 +3,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
-                      :items="items" :columnNames="columnNames" :showName="false"
+                      :items="items" :columnNames="columnNames" :showName="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
                       @handleCheckAllChange="handleCheckAllChange"/>
@@ -96,7 +96,7 @@
 
     <!--History statistics-->
     <el-drawer class="rtl" :title="$t('resource.i18n_not_compliance')" :visible.sync="statisticsList" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <div>
         <el-table border :data="statisticsData" class="adjust-table table-content" @sort-change="sort"
@@ -132,7 +132,7 @@
 
     <!--History status-->
     <el-drawer class="rtl" :title="$t('resource.i18n_resource_scanning_log')" :visible.sync="logVisible" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
@@ -190,7 +190,7 @@
 
     <!--History output list-->
     <el-drawer class="rtl" :title="$t('commons.history')" :visible.sync="visibleList" size="85%"
-               :before-close="handleClose" :direction="direction"
+               :before-close="handleClose" :direction="direction" v-loading="viewResult.loading"
                :destroy-on-close="true">
       <div>
         <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort"
@@ -254,7 +254,7 @@
 
     <!--History Compared-->
     <el-dialog :title="$t('dashboard.online_comparison')" width="90%" :visible.sync="innerDrawer"
-               :close-on-click-modal="false">
+               :close-on-click-modal="false" v-loading="viewResult.loading">
       <el-form>
         <code-diff
             :old-string="oldStr"
@@ -281,7 +281,7 @@ import TableOperators from "../../common/components/TableOperators";
 import LogForm from "@/business/components/fs/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import CodeDiff from 'vue-code-diff';
-import {fsHistoryUrl, fsDeleteHistoryResultUrl} from "@/api/system/history";
+import {fsHistoryUrl, fsDeleteHistoryResultUrl, deleteFsHistoryResultsUrl} from "@/api/system/history";
 import {
   fsMetricChartUrl,
   getFsResultUrl,
@@ -343,6 +343,7 @@ export default {
   data() {
     return {
       result: {},
+      viewResult: {},
       condition: {
         components: FS_RESULT_CONFIGS
       },
@@ -478,7 +479,7 @@ export default {
     },
     async outputListDataSearch() {
       let item = this.outputListSearchData;
-      await this.$post(fsHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
+      this.viewResult = await this.$post(fsHistoryUrl + this.outputListPage + "/" + this.outputListPageSize, {imageId: item.imageId}, response => {
         let data = response.data;
         this.outputListTotal = data.itemCount;
         this.outputListData = data.listObject;
@@ -504,24 +505,48 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      this.result = this.$post(historyResultItemListUrl, {resultId: params.id}, response => {
+      this.viewResult = this.$post(historyResultItemListUrl, {resultId: params.id}, response => {
         let data = response.data;
         this.statisticsData = data;
         this.statisticsList = true;
       });
-      this.result = this.$get(fsMetricChartUrl + params.id, response => {
+      this.viewResult = this.$get(fsMetricChartUrl + params.id, response => {
         this.content = response.data;
       });
     },
     showResultLog(result) {
-      this.result = this.$get(logFsUrl + result.id, response => {
+      this.viewResult = this.$get(logFsUrl + result.id, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getFsResultUrl + result.id, response => {
+      this.viewResult = this.$get(getFsResultUrl + result.id, response => {
         this.logForm = response.data;
         this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
       });
       this.logVisible = true;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('fs.history'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('fs.history') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteFsHistoryResultsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   created() {

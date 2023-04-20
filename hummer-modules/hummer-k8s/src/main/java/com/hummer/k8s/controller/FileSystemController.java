@@ -222,4 +222,10 @@ public class FileSystemController {
     public List<FileSystemResultItemWithBLOBs> historyResultItemList(@RequestBody FileSystemResultItem request) {
         return fileSystemService.historyResultItemList(request);
     }
+
+    @Operation(summary = "批量删除文件系统")
+    @PostMapping("deleteFss")
+    public void deleteFss(@RequestBody List<String> selectIds) throws Exception {
+        fileSystemService.deleteFss(selectIds, tokenService.getLoginUser());
+    }
 }

@@ -14,7 +14,7 @@
                       :title="$t('server.rule_list')"
                       @create="create" :createTip="$t('server.create_rule')"
                       :show-create="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -26,6 +26,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
+        </el-table-column>
         <!-- 展开 start -->
         <el-table-column type="expand" min-width="40">
           <template slot-scope="props">
@@ -267,6 +269,7 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {ruleTagsUrl} from "@/api/cloud/rule/rule";
 import {
   addServerRuleUrl,
+  deleteServerRulesUrl,
   deleteServerRuleUrl,
   serverchangeStatusUrl,
   serverRuleGroupsUrl,
@@ -332,6 +335,7 @@ export default {
       pageSize: 10,
       total: 0,
       loading: false,
+      selectIds: new Set(),
       plugins: [],
       createRuleForm: { parameter: [] },
       updateRuleForm: { parameter: [] },
@@ -424,6 +428,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear()
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      })
     },
     create() {
       this.createRuleForm = { parameter: [], script : "", type : 'linux' };
@@ -576,6 +584,30 @@ export default {
     ruleGroupsFnc () {
       this.$get(serverRuleGroupsUrl, res => {
         this.ruleGroups = res.data;
+      });
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('rule.rule'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('rule.rule') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteServerRulesUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
       });
     },
   },

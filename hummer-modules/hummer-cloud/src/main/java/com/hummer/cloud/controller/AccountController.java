@@ -111,6 +111,12 @@ public class AccountController {
         accountService.delete(accountId, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "批量删除云账号")
+    @PostMapping("deletes")
+    public void deletes(@RequestBody List<String> selectIds) throws Exception {
+        accountService.deletes(selectIds, tokenService.getLoginUser());
+    }
+
     @I18n
     @Operation(summary = "获取云账号区域")
     @GetMapping("getRegions/{id}")

@@ -6,7 +6,7 @@
                       :title="$t('code.code_settings_list')"
                       @create="create" :createTip="$t('code.code_create')"
                       :show-create="true" :show-validate="false"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -24,7 +24,7 @@
         <el-table-column prop="name" :label="$t('code.name')" v-if="checkedColumnNames.includes('name')"  min-width="220" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 40px; height: 25px; vertical-align:middle" alt=""/>
+                <img :src="require(`@/assets/img/code/${scope.row.pluginIcon}`)" style="width: 25px; height: 25px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
@@ -93,7 +93,7 @@
 
     <!--Create code-->
     <el-drawer class="rtl" :title="$t('code.code_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <div v-for="(form, index) in addAccountForm" :key="index">
         <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
           <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -180,7 +180,7 @@
 
     <!--Update code-->
     <el-drawer class="rtl" :title="$t('code.code_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
@@ -248,7 +248,7 @@
 
     <!--Result log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-row class="el-form-item-dev" v-if="logData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>
@@ -326,6 +326,7 @@ import {
   codeDownloadUrl,
   codeListUrl,
   codePluginUrl,
+  deleteCodesUrl,
   deleteCodeUrl,
   getCodeResultUrl,
   logCodeUrl,
@@ -400,6 +401,7 @@ export default {
     return {
       credential: {},
       result: {},
+      viewResult: {},
       condition: {
         components: CODE_CONFIGS
       },
@@ -626,7 +628,7 @@ export default {
     },
     //新增Git项目账号信息/选择插件查询Git项目账号信息
     async changePluginForAdd (form){
-      this.result = await this.$get(codePluginUrl, response => {
+      this.viewResult = await this.$get(codePluginUrl, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         form.tmpList = fromJson.data;
         for (let tmp of form.tmpList) {
@@ -638,7 +640,7 @@ export default {
     },
     //编辑Git项目账号信息/选择插件查询Git项目账号信息
     async changePlugin (type){
-      this.result = await this.$get(codePluginUrl, response => {
+      this.viewResult = await this.$get(codePluginUrl, response => {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         this.tmpList = fromJson.data;
         if (type === 'edit') {
@@ -679,7 +681,7 @@ export default {
         data["sbomVersionId"] = item.sbomVersionId;
         if (item.isProxy) data["proxyId"] = item.proxyId;
         if (type === 'add') {
-          this.result = this.$post(addCodeUrl, data,response => {
+          this.viewResult = this.$post(addCodeUrl, data,response => {
             if (response.success) {
               this.$success(this.$t('commons.create_success'));
               this.search();
@@ -711,7 +713,7 @@ export default {
           if (item.isProxy) data["proxyId"] = item.proxyId;
 
           if (type === 'add') {
-            this.result = this.$post(addCodeUrl, data,response => {
+            this.viewResult = this.$post(addCodeUrl, data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.create_success'));
                 this.search();
@@ -722,7 +724,7 @@ export default {
             });
           } else {
             data["id"] = item.id;
-            this.result = this.$post(updateCodeUrl, data,response => {
+            this.viewResult = this.$post(updateCodeUrl, data,response => {
               if (response.success) {
                 this.$success(this.$t('commons.update_success'));
                 this.handleClose();
@@ -740,7 +742,7 @@ export default {
     },
     async addAccount (addAccountForm) {
       if(this.sboms && this.sboms.length > 0) {
-        await this.$post(allSbomVersionListUrl, {sbomId: this.sboms[0].id},response => {
+        this.viewResult = await this.$post(allSbomVersionListUrl, {sbomId: this.sboms[0].id},response => {
           this.versions = response.data;
           let newParam = { "sbomId": this.sboms[0].id, "sbomVersionId" : this.versions[0].id, "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
           addAccountForm.push(newParam);
@@ -760,7 +762,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.$get(scanCodeUrl + item.id,response => {
+            this.result = this.$get(scanCodeUrl + item.id,response => {
               if (response.success) {
                 this.$success(this.$t('schedule.event_start'));
                 this.search();
@@ -808,10 +810,10 @@ export default {
         this.$warning(this.$t('resource.i18n_no_warn'));
         return;
       }
-      this.result = this.$get(logCodeUrl + result.resultId, response => {
+      this.viewResult = this.$get(logCodeUrl + result.resultId, response => {
         this.logData = response.data;
       });
-      this.result = this.$get(getCodeResultUrl + result.resultId, response => {
+      this.viewResult = this.$get(getCodeResultUrl + result.resultId, response => {
         this.logForm = response.data;
         this.logForm.returnJson = JSON.parse(this.logForm.returnJson);
       });
@@ -841,6 +843,30 @@ export default {
       this.$router.push({
         path: p
       }).catch(error => error);
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('code.code_setting'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('code.code_setting') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteCodesUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   computed: {

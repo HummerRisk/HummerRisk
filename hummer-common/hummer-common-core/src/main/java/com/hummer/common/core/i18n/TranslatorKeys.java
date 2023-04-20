@@ -54,7 +54,8 @@ public class TranslatorKeys {
                     "i18n_k8s_account",
                     "i18n_namespace",
                     "i18n_start_k8s_rule_result",
-                    "i18n_end_k8s_rule_result"
+                    "i18n_end_k8s_rule_result",
+                    "i18n_delete_delete_rule_group"
             ));
 
 }

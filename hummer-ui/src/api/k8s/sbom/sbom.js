@@ -51,3 +51,5 @@ export const sbomImageMetricChartUrl = "/k8s/sbom/imageMetricChart/";
 export const sbomFsMetricChartUrl = "/k8s/sbom/fsMetricChart/";
 
 export const sbomDownloadUrl = "/k8s/sbom/download";
+
+export const deleteProjectsUrl = "/k8s/sbom/deleteProjects";

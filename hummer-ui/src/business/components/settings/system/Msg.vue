@@ -239,7 +239,7 @@ export default {
         return;
       }
       const param = this.selectIds;
-      this.$post(webmsgBatchDeleteUrl, param, response => {
+      this.result = this.$post(webmsgBatchDeleteUrl, param, response => {
         this.selectIds = [];
         this.search();
       });

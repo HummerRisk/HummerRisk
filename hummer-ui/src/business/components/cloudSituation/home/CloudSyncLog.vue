@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition"
                       @search="search"  @create="create" :createTip="$t('k8s.sync_log_create')"
                       :title="$t('account.sync_log_list')" :show-create="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -17,6 +17,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" width="200">
           <template v-slot:default="scope">
@@ -78,7 +80,7 @@
 
     <!--Create sync-->
     <el-drawer class="rtl" :title="$t('k8s.sync_log_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
         <el-form-item :label="$t('event.cloud_account')" :rules="{required: true, message: $t('event.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
           <el-select style="width: 100%;" filterable :clearable="true" v-model="form.id" :placeholder="$t('event.cloud_account')">
@@ -130,7 +132,13 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import ResultLog from "./ResultLog";
 import ResourceType from "./ResourceType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {cloudSyncDeleteUrl, cloudSyncLogItemListUrl, cloudSyncLogListUrl, cloudSyncUrl} from "@/api/cloud/sync/sync";
+import {
+  cloudSyncDeleteUrl,
+  cloudSyncLogItemListUrl,
+  cloudSyncLogListUrl,
+  cloudSyncUrl,
+  syncDeleteLogsUrl
+} from "@/api/cloud/sync/sync";
 import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
@@ -182,6 +190,7 @@ export default {
       credential: {},
       logForm: {cloudTaskItemLogDTOs: []},
       result: {},
+      viewResult: {},
       condition: {
         components: SITUATION_LOG_CONFIGS
       },
@@ -190,6 +199,7 @@ export default {
       pageSize: 10,
       total: 0,
       loading: false,
+      selectIds: new Set(),
       createVisible: false,
       form: {},
       direction: 'rtl',
@@ -245,6 +255,10 @@ export default {
       this.checkAll = val;
     },
     select(selection) {
+      this.selectIds.clear();
+      selection.forEach(s => {
+        this.selectIds.add(s.id)
+      });
     },
     create() {
       this.form = {};
@@ -288,7 +302,7 @@ export default {
       });
     },
     saveSync() {
-      this.result = this.$get(cloudSyncUrl + this.form.id,response => {
+      this.viewResult = this.$get(cloudSyncUrl + this.form.id,response => {
         this.search();
         this.handleClose();
       });
@@ -330,6 +344,30 @@ export default {
     filter(filters) {
       _filter(filters, this.condition);
       this.search();
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('account.sync_log'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('account.sync_log') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: syncDeleteLogsUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   created() {

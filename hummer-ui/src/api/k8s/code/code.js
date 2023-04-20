@@ -57,3 +57,5 @@ export const addCodeRuleUrl = "/k8s/code/addCodeRule";
 
 export const updateCodeRuleUrl = "/k8s/code/updateCodeRule";
 
+export const deleteCodesUrl = "/k8s/code/deleteCodes";
+

@@ -558,24 +558,84 @@ public class HistoryService {
         historyServerResultMapper.deleteByPrimaryKey(id);
     }
 
+    public void deleteServerHistoryResults(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                serverDeleteHistoryResult(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public void codeDeleteHistoryResult(String id) throws Exception {
         historyCodeResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void deleteCodeHistoryResults(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                codeDeleteHistoryResult(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
     }
 
     public void configDeleteHistoryResult(String id) throws Exception {
         historyCloudNativeConfigResultMapper.deleteByPrimaryKey(id);
     }
 
+    public void deleteConfigHistoryResults(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                configDeleteHistoryResult(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public void fsDeleteHistoryResult(String id) throws Exception {
         historyFileSystemResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void deleteFsHistoryResults(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                fsDeleteHistoryResult(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
     }
 
     public void imageDeleteHistoryResult(String id) throws Exception {
         historyImageResultMapper.deleteByPrimaryKey(id);
     }
 
+    public void deleteImageHistoryResults(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                imageDeleteHistoryResult(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
     public void k8sDeleteHistoryResult(String id) throws Exception {
         historyCloudNativeResultMapper.deleteByPrimaryKey(id);
+    }
+
+    public void deleteK8sHistoryResults(List<String> ids) throws Exception {
+        ids.forEach(id -> {
+            try {
+                k8sDeleteHistoryResult(id);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
     }
 
 }

@@ -97,4 +97,8 @@ export const k8sSourceImagesUrl = "/k8s/k8s/sourceImages/";
 
 export const k8sListByGroupUrl = "/k8s/k8s/listByGroup/";
 
+export const deleteK8sSyncLogsUrl = "/k8s/k8s/deleteSyncLogs";
+
+export const deleteK8ssUrl = "/k8s/k8s/deleteK8ss";
+
 

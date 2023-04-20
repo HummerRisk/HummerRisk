@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('image.image_repo_list')"
                       @create="create" :createTip="$t('image.repo_create')"
-                      :show-create="true"
+                      :show-create="true" @delete="deleteBatch" :show-delete="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -18,6 +18,8 @@
         @select-all="select"
         @select="select"
       >
+        <el-table-column type="selection" id="selection" prop="selection" min-width="50">
+        </el-table-column>
         <el-table-column type="index" min-width="40"/>
         <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('image.image_repo_name')" min-width="160">
           <template v-slot:default="scope">
@@ -358,6 +360,7 @@ import {
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   addImageRepoUrl,
+  deleteImageReposUrl,
   deleteImageRepoUrl,
   editImageRepoUrl,
   imageRepoListUrl,
@@ -623,7 +626,7 @@ export default {
       this.$forceUpdate();
     },
     setting() {
-      this.viewResult = this.$get(imageRepoSettingUrl + this.handleItem.id, response => {
+      this.viewResult = this.$get(imageRepoSettingUrl + "/" + this.handleItem.id, response => {
         let repoOld = response.data?response.data.repoOld:this.imageData[0].path.split('/')[0];
         let repo = response.data?response.data.repo:'';
         this.settingForm.repoId = this.handleItem.id;
@@ -833,7 +836,7 @@ export default {
             }, res => {
               if (res.success) {
                 this.imageVisible = false;
-                this.$success(this.$t('account.success'));
+                this.$success(this.$t('commons.success'));
                 this.$router.push({
                   path: '/image/image',
                   query: {
@@ -851,6 +854,30 @@ export default {
     showK8s(item) {
       this.k8sData = item.imageRepoItemK8sDTOList;
       this.innerK8s = true;
+    },
+    deleteBatch() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('image.image_repo'));
+        return;
+      }
+      this.$alert(this.$t('oss.delete_batch') + this.$t('image.image_repo') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: deleteImageReposUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
     },
   },
   created() {

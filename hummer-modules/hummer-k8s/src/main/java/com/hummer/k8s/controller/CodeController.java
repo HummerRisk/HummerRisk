@@ -233,4 +233,10 @@ public class CodeController {
     public List<CodeResultItemWithBLOBs> historyResultItemList(@RequestBody CodeResultItem request) {
         return codeService.historyResultItemList(request);
     }
+
+    @Operation(summary = "批量删除源码")
+    @PostMapping("deleteCodes")
+    public void deleteCodes(@RequestBody List<String> selectIds) throws Exception {
+        codeService.deleteCodes(selectIds, tokenService.getLoginUser());
+    }
 }

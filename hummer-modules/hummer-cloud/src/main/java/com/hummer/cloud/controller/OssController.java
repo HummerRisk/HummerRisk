@@ -50,8 +50,7 @@ public class OssController {
     @I18n
     @Operation(summary = "对象存储账号列表")
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<OssDTO>> ossList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssRequest request) {
+    public Pager<List<OssDTO>> ossList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ossService.ossList(request));
     }
@@ -322,6 +321,12 @@ public class OssController {
     @GetMapping("severityChart")
     public List<Map<String, Object>> severityChart() {
         return ossService.severityChart();
+    }
+
+    @Operation(summary = "批量删除对象存储账号")
+    @PostMapping("deleteAccounts")
+    public void deleteAccounts(@RequestBody List<String> selectIds) throws Exception {
+        ossService.deleteAccounts(selectIds);
     }
 
 }
