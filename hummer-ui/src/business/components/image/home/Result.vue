@@ -52,27 +52,27 @@
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')"
                          :label="$t('image.result_status')" min-width="140" prop="resultStatus" sortable
                          show-overflow-tooltip>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary"
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary"
                      v-if="scope.row.resultStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary"
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary"
                      v-else-if="scope.row.resultStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="primary"
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary"
                      v-else-if="scope.row.resultStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="success"
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="success"
                      v-else-if="scope.row.resultStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="danger"
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="danger"
                      v-else-if="scope.row.resultStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="medium" type="warning"
+          <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning"
                      v-else-if="scope.row.resultStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>

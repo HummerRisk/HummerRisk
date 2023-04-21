@@ -42,10 +42,10 @@
                     <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.pluginName }}</span>
                   </el-col>
                   <el-col :span="5" v-if="checkedColumnNames.includes('flag')">
-                    <el-button size="medium" type="danger" class="round" round v-if="data.flag === true">
+                    <el-button size="mini" type="danger" class="round" round v-if="data.flag === true">
                       {{ $t('rule.tag_flag_true') }}
                     </el-button>
-                    <el-button size="medium" type="success" class="round" round v-else-if="data.flag === false">
+                    <el-button size="mini" type="success" class="round" round v-else-if="data.flag === false">
                       {{ $t('rule.tag_flag_false') }}
                     </el-button>
                   </el-col>

@@ -104,22 +104,22 @@
                         <severity-type :row="scope.row"></severity-type>
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="10%" prop="status" sortable show-overflow-tooltip>
-                        <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+                        <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
                           <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
-                        <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+                        <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
                           <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
-                        <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+                        <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
                           <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
-                        <el-button plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
+                        <el-button plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
                           <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                         </el-button>
-                        <el-button plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
+                        <el-button plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
                           <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
                         </el-button>
-                        <el-button plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
+                        <el-button plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
                           <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                         </el-button>
                       </el-table-column>
@@ -227,22 +227,22 @@
                         </template>
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="15%" prop="resultStatus" sortable show-overflow-tooltip>
-                        <el-button plain size="medium" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+                        <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
                           <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
-                        <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+                        <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
                           <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
-                        <el-button plain size="medium" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+                        <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
                           <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                         </el-button>
-                        <el-button plain size="medium" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+                        <el-button plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
                           <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                         </el-button>
-                        <el-button plain size="medium" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+                        <el-button plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
                           <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
                         </el-button>
-                        <el-button plain size="medium" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+                        <el-button plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
                           <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                         </el-button>
                       </el-table-column>

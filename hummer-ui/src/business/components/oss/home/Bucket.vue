@@ -63,10 +63,10 @@
     <el-drawer class="rtl" :title="$t('oss.oss_bucket')" :visible.sync="bucketVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="ossResult.loading">
       <el-row class="el-btn">
-        <el-button type="primary" icon="el-icon-upload2" size="medium" plain @click="upload">{{ $t('oss.i18n_upload') }}</el-button>
-        <el-button type="success" icon="el-icon-folder-add" size="medium" plain @click="addDir">{{ $t('oss.add_dir') }}</el-button>
-        <el-button type="danger" icon="el-icon-folder-delete" size="medium" plain @click="deleteSelects">{{ $t('commons.delete') }}</el-button>
-        <el-button type="info" icon="el-icon-refresh" size="medium" plain @click="refresh">{{ $t('commons.refresh') }}</el-button>
+        <el-button type="primary" icon="el-icon-upload2" size="mini" plain @click="upload">{{ $t('oss.i18n_upload') }}</el-button>
+        <el-button type="success" icon="el-icon-folder-add" size="mini" plain @click="addDir">{{ $t('oss.add_dir') }}</el-button>
+        <el-button type="danger" icon="el-icon-folder-delete" size="mini" plain @click="deleteSelects">{{ $t('commons.delete') }}</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="mini" plain @click="refresh">{{ $t('commons.refresh') }}</el-button>
       </el-row>
       <el-table :border="true" :data="objectData" class="adjust-table table-content table-inner" @sort-change="sort" stripe @select-all="selectObjects" @select="selectObjects">
         <el-table-column type="selection" min-width="50">

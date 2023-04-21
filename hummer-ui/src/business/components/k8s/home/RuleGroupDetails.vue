@@ -151,22 +151,22 @@
             <severity-type :row="scope.row"></severity-type>
           </el-table-column>
           <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
-            <el-button plain size="medium" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+            <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+            <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button plain size="medium" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+            <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
-            <el-button plain size="medium" type="success" v-else-if="scope.row.status === 'FINISHED'">
+            <el-button plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
               <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
             </el-button>
-            <el-button plain size="medium" type="danger" v-else-if="scope.row.status === 'ERROR'">
+            <el-button plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
               <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
             </el-button>
-            <el-button plain size="medium" type="warning" v-else-if="scope.row.status === 'WARNING'">
+            <el-button plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
@@ -219,7 +219,7 @@
                     <span style="color: #215d9a">{{ scope.row.name }}</span>
                   </el-table-column>
                   <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                    <el-button size="medium" type="success" class="round" round>
+                    <el-button size="mini" type="success" class="round" round>
                       {{ scope.row.sum }}
                     </el-button>
                   </el-table-column>
@@ -247,7 +247,7 @@
                     <span style="color: #215d9a;font-size: 9px;">{{ scope.row.name }}</span>
                   </el-table-column>
                   <el-table-column prop="sum" min-width="15%" align="right" v-slot:default="scope">
-                    <el-button size="medium" type="warning" class="round" round>
+                    <el-button size="mini" type="warning" class="round" round>
                       {{ scope.row.sum }}
                     </el-button>
                   </el-table-column>
@@ -275,7 +275,7 @@
                     <span style="color: #215d9a">{{ scope.row.name }}</span>
                   </el-table-column>
                   <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                    <el-button size="medium" type="primary" class="round" round>
+                    <el-button size="mini" type="primary" class="round" round>
                       {{ scope.row.sum }}
                     </el-button>
                   </el-table-column>
@@ -303,7 +303,7 @@
                     <span style="color: #215d9a">{{ scope.row.name }}</span>
                   </el-table-column>
                   <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                    <el-button size="medium" type="danger" class="round" round>
+                    <el-button size="mini" type="danger" class="round" round>
                       {{ scope.row.sum }}
                     </el-button>
                   </el-table-column>

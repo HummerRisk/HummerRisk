@@ -27,7 +27,7 @@
           @select-all="select"
           @select="select"
         >
-          <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
+          <el-table-column type="selection" id="selection"  prop="selection" min-width="40">
           </el-table-column>
           <!-- 展开 start -->
           <el-table-column type="expand" min-width="40">

@@ -49,30 +49,24 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('syncStatus')" :label="$t('event.sync_status')" min-width="170" prop="status" sortable
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('syncStatus')" :label="$t('event.sync_status')" min-width="140" prop="status" sortable
                          show-overflow-tooltip>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="primary"
-                     v-if="scope.row.syncStatus === 'UNCHECKED'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.syncStatus === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="primary"
-                     v-else-if="scope.row.syncStatus === 'APPROVED'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.syncStatus === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="primary"
-                     v-else-if="scope.row.syncStatus === 'PROCESSING'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.syncStatus === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="success"
-                     v-else-if="scope.row.syncStatus === 'FINISHED'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.syncStatus === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="danger"
-                     v-else-if="scope.row.syncStatus === 'ERROR'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.syncStatus === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showLog(scope.row)" plain size="mini" type="warning"
-                     v-else-if="scope.row.syncStatus === 'WARNING'">
+          <el-button @click="showLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.syncStatus === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
