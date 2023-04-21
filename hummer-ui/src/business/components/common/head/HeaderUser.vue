@@ -50,7 +50,7 @@ import {signoutUrl} from "@/api/auth/auth";
             });
             break;
           case "about":
-            this.$refs.aboutUs.open();
+            this.$router.push('/setting/about').catch(error => error);
             break;
           case "help":
             window.location.href = "https://hummerrisk.com";

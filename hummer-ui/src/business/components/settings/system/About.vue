@@ -3,7 +3,7 @@
     <el-card class="about-card">
 
       <el-row>
-        <img :src="require(`@/assets/img/logo/logo-dark.png`)" class="image"/>
+        <img :src="require(`@/assets/img/logo/license.png`)" class="image"/>
       </el-row>
 
       <div style="padding: 14px;text-align: center;">
@@ -44,24 +44,36 @@
       <div style="padding: 14px;">
         <el-row>
           <el-col :span="24" class="license-le">
-            <el-button plain size="medium" type="primary">{{ $t('system.update_license') }}</el-button>
-            <el-button plain size="medium">{{ $t('dashboard.i18n_other') }}</el-button>
+            <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>
+            <el-button plain size="medium" @click="others">{{ $t('dashboard.i18n_other') }}</el-button>
           </el-col>
         </el-row>
       </div>
 
-      <el-drawer class="rtl" :title="$t('user.create')" :visible.sync="dialogVisible" size="60%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('system.update_license')" :visible.sync="licenseVisible" size="60%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
+          <el-form-item :label="$t('oss.object_file')" :rules="{required: true, message: $t('oss.object_file') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+            <upload v-on:appendUpload="appendUpload" v-model="form.path"/>
+          </el-form-item>
+        </el-form>
+        <dialog-footer
+          @cancel="licenseVisible = false"
+          @confirm="uploadFile()"/>
+      </el-drawer>
+
+      <el-drawer class="rtl" :title="$t('dashboard.i18n_other')" :visible.sync="dialogVisible" size="60%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-descriptions class="margin-top" title="" :column="1" size="medium" border>
-        <el-descriptions-item v-for="item in items" :key="item.url">
-          <template slot="label">
-            <img class="logo github-icon" :src="item.img"/>
-          </template>
-          <el-link class="url" :href="item.url" target="_blank">
-            <span>{{ item.url }}</span>
-          </el-link>
-        </el-descriptions-item>
-      </el-descriptions>
+          <el-descriptions-item v-for="item in items" :key="item.url">
+            <template slot="label">
+              <img class="logo github-icon" :src="item.img"/>
+            </template>
+            <el-link class="url" :href="item.url" target="_blank">
+              <span>{{ item.url }}</span>
+            </el-link>
+          </el-descriptions-item>
+        </el-descriptions>
       </el-drawer>
     </el-card>
   </div>
@@ -69,14 +81,26 @@
 </template>
 
 <script>
+
+import Upload from "@/business/components/settings/head/Upload";
+import DialogFooter from "@/business/components/common/components/DialogFooter";
+import {updateLicenseUrl} from "@/api/system/system";
+
 /* eslint-disable */
   export default {
+    components: {
+      Upload,
+      DialogFooter,
+    },
     name: "AboutUs",
     data() {
       return {
         result: false,
         dialogVisible: false,
+        licenseVisible: false,
         direction: 'rtl',
+        form: {},
+        objectFile: Object,
         githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://hummerrisk.com',
         items: [
@@ -90,10 +114,49 @@
       }
     },
     created() {
+      this.init();
     },
     methods: {
+      init() {
+        this.search();
+      },
+      search() {
+
+      },
       handleClose() {
         this.dialogVisible = false;
+        this.licenseVisible = false;
+      },
+      updateLicense() {
+        this.licenseVisible = true;
+      },
+      others() {
+        this.dialogVisible = true;
+      },
+      appendUpload(file) {
+        this.objectFile = file;
+      },
+      uploadFile() {
+        let formData = new FormData();
+        if (this.objectFile) {
+          formData.append("objectFile", this.objectFile);
+        }
+        formData.append("request", new Blob([JSON.stringify(this.uploadForm)], {type: "application/json"}));
+        let axiosRequestConfig = {
+          method: "POST",
+          url: updateLicenseUrl,
+          data: formData,
+          headers: {
+            "Content-Type": 'multipart/form-data'
+          }
+        };
+        this.result = this.$request(axiosRequestConfig, (res) => {
+          if (res.success) {
+            this.$success(this.$t('commons.save_success'));
+            this.licenseVisible = false;
+            this.search();
+          }
+        });
       },
     }
   }
@@ -153,6 +216,10 @@
 
   .license-le {
     text-align: center;
+  }
+
+  .about-card >>> .el-card__body {
+    padding: 0;
   }
 
 </style>
