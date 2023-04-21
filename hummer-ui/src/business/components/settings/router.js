@@ -43,6 +43,11 @@ export default {
       meta: {system: true, title: "system.plugin"}
     },
     {
+      path: "about",
+      component: () => import("@/business/components/settings/system/About"),
+      meta: {system: true, title: "commons.about_us"}
+    },
+    {
       path: "personsetting",
       component: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/personal/PersonSetting"),
       meta: {person: true, title: "commons.personal_setting"}

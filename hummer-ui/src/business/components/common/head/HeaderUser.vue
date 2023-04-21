@@ -53,7 +53,7 @@ import {signoutUrl} from "@/api/auth/auth";
             this.$refs.aboutUs.open();
             break;
           case "help":
-            window.location.href = "https://docs.hummerrisk.com";
+            window.location.href = "https://hummerrisk.com";
             break;
           case "apiHelp":
             let api = process.env.VUE_APP_BASE_API

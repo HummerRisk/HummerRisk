@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://docs.hummerrisk.com">
+    <a href="https://hummerrisk.com">
         <img src="./hummer-ui/src/assets/img/logo/logo-dark.png" alt="HummerRisk" width="300"/>
     </a>
 </p>

@@ -36,7 +36,7 @@
         websiteUrl: 'https://docs.hummerrisk.com',
         version: process.env.HR_VERSION?process.env.HR_VERSION:"v1.0.0",
         items: [
-          {img: require(`@/assets/img/about/docs.png`), url: 'https://docs.hummerrisk.com'},
+          {img: require(`@/assets/img/about/docs.png`), url: 'https://hummerrisk.com'},
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
           {img: require(`@/assets/img/about/custodian.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/custodian/'},
           {img: require(`@/assets/img/about/prowler.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/prowler/'},
