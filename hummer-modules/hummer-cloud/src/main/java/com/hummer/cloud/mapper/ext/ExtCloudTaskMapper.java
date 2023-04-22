@@ -30,7 +30,7 @@ public interface ExtCloudTaskMapper {
 
     List<CloudTaskDTO> selectByExample(CloudTaskExample example);
 
-    List<CloudTask> selectByHummerId(String hummerId,String regionId);
+    List<CloudTask> selectByHummerId(@Param("hummerId") String hummerId,@Param("regionId") String regionId);
 
     List<CloudTask> selectManualTasks(@Param("request") ManualRequest request);
 

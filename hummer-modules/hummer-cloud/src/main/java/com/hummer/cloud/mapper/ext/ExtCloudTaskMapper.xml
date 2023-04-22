@@ -177,7 +177,7 @@
                             join cloud_task_item_resource b on a.resource_id = b.resource_id
                             join cloud_task_item c on b.task_item_id = c.id
                             join cloud_task d on d.id = c.task_id
-        where hummer_id = #{hummerId} and A.REGION_ID = #{regionId}
+        where hummer_id = #{hummerId} and a.region_id = #{regionId}
     </select>
 
     <sql id="condition">
