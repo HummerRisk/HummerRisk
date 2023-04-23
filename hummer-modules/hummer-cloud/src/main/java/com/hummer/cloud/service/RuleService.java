@@ -728,7 +728,7 @@ public class RuleService {
                 CloudTask cloudTask = cloudTaskService.saveK8sManualTask(quartzTaskDTO, messageOrderId, loginUser);
                 if (scanId != null) {
                     if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
-                        systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.k8sAccount.getType());
+                        systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.k8sRuleAccount.getType());
                     }
                 }
                 return cloudTask.getId();

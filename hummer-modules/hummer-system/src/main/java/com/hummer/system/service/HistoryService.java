@@ -68,7 +68,7 @@ public class HistoryService {
     @DubboReference
     private IK8sProviderService k8sProviderService;
 
-    public Integer insertScanHistory (Object obj) throws Exception {
+    public Integer insertScanHistory(Object obj) throws Exception {
 
         Map map = obj2Account(obj);
         String accountId = map.get("accountId").toString();
@@ -85,23 +85,23 @@ public class HistoryService {
         return history.getId();
     }
 
-    public Integer updateScanHistory (HistoryScan historyScan) throws Exception {
+    public Integer updateScanHistory(HistoryScan historyScan) throws Exception {
 
         HistoryScanTaskExample historyScanTaskExample = new HistoryScanTaskExample();
         historyScanTaskExample.createCriteria().andScanIdEqualTo(historyScan.getId());
         List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExampleWithBLOBs(historyScanTaskExample);
         JSONArray jsonArray = new JSONArray();
-        historyScanTasks.forEach(item ->{
+        historyScanTasks.forEach(item -> {
             String output = item.getOutput();
             Boolean flag;
-            if(output!=null) {
+            if (output != null) {
                 try {
                     JSON.parse(output);
                     flag = true;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     flag = false;
                 }
-                if(flag) jsonArray.addAll(JSON.parseArray(output));
+                if (flag) jsonArray.addAll(JSON.parseArray(output));
             }
         });
         historyScan.setOutput(jsonArray.toJSONString());
@@ -112,7 +112,7 @@ public class HistoryService {
         return historyScan.getId();
     }
 
-    public void insertScanTaskHistory (Object obj, Integer scanId, String accountId, String accountType) throws Exception {
+    public void insertScanTaskHistory(Object obj, Integer scanId, String accountId, String accountType) throws Exception {
         HistoryScanTask historyScanTask = new HistoryScanTask();
         historyScanTask.setScanId(scanId);
         historyScanTask.setTaskId(obj2Result(obj));
@@ -123,25 +123,25 @@ public class HistoryService {
         historyScanTaskMapper.insertSelective(historyScanTask);
     }
 
-    public void updateScanTaskHistory (HistoryScanTask historyScanTask) throws Exception {
-        try{
+    public void updateScanTaskHistory(HistoryScanTask historyScanTask) throws Exception {
+        try {
             historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    public void deleteScanTaskHistory (Integer scanId) throws Exception {
-        try{
+    public void deleteScanTaskHistory(Integer scanId) throws Exception {
+        try {
             historyScanTaskMapper.deleteByPrimaryKey(scanId);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
 
-    public void editUselessScanTaskHistory () throws Exception {
-        try{
+    public void editUselessScanTaskHistory() throws Exception {
+        try {
             final HistoryScanExample historyScanExample = new HistoryScanExample();
             HistoryScanExample.Criteria historyScanCriteria = historyScanExample.createCriteria();
             historyScanCriteria.andStatusEqualTo(TaskConstants.TASK_STATUS.APPROVED.toString());
@@ -153,61 +153,61 @@ public class HistoryService {
                 HistoryScanTaskExample.Criteria historyScanTaskCriteria = historyScanTaskExample.createCriteria();
                 historyScanTaskCriteria.andScanIdEqualTo(historyScan.getId()).andStatusNotIn(historyScanStatus);
                 List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExample(historyScanTaskExample);
-                if(historyScanTasks.size() == 0) {
+                if (historyScanTasks.size() == 0) {
                     historyScan.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                     historyScanMapper.updateByPrimaryKey(historyScan);
                 }
                 for (HistoryScanTask historyScanTask : historyScanTasks) {
-                    if(historyScanTask.getTaskId()==null) {
+                    if (historyScanTask.getTaskId() == null) {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                     } else {
                         if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
                             CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
                             Account account = cloudProviderService.selectAccount(historyScanTask.getAccountId());
-                            if(cloudTask == null || account == null) {
+                            if (cloudTask == null || account == null) {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
-                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
+                        } else if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
                             ServerResult serverResult = k8sProviderService.serverResult(historyScanTask.getTaskId());
                             Server server = k8sProviderService.server(historyScanTask.getAccountId());
-                            if(serverResult == null || server == null) {
+                            if (serverResult == null || server == null) {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
-                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
+                        } else if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
                             ImageResult imageResult = k8sProviderService.imageResult(historyScanTask.getTaskId());
                             Image image = k8sProviderService.image(historyScanTask.getAccountId());
-                            if(imageResult == null || image == null) {
+                            if (imageResult == null || image == null) {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
-                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
+                        } else if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
                             CodeResult codeResult = k8sProviderService.codeResult(historyScanTask.getTaskId());
                             Code code = k8sProviderService.code(historyScanTask.getAccountId());
-                            if(codeResult == null || code == null) {
+                            if (codeResult == null || code == null) {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
-                        }  else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
+                        } else if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
                             FileSystemResult fileSystemResult = k8sProviderService.fileSystemResult(historyScanTask.getTaskId());
                             FileSystem fileSystem = k8sProviderService.fileSystem(historyScanTask.getAccountId());
-                            if(fileSystemResult == null || fileSystem == null) {
+                            if (fileSystemResult == null || fileSystem == null) {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
-                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
+                        } else if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
                             CloudNativeResult cloudNativeResult = k8sProviderService.cloudNativeResult(historyScanTask.getTaskId());
                             CloudNative cloudNative = k8sProviderService.cloudNative(historyScanTask.getAccountId());
-                            if(cloudNativeResult == null || cloudNative == null) {
+                            if (cloudNativeResult == null || cloudNative == null) {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
-                        } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
+                        } else if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
                             CloudNativeConfigResult cloudNativeConfigResult = k8sProviderService.cloudNativeConfigResult(historyScanTask.getTaskId());
                             CloudNativeConfig cloudNativeConfig = k8sProviderService.cloudNativeConfig(historyScanTask.getAccountId());
-                            if(cloudNativeConfigResult == null || cloudNativeConfig == null) {
+                            if (cloudNativeConfigResult == null || cloudNativeConfig == null) {
                                 historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                                 historyScanTaskMapper.updateByPrimaryKeySelective(historyScanTask);
                             }
@@ -215,12 +215,12 @@ public class HistoryService {
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    private boolean isJson(String str){
+    private boolean isJson(String str) {
         try {
             JSONObject.parseObject(str);
             return true;
@@ -230,29 +230,29 @@ public class HistoryService {
     }
 
     //通过对象获取资源ID
-    public Map obj2Account(Object obj) throws Exception{
+    public Map obj2Account(Object obj) throws Exception {
         Map map = new HashMap<>();
         try {
             String accountId = "";
             if (obj.getClass() == Account.class || obj.getClass() == AccountWithBLOBs.class) {
                 accountId = ((Account) obj).getId();
                 map.put("accountType", TaskEnum.cloudAccount.getType());
-            } else if(obj.getClass() == Server.class || obj.getClass() == ServerDTO.class) {
+            } else if (obj.getClass() == Server.class || obj.getClass() == ServerDTO.class) {
                 accountId = ((Server) obj).getId();
                 map.put("accountType", TaskEnum.serverAccount.getType());
-            } else if(obj.getClass() == Image.class || obj.getClass() == ImageDTO.class) {
+            } else if (obj.getClass() == Image.class || obj.getClass() == ImageDTO.class) {
                 accountId = ((Image) obj).getId();
                 map.put("accountType", TaskEnum.imageAccount.getType());
-            } else if(obj.getClass() == CloudNative.class || obj.getClass() == CloudNativeDTO.class) {
+            } else if (obj.getClass() == CloudNative.class || obj.getClass() == CloudNativeDTO.class) {
                 accountId = ((CloudNative) obj).getId();
                 map.put("accountType", TaskEnum.k8sAccount.getType());
-            } else if(obj.getClass() == CloudNativeConfig.class || obj.getClass() == CloudNativeConfigDTO.class) {
+            } else if (obj.getClass() == CloudNativeConfig.class || obj.getClass() == CloudNativeConfigDTO.class) {
                 accountId = ((CloudNativeConfig) obj).getId();
                 map.put("accountType", TaskEnum.configAccount.getType());
-            } else if(obj.getClass() == Code.class || obj.getClass() == CodeDTO.class) {
+            } else if (obj.getClass() == Code.class || obj.getClass() == CodeDTO.class) {
                 accountId = ((Code) obj).getId();
                 map.put("accountType", TaskEnum.codeAccount.getType());
-            } else if(obj.getClass() == FileSystem.class || obj.getClass() == FsDTO.class) {
+            } else if (obj.getClass() == FileSystem.class || obj.getClass() == FsDTO.class) {
                 accountId = ((FileSystem) obj).getId();
                 map.put("accountType", TaskEnum.fsAccount.getType());
             }
@@ -264,22 +264,22 @@ public class HistoryService {
     }
 
     //通过对象获取资源ID
-    public String obj2Result(Object obj) throws Exception{
+    public String obj2Result(Object obj) throws Exception {
         try {
             String resultId = "";
             if (obj.getClass() == CloudTask.class || obj.getClass() == CloudTaskDTO.class) {
                 resultId = ((CloudTask) obj).getId();
-            } else if(obj.getClass() == ServerResult.class || obj.getClass() == ServerResultLogWithBLOBs.class || obj.getClass() == ServerResultDTO.class) {
+            } else if (obj.getClass() == ServerResult.class || obj.getClass() == ServerResultLogWithBLOBs.class || obj.getClass() == ServerResultDTO.class) {
                 resultId = ((ServerResult) obj).getId();
-            } else if(obj.getClass() == CloudNativeResult.class || obj.getClass() == CloudNativeResultWithBLOBs.class) {
+            } else if (obj.getClass() == CloudNativeResult.class || obj.getClass() == CloudNativeResultWithBLOBs.class) {
                 resultId = ((CloudNativeResult) obj).getId();
-            } else if(obj.getClass() == CloudNativeConfigResult.class) {
+            } else if (obj.getClass() == CloudNativeConfigResult.class) {
                 resultId = ((CloudNativeConfigResult) obj).getId();
-            } else if(obj.getClass() == CodeResult.class || obj.getClass() == CodeResultDTO.class) {
+            } else if (obj.getClass() == CodeResult.class || obj.getClass() == CodeResultDTO.class) {
                 resultId = ((CodeResult) obj).getId();
-            } else if(obj.getClass() == ImageResult.class || obj.getClass() == ImageResultWithBLOBs.class || obj.getClass() == ImageResultDTO.class) {
+            } else if (obj.getClass() == ImageResult.class || obj.getClass() == ImageResultWithBLOBs.class || obj.getClass() == ImageResultDTO.class) {
                 resultId = ((ImageResult) obj).getId();
-            } else if(obj.getClass() == FileSystemResult.class) {
+            } else if (obj.getClass() == FileSystemResult.class) {
                 resultId = ((FileSystemResult) obj).getId();
             } else {
                 resultId = ((Map) obj).get("id").toString();
@@ -293,21 +293,22 @@ public class HistoryService {
     /**
      * 计算安全检测评分
      * 高：中：低 = 5 ： 3 ： 2
+     *
      * @param accountId
      * @return
      */
-    public Integer calculateScore (String accountId, Object task, String accountType) {
+    public Integer calculateScore(String accountId, Object task, String accountType) {
 
         Integer score = 100;
-        if(task == null) {
+        if (task == null) {
             return score;
         }
         if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.cloudAccount.getType())) {
 
             CloudTask cloudTask = (CloudTask) task;
-            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
-            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId()): "0.0");
-            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
+            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
+            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
 
             HistoryCloudTaskExample example = new HistoryCloudTaskExample();
             HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
@@ -319,14 +320,14 @@ public class HistoryService {
             long low = historyCloudTaskMapper.countByExample(example);
 
             long sum = 5 * high + 3 * mediuml + 2 * low;
-            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
+            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum)) * 100);
 
         } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sRuleAccount.getType())) {
 
             CloudTask cloudTask = (CloudTask) task;
-            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
-            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask ==null?null: cloudTask.getId()): "0.0");
-            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId())!=null?extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask ==null?null: cloudTask.getId()):"0.0");
+            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
+            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
+            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
 
             HistoryCloudTaskExample example = new HistoryCloudTaskExample();
             HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
@@ -338,9 +339,9 @@ public class HistoryService {
             long low = historyCloudTaskMapper.countByExample(example);
 
             long sum = 5 * high + 3 * mediuml + 2 * low;
-            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum) ) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum) ) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum) ) * 100);
+            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum)) * 100);
 
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.serverAccount.getType())) {
+        } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.serverAccount.getType())) {
             ServerResult serverResult = (ServerResult) task;
             if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.HighRisk.name())) {
                 score = 100 - 20;
@@ -349,7 +350,7 @@ public class HistoryService {
             } else if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.LowRisk.name())) {
                 score = 100 - 5;
             }
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.imageAccount.getType())) {
+        } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.imageAccount.getType())) {
             ImageResult imageResult = (ImageResult) task;
             if (imageResult.getReturnSum() >= 0 && imageResult.getReturnSum() < 10) {
                 score = 100 - 5;
@@ -364,7 +365,7 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.codeAccount.getType())) {
+        } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.codeAccount.getType())) {
             CodeResult codeResult = (CodeResult) task;
             if (codeResult.getReturnSum() >= 0 && codeResult.getReturnSum() < 10) {
                 score = 100 - 5;
@@ -379,7 +380,7 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.fsAccount.getType())) {
+        } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.fsAccount.getType())) {
             FileSystemResult fsResult = (FileSystemResult) task;
             if (fsResult.getReturnSum() >= 0 && fsResult.getReturnSum() < 10) {
                 score = 100 - 5;
@@ -394,7 +395,7 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sAccount.getType())) {
+        } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sAccount.getType())) {
             CloudNativeResult cloudNativeResult = (CloudNativeResult) task;
             if (cloudNativeResult.getReturnSum() >= 0 && cloudNativeResult.getReturnSum() < 10) {
                 score = 100 - 5;
@@ -409,7 +410,7 @@ public class HistoryService {
             } else {
                 score = 100 - 41;
             }
-        } else if(StringUtils.equalsIgnoreCase(accountType, TaskEnum.configAccount.getType())) {
+        } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.configAccount.getType())) {
             CloudNativeConfigResult cloudNativeConfigResult = (CloudNativeConfigResult) task;
             if (cloudNativeConfigResult.getReturnSum() >= 0 && cloudNativeConfigResult.getReturnSum() < 10) {
                 score = 100 - 5;

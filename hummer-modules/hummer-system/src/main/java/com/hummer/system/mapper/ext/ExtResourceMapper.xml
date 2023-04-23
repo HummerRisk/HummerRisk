@@ -3,7 +3,7 @@
 <mapper namespace="com.hummer.system.mapper.ext.ExtResourceMapper">
 
     <select id="resultPercentByCloud" resultType="java.lang.String">
-        select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
+        select IFNULL(sum( t.return_sum ), 0)/IF(IFNULL(sum( t.resources_sum ), 1) = 0, 1, IFNULL(sum( t.resources_sum ), 1))
         from cloud_task t
         <where>
             <if test="severity != null and severity != ''">
