@@ -671,7 +671,15 @@
         ORDER BY sum desc
     </select>
 
-    <select id="regulation" resultType="com.hummer.common.core.domain.RuleInspectionReport" parameterType="java.lang.String">
+    <resultMap id="RuleInspectionReportResultMap" type="com.hummer.common.core.domain.RuleInspectionReport">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project" jdbcType="VARCHAR" property="project" />
+        <result column="item_sort_first_level" jdbcType="VARCHAR" property="itemSortFirstLevel" />
+        <result column="item_sort_second_level" jdbcType="VARCHAR" property="itemSortSecondLevel" />
+        <result column="improvement" jdbcType="VARCHAR" property="improvement" />
+    </resultMap>
+
+    <select id="regulation" resultMap="RuleInspectionReportResultMap" parameterType="java.lang.String">
         SELECT t.*
         FROM rule_inspection_report t
         JOIN rule_inspection_report_mapping t1 ON t.id = t1.report_id
