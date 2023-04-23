@@ -92,7 +92,17 @@ public class HistoryService {
         List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExampleWithBLOBs(historyScanTaskExample);
         JSONArray jsonArray = new JSONArray();
         historyScanTasks.forEach(item ->{
-            if(item.getOutput()!=null) jsonArray.addAll(JSON.parseArray(item.getOutput()));
+            String output = item.getOutput();
+            Boolean flag;
+            if(output!=null) {
+                try {
+                    JSON.parse(output);
+                    flag = true;
+                } catch(Exception e) {
+                    flag = false;
+                }
+                if(flag) jsonArray.addAll(JSON.parseArray(output));
+            }
         });
         historyScan.setOutput(jsonArray.toJSONString());
         historyScan.setResourcesSum(Long.valueOf(extResourceMapper.sumResourcesSum(historyScan.getId())));
