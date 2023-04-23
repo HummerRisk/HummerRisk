@@ -371,10 +371,18 @@
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="100">
               {{ scope.row.resourceType }}
             </el-table-column>
-            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="100"
                              :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
                              show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
+            </el-table-column>
+            <el-table-column prop="regionName" v-if="checkedColumnNames2.includes('regionName')" :label="$t('k8s.namespace')" min-width="130">
+              <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                {{ scope.row.regionName }}
+              </span>
+              </template>
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('ruleName')" :label="$t('rule.rule_name')" min-width="200" show-overflow-tooltip>
               {{ scope.row.ruleName }}
@@ -386,7 +394,8 @@
             </el-table-column>
             <el-table-column min-width="90" :label="$t('commons.operating')" show-overflow-tooltip>
               <template v-slot:default="scope">
-                <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
+                <table-operators v-if="!!scope.row.suggestion" :buttons="resource_buttons2" :row="scope.row"/>
+                <table-operators v-if="!scope.row.suggestion" :buttons="resource_buttons" :row="scope.row"/>
               </template>
             </el-table-column>
           </hide-table>
@@ -692,8 +701,18 @@ export default {
       ],
       resource_buttons: [
         {
+          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+          exec: this.showSeverityDetail
+        },
+      ],
+      resource_buttons2: [
+        {
           tip: this.$t('rule.suggestion'), icon: "el-icon-share", type: "primary",
           exec: this.handleSuggestion
+        },
+        {
+          tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
+          exec: this.showSeverityDetail
         },
       ],
       logVisible: false,

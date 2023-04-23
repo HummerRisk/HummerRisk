@@ -93,7 +93,7 @@
 
       <!--Create rule-->
       <el-drawer class="rtl" :title="$t('rule.create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="createRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createRuleForm">
           <el-form-item :label="$t('rule.rule_name')" prop="name">
             <el-input v-model="createRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
@@ -191,7 +191,7 @@
 
       <!--Update rule-->
       <el-drawer class="rtl" :title="$t('rule.update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="updateRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateRuleForm">
           <el-form-item :label="$t('rule.rule_name')" prop="name">
             <el-input v-model="updateRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
@@ -289,7 +289,7 @@
 
       <!--Copy rule-->
       <el-drawer class="rtl" :title="$t('rule.copy')" :visible.sync="copyVisible" size="70%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="copyRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="copyRuleForm">
           <el-form-item :label="$t('rule.rule_name')" prop="name">
             <el-input v-model="copyRuleForm.name" autocomplete="off" :placeholder="$t('rule.rule_name')"/>
@@ -467,6 +467,7 @@ const columnOptions = [
       return {
         tagKey:"all",
         result: {},
+        viewResult: {},
         condition: {
           components: K8S_RULE_CONFIGS
         },
@@ -636,7 +637,7 @@ const columnOptions = [
       },
       //查询插件
       activePlugin() {
-        this.result = this.$get(pluginK8sScanUrl, response => {
+        this.viewResult = this.$get(pluginK8sScanUrl, response => {
           let data = response.data;
           this.plugins =  data;
         });
@@ -681,12 +682,12 @@ const columnOptions = [
         this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc (pluginId) {
-        this.$get(ruleGroupsUrl + pluginId, res => {
+        this.viewResult = this.$get(ruleGroupsUrl + pluginId, res => {
           this.ruleSetOptions = res.data;
         });
       },
       inspectionSeportOptionsFnc () {
-        this.$get(ruleInspectionReport, res => {
+        this.viewResult = this.$get(ruleInspectionReport, res => {
           this.inspectionSeportOptions = res.data;
         });
       },
@@ -761,12 +762,12 @@ const columnOptions = [
             if (url === '') {
               this.$error(this.$t('rule.ex_request_parameter_error'));
             }
-            this.result = this.$post(getRuleByNameUrl, param, response => {
+            this.viewResult = this.$post(getRuleByNameUrl, param, response => {
               if (!response.data) {
                 this.$error(this.$t('rule.rule_name_validate'));
                 return;
               }
-              this.$post(url, param, res => {
+              this.viewResult = this.$post(url, param, res => {
                 this.handleClose();
                 this.$success(this.$t('commons.opt_success'));
                 this.search();
@@ -782,7 +783,7 @@ const columnOptions = [
         let param = Object.assign({}, mdObj);
         param.parameter = JSON.stringify(param.parameter);
         param.tags = [];
-        this.result = this.$post(ruleDryRunUrl, param, response => {
+        this.viewResult = this.$post(ruleDryRunUrl, param, response => {
           this.$success(this.$t('rule.opt_success'));
         }, error => {
           this.$warning(error);

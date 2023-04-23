@@ -329,13 +329,15 @@ public class K8sCreateService {
         ResourceItem resourceItem = new ResourceItem();
         try{
             String fid = jsonObject.getString("hummerId") != null ? jsonObject.getString("hummerId") : jsonObject.getString("id");
+            String namespace = jsonObject.getString("namespace");
+
             resourceItem.setAccountId(resourceWithBLOBs.getAccountId());
             resourceItem.setUpdateTime(System.currentTimeMillis());
             resourceItem.setPluginIcon(resourceWithBLOBs.getPluginIcon());
             resourceItem.setPluginId(resourceWithBLOBs.getPluginId());
             resourceItem.setPluginName(resourceWithBLOBs.getPluginName());
-            resourceItem.setRegionId(resourceWithBLOBs.getRegionId());
-            resourceItem.setRegionName(resourceWithBLOBs.getRegionName());
+            resourceItem.setRegionId(namespace!=null?namespace:resourceWithBLOBs.getRegionId());
+            resourceItem.setRegionName(namespace!=null?namespace:resourceWithBLOBs.getRegionName());
             resourceItem.setResourceId(resourceWithBLOBs.getId());
             resourceItem.setSeverity(resourceWithBLOBs.getSeverity());
             resourceItem.setResourceType(resourceWithBLOBs.getResourceType());
