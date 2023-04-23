@@ -127,6 +127,7 @@ public class OssService {
 
     private ValidateDTO validateAccount(OssWithBLOBs account) {
         ValidateDTO validateDTO = new ValidateDTO();
+        validateDTO.setName(account.getName());
         try {
             Proxy proxy = new Proxy();
             if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());

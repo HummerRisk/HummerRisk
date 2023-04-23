@@ -123,10 +123,16 @@
           </el-form-item>
           <div v-for="(tmp, index) in tmpList" :key="index">
             <el-form-item v-if="tmp.inputType === 'password'" :label="tmp.label" style="margin-bottom: 29px">
-              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="new-password" show-password :placeholder="tmp.description"/>
+              <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="new-password" show-password :placeholder="tmp.description"/>
             </el-form-item>
-            <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean'" :label="tmp.label">
-              <el-input :type="tmp.inputType" v-model="tmp.input" @input="change($event)" autocomplete="off" :placeholder="tmp.description"/>
+            <el-form-item v-if="tmp.inputType !== 'password' && tmp.inputType !== 'boolean' && tmp.inputType !== 'token'" :label="tmp.label">
+              <el-input :type="tmp.inputType" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+            </el-form-item>
+            <el-form-item v-if="tmp.inputType === 'token' && tokenSwitch" :label="tmp.label" style="margin-bottom: 29px">
+              <el-input type="textarea" @input="change($event)" :rows="10" v-model="tmp.input" autocomplete="off" :placeholder="tmp.description"/>
+            </el-form-item>
+            <el-form-item v-if="tmp.inputType == 'boolean'" :label="tmp.label">
+              <el-switch v-model="tmp.input" @change="switchSessionToken(tmp.input)"></el-switch>
             </el-form-item>
           </div>
           <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
@@ -621,6 +627,8 @@ export default {
       ],
       checkAll2: true,
       isIndeterminate2: false,
+      innerDrawerProxy: false,
+      tokenSwitch: false,
     }
   },
   methods: {
@@ -764,9 +772,11 @@ export default {
         if (valid) {
           let key = {};
           for (let tmp of this.tmpList) {
-            if(!tmp.input) {
-              this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
-              return;
+            if(tmp.input === '' || tmp.input === null) {
+              if(tmp.label !== 'AwsSessionToken') {
+                this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
+                return;
+              }
             }
             key[tmp.name] = tmp.input;
           }
@@ -1039,6 +1049,9 @@ export default {
           }
         }
       });
+    },
+    switchSessionToken(tokenSwitch) {
+      this.tokenSwitch = tokenSwitch;
     },
   },
   computed: {

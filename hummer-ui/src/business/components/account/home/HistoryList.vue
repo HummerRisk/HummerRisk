@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="24">
+  <el-row :gutter="24" >
     <el-col :span="24">
       <el-card class="box-card" shadow="always">
         <el-table border :data="tableData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
@@ -42,7 +42,7 @@
 
       <!--History output list-->
       <el-drawer class="rtl" :title="$t('dashboard.history')" :visible.sync="visibleList" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <div>
           <el-table border :data="outputListData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName">
             <el-table-column type="index" min-width="40"/>
@@ -161,7 +161,7 @@
       <!--History output list-->
 
       <!--History Compared-->
-      <el-dialog :title="$t('dashboard.online_comparison')" width="80%" :visible.sync="innerDrawer" :close-on-click-modal="false">
+      <el-dialog :title="$t('dashboard.online_comparison')" width="80%" :visible.sync="innerDrawer" :close-on-click-modal="false" v-loading="viewResult.loading">
         <el-form>
           <code-diff
             :old-string="oldStr"
@@ -242,6 +242,7 @@ import {accountHistoryDiffListUrl, accountHistoryListUrl} from "@/api/cloud/acco
     },
     data() {
       return {
+        viewResult: false,
         tags: [],
         tableData: [],
         currentPage: 1,
@@ -367,7 +368,7 @@ import {accountHistoryDiffListUrl, accountHistoryListUrl} from "@/api/cloud/acco
       },
       async outputListDataSearch() {
         let item = this.outputListSearchData;
-        await this.$post(accountHistoryListUrl + this.outputListPage + "/" + this.outputListPageSize, item, response => {
+        this.viewResult = await this.$post(accountHistoryListUrl + this.outputListPage + "/" + this.outputListPageSize, item, response => {
           let data = response.data;
           this.outputListTotal = data.itemCount;
           this.outputListData = data.listObject;

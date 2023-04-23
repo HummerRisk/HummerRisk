@@ -765,9 +765,11 @@ const columnOptions = [
           if (valid) {
             let data = {}, key = {};
             for (let tmp of this.tmpList) {
-              if(!tmp.input) {
-                this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
-                return;
+              if(tmp.input === '' || tmp.input === null) {
+                if(tmp.label !== 'AwsSessionToken') {
+                  this.$warning(this.$t('vuln.no_plugin_param') + tmp.label);
+                  return;
+                }
               }
               key[tmp.name] = tmp.input;
             }
