@@ -8,7 +8,7 @@
       <div class="el-upload__text">{{ $t('package.upload_text1') }}<em>{{ $t('package.upload_text2') }}</em></div>
       <div class="el-upload__tip" slot="tip">{{ $t('commons.upload_tip', ['5GB']) }}</div>
       <div class="el-upload__tip content" slot="tip">
-        <div>{{ 'Tar archive format (*.tar.gz)' }}</div>
+        <div>{{ 'License archive format (License.key)' }}</div>
       </div>
     </el-upload>
 
@@ -21,8 +21,8 @@ export default {
     return {
       loading:false,
       result: {},
-      // 文件类型, 例如
-      fileType: ['tar.gz'],
+      // 文件类型, 例如 License.key
+      fileType: ['key'],
       // 大小限制(MB)
       fileSize: 5000,
       fileList: [],

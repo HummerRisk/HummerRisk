@@ -125,4 +125,6 @@ export const deleteApiKeysUrl = "/system/user/key/deleteApiKeys";
 
 export const updateLicenseUrl = "/system/system/updateLicense";
 
+export const getLicenseUrl = "/system/license/getLicense";
+
 

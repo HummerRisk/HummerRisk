@@ -70,7 +70,7 @@
 import {saveLocalStorage} from '@/common/js/utils';
 import {DEFAULT_LANGUAGE} from "@/common/js/constants";
 import {isLoginUrl, languageUrl, signinUrl} from "@/api/auth/auth";
-import {setToken} from '@/common/js/auth';
+import {setLicense, setToken} from '@/common/js/auth';
 
 /* eslint-disable */
   export default {
@@ -102,6 +102,7 @@ import {setToken} from '@/common/js/auth';
         if (response.data.success) {
           let user = response.data.data;
           setToken(response.data.token);
+          setLicense(response.data.license);
           let responseUser = {
             data : response.data.data
           };
@@ -156,6 +157,7 @@ import {setToken} from '@/common/js/auth';
             saveLocalStorage(responseUser);
             sessionStorage.setItem('loginSuccess', 'true');
             setToken(response.data.token);
+            setLicense(response.data.license);
             this.getLanguage(response.data.language, response.data.token);
           }
         });

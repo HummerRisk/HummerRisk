@@ -12,7 +12,7 @@
             <span>{{ $t('system.authorized_to') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ $t('HummerCloud') }}</span>
+            <span>{{ license?license.company:$t('system.no_license') }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -20,7 +20,7 @@
             <span>{{ $t('system.expiration') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ $t('2035-12-30') }}</span>
+            <span>{{ license?license.expiration:'--' }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -28,7 +28,7 @@
             <span>{{ $t('system.version') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ $t('企业版') }}</span>
+            <span>{{ expirationTime?$t('system.enterprise'):$t('system.community') }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -36,7 +36,7 @@
             <span>{{ $t('system.version_number') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ $t('v1.1.0') }}</span>
+            <span>{{ license?license.expiration:'v1.0.1' }}</span>
           </el-col>
         </el-row>
       </div>
@@ -85,6 +85,7 @@
 import Upload from "@/business/components/settings/head/Upload";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {updateLicenseUrl} from "@/api/system/system";
+import {getLicense} from '@/common/js/auth';
 
 /* eslint-disable */
   export default {
@@ -101,6 +102,8 @@ import {updateLicenseUrl} from "@/api/system/system";
         direction: 'rtl',
         form: {},
         objectFile: Object,
+        license: null,
+        expirationTime: false,
         githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://hummerrisk.com',
         items: [
@@ -121,7 +124,13 @@ import {updateLicenseUrl} from "@/api/system/system";
         this.search();
       },
       search() {
-
+        let licenseKey = getLicense();
+        if (licenseKey && licenseKey != 'null') {
+          this.license = licenseKey;
+          let date =new Date();
+          let now = Date.parse(date);
+          if(licenseKey.expiration > now) this.expirationTime = true;
+        }
       },
       handleClose() {
         this.dialogVisible = false;

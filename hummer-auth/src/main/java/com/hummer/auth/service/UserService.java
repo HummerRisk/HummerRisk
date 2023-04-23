@@ -1,9 +1,6 @@
 package com.hummer.auth.service;
 
-import com.hummer.auth.mapper.OperationLogMapper;
-import com.hummer.auth.mapper.RoleMapper;
-import com.hummer.auth.mapper.UserMapper;
-import com.hummer.auth.mapper.UserRoleMapper;
+import com.hummer.auth.mapper.*;
 import com.hummer.auth.mapper.ext.ExtUserMapper;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.UserDTO;
@@ -39,6 +36,8 @@ public class UserService {
     private RoleMapper roleMapper;
     @Autowired
     private UserRoleMapper userRoleMapper;
+    @Autowired
+    private HummerLicenseMapper licenseMapper;
 
     public User getUserById(String id) throws Exception {
         User user = userMapper.selectByPrimaryKey(id);
@@ -61,7 +60,19 @@ public class UserService {
         userDTO.setRoles(Optional.ofNullable(userRole.getRoles()).orElse(new ArrayList<>()));
 
         loginUser.setUser(userDTO);
+
+        HummerLicense license = getLicense();
+        if(license != null) loginUser.setLicense(license);
+
         return loginUser;
+    }
+
+    public HummerLicense getLicense() {
+        List<HummerLicense> list = licenseMapper.selectByExample(null);
+        if (list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
     }
 
     public UserRoleDTO getUserRole(String userId) {
