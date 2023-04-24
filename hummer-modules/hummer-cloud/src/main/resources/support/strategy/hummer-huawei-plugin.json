@@ -5,7 +5,9 @@
       "Action": [
         "obs:*:get*",
         "obs:*:list*",
-        "obs:*:head*"
+        "obs:*:head*",
+        "obs:object:PutObject",
+        "obs:bucket:CreateBucket"
       ],
       "Effect": "Allow"
     },
