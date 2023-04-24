@@ -273,7 +273,6 @@ export default {
   box-shadow: 0 0 0 0 #0a7be0;
 }
 .de-msg-a:hover {
-    text-decoration: underline !important;
     color: #0a7be0 !important;
     cursor: pointer !important;
 }

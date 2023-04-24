@@ -126,19 +126,8 @@
 
       <!--Create group-->
       <el-drawer class="rtl" :title="$t('rule.create_group')" :visible.sync="createVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
-          <el-form-item :label="$t('rule.group_type')" :rules="{required: true, message: $t('rule.group_type'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createForm.type" :placeholder="$t('rule.group_type')">
-              <el-option
-                v-for="item in groupTypes"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="createForm.name" autocomplete="off" :placeholder="$t('rule.rule_set')"/>
           </el-form-item>
@@ -157,11 +146,8 @@
 
       <!--Update group-->
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.group_type')" prop="type">
-            <el-input v-model="infoForm.type" :disabled="true" autocomplete="off" :placeholder="$t('rule.group_type')"/>
-          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
@@ -180,11 +166,8 @@
 
       <!--Info group-->
       <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.group_type')" prop="type">
-            {{ infoForm.type }}
-          </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" prop="name">
             {{ infoForm.name }}
           </el-form-item>
@@ -203,7 +186,7 @@
 
       <!--rule list-->
       <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <table-header :condition.sync="ruleCondition" @search="handleListSearch"
                       :title="$t('rule.rule_list')"
                       :items="items2" :columnNames="columnNames2"
@@ -248,7 +231,7 @@
 
       <!--rule bind-->
       <el-drawer class="rtl edit-dev-drawer" :title="$t('rule.rule_list_bind')" :visible.sync="bindVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-card class="table-card edit_dev" style="">
           <div style="text-align: center; margin: 25px;">
             <p style="text-align: center; padding: 10px;margin: 25px;color: red;background-color: aliceblue;">{{ $t('rule.rule_list_bind') }}</p>
@@ -265,7 +248,7 @@
 
       <!--Create sync-->
       <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
           <el-form-item :label="$t('server.server_setting')" :rules="{required: true, message: $t('server.server_setting') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('server.server_setting')">
@@ -402,6 +385,7 @@ const columnOptions2 = [
     data() {
       return {
         result: {},
+        viewResult: {},
         condition: {
           components: SERVER_RULE_GROUP_CONFIGS
         },
@@ -532,11 +516,6 @@ const columnOptions2 = [
         ],
         checkAll2: true,
         isIndeterminate2: false,
-        groupTypes: [
-          {id: 'cloud', name: 'Cloud'},
-          {id: 'k8s', name: 'K8s'},
-          {id: 'server', name: 'Server'},
-        ],
       }
     },
 
@@ -588,7 +567,7 @@ const columnOptions2 = [
       handleListSearch () {
         this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
         let url = serverRuleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
-        this.result = this.$post(url, this.ruleCondition, response => {
+        this.viewResult = this.$post(url, this.ruleCondition, response => {
           let data = response.data;
           this.ruleListTotal = data.itemCount;
           this.ruleForm = data.listObject;
@@ -670,7 +649,7 @@ const columnOptions2 = [
               params.pluginName = "主机检测";
               params.pluginIcon = "server.png";
               let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
-              this.result = this.$post(url, params, response => {
+              this.viewResult = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;
                 this.updateVisible =  false;
@@ -713,7 +692,7 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        this.$get(serverUnBindListUrl + item.id,response => {
+        this.viewResult = this.$get(serverUnBindListUrl + item.id,response => {
           this.cloudData = [];
           for(let data of response.data) {
             this.cloudData.push({
@@ -723,7 +702,7 @@ const columnOptions2 = [
           }
           this.bindVisible = true;
         });
-        this.$get(serverAllBindListUrl + item.id,response => {
+        this.viewResult = this.$get(serverAllBindListUrl + item.id,response => {
           this.cloudValue = [];
           for(let data of response.data) {
             this.cloudValue.push(data.id);
@@ -735,7 +714,7 @@ const columnOptions2 = [
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post(serverBindRuleUrl, params,response => {
+        this.viewResult = this.$post(serverBindRuleUrl, params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -745,7 +724,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        this.result = this.$get(allServerListUrl, response => {
+        this.viewResult = this.$get(allServerListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
             this.groupId = item.id;
@@ -759,7 +738,7 @@ const columnOptions2 = [
           return;
         }
         let url = serverScanByGroupUrl + this.groupId + "/" + this.scanForm.id;
-        this.result = this.$get(url, response => {
+        this.viewResult = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
           this.$router.push({

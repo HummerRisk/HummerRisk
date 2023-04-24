@@ -367,7 +367,7 @@ const columnOptions = [
       select(selection) {
         this.selectIds.clear()
         selection.forEach(s => {
-          this.selectIds.add(s.id)
+          this.selectIds.add(s.tagKey)
         })
       },
       //查询列表

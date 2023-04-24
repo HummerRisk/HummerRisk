@@ -25,4 +25,4 @@ export const cloudEventTopInfoUrl = "/cloud/cloud/event/topInfo";
 
 export const cloudEventSyncLogListUrl = "/cloud/cloud/event/sync/log/list/";
 
-export const cloudEventDeleteLogsUrl = "/cloud/cloud/event/sync/log/deleteLogs";
+export const cloudEventDeleteLogsUrl = "/cloud/cloud/event/deleteLogs";

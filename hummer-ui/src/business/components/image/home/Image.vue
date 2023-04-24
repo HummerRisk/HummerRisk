@@ -404,7 +404,7 @@ import {IMAGE_CONFIGS} from "@/business/components/common/components/search/sear
 import {
   addImageUrl,
   allImageReposUrl,
-  changeImageUrl, deleteImageReposUrl,
+  changeImageUrl, deleteImageReposUrl, deleteImagesUrl,
   deleteImageUrl,
   getImageResultUrl,
   getImageResultWithBLOBsUrl,

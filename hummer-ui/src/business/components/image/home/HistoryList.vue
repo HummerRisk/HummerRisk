@@ -241,7 +241,7 @@ import LogForm from "@/business/components/image/home/LogForm";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {IMAGE_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import CodeDiff from 'vue-code-diff';
-import {imageHistoryUrl, imageDeleteHistoryResultUrl} from "@/api/system/history";
+import {imageHistoryUrl, imageDeleteHistoryResultUrl, deleteImageHistoryResultsUrl} from "@/api/system/history";
 import {
   getImageResultWithBLOBsUrl,
   historyResultItemListUrl,

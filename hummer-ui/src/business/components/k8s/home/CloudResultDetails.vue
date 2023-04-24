@@ -220,36 +220,8 @@
 
         <!-- result second -->
         <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
-          <!--regions-->
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
-              <div slot="header" class="clearfix">
-                <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('k8s.namespace') }}</span>
-                <table-search-right :condition.sync="regionCondition" @change="regionFilter" style="float: right;width: 70%" class="search-bar"/>
-              </div>
-              <div style="height: 130px;">
-                <el-table :data="regionData" :show-header="false"
-                          :row-style="{height:'20px', cursor:'pointer'}"
-                          :cell-style="{padding:'0px'}"
-                          height="130" @row-click="handleRegionRow"
-                          :highlight-current-row="highRegionRow"
-                          style="font-size: 12px">
-                  <el-table-column prop="name" min-width="80%" align="left" v-slot:default="scope">
-                    <span style="color: #215d9a">{{ scope.row.name }}</span>
-                  </el-table-column>
-                  <el-table-column prop="sum" min-width="20%" align="right" v-slot:default="scope">
-                    <el-button size="mini" type="success" class="round" round>
-                      {{ scope.row.sum }}
-                    </el-button>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </el-card>
-          </el-col>
-          <!--regions-->
-
           <!--rule-->
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
+          <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
@@ -277,7 +249,7 @@
           <!--rule-->
 
           <!--resource type-->
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
+          <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
@@ -305,7 +277,7 @@
           <!--resource type-->
 
           <!--severity-->
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
+          <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
