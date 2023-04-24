@@ -19,7 +19,7 @@
 
 ## HummerRisk 是什么
 
-> HummerRisk 是开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和K8S容器云安全检测。
+> HummerRisk 是开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和容器云安全检测。
 
 HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and K8S container cloud detection.
 
@@ -46,7 +46,7 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 * 开箱即用: 内置大量规则，并且不断迭代新增。用户可以按需自定义规则。
 
 
-### **K8S 容器云安全**
+### **容器云安全**
 
 * K8S 资源态势: 可以关联多个 K8S 集群，统一查看各个关联环境的资源态势；
 * 主机检测: 可以自定义检测内容，发现底层主机、虚机中存在问题；
@@ -57,7 +57,7 @@ HummerRisk is an opensource cloud-native security platform. It resolve the  clou
 * 文件检测: 检测源码项目中特定的语言文件或文件夹，发现应用程序依赖的漏洞风险；
 * SBOM 管理: SBOM 的可视化管理和分析，检测 SBOM 的变更，快速发现和定位软件供应链中的风险和漏洞，给出合理地处理建议。
 
-  ![K8S容器云安全](./hummer-ui/src/assets/img/readme/k8s.png)
+  ![容器云安全](./hummer-ui/src/assets/img/readme/k8s.png)
 
 
 >**优势是什么？**
