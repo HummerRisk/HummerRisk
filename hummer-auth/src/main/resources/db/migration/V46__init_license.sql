@@ -95,6 +95,18 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('6adf1612-6017-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0f2dae7b-da23-4c17-a77d-b2d677b25174', @groupId1);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8d00a470-0a18-4eb3-908e-63e0352edec1', @groupId1);
 
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('c3959d6f-d6c1-49d9-9f16-bd7f8e359667', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('cf01ca4c-c87a-4db6-b90a-830f6d1018ea', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('2d08f729-f869-4b69-8772-41a8d58b5c34', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('fe65831e-24b1-4c5b-a08b-e0bae0d3847b', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('c5544cfe-074a-4947-a075-d607dc705837', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('988037d4-8de9-4664-8775-4fa9a4a5afca', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('50f5f3b4-8cc1-44fa-8e59-c84b1c4250fe', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('6adf1612-6017-4a9f-a224-e04fbb78a131', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0f2dae7b-da23-4c17-a77d-b2d677b25174', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8d00a470-0a18-4eb3-908e-63e0352edec1', '115');
+
+
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('KubeSphere 内存限制检测', '检测 KubeSphere 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-kubesphere-plugin', 1, 'kubesphere');
 
 SELECT @groupId := LAST_INSERT_ID();
@@ -148,3 +160,13 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('6atr1612-6017-
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0f4rae7b-da23-4c17-a77d-b2d677b25174', @groupId1);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8d78a470-0a18-4eb3-908e-63e0352edec1', @groupId1);
 
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('c1659d6f-d6c1-49d9-9f16-bd7f8e359667', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('cf13ca4c-c87a-4db6-b90a-830f6d1018ea', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1d18f729-f869-4b69-8772-41a8d58b5c34', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('fe56831e-24b1-4c5b-a08b-e0bae0d3847b', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('c2244cfe-074a-4947-a075-d607dc705837', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('986637d4-8de9-4664-8775-4fa9a4a5afca', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('59t5f3b4-8cc1-44fa-8e59-c84b1c4250fe', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('6atr1612-6017-4a9f-a224-e04fbb78a131', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0f4rae7b-da23-4c17-a77d-b2d677b25174', '105');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8d78a470-0a18-4eb3-908e-63e0352edec1', '115');
