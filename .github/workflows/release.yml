@@ -23,7 +23,7 @@ jobs:
           cd installer
           rm -rf hudson.* .travis.yml .git .github
           chmod +x hummerrisk/hrctl
-          sed -i "s@Version=.*@Version=${version}@g" quick_start.sh
+          sed -i "s@VERSION=.*@VERSION=${version}@g" quick_start.sh
           cd ..
           version=`echo ${RELEASE_VERSION##*/}`
           filename=hummerrisk-installer-$version
