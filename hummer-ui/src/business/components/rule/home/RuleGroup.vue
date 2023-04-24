@@ -129,7 +129,7 @@
                  :destroy-on-close="true">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
           <el-form-item :label="$t('rule.group_type')" :rules="{required: true, message: $t('rule.group_type'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createForm.type" :placeholder="$t('rule.group_type')">
+            <el-select style="width: 100%;" v-model="createForm.type" :placeholder="$t('rule.group_type')" @change="changePlugin(createForm)">
               <el-option
                 v-for="item in groupTypes"
                 :key="item.id"
@@ -148,7 +148,19 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             <el-input v-model="createForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item v-if="createForm.type === 'k8s'" :label="$t('k8s.platform')" prop="pluginId" :rules="{required: true, message: $t('k8s.platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')">
+              <el-option
+                  v-for="item in plugins"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="createForm.type === 'cloud'" :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
               <el-option
                 v-for="item in plugins"
@@ -218,7 +230,7 @@
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
             {{ infoForm.level }}
           </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')">
+          <el-form-item :label="$t('account.cloud_platform')" prop="pluginName">
          &nbsp;&nbsp; {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
@@ -347,8 +359,8 @@ import {
   ruleUnBindListUrl,
   scanByGroupUrl
 } from "@/api/cloud/rule/rule";
-import {cloudListByGroupUrl} from "@/api/cloud/account/account";
-import {cloudPluginUrl} from "@/api/system/system";
+import {cloudListByGroupUrl, iamStrategyUrl} from "@/api/cloud/account/account";
+import {cloudPluginUrl, nativePluginUrl, pluginByIdUrl} from "@/api/system/system";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -793,9 +805,15 @@ const columnOptions2 = [
         this.result = this.$get(url, response => {
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
-          this.$router.push({
-            path: '/account/result',
-          }).catch(error => error);
+          if (this.scanForm.type === 'cloud') {
+            this.$router.push({
+              path: '/account/result',
+            }).catch(error => error);
+          } else if (this.scanForm.type === 'k8s') {
+            this.$router.push({
+              path: '/k8s/k8s',
+            }).catch(error => error);
+          }
         });
       },
       deleteBatch() {
@@ -821,6 +839,20 @@ const columnOptions2 = [
             }
           }
         });
+      },
+      getK8sPlugins () {
+        this.result = this.$get(nativePluginUrl, response => {
+          this.plugins = response.data;
+        });
+      },
+      changePlugin (form){
+        if(form.type === 'cloud') {
+          this.getPlugins();
+        } else if (form.type === 'k8s') {
+          this.getK8sPlugins();
+        } else {
+          form.pluginId = 'hummer-server-plugin';
+        }
       },
     },
     created() {
