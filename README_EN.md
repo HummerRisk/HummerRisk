@@ -19,7 +19,7 @@
 
 ## Introduction
 
-> HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and container cloud detection.
+> HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and cloud native security detection.
 
 
 ![架构](./hummer-ui/src/assets/img/readme/architecturev-en.png)
@@ -52,7 +52,7 @@ Only need to add account of csp, you can perform the detection with one click;
 Large number of built-in rules, and continuously extend. Users can customize the rules as needed.
 
 
-### **K8s Security**
+### **Cloud Native Security**
 
 * K8s resource situation:  
    You can associate multiple K8S clusters,then view the resource situation in a unified panel;
