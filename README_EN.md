@@ -32,8 +32,6 @@
    Continuously monitor compliance for multiple clouds with many compliance frameworks, such as Guarantee 2.0, CIS ,HPPA, and some best practice, we also support customizable rules;
 * Cloud resource visualization:  
   Synchronize resources on the cloud, and quickly view various resource situations and cloud resource topology diagrams of the hybrid cloud;
-* Vulnerability detection:   
-  Detect vulnerability base on the vulnerability Database, the security vulnerability of network devices and application services is detected by scanning
 * Compliance report:  
   One-click to get the compliance reports with fully vision of the security situation;
 * Operation audit:  
