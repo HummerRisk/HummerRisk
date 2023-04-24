@@ -335,6 +335,16 @@ public class PlatformUtils {
                 String token = params.get("token");
                 pre = "K8S_HOST=" + url + " K8S_TOKEN=" + token + " ";
                 break;
+            case rancher:
+                String url2 = params.get("url");
+                String token2 = params.get("token");
+                pre = "RANCHER_HOST=" + url2 + " RANCHER_TOKEN=" + token2 + " ";
+                break;
+            case kubesphere:
+                String url3 = params.get("url");
+                String token3 = params.get("token");
+                pre = "KUBESPHERE_HOST=" + url3 + " KUBESPHERE_TOKEN=" + token3 + " ";
+                break;
             case huoshan:
                 String AccessKeyId = params.get("AccessKeyId");
                 String SecretAccessKey = params.get("SecretAccessKey");
@@ -537,6 +547,18 @@ public class PlatformUtils {
                 K8sCredential k8sCredential = new Gson().fromJson(account.getCredential(), K8sCredential.class);
                 map.put("url", k8sCredential.getUrl());
                 map.put("token", k8sCredential.getToken());
+                map.put("region", region);
+            case rancher:
+                map.put("type", rancher);
+                K8sCredential k8sCredential2 = new Gson().fromJson(account.getCredential(), K8sCredential.class);
+                map.put("url", k8sCredential2.getUrl());
+                map.put("token", k8sCredential2.getToken());
+                map.put("region", region);
+            case kubesphere:
+                map.put("type", kubesphere);
+                K8sCredential k8sCredential3 = new Gson().fromJson(account.getCredential(), K8sCredential.class);
+                map.put("url", k8sCredential3.getUrl());
+                map.put("token", k8sCredential3.getToken());
                 map.put("region", region);
                 break;
             default:
@@ -864,7 +886,7 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
                     }
                     break;
-                case k8s:
+                case k8s,rancher,kubesphere:
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("regionId","all-namespaces");
                     jsonObject.put("regionName","all-namespaces");
@@ -1085,7 +1107,7 @@ public class PlatformUtils {
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
-            case k8s:
+            case k8s,rancher,kubesphere:
                 /**创建默认 Api 客户端**/
                 // 定义连接集群的 Token
                 try {
@@ -1212,6 +1234,12 @@ public class PlatformUtils {
                 strCn = RegionsConstants.KsyunMap.get(strEn);
                 break;
             case k8s:
+                strCn = strEn;
+                break;
+            case rancher:
+                strCn = strEn;
+                break;
+            case kubesphere:
                 strCn = strEn;
                 break;
             default:
@@ -1362,6 +1390,10 @@ public class PlatformUtils {
                 break;
             case k8s:
                 break;
+            case rancher:
+                break;
+            case kubesphere:
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + pluginId);
         }
@@ -1399,6 +1431,10 @@ public class PlatformUtils {
                 return CloudTaskConstants.UCLOUD_RESOURCE_TYPE;
             case k8s:
                 return null;
+            case rancher:
+                return null;
+            case kubesphere:
+                return null;
             case jdcloud:
                 return CloudTaskConstants.JDCLOUD_RESOURCE_TYPE;
             case ksyun:
@@ -1426,7 +1462,6 @@ public class PlatformUtils {
     /**
      * 获取K8s相关参数
      *
-     * @param account
      * @param region
      * @return
      */
