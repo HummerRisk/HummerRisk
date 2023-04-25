@@ -185,9 +185,19 @@ public class K8sService {
             Map<String, String> param = new HashMap<>();
             param.put("Accept", CloudNativeConstants.Accept);
             param.put("Authorization", token);
-            boolean valid = HttpClientUtil.operatorStatus(url, param);
-            validateDTO.setFlag(valid);
-            validateDTO.setMessage("Verification : " + valid);
+            int i = 0;
+            while( i < 5 ) {
+                boolean valid = HttpClientUtil.operatorStatus(url, param);
+                if (valid) {
+                    validateDTO.setFlag(valid);
+                    validateDTO.setMessage("Verification : " + valid);
+                    return validateDTO;
+                }
+                i++;
+                Thread.currentThread().sleep(5000);
+            }
+            validateDTO.setFlag(false);
+            validateDTO.setMessage("Verification : " + false);
             return validateDTO;
         } catch (Exception e) {
             validateDTO.setFlag(false);
@@ -219,12 +229,19 @@ public class K8sService {
                 Map<String, String> param = new HashMap<>();
                 param.put("Accept", CloudNativeConstants.Accept);
                 param.put("Authorization", token);
-                boolean valid = HttpClientUtil.kubenchStatus(url, param);
-                if (valid) {
-                    validateDTO.setFlag(valid);
-                    validateDTO.setMessage("Verification : " + valid);
-                    return validateDTO;
+
+                int i = 0;
+                while( i < 5 ) {
+                    boolean valid = HttpClientUtil.kubenchStatus(url, param);
+                    if (valid) {
+                        validateDTO.setFlag(valid);
+                        validateDTO.setMessage("Verification : " + valid);
+                        return validateDTO;
+                    }
+                    i++;
+                    Thread.currentThread().sleep(5000);
                 }
+
             }
 
             validateDTO.setFlag(false);
