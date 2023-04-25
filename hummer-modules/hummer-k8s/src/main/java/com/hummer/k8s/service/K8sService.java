@@ -328,7 +328,6 @@ public class K8sService {
 
                 AccountWithBLOBs accountWithBLOBs = new AccountWithBLOBs();
                 BeanUtils.copyBean(accountWithBLOBs, account);
-                cloudProviderService.insertCloudAccount(accountWithBLOBs);
 
                 reinstallOperator(account.getId(), loginUser);
                 reinstallKubench(account.getId(), loginUser);
@@ -398,7 +397,6 @@ public class K8sService {
 
                 AccountWithBLOBs accountWithBLOBs = new AccountWithBLOBs();
                 BeanUtils.copyBean(accountWithBLOBs, account);
-                cloudProviderService.updateCloudAccount(accountWithBLOBs);
 
                 account = cloudNativeMapper.selectByPrimaryKey(account.getId());
                 //检验账号已更新状态
@@ -417,7 +415,6 @@ public class K8sService {
     public void delete(String accountId, LoginUser loginUser) throws Exception {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(accountId);
         cloudNativeMapper.deleteByPrimaryKey(accountId);
-        cloudProviderService.deleteCloudAccount(accountId);
         deleteResultByCloudNativeId(accountId, loginUser);
         operationLogService.log(loginUser, accountId, cloudNative.getName(), ResourceTypeConstants.CLOUD_NATIVE.name(), ResourceOperation.DELETE, "i18n_delete_cloud_native");
     }
