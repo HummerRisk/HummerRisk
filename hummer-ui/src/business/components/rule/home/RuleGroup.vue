@@ -18,7 +18,7 @@
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
-                    <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                    <el-image v-if="data.pluginIcon" style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
                       <div slot="error" class="image-slot">
                         <i class="el-icon-picture-outline"></i>
                       </div>
@@ -62,13 +62,11 @@
                       <i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
                     </el-dropdown-menu>
                     <el-dropdown-menu slot="dropdown" v-if="!data.flag">
-                      <el-dropdown-item command="handleScan">{{ $t('account.scan') }}</el-dropdown-item>
                       <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
                       <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
                       <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
@@ -97,7 +95,7 @@
           <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="180" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                <img v-if="scope.row.pluginIcon" :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
             </template>
@@ -113,7 +111,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="level" v-if="checkedColumnNames.includes('level')" :label="$t('resource.equal_guarantee_level')" min-width="140" show-overflow-tooltip></el-table-column>
-          <el-table-column min-width="210" :label="$t('commons.operating')" fixed="right">
+          <el-table-column min-width="170" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
               <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
@@ -126,7 +124,7 @@
 
       <!--Create group-->
       <el-drawer class="rtl" :title="$t('rule.create_group')" :visible.sync="createVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
           <el-form-item :label="$t('rule.group_type')" :rules="{required: true, message: $t('rule.group_type'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="createForm.type" :placeholder="$t('rule.group_type')" @change="changePlugin(createForm)">
@@ -180,8 +178,8 @@
       <!--Create group-->
 
       <!--Update group-->
-      <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+      <el-drawer v-if="infoForm.type === 'cloud'" class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
           <el-form-item :label="$t('rule.group_type')" prop="type">
             <el-input v-model="infoForm.type" :disabled="true" autocomplete="off" :placeholder="$t('rule.group_type')"/>
@@ -212,11 +210,57 @@
           @cancel="updateVisible = false"
           @confirm="save(infoForm, 'infoForm')"/>
       </el-drawer>
+      <el-drawer v-if="infoForm.type === 'k8s'" class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.rule_set')" prop="name">
+            <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+          </el-form-item>
+          <el-form-item :label="$t('commons.description')" prop="description">
+            <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+          </el-form-item>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
+            <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
+          </el-form-item>
+          <el-form-item :label="$t('k8s.platform')" prop="pluginId" :rules="{required: true, message: $t('k8s.platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="infoForm.pluginId" :disabled="infoForm.flag" :placeholder="$t('k8s.please_choose_plugin')">
+              <el-option
+                  v-for="item in plugins"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <dialog-footer
+            @cancel="updateVisible = false"
+            @confirm="save(infoForm, 'infoForm')"/>
+      </el-drawer>
+      <el-drawer v-if="infoForm.type === 'server'" class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true" v-loading="viewResult.loading">
+        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.rule_set')" prop="name">
+            <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+          </el-form-item>
+          <el-form-item :label="$t('commons.description')" prop="description">
+            <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
+          </el-form-item>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
+            <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
+          </el-form-item>
+        </el-form>
+        <dialog-footer
+            @cancel="updateVisible = false"
+            @confirm="save(infoForm, 'infoForm')"/>
+      </el-drawer>
       <!--Update group-->
 
       <!--Info group-->
-      <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+      <el-drawer v-if="infoForm.type === 'cloud'" class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
           <el-form-item :label="$t('rule.group_type')" prop="type">
             {{ infoForm.type }}
@@ -231,15 +275,49 @@
             {{ infoForm.level }}
           </el-form-item>
           <el-form-item :label="$t('account.cloud_platform')" prop="pluginName">
-         &nbsp;&nbsp; {{ infoForm.pluginName }}
+           {{ infoForm.pluginName }}
+          </el-form-item>
+        </el-form>
+      </el-drawer>
+      <el-drawer v-if="infoForm.type === 'k8s'" class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.rule_set')" prop="name">
+            {{ infoForm.name }}
+          </el-form-item>
+          <el-form-item :label="$t('commons.description')" prop="description">
+            {{ infoForm.description }}
+          </el-form-item>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
+            {{ infoForm.level }}
+          </el-form-item>
+          <el-form-item :label="$t('k8s.platform')">
+            {{ infoForm.pluginName }}
+          </el-form-item>
+        </el-form>
+      </el-drawer>
+      <el-drawer v-if="infoForm.type === 'server'" class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true" v-loading="viewResult.loading">
+        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
+          <el-form-item :label="$t('rule.rule_set')" prop="name">
+            {{ infoForm.name }}
+          </el-form-item>
+          <el-form-item :label="$t('commons.description')" prop="description">
+            {{ infoForm.description }}
+          </el-form-item>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
+            {{ infoForm.level }}
+          </el-form-item>
+          <el-form-item :label="$t('dashboard.scan_types')">
+            {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
       </el-drawer>
       <!--Info group-->
 
       <!--rule list-->
-      <el-drawer class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+      <el-drawer v-if="infoForm.type === 'cloud'" class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <table-header :condition.sync="ruleCondition" @search="handleListSearch"
                       :title="$t('rule.rule_list')"
                       :items="items2" :columnNames="columnNames2"
@@ -286,6 +364,96 @@
         </hide-table>
         <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
       </el-drawer>
+      <el-drawer v-if="infoForm.type === 'k8s'" class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true">
+        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
+                      :title="$t('rule.rule_list')"
+                      :items="items2" :columnNames="columnNames2"
+                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+        <hide-table
+            :table-data="ruleForm"
+            @sort-change="sort"
+            @filter-change="filter"
+            @select-all="select"
+            @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span>
+                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                 &nbsp;&nbsp; {{ scope.row.pluginName }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
+            <template v-slot:default="{row}">
+              <severity-type :row="row"></severity-type>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
+          <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
+            <template v-slot:default="scope">
+              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+        </hide-table>
+        <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
+      </el-drawer>
+      <el-drawer v-if="infoForm.type === 'server'" class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
+                 :destroy-on-close="true" v-loading="viewResult.loading">
+        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
+                      :title="$t('rule.rule_list')"
+                      :items="items2" :columnNames="columnNames2"
+                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+        <hide-table
+            :table-data="ruleForm"
+            @sort-change="sort"
+            @filter-change="filter"
+            @select-all="select"
+            @select="select"
+        >
+          <el-table-column type="index" min-width="40"/>
+          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('package.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column min-width="70" v-if="checkedColumnNames2.includes('severity')" :label="$t('package.severity')" column-key="severity">
+            <template v-slot:default="{row}">
+              <rule-type :row="row"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" v-if="checkedColumnNames2.includes('description')" :label="$t('package.description')" min-width="250" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="type" v-if="checkedColumnNames2.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-if="scope.row.type === 'linux'">Linux</span>
+              <span v-if="scope.row.type === 'windows'">Windows</span>
+              <span v-if="!scope.row.type">N/A</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('package.status')" v-if="checkedColumnNames2.includes('status')" min-width="70" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastModified" v-if="checkedColumnNames2.includes('lastModified')" min-width="160" :label="$t('package.last_modified')" sortable>
+            <template v-slot:default="scope">
+              <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+        </hide-table>
+        <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
+      </el-drawer>
       <!--rule list-->
 
       <!--rule bind-->
@@ -304,31 +472,6 @@
           @confirm="bind()"/>
       </el-drawer>
       <!--rule bind-->
-
-      <!--Create sync-->
-      <el-drawer class="rtl" :title="$t('account.scan_group_quick')" :visible.sync="scanVisible" size="60%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
-        <el-form :model="scanForm" label-position="right" label-width="150px" size="small" ref="form">
-          <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="scanForm.id" :placeholder="$t('account.please_choose_account')">
-              <el-option
-                v-for="item in accounts"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <div style="margin: 10px;">
-          <dialog-footer
-            @cancel="scanVisible = false"
-            @confirm="saveScan"/>
-        </div>
-      </el-drawer>
-      <!--Create sync-->
 
     </main-container>
 </template>
@@ -349,7 +492,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   bindRuleUrl,
-  deleteGroupsUrl,
+  deleteGroupsUrl, k8sRuleListUrl,
   ruleAllBindListUrl,
   ruleGroupDeleteUrl,
   ruleGroupListUrl,
@@ -361,6 +504,7 @@ import {
 } from "@/api/cloud/rule/rule";
 import {cloudListByGroupUrl, iamStrategyUrl} from "@/api/cloud/account/account";
 import {cloudPluginUrl, nativePluginUrl, pluginByIdUrl} from "@/api/system/system";
+import {serverAllBindListUrl, serverRuleListUrl, serverUnBindListUrl} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -442,6 +586,7 @@ const columnOptions2 = [
     data() {
       return {
         result: {},
+        viewResult: {},
         condition: {
           components: RULE_GROUP_CONFIGS
         },
@@ -490,10 +635,6 @@ const columnOptions2 = [
         },
         buttonsN: [
           {
-            tip: this.$t('account.scan'), icon: "el-icon-s-promotion", type: "danger",
-            exec: this.handleScan
-          },
-          {
             tip: this.$t('commons.detail'), icon: "el-icon-edit-outline", type: "primary",
             exec: this.handleInfo
           },
@@ -507,10 +648,6 @@ const columnOptions2 = [
           },
         ],
         buttons: [
-          {
-            tip: this.$t('account.scan'), icon: "el-icon-s-promotion", type: "danger",
-            exec: this.handleScan
-          },
           {
             tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
             exec: this.handleEdit
@@ -536,9 +673,6 @@ const columnOptions2 = [
         cloudValue: [],
         cloudData: [],
         groupId: '',
-        scanVisible: false,
-        scanForm: {},
-        accounts: [],
         checkedColumnNames: columnOptions.map((ele) => ele.props),
         columnNames: columnOptions,
         //名称搜索
@@ -623,17 +757,36 @@ const columnOptions2 = [
         this.ruleListTotal = 0;
         this.ruleForm = [];
         this.itemId = item.id;
-        this.handleListSearch();
+        this.infoForm = item;
+        this.handleListSearch(item);
         this.listVisible = true;
       },
-      handleListSearch () {
-        this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-        let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
-        this.result = this.$post(url, this.ruleCondition, response => {
-          let data = response.data;
-          this.ruleListTotal = data.itemCount;
-          this.ruleForm = data.listObject;
-        });
+      handleListSearch (item) {
+        if(item.type === 'server') {
+          this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
+          let url = serverRuleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
+          this.viewResult = this.$post(url, this.ruleCondition, response => {
+            let data = response.data;
+            this.ruleListTotal = data.itemCount;
+            this.ruleForm = data.listObject;
+          });
+        } else if(item.type === 'k8s'){
+          this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
+          let url = k8sRuleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
+          this.result = this.$post(url, this.ruleCondition, response => {
+            let data = response.data;
+            this.ruleListTotal = data.itemCount;
+            this.ruleForm = data.listObject;
+          });
+        } else {
+          this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
+          let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
+          this.viewResult = this.$post(url, this.ruleCondition, response => {
+            let data = response.data;
+            this.ruleListTotal = data.itemCount;
+            this.ruleForm = data.listObject;
+          });
+        }
       },
       handleInfo(item) {
         this.infoForm = item;
@@ -645,7 +798,6 @@ const columnOptions2 = [
         this.infoVisible = false;
         this.listVisible = false;
         this.bindVisible = false;
-        this.scanVisible = false;
         this.search();
       },
       handleDelete(item) {
@@ -672,7 +824,7 @@ const columnOptions2 = [
         })
       },
       getPlugins () {
-        this.result = this.$get(cloudPluginUrl, response => {
+        this.viewResult = this.$get(cloudPluginUrl, response => {
           this.plugins = response.data;
         });
       },
@@ -712,7 +864,7 @@ const columnOptions2 = [
               let params = item;
               params.flag = item.flag ? item.flag : false;
               let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
-              this.result = this.$post(url, params, response => {
+              this.viewResult = this.$post(url, params, response => {
                 this.search();
                 this.createVisible =  false;
                 this.updateVisible =  false;
@@ -731,9 +883,6 @@ const columnOptions2 = [
       },
       handleCommand(command, data) {
         switch (command) {
-          case "handleScan":
-            this.handleScan(data);
-            break;
           case "handleInfo":
             this.handleInfo(data);
             break;
@@ -755,29 +904,49 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        this.$get(ruleUnBindListUrl + item.id,response => {
-          this.cloudData = [];
-          for(let data of response.data) {
-            this.cloudData.push({
-              key: data.id,
-              label: data.name
-            });
-          }
-          this.bindVisible = true;
-        });
-        this.$get(ruleAllBindListUrl + item.id,response => {
-          this.cloudValue = [];
-          for(let data of response.data) {
-            this.cloudValue.push(data.id);
-          }
-        });
+        if(item.type === 'server') {
+          this.viewResult = this.$get(serverUnBindListUrl + item.id,response => {
+            this.cloudData = [];
+            for(let data of response.data) {
+              this.cloudData.push({
+                key: data.id,
+                label: data.name
+              });
+            }
+            this.bindVisible = true;
+          });
+          this.viewResult = this.$get(serverAllBindListUrl + item.id,response => {
+            this.cloudValue = [];
+            for(let data of response.data) {
+              this.cloudValue.push(data.id);
+            }
+          });
+        } else {
+          this.viewResult = this.$get(ruleUnBindListUrl + item.id,response => {
+            this.cloudData = [];
+            for(let data of response.data) {
+              this.cloudData.push({
+                key: data.id,
+                label: data.name
+              });
+            }
+            this.bindVisible = true;
+          });
+          this.viewResult = this.$get(ruleAllBindListUrl + item.id,response => {
+            this.cloudValue = [];
+            for(let data of response.data) {
+              this.cloudValue.push(data.id);
+            }
+          });
+        }
+
       },
       bind() {
         let params = {
           cloudValue: this.cloudValue,
           groupId: this.groupId,
         };
-        this.$post(bindRuleUrl, params,response => {
+        this.viewResult = this.$post(bindRuleUrl, params,response => {
           this.$success(this.$t('organization.integration.successful_operation'));
           this.bindVisible = false;
           this.search();
@@ -785,36 +954,6 @@ const columnOptions2 = [
       },
       filterMethod(query, item) {
         return item.label.indexOf(query) > -1;
-      },
-      handleScan(item) {
-        let url = cloudListByGroupUrl + item.pluginId;
-        this.result = this.$get(url, response => {
-          if (response.data != undefined && response.data != null) {
-            this.accounts = response.data;
-            this.groupId = item.id;
-            this.scanVisible = true;
-          }
-        });
-      },
-      saveScan() {
-        if (!this.scanForm.id){
-          this.$warning(this.$t('commons.please_select') + this.$t('dashboard.accounts'));
-          return;
-        }
-        let url = scanByGroupUrl + this.groupId + "/" + this.scanForm.id;
-        this.result = this.$get(url, response => {
-          this.scanVisible = false;
-          this.$success(this.$t('account.i18n_hr_create_success'));
-          if (this.scanForm.type === 'cloud') {
-            this.$router.push({
-              path: '/account/result',
-            }).catch(error => error);
-          } else if (this.scanForm.type === 'k8s') {
-            this.$router.push({
-              path: '/k8s/k8s',
-            }).catch(error => error);
-          }
-        });
       },
       deleteBatch() {
         if (this.selectIds.size === 0) {
@@ -841,7 +980,7 @@ const columnOptions2 = [
         });
       },
       getK8sPlugins () {
-        this.result = this.$get(nativePluginUrl, response => {
+        this.viewResult = this.$get(nativePluginUrl, response => {
           this.plugins = response.data;
         });
       },

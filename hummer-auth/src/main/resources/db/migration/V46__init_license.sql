@@ -42,11 +42,11 @@ CREATE TABLE IF NOT EXISTS `hummer_license` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Rancher 内存限制检测', '检测 Rancher 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-rancher-plugin', 1, 'rancher');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Rancher 内存限制检测', '检测 Rancher 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-rancher-plugin', 1, 'k8s');
 
 SELECT @groupId := LAST_INSERT_ID();
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Rancher 容器的文件系统检测', '检测 Rancher 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-rancher-plugin', 1, 'rancher');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Rancher 容器的文件系统检测', '检测 Rancher 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-rancher-plugin', 1, 'k8s');
 
 SELECT @groupId1 := LAST_INSERT_ID();
 
@@ -107,11 +107,11 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8d00a470-0a18-4eb3-908e-63e0352edec1', '115');
 
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('KubeSphere 内存限制检测', '检测 KubeSphere 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-kubesphere-plugin', 1, 'kubesphere');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('KubeSphere 内存限制检测', '检测 KubeSphere 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-kubesphere-plugin', 1, 'k8s');
 
 SELECT @groupId := LAST_INSERT_ID();
 
-INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('KubeSphere 容器的文件系统检测', '检测 KubeSphere 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-kubesphere-plugin', 1, 'kubesphere');
+INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('KubeSphere 容器的文件系统检测', '检测 KubeSphere 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-kubesphere-plugin', 1, 'k8s');
 
 SELECT @groupId1 := LAST_INSERT_ID();
 

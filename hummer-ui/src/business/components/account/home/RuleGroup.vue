@@ -189,7 +189,7 @@
       <!--Update group-->
 
       <!--Info group-->
-      <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
         <el-form v-loading="groupResult.loading" :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
           <el-form-item :label="$t('rule.rule_set')" prop="name">
@@ -202,7 +202,7 @@
             {{ infoForm.level }}
           </el-form-item>
           <el-form-item :label="$t('account.cloud_platform')">
-         &nbsp;&nbsp; {{ infoForm.pluginName }}
+            {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
       </el-drawer>

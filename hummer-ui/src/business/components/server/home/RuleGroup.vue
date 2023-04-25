@@ -18,7 +18,7 @@
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
-                    <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                    <el-image v-if="data.pluginIcon" style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
                       <div slot="error" class="image-slot">
                         <i class="el-icon-picture-outline"></i>
                       </div>
@@ -97,7 +97,7 @@
           <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="180" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                <img v-if="scope.row.pluginIcon" :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                  &nbsp;&nbsp; {{ scope.row.pluginName }}
               </span>
             </template>
@@ -165,7 +165,7 @@
       <!--Update group-->
 
       <!--Info group-->
-      <el-drawer class="rtl" :title="$t('rule.update_group')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
+      <el-drawer class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
           <el-form-item :label="$t('rule.rule_set')" prop="name">
@@ -178,7 +178,7 @@
             {{ infoForm.level }}
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_types')">
-         &nbsp;&nbsp; {{ infoForm.pluginName }}
+            {{ infoForm.pluginName }}
           </el-form-item>
         </el-form>
       </el-drawer>
