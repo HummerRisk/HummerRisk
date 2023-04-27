@@ -21,13 +21,21 @@
         <table-button v-if="showDelete" icon="el-icon-remove-outline" :showName="showDeleteName"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
         <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" @upload="upload"
-                          :showFilter="showFilter" :showUpload="showUpload" :showUploadName="showUploadName" :tip="tip" :items="items"/>
+                          :showFilter="showFilter" :showUpload="showUpload" :showUploadName="showUploadName" :tip="tip" :items="items" ref="conditionSearch"/>
         <slot name="button"></slot>
       </span>
       <span class="operate-button">
         <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" :showList="showList" @search="search" @pdfDown="pdfDown" @excelDown="excelDown" @more="more" @menu="menu"
                               :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
+      </span>
+    </el-row>
+    <el-row v-show="tags && Object.keys(tags).length > 0" type="flex" justify="space-between" align="middle">
+      <span>
+        {{ '筛选条件为: ' }}
+        <el-tag v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
+          {{ $t(value.label) }} : {{ value.valueArray }}
+        </el-tag>
       </span>
     </el-row>
   </div>
@@ -42,6 +50,7 @@ import TableAdvSearchBar from "@/business/components/common/components/search/Ta
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import htmlToPdf from "@/common/js/htmlToPdf";
+import Vue from "vue";
 
 /* eslint-disable */
   export default {
@@ -54,6 +63,7 @@ import htmlToPdf from "@/common/js/htmlToPdf";
     data(){
       return {
         htmlTitle: this.$t('pdf.html_title'),
+        tags: [],
       }
     },
     props: {
@@ -203,6 +213,9 @@ import htmlToPdf from "@/common/js/htmlToPdf";
     },
     methods: {
       search(value) {
+        if (this.condition.combine) {
+          this.tags = this.condition.combine;
+        }
         this.$emit('update:condition', this.condition);
         this.$emit('search', value);
       },
@@ -278,6 +291,11 @@ import htmlToPdf from "@/common/js/htmlToPdf";
       upload() {
         this.$emit('upload');
       },
+      handleClose(key) {
+        Vue.delete(this.condition.combine, key);
+        this.search(null);
+        this.$refs.conditionSearch.conditionSearch(this.condition.combine);
+      },
     },
     computed: {
       isCombine() {
@@ -307,6 +325,10 @@ import htmlToPdf from "@/common/js/htmlToPdf";
 
   .search-bar {
     width: 200px
+  }
+
+  .el-tag-con {
+    margin: 2px 5px 0 0;
   }
 
 </style>
