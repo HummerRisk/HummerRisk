@@ -130,7 +130,6 @@ public class K8sService {
         return list;
     }
 
-
     public ValidateDTO validate(String id, LoginUser loginUser) throws IOException, ApiException {
         CloudNative cloudNative = cloudNativeMapper.selectByPrimaryKey(id);
         //检验账号的有效性
@@ -186,7 +185,7 @@ public class K8sService {
             param.put("Accept", CloudNativeConstants.Accept);
             param.put("Authorization", token);
             int i = 0;
-            while( i < 5 ) {
+            while( i < 3 ) {
                 boolean valid = HttpClientUtil.operatorStatus(url, param);
                 if (valid) {
                     validateDTO.setFlag(valid);
@@ -211,37 +210,28 @@ public class K8sService {
         ValidateDTO validateDTO = new ValidateDTO();
         try {
             //检验
-            K8sRequest k8sRequest = new K8sRequest();
-            k8sRequest.setCredential(cloudNative.getCredential());
-            String token = "Bearer " + k8sRequest.getToken();
-            String url = k8sRequest.getUrl();
 
             CloudNativeSourceExample example = new CloudNativeSourceExample();
-            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
-            List<CloudNativeSource> cloudNativeSources = cloudNativeSourceMapper.selectByExample(example);
+            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("kube-bench");
+            List<CloudNativeSourceWithBLOBs> cloudNativeSources = cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
 
-            for (CloudNativeSource cloudNativeSource : cloudNativeSources) {
-                if (url.endsWith("/")) {
-                    url = url + CloudNativeConstants.URL8 + cloudNativeSource.getSourceName() + "/log";
-                } else {
-                    url = url + CloudNativeConstants.URL7 + cloudNativeSource.getSourceName() + "/log";
-                }
-                Map<String, String> param = new HashMap<>();
-                param.put("Accept", CloudNativeConstants.Accept);
-                param.put("Authorization", token);
-
-                int i = 0;
-                while( i < 5 ) {
-                    boolean valid = HttpClientUtil.kubenchStatus(url, param);
-                    if (valid) {
-                        validateDTO.setFlag(valid);
-                        validateDTO.setMessage("Verification : " + valid);
-                        return validateDTO;
+            for (CloudNativeSourceWithBLOBs cloudNativeSource : cloudNativeSources) {
+                String sourceJsonStr = cloudNativeSource.getSourceJson();
+                if(StringUtils.isNotBlank(sourceJsonStr)) {
+                    JSONObject sourceJson = JSONObject.parseObject(sourceJsonStr);
+                    if (sourceJson != null) {
+                        JSONObject statusJson = JSONObject.parseObject(sourceJson.getString("status"));
+                        String completionTime = statusJson.getString("completionTime");
+                        String succeeded = statusJson.getString("succeeded");
+                        if(StringUtils.isNotBlank(completionTime) && StringUtils.isNotBlank(succeeded)) {
+                            if(Integer.valueOf(succeeded) > 0) {
+                                validateDTO.setFlag(true);
+                                validateDTO.setMessage("Verification : " + true);
+                                return validateDTO;
+                            }
+                        }
                     }
-                    i++;
-                    Thread.currentThread().sleep(5000);
                 }
-
             }
 
             validateDTO.setFlag(false);
@@ -892,15 +882,19 @@ public class K8sService {
             String token = "Bearer " + k8sRequest.getToken();
             String url = k8sRequest.getUrl();
 
-            CloudNativeSourceExample example = new CloudNativeSourceExample();
-            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+            CloudNativeSourceExample example1 = new CloudNativeSourceExample();
+            example1.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+
+            CloudNativeSourceExample example2 = new CloudNativeSourceExample();
+            example2.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Job").andSourceNameLike("kube-bench");
 
             ValidateDTO kubenchIsInstall = validateKubenchStatus(cloudNative);
             if (!kubenchIsInstall.isFlag()) {
-                createKubench(k8sRequest, example, cloudNative);
+
+                createKubench(k8sRequest, example1, example2, cloudNative);
             }
 
-            List<CloudNativeSource> cloudNativeSources = cloudNativeSourceMapper.selectByExample(example);
+            List<CloudNativeSource> cloudNativeSources = cloudNativeSourceMapper.selectByExample(example1);
 
             if (cloudNativeSources.size() == 0) {
                 return "";
@@ -915,27 +909,48 @@ public class K8sService {
                 Map<String, String> param = new HashMap<>();
                 param.put("Accept", CloudNativeConstants.Accept);
                 param.put("Authorization", token);
-                String reponse = HttpClientUtil.HttpGet(url, param);
-                if (!reponse.contains("unable to retrieve container logs for docker")) {
-                    saveKubenchResultItem(reponse, resultId);
-                    return reponse;
+                int i = 0;
+                while (i < 5) {
+                    String reponse = HttpClientUtil.HttpGet(url, param);
+                    if (!reponse.contains("unable to retrieve container logs for docker")) {
+                        saveKubenchResultItem(reponse, resultId);
+                        return reponse;
+                    }
+                    i++;
                 }
+
             }
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
-        return "Unable to retrieve container logs for docker, Kubebench job 对应的 SourceName 已经过期失效。";
+        return "Unable to retrieve container logs for docker, Kubebench job 对应的 SourceName 已经过期失效，请重新安装 Kubebench。";
     }
 
-    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example, CloudNative cloudNative) throws Exception {
+    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example1, CloudNativeSourceExample example2, CloudNative cloudNative) throws Exception {
         try {
+            //Job
             k8sRequest.deleteKubenchJob();
-            List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example);
-            cloudNativeSourceMapper.deleteByExample(example);
+            cloudNativeSourceMapper.deleteByExample(example2);
+
+            //Pod
+            cloudNativeSourceMapper.deleteByExample(example1);
+            List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example1);
             for (CloudNativeSource cloudNativeSource : list) {
                 k8sRequest.deleteKubenchPod(cloudNativeSource.getSourceName());
             }
+
             k8sRequest.createKubenchJob();
+
+            //Job
+            K8sSource job = k8sRequest.getKubenchJob(cloudNative);
+            for (CloudNativeSourceWithBLOBs k8sSource : job.getK8sSource()) {
+                cloudNativeSourceMapper.insertSelective(k8sSource);
+            }
+            for (CloudNativeSourceImage cloudNativeSourceImage : job.getK8sSourceImage()) {
+                cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+            }
+
+            //Pod
             K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
             for (CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
                 cloudNativeSourceMapper.insertSelective(k8sSource);
@@ -1438,10 +1453,13 @@ public class K8sService {
             K8sRequest k8sRequest = new K8sRequest();
             k8sRequest.setCredential(cloudNative.getCredential());
 
-            CloudNativeSourceExample example = new CloudNativeSourceExample();
-            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+            CloudNativeSourceExample example1 = new CloudNativeSourceExample();
+            example1.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
 
-            createKubench(k8sRequest, example, cloudNative);
+            CloudNativeSourceExample example2 = new CloudNativeSourceExample();
+            example2.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Job").andSourceNameLike("kube-bench");
+
+            createKubench(k8sRequest, example1, example2, cloudNative);
 
             saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true, loginUser);
         } catch (Exception e) {
