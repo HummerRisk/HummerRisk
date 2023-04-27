@@ -234,6 +234,7 @@ export default {
     config_scan: 'Configuration Audit',
     kubench_scan: 'CIS Benchmark',
     deleted: 'Deleted',
+    filter_condition: 'The filter condition is: ',
   },
   workspace: {
     create:'Create a workspace',

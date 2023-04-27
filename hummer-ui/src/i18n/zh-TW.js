@@ -233,6 +233,7 @@ export default {
     config_scan: '配置審計',
     kubench_scan: 'CIS Benchmark',
     deleted: '已刪除',
+    filter_condition: '篩選條件為: ',
   },
   workspace: {
     create: '創建工作空間',

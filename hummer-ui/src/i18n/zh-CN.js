@@ -234,6 +234,7 @@ export default {
     config_scan: '配置审计',
     kubench_scan: 'CIS Benchmark',
     deleted: '已删除',
+    filter_condition: '筛选条件为: ',
   },
   workspace: {
     create: '创建工作空间',
