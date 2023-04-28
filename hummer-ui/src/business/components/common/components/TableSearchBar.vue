@@ -2,7 +2,9 @@
   <span class="adv-search-bar">
     <!-- 名称查询 -->
     <el-input size="small" :placeholder="$t('commons.search_by') + $t(selectName) + $t('commons.search')"
-              v-model="filterText" class="input-with-select search" maxlength="60" @change="search" clearable>
+              v-model="filterText" maxlength="60" @change="search" clearable
+              v-bind:class="{ 'input-with-select search': showCreate,
+              'input-with-select search search2': !showCreate }">
       <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
         <el-option
           v-for="item in items"
@@ -14,13 +16,13 @@
       </el-select>
       <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
-    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen && condition" style="margin: 10px 0 10px 10px;">
+    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="condition" style="margin: 10px 0 10px 10px;">
       <span v-if="showFilter">{{ $t('el.table.confirmFilter') }}</span>
     </el-button>
     <!-- 名称查询 -->
 
     <!-- 上传 -->
-    <el-button icon="el-icon-upload2" size="small" @click="upload" v-if="showOpen && showUpload">
+    <el-button icon="el-icon-upload2" size="small" @click="upload" v-if="showUpload">
       <span v-if="showUploadName">{{ $t('server.upload') }}</span>
     </el-button>
     <!-- 上传 -->
@@ -60,6 +62,10 @@ import {cloneDeep} from "lodash";
         showOpen: {
           type: Boolean,
           default: true
+        },
+        showCreate: {
+          type: Boolean,
+          default: false
         },
         showFilter: {
           type: Boolean,
@@ -300,18 +306,25 @@ import {cloneDeep} from "lodash";
 </style>
 
 <style scoped>
-.adv-search-bar {
-}
+
 .search {
-  width: 430px;
+  width: 48%;
   margin-left: 10px;
 }
-.search >>> .el-select .el-input {
-  width: 120px;
+
+.search2 {
+  width: 65%;
+  margin-left: 10px;
 }
+
+.search >>> .el-select .el-input {
+  min-width: 120px;
+}
+
 .search >>> .el-input-group__prepend {
   background-color: #fff;
 }
+
 .dialog-footer {
   text-align: center;
 }

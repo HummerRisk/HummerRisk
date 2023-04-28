@@ -7,7 +7,7 @@
       </slot>
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
-      <span class="operate-button">
+      <span class="operate-button operate-btn">
         <table-button v-if="showSync" icon="el-icon-sort-down" :showName="showSyncName"
                       type="primary" :content="syncTip" @click="sync"/>
         <table-button v-if="showCreate" icon="el-icon-circle-plus-outline" :showName="showCreateName"
@@ -20,11 +20,11 @@
                       type="warning" :content="settingTip" @click="setting"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline" :showName="showDeleteName"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
-        <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" @upload="upload"
+        <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" @upload="upload" :showCreate="showCreate"
                           :showFilter="showFilter" :showUpload="showUpload" :showUploadName="showUploadName" :tip="tip" :items="items" ref="conditionSearch"/>
         <slot name="button"></slot>
       </span>
-      <span class="operate-button">
+      <span class="operate-button operate-right">
         <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" :showList="showList" @search="search" @pdfDown="pdfDown" @excelDown="excelDown" @more="more" @menu="menu"
                               :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -319,12 +319,19 @@ import Vue from "vue";
 
 <style scoped>
 
+  .operate-btn {
+    min-width: 75%;
+  }
+
+  .operate-right {
+    float: right;
+  }
+
   .operate-button {
     margin-bottom: -5px;
   }
 
   .search-bar {
-    width: 200px
   }
 
   .el-tag-con {

@@ -177,7 +177,7 @@
           <template v-slot:header>
             <table-header :condition.sync="condition" @search="search"
                           :title="$t('k8s.source_list')"
-                          :items="items" :columnNames="columnNames"
+                          :items="items" :columnNames="columnNames" :showOpen="false"
                           :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                           @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
           </template>

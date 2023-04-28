@@ -326,11 +326,5 @@ export default {
 .rtl >>> .el-form-item__content {
   width: 60%;
 }
-.table-card >>> .search {
-  width: 430px !important;
-}
-.table-card >>> .search .el-input {
-  width: 120px !important;
-}
 /deep/ :focus{outline:0;}
 </style>
