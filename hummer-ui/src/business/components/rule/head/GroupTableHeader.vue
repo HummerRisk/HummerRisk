@@ -7,7 +7,7 @@
       </slot>
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
-      <span class="operate-button">
+      <span class="operate-button operate-btn">
         <table-button v-if="showCreate" icon="el-icon-circle-plus-outline"
                       type="primary" :content="createTip" @click="create"/>
         <table-button v-if="showScan" icon="el-icon-video-play"
@@ -16,13 +16,21 @@
                       type="warning" :content="validateTip" @click="validate"/>
         <table-button v-if="showDelete" icon="el-icon-remove-outline"
                       type="danger" :content="deleteTip" @click="deleteSelect"/>
-        <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
+        <table-search-bar v-if="isCombine" :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items" :showCreate="showCreate" :showGroup="showGroup" ref="conditionSearch"/>
         <slot name="button"></slot>
       </span>
-      <span class="operate-button">
+      <span class="operate-button operate-right">
         <table-adv-search-bar v-if="isCombine" :showOpen="showOpen" :showList="showList" @search="search" @pdfDown="pdfDown" @excelDown="excelDown" @more="more" @menu="menu"
                               :columnNames="columnNames" :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange" :listStatus="listStatus"/>
+      </span>
+    </el-row>
+    <el-row v-show="tags && Object.keys(tags).length > 0" type="flex" justify="space-between" align="middle">
+      <span>
+        <I style="font-size: 12px;color: #888">{{ $t('commons.filter_condition') }} </I>
+        <el-tag v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
+          {{ $t(value.label) }} : {{ value.valueArray }}
+        </el-tag>
       </span>
     </el-row>
   </div>
@@ -37,6 +45,7 @@ import TableAdvSearchBar from "./TableAdvSearchBar";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import htmlToPdf from "@/common/js/htmlToPdf";
+import Vue from "vue";
 
 /* eslint-disable */
 export default {
@@ -49,6 +58,8 @@ export default {
   data(){
     return {
       htmlTitle: this.$t('pdf.html_title'),
+      tags: [],
+      showGroup: true,
     }
   },
   props: {
@@ -140,6 +151,9 @@ export default {
   },
   methods: {
     search(value) {
+      if (this.condition.combine) {
+        this.tags = this.condition.combine;
+      }
       this.$emit('update:condition', this.condition);
       this.$emit('search', value);
     },
@@ -206,6 +220,11 @@ export default {
     menu() {
       this.$emit('menu');
     },
+    handleClose(key) {
+      Vue.delete(this.condition.combine, key);
+      this.search(null);
+      this.$refs.conditionSearch.conditionSearch(this.condition.combine);
+    },
   },
   computed: {
     isCombine() {
@@ -229,6 +248,13 @@ export default {
 
 <style scoped>
 
+.operate-btn {
+  min-width: 60%;
+}
+
+.operate-right {
+  float: right;
+}
 .operate-button {
   margin-bottom: -5px;
 }

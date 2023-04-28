@@ -7,7 +7,15 @@
                         @selectAccount="selectAccount" @openDownload="openDownload"/>
       </span>
       <span>
-        <table-search-bar :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items"/>
+        <table-search-bar :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items" ref="conditionSearch"/>
+      </span>
+    </el-row>
+    <el-row v-show="tags && Object.keys(tags).length > 0" type="flex" justify="space-between" align="middle">
+      <span>
+        <I style="font-size: 12px;color: #888">{{ $t('commons.filter_condition') }} </I>
+        <el-tag v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
+          {{ $t(value.label) }} : {{ value.valueArray }}
+        </el-tag>
       </span>
     </el-row>
   </div>
@@ -20,6 +28,7 @@ import TableButton from '@/business/components/common/components/TableButton';
 import TableAdvSearchBar from "@/business/components/common/components/search/TableAdvSearchBar";
 import AccountChange from "@/business/components/report/head/AccountSwitch";
 import {ACCOUNT_NAME} from "@/common/js/constants";
+import Vue from "vue";
 
 /* eslint-disable */
   export default {
@@ -29,6 +38,11 @@ import {ACCOUNT_NAME} from "@/common/js/constants";
       TableSearchBar,
       TableButton,
       AccountChange
+    },
+    data(){
+      return {
+        tags: [],
+      }
     },
     props: {
       title: {
@@ -97,6 +111,9 @@ import {ACCOUNT_NAME} from "@/common/js/constants";
     },
     methods: {
       search(value) {
+        if (this.condition.combine) {
+          this.tags = this.condition.combine;
+        }
         this.$emit('update:condition', this.condition);
         this.$emit('search', value);
       },
@@ -117,6 +134,11 @@ import {ACCOUNT_NAME} from "@/common/js/constants";
       },
       selectAccount(accountId, accountName) {
         this.$emit('selectAccount', accountId, accountName);
+      },
+      handleClose(key) {
+        Vue.delete(this.condition.combine, key);
+        this.search(null);
+        this.$refs.conditionSearch.conditionSearch(this.condition.combine);
       },
     },
     computed: {

@@ -4,7 +4,8 @@
     <el-input size="small" :placeholder="$t('commons.search_by') + $t(selectName) + $t('commons.search')"
               v-model="filterText" maxlength="60" @change="search" clearable
               v-bind:class="{ 'input-with-select search': showCreate,
-              'input-with-select search search2': !showCreate }">
+              'input-with-select search search2': !showCreate,
+               'input-with-select search search3': showGroup }">
       <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
         <el-option
           v-for="item in items"
@@ -62,6 +63,10 @@ import {cloneDeep} from "lodash";
         showOpen: {
           type: Boolean,
           default: true
+        },
+        showGroup: {
+          type: Boolean,
+          default: false
         },
         showCreate: {
           type: Boolean,
@@ -314,7 +319,10 @@ import {cloneDeep} from "lodash";
 
 .search2 {
   width: 65%;
-  margin-left: 10px;
+}
+
+.search2 {
+  width: 45%;
 }
 
 .search >>> .el-select .el-input {
