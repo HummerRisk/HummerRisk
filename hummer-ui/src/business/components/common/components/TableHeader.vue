@@ -32,7 +32,7 @@
     </el-row>
     <el-row v-show="tags && Object.keys(tags).length > 0" type="flex" justify="space-between" align="middle">
       <span>
-        {{ $t('commons.filter_condition') }}
+        <I style="font-size: 12px;color: #888">{{ $t('commons.filter_condition') }} </I>
         <el-tag v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
           {{ $t(value.label) }} : {{ value.valueArray }}
         </el-tag>
