@@ -4,7 +4,7 @@
       <el-tab-pane label="VulnerabilityReport" v-if="logForm.vulnerabilityReport">
         <div class="ch-mar-top">
           <h2>Summary:&nbsp;</h2>
-          <ul style="margin-left: 60px;">
+          <ul style="margin: 5px 0 0 60px;">
             <li><i>Api Version</i>: {{ logForm.vulnerabilityReport.apiVersion }}</li>
             <li><i>Kind</i>: {{ logForm.vulnerabilityReport.kind }}</li>
           </ul>
@@ -91,7 +91,7 @@
       <el-tab-pane label="ConfigAuditReport" v-if="logForm.configAuditReport">
         <div class="ch-mar-top">
           <h2>Summary:&nbsp;</h2>
-          <ul style="margin-left: 60px;">
+          <ul style="margin: 5px 0 0 60px;">
             <li><i>Api Version</i>: {{ logForm.configAuditReport.apiVersion }}</li>
             <li><i>Kind</i>: {{ logForm.configAuditReport.kind }}</li>
           </ul>
