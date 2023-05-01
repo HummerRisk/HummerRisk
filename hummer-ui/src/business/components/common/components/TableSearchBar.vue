@@ -12,7 +12,7 @@
           :key="item.id" style="width:100%"
           :label="$t(item.name)"
           :value="item.id">
-          &nbsp;&nbsp; {{ $t(item.name) }}
+          &nbsp;&nbsp; <span>{{ $t(item.name) }}</span>
           </el-option>
       </el-select>
       <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
@@ -104,6 +104,7 @@ import {cloneDeep} from "lodash";
           select: this.items[0].id,
           selectName: this.items[0].name,
           filterText: '',
+          normalSearch: [],
         }
       },
       created() {
@@ -113,6 +114,14 @@ import {cloneDeep} from "lodash";
           for (let item of this.items) {
             if(item.id === id) {
               this.selectName = item.name;
+              for (let obj of this.normalSearch) {
+                if (!!obj[id]) {
+                  this.filterText = obj[id];
+                  break;
+                } else {
+                  this.filterText = '';
+                }
+              }
               return;
             }
           }
@@ -132,10 +141,10 @@ import {cloneDeep} from "lodash";
             }
           });
         },
+        conditionSearch2(normalSearch) {
+          this.normalSearch = normalSearch;
+        },
         search() {
-          for (let item of this.items) {
-            this.condition[item.id] = "";
-          }
           let condition = {};
           this.config.components.forEach(component => {
             let operator = component.operator.value;
@@ -166,11 +175,33 @@ import {cloneDeep} from "lodash";
           // 清除name
           if (this.filterText) {
             this.condition[this.select] = this.filterText;
+
+            //普通搜索
+            for (let item of this.items) {
+              if (item.id === this.select) {
+                if (!!this.filterText) {
+                  let searchCondition = {};
+                  searchCondition[item.id] = this.filterText;
+                  searchCondition['searchName'] = this.filterText;
+                  searchCondition['i18nKey'] = item.name;
+                  this.normalSearch.push(searchCondition);
+                }
+              }
+            }
           } else {
             this.condition[this.select] = undefined;
+            //普通搜索
+            for (let item of this.items) {
+              let searchCondition = {};
+              searchCondition[item.id] = undefined;
+              searchCondition['searchName'] = undefined;
+              searchCondition['i18nKey'] = undefined;
+              this.normalSearch.push(searchCondition);
+            }
           }
           // 添加组合条件
           this.condition.combine = condition;
+          this.condition.normalSearch = this.normalSearch;
           this.$emit('update:condition', this.condition);
           this.$emit('search', condition);
           this.visible = false;

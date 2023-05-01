@@ -30,10 +30,13 @@
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </span>
     </el-row>
-    <el-row v-show="tags && Object.keys(tags).length > 0" type="flex" justify="space-between" align="middle">
+    <el-row v-show="condition.normalSearch && ((condition.normalSearch.length > 0) || (tags && Object.keys(tags).length > 0))" type="flex" justify="space-between" align="middle">
       <span>
         <I style="font-size: 12px;color: #888">{{ $t('commons.filter_condition') }} </I>
-        <el-tag v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
+        <el-tag v-show="condition.normalSearch.length > 0" v-for="(normal, index) in condition.normalSearch" :key="index" closable type="success" size="mini" class="el-tag-con" @close="handleClose2(normal)">
+          {{ $t(normal.i18nKey) }} : {{ normal.searchName }}
+        </el-tag>
+        <el-tag v-show="tags && Object.keys(tags).length > 0" v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
           {{ $t(value.label) }} : {{ value.valueArray }}
         </el-tag>
       </span>
@@ -295,6 +298,11 @@ import Vue from "vue";
         Vue.delete(this.condition.combine, key);
         this.search(null);
         this.$refs.conditionSearch.conditionSearch(this.condition.combine);
+      },
+      handleClose2(normal) {
+        Vue.delete(this.condition.normalSearch, normal);
+        this.search(null);
+        this.$refs.conditionSearch.conditionSearch2(this.condition.normalSearch);
       },
     },
     computed: {
