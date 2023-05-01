@@ -143,6 +143,18 @@ import {cloneDeep} from "lodash";
         },
         conditionSearch2(normalSearch) {
           this.normalSearch = normalSearch;
+          for (let item of this.items) {
+            this.selectName = item.name;
+            for (let obj of this.normalSearch) {
+              if (!!obj[item.id]) {
+                this.filterText = obj[item.id];
+                break;
+              } else {
+                this.filterText = '';
+              }
+            }
+            return;
+          }
         },
         search() {
           let condition = {};
@@ -182,7 +194,8 @@ import {cloneDeep} from "lodash";
                 if (!!this.filterText) {
                   let searchCondition = {};
                   searchCondition[item.id] = this.filterText;
-                  searchCondition['searchName'] = this.filterText;
+                  searchCondition['searchValue'] = this.filterText;
+                  searchCondition['searchName'] = this.select;
                   searchCondition['i18nKey'] = item.name;
                   this.normalSearch.push(searchCondition);
                 }
@@ -191,12 +204,11 @@ import {cloneDeep} from "lodash";
           } else {
             this.condition[this.select] = undefined;
             //普通搜索
-            for (let item of this.items) {
-              let searchCondition = {};
-              searchCondition[item.id] = undefined;
-              searchCondition['searchName'] = undefined;
-              searchCondition['i18nKey'] = undefined;
-              this.normalSearch.push(searchCondition);
+            for (let obj of this.normalSearch) {
+              if (this.select === obj['searchName']) {
+                this.normalSearch.splice(obj);
+                break;
+              }
             }
           }
           // 添加组合条件

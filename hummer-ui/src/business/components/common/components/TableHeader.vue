@@ -30,11 +30,12 @@
                               @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </span>
     </el-row>
-    <el-row v-show="condition.normalSearch && ((condition.normalSearch.length > 0) || (tags && Object.keys(tags).length > 0))" type="flex" justify="space-between" align="middle">
+
+    <el-row v-show="normals && ((normals.length > 0) || (tags && Object.keys(tags).length > 0))" type="flex" justify="space-between" align="middle">
       <span>
         <I style="font-size: 12px;color: #888">{{ $t('commons.filter_condition') }} </I>
-        <el-tag v-show="condition.normalSearch.length > 0" v-for="(normal, index) in condition.normalSearch" :key="index" closable type="success" size="mini" class="el-tag-con" @close="handleClose2(normal)">
-          {{ $t(normal.i18nKey) }} : {{ normal.searchName }}
+        <el-tag v-show="normals.length > 0" v-for="(normal, index) in normals" :key="index" closable type="success" size="mini" class="el-tag-con" @close="handleClose2(normal)">
+          {{ $t(normal.i18nKey) }} : {{ normal.searchValue }}
         </el-tag>
         <el-tag v-show="tags && Object.keys(tags).length > 0" v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
           {{ $t(value.label) }} : {{ value.valueArray }}
@@ -54,7 +55,6 @@ import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import htmlToPdf from "@/common/js/htmlToPdf";
 import Vue from "vue";
-
 /* eslint-disable */
   export default {
     name: "TableHeader",
@@ -67,6 +67,7 @@ import Vue from "vue";
       return {
         htmlTitle: this.$t('pdf.html_title'),
         tags: [],
+        normals: [],
       }
     },
     props: {
@@ -219,6 +220,9 @@ import Vue from "vue";
         if (this.condition.combine) {
           this.tags = this.condition.combine;
         }
+        if (this.condition.normalSearch) {
+          this.normals = this.condition.normalSearch;
+        }
         this.$emit('update:condition', this.condition);
         this.$emit('search', value);
       },
@@ -300,7 +304,13 @@ import Vue from "vue";
         this.$refs.conditionSearch.conditionSearch(this.condition.combine);
       },
       handleClose2(normal) {
-        Vue.delete(this.condition.normalSearch, normal);
+        //普通搜索 对象数组删除元素 [{},{}] => [{}]
+        for (let i = 0; i < this.condition.normalSearch.length; i++) {
+          if(normal === this.condition.normalSearch[i]) {
+            this.condition.normalSearch.splice(i, 1);
+          }
+          i++;
+        }
         this.search(null);
         this.$refs.conditionSearch.conditionSearch2(this.condition.normalSearch);
       },
