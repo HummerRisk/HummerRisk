@@ -68,6 +68,7 @@ import {cloneDeep} from "lodash";
           select: this.items[0].id,
           selectName: this.items[0].name,
           filterText: '',
+          normalSearch: [],
         }
       },
       methods: {
@@ -75,6 +76,14 @@ import {cloneDeep} from "lodash";
           for (let item of this.items) {
             if(item.id === id) {
               this.selectName = item.name;
+              for (let obj of this.normalSearch) {
+                if (obj['i18nKey'] == this.selectName) {
+                  this.filterText = obj[id];
+                  break;
+                } else {
+                  this.filterText = '';
+                }
+              }
               return;
             }
           }
@@ -94,11 +103,20 @@ import {cloneDeep} from "lodash";
             }
           });
         },
-        search() {
-          for (let item of this.items) {
-            this.condition[item.id] = "";
+        conditionSearch2(normalSearch) {
+          this.normalSearch = normalSearch;
+          if (normalSearch.length == 0) this.filterText = '';
+          for (let obj of this.normalSearch) {
+            if (obj['i18nKey'] == this.selectName) {
+              this.filterText = obj['searchValue'];
+              break;
+            } else {
+              this.filterText = '';
+            }
           }
-          let condition = {}
+        },
+        search() {
+          let condition = {};
           this.config.components.forEach(component => {
             let operator = component.operator.value;
             let value = component.value;
@@ -128,14 +146,44 @@ import {cloneDeep} from "lodash";
           // 清除name
           if (this.filterText) {
             this.condition[this.select] = this.filterText;
+            //普通搜索
+            for (let item of this.items) {
+              if (item.id === this.select) {
+                if (!!this.filterText) {
+                  let searchCondition = {};
+                  searchCondition[item.id] = this.filterText;
+                  searchCondition['searchValue'] = this.filterText;
+                  searchCondition['searchName'] = this.select;
+                  searchCondition['i18nKey'] = item.name;
+                  if(this.checkExist(this.normalSearch, searchCondition)) this.normalSearch.push(searchCondition);
+                }
+              }
+            }
           } else {
             this.condition[this.select] = undefined;
+            //普通搜索
+            for (let i = 0; i < this.normalSearch.length; i++) {
+              if (this.select === this.normalSearch[i]['searchName']) {
+                this.normalSearch.splice(i, 1);
+                break;
+              }
+            }
           }
           // 添加组合条件
           this.condition.combine = condition;
+          this.condition.normalSearch = this.normalSearch;
           this.$emit('update:condition', this.condition);
           this.$emit('search', condition);
           this.visible = false;
+        },
+        checkExist(normalSearch, searchCondition) {
+          for (let obj of normalSearch) {
+            if (obj['i18nKey'] === searchCondition['i18nKey']) {
+              this.normalSearch.splice(obj);
+              return true;
+            }
+          }
+          return true;
         },
         init() {
           let config = cloneDeep(this.condition);
@@ -163,8 +211,8 @@ import {cloneDeep} from "lodash";
         open() {
           this.visible = true;
         },
-        refresh() {
-          this.$emit('search');
+        upload() {
+          this.$emit('upload');
         },
         i18nChange(operator) {
           switch (operator) {
