@@ -2,7 +2,7 @@
   <div>
     <div class="ch-mar" v-if="logForm.resultJson">
       <h2>Summary:&nbsp;</h2>
-      <ul style="margin-left: 60px;">
+      <ul style="margin: 5px 0 0 60px;">
         <li><i>Scan Name</i>: {{ logForm.name }}</li>
         <li><i>Scan User</i>:&nbsp;{{ logForm.userName }}</li>
         <li><i>ArtifactType</i>:&nbsp;{{ logForm.resultJson.ArtifactType }}</li>

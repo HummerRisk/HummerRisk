@@ -2,25 +2,28 @@
   <span class="adv-search-bar">
     <!-- 名称查询 -->
     <el-input size="small" :placeholder="$t('commons.search_by') + $t(selectName) + $t('commons.search')"
-              v-model="filterText" class="input-with-select search" maxlength="60" @change="search" clearable>
+              v-model="filterText" maxlength="60" @change="search" clearable
+              v-bind:class="{ 'input-with-select search': showCreate,
+              'input-with-select search search2': !showCreate,
+               'input-with-select search search3': showGroup }">
       <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
         <el-option
           v-for="item in items"
           :key="item.id" style="width:100%"
           :label="$t(item.name)"
           :value="item.id">
-          &nbsp;&nbsp; {{ $t(item.name) }}
+          &nbsp;&nbsp; <span>{{ $t(item.name) }}</span>
           </el-option>
       </el-select>
       <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
-    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="showOpen && condition" style="margin: 10px 0 10px 10px;">
+    <el-button icon="iconfont icon-shaixuan" size="small" @click="open" v-if="condition" style="margin: 10px 0 10px 10px;">
       <span v-if="showFilter">{{ $t('el.table.confirmFilter') }}</span>
     </el-button>
     <!-- 名称查询 -->
 
     <!-- 上传 -->
-    <el-button icon="el-icon-upload2" size="small" @click="upload" v-if="showOpen && showUpload">
+    <el-button icon="el-icon-upload2" size="small" @click="upload" v-if="showUpload">
       <span v-if="showUploadName">{{ $t('server.upload') }}</span>
     </el-button>
     <!-- 上传 -->
@@ -61,6 +64,14 @@ import {cloneDeep} from "lodash";
           type: Boolean,
           default: true
         },
+        showGroup: {
+          type: Boolean,
+          default: false
+        },
+        showCreate: {
+          type: Boolean,
+          default: false
+        },
         showFilter: {
           type: Boolean,
           default: true
@@ -93,6 +104,7 @@ import {cloneDeep} from "lodash";
           select: this.items[0].id,
           selectName: this.items[0].name,
           filterText: '',
+          normalSearch: [],
         }
       },
       created() {
@@ -102,15 +114,50 @@ import {cloneDeep} from "lodash";
           for (let item of this.items) {
             if(item.id === id) {
               this.selectName = item.name;
+              for (let obj of this.normalSearch) {
+                if (!!obj[id]) {
+                  this.filterText = obj[id];
+                  break;
+                } else {
+                  this.filterText = '';
+                }
+              }
               return;
             }
           }
         },
-        search() {
+        conditionSearch(combine) {
+          this.config.components.forEach(component => {
+            if (combine) {
+              component.value = null;
+              for (let o in combine) {
+                if (component.key === o) {
+                  component.value = combine[o].value;
+                  break;
+                }
+              }
+            } else {
+              component.value = null;
+            }
+          });
+        },
+        conditionSearch2(normalSearch) {
+          this.normalSearch = normalSearch;
           for (let item of this.items) {
-            this.condition[item.id] = "";
+            this.selectName = item.name;
+            for (let obj of this.normalSearch) {
+              if (!!obj[item.id]) {
+                this.filterText = obj[item.id];
+                break;
+              } else {
+                this.filterText = '';
+              }
+            }
+            return;
           }
-          let condition = {}
+        },
+        search() {
+          let condition = {};
           this.config.components.forEach(component => {
             let operator = component.operator.value;
             let value = component.value;
@@ -118,14 +165,20 @@ import {cloneDeep} from "lodash";
               if (value.length > 0) {
                 condition[component.key] = {
                   operator: operator,
-                  value: value
+                  value: value,
+                  key: component.key,
+                  label: component.label,
+                  valueArray: this.arrayChange(component, operator, value),
                 }
               }
             } else {
               if (value !== undefined && value !== null && value !== "") {
                 condition[component.key] = {
                   operator: operator,
-                  value: value
+                  value: value,
+                  key: component.key,
+                  label: component.label,
+                  valueArray: this.arrayChange(component, operator, value),
                 }
               }
             }
@@ -134,11 +187,33 @@ import {cloneDeep} from "lodash";
           // 清除name
           if (this.filterText) {
             this.condition[this.select] = this.filterText;
+
+            //普通搜索
+            for (let item of this.items) {
+              if (item.id === this.select) {
+                if (!!this.filterText) {
+                  let searchCondition = {};
+                  searchCondition[item.id] = this.filterText;
+                  searchCondition['searchValue'] = this.filterText;
+                  searchCondition['searchName'] = this.select;
+                  searchCondition['i18nKey'] = item.name;
+                  this.normalSearch.push(searchCondition);
+                }
+              }
+            }
           } else {
             this.condition[this.select] = undefined;
+            //普通搜索
+            for (let obj of this.normalSearch) {
+              if (this.select === obj['searchName']) {
+                this.normalSearch.splice(obj);
+                break;
+              }
+            }
           }
           // 添加组合条件
           this.condition.combine = condition;
+          this.condition.normalSearch = this.normalSearch;
           this.$emit('update:condition', this.condition);
           this.$emit('search', condition);
           this.visible = false;
@@ -172,6 +247,81 @@ import {cloneDeep} from "lodash";
         upload() {
           this.$emit('upload');
         },
+        i18nChange(operator) {
+          switch (operator) {
+            case "like":
+              return "commons.adv_search.operators.like";
+            case "not like":
+              return "commons.adv_search.operators.not_like";
+            case "in":
+              return "commons.adv_search.operators.in";
+            case "not in":
+              return "commons.adv_search.operators.not_in";
+            case "gt":
+              return "commons.adv_search.operators.gt";
+            case "ge":
+              return "commons.adv_search.operators.ge";
+            case "lt":
+              return "commons.adv_search.operators.lt";
+            case "le":
+              return "commons.adv_search.operators.le";
+            case "eq":
+              return "commons.adv_search.operators.equals";
+            case "between":
+              return "commons.adv_search.operators.between";
+            case "current user":
+              return "commons.adv_search.operators.current_user";
+            default:
+              return "commons.adv_search.operators.like";
+          }
+        },
+        arrayChange(component, operator, value) {
+          let op = this.i18nChange(operator);
+          if (component.name === 'TableSearchInput') return this.$t(op) + ' ' + value;
+          let str = '';
+          if (component.name === 'TableSearchSelect') {
+            for (let o of value) {
+              str = str === '' ? this.operatorLabel(component, o) : str + ',' + this.operatorLabel(component, o);
+            }
+            return this.$t(op) + ' ' + str;
+          } else if (component.name === 'TableSearchDateTimePicker') {
+            if (typeof value === 'number') {
+              return this.$t(op) + ' ' + this.timestampFormatDayDate(value);
+            } else {
+              for (let o of value) {
+                str = str === '' ? this.timestampFormatDayDate(o) : str + ',' + this.timestampFormatDayDate(o);
+              }
+              return str + ' ' + this.$t(op);
+            }
+          }
+        },
+        operatorLabel (component, str) {
+          if (!component.options.url) {
+            for (let obj of component.options) {
+              if (obj.value === str) {
+                return this.$t(obj.label);
+              }
+            }
+          }
+          return str;
+        },
+        timestampFormatDayDate (timestamp) {
+          if (!timestamp) {
+            return timestamp;
+          }
+
+          let date = new Date(timestamp);
+
+          let y = date.getFullYear();
+
+          let MM = date.getMonth() + 1;
+          MM = MM < 10 ? ('0' + MM) : MM;
+
+          let d = date.getDate();
+          d = d < 10 ? ('0' + d) : d;
+
+          return y + '-' + MM + '-' + d;
+        },
       }
     }
 </script>
@@ -204,18 +354,28 @@ import {cloneDeep} from "lodash";
 </style>
 
 <style scoped>
-.adv-search-bar {
-}
+
 .search {
-  width: 430px;
+  width: 48%;
   margin-left: 10px;
 }
-.search >>> .el-select .el-input {
-  width: 120px;
+
+.search2 {
+  width: 65%;
 }
+
+.search2 {
+  width: 45%;
+}
+
+.search >>> .el-select .el-input {
+  min-width: 120px;
+}
+
 .search >>> .el-input-group__prepend {
   background-color: #fff;
 }
+
 .dialog-footer {
   text-align: center;
 }

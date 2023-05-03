@@ -3,7 +3,7 @@
 
     <el-card class="table-card">
       <template v-slot:header>
-        <table-header :condition.sync="condition" @search="search"
+        <table-header :condition.sync="condition" @search="search" :showOpen="false"
                       :items="items" :columnNames="columnNames" :showName="false" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>

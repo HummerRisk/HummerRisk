@@ -79,6 +79,21 @@ import {cloneDeep} from "lodash";
             }
           }
         },
+        conditionSearch(combine) {
+          this.config.components.forEach(component => {
+            if (combine) {
+              component.value = null;
+              for (let o in combine) {
+                if (component.key === o) {
+                  component.value = combine[o].value;
+                  break;
+                }
+              }
+            } else {
+              component.value = null;
+            }
+          });
+        },
         search() {
           for (let item of this.items) {
             this.condition[item.id] = "";
@@ -91,14 +106,20 @@ import {cloneDeep} from "lodash";
               if (value.length > 0) {
                 condition[component.key] = {
                   operator: operator,
-                  value: value
+                  value: value,
+                  key: component.key,
+                  label: component.label,
+                  valueArray: this.arrayChange(component, operator, value),
                 }
               }
             } else {
               if (value !== undefined && value !== null && value !== "") {
                 condition[component.key] = {
                   operator: operator,
-                  value: value
+                  value: value,
+                  key: component.key,
+                  label: component.label,
+                  valueArray: this.arrayChange(component, operator, value),
                 }
               }
             }
@@ -145,6 +166,81 @@ import {cloneDeep} from "lodash";
         refresh() {
           this.$emit('search');
         },
+        i18nChange(operator) {
+          switch (operator) {
+            case "like":
+              return "commons.adv_search.operators.like";
+            case "not like":
+              return "commons.adv_search.operators.not_like";
+            case "in":
+              return "commons.adv_search.operators.in";
+            case "not in":
+              return "commons.adv_search.operators.not_in";
+            case "gt":
+              return "commons.adv_search.operators.gt";
+            case "ge":
+              return "commons.adv_search.operators.ge";
+            case "lt":
+              return "commons.adv_search.operators.lt";
+            case "le":
+              return "commons.adv_search.operators.le";
+            case "eq":
+              return "commons.adv_search.operators.equals";
+            case "between":
+              return "commons.adv_search.operators.between";
+            case "current user":
+              return "commons.adv_search.operators.current_user";
+            default:
+              return "commons.adv_search.operators.like";
+          }
+        },
+        arrayChange(component, operator, value) {
+          let op = this.i18nChange(operator);
+          if (component.name === 'TableSearchInput') return this.$t(op) + ' ' + value;
+          let str = '';
+          if (component.name === 'TableSearchSelect') {
+            for (let o of value) {
+              str = str === '' ? this.operatorLabel(component, o) : str + ',' + this.operatorLabel(component, o);
+            }
+            return this.$t(op) + ' ' + str;
+          } else if (component.name === 'TableSearchDateTimePicker') {
+            if (typeof value === 'number') {
+              return this.$t(op) + ' ' + this.timestampFormatDayDate(value);
+            } else {
+              for (let o of value) {
+                str = str === '' ? this.timestampFormatDayDate(o) : str + ',' + this.timestampFormatDayDate(o);
+              }
+              return str + ' ' + this.$t(op);
+            }
+          }
+        },
+        operatorLabel (component, str) {
+          if (!component.options.url) {
+            for (let obj of component.options) {
+              if (obj.value === str) {
+                return this.$t(obj.label);
+              }
+            }
+          }
+          return str;
+        },
+        timestampFormatDayDate (timestamp) {
+          if (!timestamp) {
+            return timestamp;
+          }
+
+          let date = new Date(timestamp);
+
+          let y = date.getFullYear();
+
+          let MM = date.getMonth() + 1;
+          MM = MM < 10 ? ('0' + MM) : MM;
+
+          let d = date.getDate();
+          d = d < 10 ? ('0' + d) : d;
+
+          return y + '-' + MM + '-' + d;
+        },
       }
     }
 </script>
@@ -177,14 +273,12 @@ import {cloneDeep} from "lodash";
 </style>
 
 <style scoped>
-.adv-search-bar {
-}
 .search {
-  width: 430px;
+  width: 76%;
   margin-left: 10px;
 }
 .search >>> .el-select .el-input {
-  width: 120px;
+  min-width: 120px;
 }
 .search >>> .el-input-group__prepend {
   background-color: #fff;

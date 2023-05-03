@@ -128,8 +128,8 @@
 
     <!--Create k8s-->
     <el-drawer class="rtl" :title="$t('k8s.k8s_create')" :visible.sync="createVisible" size="70%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <div v-loading="k8sResult.loading">
+               :destroy-on-close="true" v-loading="k8sResult.loading">
+      <div>
         <div v-for="(form, index) in addAccountForm" :key="index">
           <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
             <el-form-item :label="$t('k8s.name')" ref="name" prop="name">
@@ -194,8 +194,8 @@
 
     <!--Update k8s-->
     <el-drawer class="rtl" :title="$t('k8s.k8s_update')" :visible.sync="updateVisible" size="70%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <div v-loading="k8sResult.loading">
+               :destroy-on-close="true" v-loading="k8sResult.loading">
+      <div>
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
           <el-form-item :label="$t('k8s.name')"  ref="name" prop="name">
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
@@ -239,8 +239,8 @@
 
     <!--Install log-->
     <el-drawer class="rtl" :title="$t('k8s.install_log')" :visible.sync="logVisible" size="85%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
-      <el-row class="el-form-item-dev" v-loading="k8sResult.loading">
+               :destroy-on-close="true" v-loading="k8sResult.loading">
+      <el-row class="el-form-item-dev">
         <div>
           <el-row>
             <el-col :span="24">
@@ -389,7 +389,7 @@
 
     <!--Result log-->
     <el-drawer class="rtl" :title="$t('resource.i18n_log_detail')" :visible.sync="logResultVisible" size="90%" :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+               :destroy-on-close="true" v-loading="k8sResult.loading">
       <el-row class="el-form-item-dev" v-if="logResultData.length == 0">
         <span>{{ $t('resource.i18n_no_data') }}<br></span>
       </el-row>

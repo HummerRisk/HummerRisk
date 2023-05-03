@@ -307,6 +307,50 @@ public class K8sRequest extends Request {
         return k8sSource;
     }
 
+    public K8sSource getKubenchJob(CloudNative cloudNative) throws IOException, ApiException {
+        K8sSource k8sSource = new K8sSource();
+        List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();
+        List<CloudNativeSourceImage> k8sSourceImage = new ArrayList<>();
+        try {
+            ApiClient apiClient = getK8sClient(null);
+            BatchV1Api apiInstance = new BatchV1Api(apiClient);
+            V1JobList result = apiInstance.listJobForAllNamespaces(null, null, null, null, null, null, null, null, null, null);
+            for (V1Job v1Job : result.getItems()) {
+                if(!v1Job.getMetadata().getName().contains("kube-bench")) continue;
+                CloudNativeSourceWithBLOBs cloudNativeSource = base(cloudNative);
+                cloudNativeSource.setSourceNamespace(Objects.requireNonNull(v1Job.getMetadata()).getNamespace() != null ? v1Job.getMetadata().getNamespace() : "");
+                JSONObject jsonObject;
+                try {
+                    jsonObject = (JSONObject) JSON.toJSON(v1Job);
+                } catch (Exception e) {
+                    jsonObject = (JSONObject) JSON.toJSON(v1Job.getMetadata());
+                }
+                cloudNativeSource.setSourceJson(jsonObject.toJSONString());
+                cloudNativeSource.setSourceYaml(YamlUtil.json2Yaml(jsonObject.toJSONString()));
+                V1JobSpec spec = v1Job.getSpec();
+                List<V1Container> v1Containers = null;
+                if (spec != null) {
+                    v1Containers = Objects.requireNonNull(spec.getTemplate().getSpec()).getContainers();
+                    for (V1Container v1Container : v1Containers) {
+                        CloudNativeSourceImage cloudNativeSourceImage = new CloudNativeSourceImage();
+                        cloudNativeSourceImage.setImage(v1Container.getImage());
+                        cloudNativeSourceImage.setCreateTime(System.currentTimeMillis());
+                        cloudNativeSourceImage.setSourceId(cloudNativeSource.getId());
+                        k8sSourceImage.add(cloudNativeSourceImage);
+                    }
+                }
+                cloudNativeSource.setSourceName(v1Job.getMetadata().getName());
+                cloudNativeSource.setSourceType(CloudNativeConstants.K8S_TYPE.Job.name());
+                list.add(cloudNativeSource);
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+        k8sSource.setK8sSource(list);
+        k8sSource.setK8sSourceImage(k8sSourceImage);
+        return k8sSource;
+    }
+
     public K8sSource getKubenchPod(CloudNative cloudNative) throws IOException, ApiException {
         K8sSource k8sSource = new K8sSource();
         List<CloudNativeSourceWithBLOBs> list = new ArrayList<>();

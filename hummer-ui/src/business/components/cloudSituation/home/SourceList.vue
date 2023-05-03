@@ -16,7 +16,7 @@
                           :title="$t('k8s.source_list')"
                           :items="items" :columnNames="columnNames"
                           :checkedColumnNames="checkedColumnNames" :checkAll="checkAll"
-                          :isIndeterminate="isIndeterminate"
+                          :isIndeterminate="isIndeterminate" :showOpen="false"
                           @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange"
                           @handleCheckAllChange="handleCheckAllChange"/>
           </template>
