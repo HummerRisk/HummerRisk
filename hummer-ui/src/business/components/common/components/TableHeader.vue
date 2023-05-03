@@ -305,11 +305,12 @@ import Vue from "vue";
       },
       handleClose2(normal) {
         //普通搜索 对象数组删除元素 [{},{}] => [{}]
-        for (let i = 0; i < this.condition.normalSearch.length; i++) {
+        let arr = this.condition.normalSearch.length;
+        for (let i = 0; i < arr; i++) {
           if(normal === this.condition.normalSearch[i]) {
             this.condition.normalSearch.splice(i, 1);
+            this.condition[normal.searchName] = '';
           }
-          i++;
         }
         this.search(null);
         this.$refs.conditionSearch.conditionSearch2(this.condition.normalSearch);

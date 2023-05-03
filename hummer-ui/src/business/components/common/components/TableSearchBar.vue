@@ -115,7 +115,7 @@ import {cloneDeep} from "lodash";
             if(item.id === id) {
               this.selectName = item.name;
               for (let obj of this.normalSearch) {
-                if (!!obj[id]) {
+                if (obj['i18nKey'] == this.selectName) {
                   this.filterText = obj[id];
                   break;
                 } else {
@@ -143,17 +143,14 @@ import {cloneDeep} from "lodash";
         },
         conditionSearch2(normalSearch) {
           this.normalSearch = normalSearch;
-          for (let item of this.items) {
-            this.selectName = item.name;
-            for (let obj of this.normalSearch) {
-              if (!!obj[item.id]) {
-                this.filterText = obj[item.id];
-                break;
-              } else {
-                this.filterText = '';
-              }
+          if (normalSearch.length == 0) this.filterText = '';
+          for (let obj of this.normalSearch) {
+            if (obj['i18nKey'] == this.selectName) {
+              this.filterText = obj['searchValue'];
+              break;
+            } else {
+              this.filterText = '';
             }
-            return;
           }
         },
         search() {
@@ -187,7 +184,6 @@ import {cloneDeep} from "lodash";
           // 清除name
           if (this.filterText) {
             this.condition[this.select] = this.filterText;
-
             //普通搜索
             for (let item of this.items) {
               if (item.id === this.select) {
@@ -197,16 +193,16 @@ import {cloneDeep} from "lodash";
                   searchCondition['searchValue'] = this.filterText;
                   searchCondition['searchName'] = this.select;
                   searchCondition['i18nKey'] = item.name;
-                  this.normalSearch.push(searchCondition);
+                  if(this.checkExist(this.normalSearch, searchCondition)) this.normalSearch.push(searchCondition);
                 }
               }
             }
           } else {
             this.condition[this.select] = undefined;
             //普通搜索
-            for (let obj of this.normalSearch) {
-              if (this.select === obj['searchName']) {
-                this.normalSearch.splice(obj);
+            for (let i = 0; i < this.normalSearch.length; i++) {
+              if (this.select === this.normalSearch[i]['searchName']) {
+                this.normalSearch.splice(i, 1);
                 break;
               }
             }
@@ -217,6 +213,15 @@ import {cloneDeep} from "lodash";
           this.$emit('update:condition', this.condition);
           this.$emit('search', condition);
           this.visible = false;
+        },
+        checkExist(normalSearch, searchCondition) {
+          for (let obj of normalSearch) {
+            if (obj['i18nKey'] === searchCondition['i18nKey']) {
+              this.normalSearch.splice(obj);
+              return true;
+            }
+          }
+          return true;
         },
         init() {
           let config = cloneDeep(this.condition);
