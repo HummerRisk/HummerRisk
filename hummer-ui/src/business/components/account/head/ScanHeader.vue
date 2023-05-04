@@ -8,30 +8,25 @@
     </el-row>
     <el-row type="flex" justify="space-between" align="middle">
       <span class="operate-button">
+        <table-button class="item" icon="el-icon-back" type="info" :content="backTip" @click="back"/>
         <el-tooltip class="item" effect="dark" :content="$t('account.save_settings_tip')" placement="top-start">
           <table-button  v-if="showSave" icon="el-icon-upload"
                          :content="saveTip" @click="save"/>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" :content="$t('account.quick_settings_tip')" placement="top-start">
+          <table-button  v-if="showSetting" icon="el-icon-s-tools" type="primary"
+                         :content="settingTip" @click="setting"/>
         </el-tooltip>
         <el-tooltip class="item" effect="dark" :content="$t('account.start_batch_tip')" placement="top-start">
           <table-button  v-if="showCreate" icon="el-icon-s-promotion" type="success"
                            :content="createTip" @click="create"/>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" :content="$t('account.quick_settings_tip')" placement="top-start">
-          <table-button  v-if="showSetting" icon="el-icon-s-tools" type="primary"
-                           :content="settingTip" @click="setting"/>
-        </el-tooltip>
         <el-tooltip class="item" effect="dark" :content="$t('account.clean_settings_tip')" placement="top-start">
           <table-button  v-if="showClean" icon="el-icon-refresh" type="danger"
                          :content="cleanTip" @click="clean"/>
         </el-tooltip>
-
+        <el-button class="item" icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
         <slot name="button"></slot>
-      </span>
-      <span>
-        <el-button icon="el-icon-refresh" size="small" @click="refresh">{{ $t('commons.refresh') }}</el-button>
-        <table-button  icon="el-icon-back"
-                      type="info"
-                      :content="backTip" @click="back"/>
       </span>
     </el-row>
   </div>

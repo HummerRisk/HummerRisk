@@ -919,6 +919,7 @@ export default {
     sync_log_list: '雲資源同步日誌列表',
     failed_cloud: '存在驗證失敗的雲賬號配置:',
     failed_status: '雲賬號無效狀態不可執行檢測',
+    i18n_comfirm_rule_scan: '未選中某些規則，是否快捷設置當前頁面所有規則的區域',
   },
   server: {
     server_setting: '主機檢測',

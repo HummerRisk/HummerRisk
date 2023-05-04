@@ -920,6 +920,7 @@ export default {
     sync_log_list: '云资源同步日志列表',
     failed_cloud: '存在验证失败的云账号配置:',
     failed_status: '云账号无效状态不可执行检测',
+    i18n_comfirm_rule_scan: '未选中某些规则，是否快捷设置当前页面所有规则的区域',
   },
   server: {
     server_setting: '主机检测',

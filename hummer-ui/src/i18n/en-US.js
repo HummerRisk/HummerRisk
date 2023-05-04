@@ -920,6 +920,7 @@ export default {
     sync_log_list: 'Cloud resource synchronization log list',
     failed_cloud: 'There is a cloud account configuration that failed verification:',
     failed_status: 'Cloud account invalid status cannot perform detection',
+    i18n_comfirm_rule_scan: 'If some rules are not selected, whether to quickly set the area of all rules on the current page',
   },
   server: {
     server_setting: 'Host scan',
