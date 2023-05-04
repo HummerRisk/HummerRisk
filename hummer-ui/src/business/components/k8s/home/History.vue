@@ -24,9 +24,9 @@
 
 import ScenarioModule from "./ScenarioModule";
 import ScenarioHistList from "./ScenarioHistList";
-import Container from "../.././common/components/Container";
-import AsideContainer from "../.././common/components/AsideContainer";
-import MainContainer from "../.././common/components/MainContainer";
+import Container from "@/business/components/common/components/Container";
+import AsideContainer from "@/business/components/common/components/AsideContainer";
+import MainContainer from "@/business/components/common/components/MainContainer";
 /* eslint-disable */
 export default {
   name: "history",

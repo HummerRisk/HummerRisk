@@ -240,6 +240,10 @@ export default {
     k8s_entry: '创建 K8s 账号',
     server_entry: '创建主机',
     image_entry: '创建镜像',
+    code_entry: '创建源码',
+    fs_entry: '创建文件',
+    associated_assets: '关联资产',
+    cloud_resource: '云资源',
   },
   workspace: {
     create: '创建工作空间',

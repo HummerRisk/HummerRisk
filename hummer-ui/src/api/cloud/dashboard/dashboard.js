@@ -33,4 +33,6 @@ export const topScanInfoUrl = "/system/dashboard/topScanInfo";
 
 export const dashboardScoreUrl = "/system/dashboard/score";
 
+export const cloudInfoUrl = "/system/dashboard/cloudInfo";
+
 

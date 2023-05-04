@@ -4,29 +4,37 @@
       <el-row>
         <el-card class="table-card">
           <el-row>
-          <el-col :span="5">
-            <span class="hr-card-data">
-              <span class="hr-card-data-digital">{{ $t('commons.fast_entry') }}</span>
-              <span class="hr-card-data-unit"> {{ 'Entry' }}</span>
-            </span>
-            <span class="hr-card-desc"></span>
-          </el-col>
-          <el-col :span="19">
-            <el-row class="lb-row-txt-white">
-              <el-col :span="6">
-                <el-button size="medium" @click="goResource('cloud')"><i class="iconfont icon-guanyuyunguanjia"></i> {{ $t('commons.cloud_entry') }}</el-button>
-              </el-col>
-              <el-col :span="6">
-                <el-button size="medium" @click="goResource('k8s')"><i class="iconfont icon-adsyunyuanshengshujuku"></i> {{ $t('commons.k8s_entry') }}</el-button>
-              </el-col>
-              <el-col :span="6">
-                <el-button size="medium" @click="goResource('server')"><i class="iconfont icon-fuwuqi"></i> {{ $t('commons.server_entry') }}</el-button>
-              </el-col>
-              <el-col :span="6">
-                <el-button size="medium" @click="goResource('image')"><i class="iconfont icon-jingxiang2"></i> {{ $t('commons.image_entry') }}</el-button>
-              </el-col>
-            </el-row>
-          </el-col>
+            <el-col :span="24">
+              <span class="hr-card-data">
+                <span class="hr-card-data-digital">{{ $t('commons.fast_entry') }}</span>
+                <span class="hr-card-data-unit"> {{ 'Entry' }}</span>
+              </span>
+              <span class="hr-card-desc"></span>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-row class="lb-row-txt-white">
+                <el-col :span="4">
+                  <el-button size="small" @click="goResource('cloud')"><i class="iconfont icon-guanyuyunguanjia"></i> {{ $t('commons.cloud_entry') }}</el-button>
+                </el-col>
+                <el-col :span="4">
+                  <el-button size="small" @click="goResource('k8s')"><i class="iconfont icon-adsyunyuanshengshujuku"></i> {{ $t('commons.k8s_entry') }}</el-button>
+                </el-col>
+                <el-col :span="4">
+                  <el-button size="small" @click="goResource('server')"><i class="iconfont icon-fuwuqi"></i> {{ $t('commons.server_entry') }}</el-button>
+                </el-col>
+                <el-col :span="4">
+                  <el-button size="small" @click="goResource('image')"><i class="iconfont icon-jingxiang2"></i> {{ $t('commons.image_entry') }}</el-button>
+                </el-col>
+                <el-col :span="4">
+                  <el-button size="small" @click="goResource('code')"><i class="iconfont icon-yuandaimaxiayoudaima"></i> {{ $t('commons.code_entry') }}</el-button>
+                </el-col>
+                <el-col :span="4">
+                  <el-button size="small" @click="goResource('fs')"><i class="iconfont icon-wendang"></i> {{ $t('commons.fs_entry') }}</el-button>
+                </el-col>
+              </el-row>
+            </el-col>
           </el-row>
         </el-card>
       </el-row>
@@ -78,6 +86,16 @@ export default {
         case 'image':
           this.$router.push({
             path: '/image/image'
+          }).catch(error => error);
+          break;
+        case 'code':
+          this.$router.push({
+            path: '/code/code'
+          }).catch(error => error);
+          break;
+        case 'fs':
+          this.$router.push({
+            path: '/fs/fs'
           }).catch(error => error);
           break;
       }
@@ -224,11 +242,19 @@ export default {
 }
 
 .lb-row-txt-white {
-  padding-top: 20px;
 }
 
 .lb-row-txt-white >>> .el-button {
-  min-width: 150px;
+  min-width: 140px;
+}
+
+.iconfont {
+  vertical-align: middle;
+  margin-right: 5px;
+  width: 20px;
+  height: 15px;
+  text-align: center;
+  font-size: 14px;
 }
 
 </style>

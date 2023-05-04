@@ -239,6 +239,10 @@ export default {
     k8s_entry: '創建 K8s 賬號',
     server_entry: '創建主機',
     image_entry: '創建鏡像',
+    code_entry: '創建源碼',
+    fs_entry: '創建文件',
+    associated_assets: '關聯資產',
+    cloud_resource: '雲資源',
   },
   workspace: {
     create: '創建工作空間',

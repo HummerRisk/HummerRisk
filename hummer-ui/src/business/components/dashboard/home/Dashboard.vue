@@ -2,18 +2,18 @@
   <main-container class="main-container" v-loading="result.loading">
     <el-row :gutter="20">
       <el-col :span="18" style="padding-right: 0">
-        <top-info/>
+        <entry-info/>
       </el-col>
       <el-col :span="6" style="padding-left: 0">
-        <top-info-r/>
+        <user-info/>
       </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="18" style="padding-right: 0">
-        <left-info/>
+        <assets-info/>
       </el-col>
       <el-col :span="6" style="padding-left: 0">
-        <right-info/>
+        <score-info/>
       </el-col>
     </el-row>
     <el-row :gutter="20">
@@ -24,20 +24,20 @@
 
 <script>
 import MainContainer from "@/business/components/common/components/MainContainer";
-import TopInfo from "@/business/components/dashboard/home/TopInfo";
-import LeftInfo from "@/business/components/dashboard/home/LeftInfo";
-import RightInfo from "@/business/components/dashboard/home/RightInfo";
+import EntryInfo from "@/business/components/dashboard/home/EntryInfo";
+import AssetsInfo from "@/business/components/dashboard/home/AssetsInfo";
+import ScoreInfo from "@/business/components/dashboard/home/ScoreInfo";
 import BottomInfo from "@/business/components/dashboard/home/BottomInfo";
-import TopInfoR from "@/business/components/dashboard/home/TopInfoR.vue";
+import UserInfo from "@/business/components/dashboard/home/UserInfo";
 
 /* eslint-disable */
 export default {
   components: {
-    TopInfoR,
+    UserInfo,
     MainContainer,
-    TopInfo,
-    LeftInfo,
-    RightInfo,
+    EntryInfo,
+    AssetsInfo,
+    ScoreInfo,
     BottomInfo,
   },
   data() {

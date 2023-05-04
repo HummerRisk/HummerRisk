@@ -240,6 +240,10 @@ export default {
     k8s_entry: 'Create K8s account',
     server_entry: 'Create host',
     image_entry: 'Create image',
+    code_entry: 'Create code',
+    fs_entry: 'Create file',
+    associated_assets: 'Associated assets',
+    cloud_resource: 'Cloud resources',
   },
   workspace: {
     create:'Create a workspace',
