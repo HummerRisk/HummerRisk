@@ -243,6 +243,9 @@ export default {
     fs_entry: '創建文件',
     associated_assets: '關聯資產',
     cloud_resource: '雲資源',
+    k8s_platform: 'K8s平台',
+    k8s_account: 'K8s賬號',
+    k8s_resource: 'K8s資源',
   },
   workspace: {
     create: '創建工作空間',

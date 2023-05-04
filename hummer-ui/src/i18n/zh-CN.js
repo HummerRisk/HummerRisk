@@ -244,6 +244,9 @@ export default {
     fs_entry: '创建文件',
     associated_assets: '关联资产',
     cloud_resource: '云资源',
+    k8s_platform: 'K8s平台',
+    k8s_account: 'K8s账号',
+    k8s_resource: 'K8s资源',
   },
   workspace: {
     create: '创建工作空间',

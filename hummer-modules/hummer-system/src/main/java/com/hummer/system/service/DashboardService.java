@@ -307,5 +307,14 @@ public class DashboardService {
         return cloudInfo;
     }
 
+    public CloudInfo k8sInfo() {
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setClouds(extDashboardMapper.getK8sClouds());
+        cloudInfo.setAccounts(extDashboardMapper.getK8sAccounts());
+        cloudInfo.setResources(extDashboardMapper.getK8sResources());
+        cloudInfo.setPlugins(extDashboardMapper.getK8sPlugins());
+        return cloudInfo;
+    }
+
 }
 

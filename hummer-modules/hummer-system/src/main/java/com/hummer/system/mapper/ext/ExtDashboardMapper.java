@@ -57,4 +57,12 @@ public interface ExtDashboardMapper {
 
     List<Plugin> getPlugins();
 
+    Integer getK8sClouds();
+
+    Integer getK8sAccounts();
+
+    Integer getK8sResources();
+
+    List<Plugin> getK8sPlugins();
+
 }

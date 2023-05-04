@@ -244,6 +244,9 @@ export default {
     fs_entry: 'Create file',
     associated_assets: 'Associated assets',
     cloud_resource: 'Cloud resources',
+    k8s_platform: 'K8s platform',
+    k8s_account: 'K8s account',
+    k8s_resource: 'K8s resource',
   },
   workspace: {
     create:'Create a workspace',

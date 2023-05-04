@@ -53,17 +53,181 @@
                 </el-col>
                 <el-col :span="6">
                   <el-card class="cloud-card">
-
+                    <div slot="header" class="clearfix">
+                      <span>{{ $t('commons.k8s_scan') }} & {{ $t('dashboard.server_scan') }}</span>
+                    </div>
+                    <div class="text item">
+                      <el-row>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(item, index) in k8sInfo.plugins" :key="index" style="margin-top: 8px;">
+                          <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 25px; height: 25px; vertical-align:middle" alt=""/>
+                        </el-col>
+                      </el-row>
+                    </div>
+                    <div class="cs-scan">
+                      <span></span>
+                    </div>
+                    <div class="text item">
+                      <el-row>
+                        <el-col :span="4">
+                          <h1 class="server-h1">{{ 12 }}</h1>
+                        </el-col>
+                        <el-col :span="9">
+                          <h1 class="server-h1">{{ 11 }}<span class="hr-card-data-unit-server"> {{ 'Linux' }}</span></h1>
+                        </el-col>
+                        <el-col :span="11">
+                          <h1 class="server-h1">{{ 13 }}<span class="hr-card-data-unit-server"> {{ 'Windows' }}</span></h1>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                        </el-col>
+                      </el-row>
+                    </div>
                   </el-card>
                 </el-col>
                 <el-col :span="6">
                   <el-card class="cloud-card">
-
+                    <div slot="header" class="clearfix">
+                      <span>{{ $t('dashboard.image_scan') }} & {{ $t('dashboard.config_scan') }}</span>
+                    </div>
+                    <div class="text item">
+                      <el-row>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                        </el-col>
+                      </el-row>
+                    </div>
+                    <div class="cs-scan">
+                      <span></span>
+                    </div>
+                    <div class="text item">
+                      <el-row>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                        </el-col>
+                      </el-row>
+                    </div>
                   </el-card>
                 </el-col>
                 <el-col :span="6">
                   <el-card class="cloud-card">
-
+                    <div slot="header" class="clearfix">
+                      <span>{{ $t('dashboard.code_scan') }} & {{ $t('dashboard.fs_scan') }}</span>
+                    </div>
+                    <div class="text item">
+                      <el-row>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                        </el-col>
+                      </el-row>
+                    </div>
+                    <div class="cs-scan">
+                      <span></span>
+                    </div>
+                    <div class="text item">
+                      <el-row>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
+                        </el-col>
+                        <el-col :span="8">
+                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                        </el-col>
+                      </el-row>
+                      <el-row>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
+                        </el-col>
+                        <el-col :span="8">
+                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                        </el-col>
+                      </el-row>
+                    </div>
                   </el-card>
                 </el-col>
               </el-row>
@@ -78,7 +242,7 @@
 <script>
 import Container from "../.././common/components/Container";
 import {getCurrentUser} from "@/common/js/utils";
-import {cloudInfoUrl, topInfoUrl} from "@/api/cloud/dashboard/dashboard";
+import {cloudInfoUrl, k8sInfoUrl, topInfoUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -89,6 +253,7 @@ export default {
     return {
       result: {},
       cloudInfo: {},
+      k8sInfo: {},
     }
   },
   methods: {
@@ -96,6 +261,10 @@ export default {
       this.result = this.$post(cloudInfoUrl, {}, response => {
         let data = response.data;
         this.cloudInfo = data;
+      });
+      this.result = this.$post(k8sInfoUrl, {}, response => {
+        let data = response.data;
+        this.k8sInfo = data;
       });
     },
   },
@@ -261,8 +430,32 @@ export default {
 .cloud-h2 {
   font-size: 12px;
   font-weight: normal;
-  color: #888;
+  color: #555555;
   margin: 5px 5px 0 5px;
+}
+
+.cs-scan {
+  padding: 0 0 10px 10px;
+  margin: 10px 0;
+  border-bottom: 1px solid #EBEEF5;
+}
+
+.cs-card >>> .el-card__body {
+  padding: 10px;
+}
+
+.server-h1 {
+  font-size: 16px;
+  font-weight: bold;
+  font-style:italic;
+  margin: 8px 5px 0 5px;
+}
+
+.hr-card-data-unit-server {
+  color: #8492a6;
+  font-size: 12px;
+  display:inline-block;
+  transform: scale(0.58);
 }
 
 </style>

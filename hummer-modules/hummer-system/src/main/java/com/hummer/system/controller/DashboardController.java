@@ -160,4 +160,11 @@ public class DashboardController {
     public CloudInfo cloudInfo() {
         return dashboardService.cloudInfo();
     }
+
+    @I18n
+    @Operation(summary = "首页K8s统计")
+    @PostMapping("k8sInfo")
+    public CloudInfo k8sInfo() {
+        return dashboardService.k8sInfo();
+    }
 }

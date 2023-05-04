@@ -493,4 +493,28 @@
         from plugin p
         where p.id in (select t.plugin_id from cloud_account t where p.type = 'cloud')
     </select>
+
+    <select id="getK8sClouds" resultType="java.lang.Integer">
+        select count(*)
+        from plugin p
+        where p.id in (select t.plugin_id from cloud_native t where p.type = 'native')
+    </select>
+
+    <select id="getK8sAccounts" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_native t
+        left join plugin p on t.plugin_id = p.id
+        where p.type = 'native'
+    </select>
+
+    <select id="getK8sResources" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_native_source t
+    </select>
+
+    <select id="getK8sPlugins" resultMap="getPluginsResultMap">
+        select *
+        from plugin p
+        where p.id in (select t.plugin_id from cloud_native t where p.type = 'native')
+    </select>
 </mapper>
