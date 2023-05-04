@@ -1,7 +1,12 @@
 <template>
   <main-container class="main-container" v-loading="result.loading">
     <el-row :gutter="20">
-      <top-info/>
+      <el-col :span="18" style="padding-right: 0">
+        <top-info/>
+      </el-col>
+      <el-col :span="6" style="padding-left: 0">
+        <top-info-r/>
+      </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="18" style="padding-right: 0">
@@ -18,15 +23,17 @@
 </template>
 
 <script>
-import MainContainer from "../../common/components/MainContainer";
-import TopInfo from "./TopInfo";
-import LeftInfo from "./LeftInfo";
-import RightInfo from "./RightInfo";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import TopInfo from "@/business/components/dashboard/home/TopInfo";
+import LeftInfo from "@/business/components/dashboard/home/LeftInfo";
+import RightInfo from "@/business/components/dashboard/home/RightInfo";
 import BottomInfo from "@/business/components/dashboard/home/BottomInfo";
+import TopInfoR from "@/business/components/dashboard/home/TopInfoR.vue";
 
 /* eslint-disable */
 export default {
   components: {
+    TopInfoR,
     MainContainer,
     TopInfo,
     LeftInfo,

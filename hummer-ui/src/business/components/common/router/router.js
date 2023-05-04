@@ -27,7 +27,7 @@ Vue.use(VueRouter);
 /* eslint-disable */
 const router = new VueRouter({
   routes: [
-    {path: "/", redirect: '/dashboard/panel'},
+    {path: "/", redirect: '/dashboard/dashboard'},
     {
       path: "/sidebar",
       components: {

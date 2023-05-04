@@ -235,6 +235,11 @@ export default {
     kubench_scan: 'CIS Benchmark',
     deleted: '已删除',
     filter_condition: '筛选条件为: ',
+    fast_entry: '快速入口',
+    cloud_entry: '创建云账号',
+    k8s_entry: '创建 K8s 账号',
+    server_entry: '创建主机',
+    image_entry: '创建镜像',
   },
   workspace: {
     create: '创建工作空间',

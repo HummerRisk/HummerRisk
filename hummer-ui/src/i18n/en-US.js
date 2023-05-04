@@ -235,6 +235,11 @@ export default {
     kubench_scan: 'CIS Benchmark',
     deleted: 'Deleted',
     filter_condition: 'The filter condition is: ',
+    fast_entry: 'Fast entry',
+    cloud_entry: 'Create cloud account',
+    k8s_entry: 'Create K8s account',
+    server_entry: 'Create host',
+    image_entry: 'Create image',
   },
   workspace: {
     create:'Create a workspace',

@@ -1,139 +1,54 @@
 <template>
-  <div v-loading="result.loading">
-    <container class="container">
-      <el-col :span="4">
-        <el-card shadow="always" class="hr-card-index-1">
-          <span class="hr-card-data">
-            <span class="hr-card-data-digital">{{ topInfo.users }}</span>
-            <span class="hr-card-data-unit"> {{ 'Users' }}</span>
-          </span>
-          <span class="hr-card-desc">{{ $t('dashboard.users') }}</span>
-        </el-card>
-      </el-col>
-      <el-col :span="4">
-        <el-card shadow="always" class="hr-card-index-2">
-          <span class="hr-card-data">
-            <span class="hr-card-data-digital">{{ topInfo.accounts }}</span>
-            <span class="hr-card-data-unit"> {{ 'Accounts' }}</span>
-          </span>
-          <span class="hr-card-desc">{{ $t('dashboard.accounts') }}</span>
-        </el-card>
-      </el-col>
-      <el-col :span="4">
-        <el-card shadow="always" class="hr-card-index-3">
-          <span class="hr-card-data">
-            <span class="hr-card-data-digital">{{ topInfo.rules }}</span>
-            <span class="hr-card-data-unit"> {{ 'Rules' }}</span>
-          </span>
-          <span class="hr-card-desc">{{ $t('dashboard.rules') }}</span>
-        </el-card>
-      </el-col>
-      <el-col :span="4">
-        <el-card shadow="always" class="hr-card-index-4">
-          <span class="hr-card-data">
-            <span class="hr-card-data-digital">{{ topInfo.results }}</span>
-            <span class="hr-card-data-unit"> {{ 'Results' }}</span>
-          </span>
-          <span class="hr-card-desc">{{ $t('dashboard.results') }}</span>
-        </el-card>
-      </el-col>
-      <el-col :span="4">
-        <el-card shadow="always" class="hr-card-index-5">
-          <span class="hr-card-data">
-            <span class="hr-card-data-digital">{{ topInfo.tasks }}</span>
-            <span class="hr-card-data-unit"> {{ 'Tasks' }}</span>
-          </span>
-          <span class="hr-card-desc">{{ $t('dashboard.tasks') }}</span>
-        </el-card>
-      </el-col>
-      <el-col :span="4">
-          <el-card shadow="always" class="hr-card-index-6">
+  <container v-loading="result.loading" class="container">
+    <el-col :span="24" style="padding: 0;">
+      <el-row>
+        <el-card class="table-card">
+          <el-row>
+          <el-col :span="5">
             <span class="hr-card-data">
-              <current-user/>
+              <span class="hr-card-data-digital">{{ $t('commons.fast_entry') }}</span>
+              <span class="hr-card-data-unit"> {{ 'Entry' }}</span>
             </span>
-            <span class="hr-card-desc">{{ currentUser.email }}</span>
-          </el-card>
-        </el-col>
-    </container>
-    <container class="container">
-      <el-col :span="24">
-        <el-card shadow="always">
-          <el-col :span="24">
-            <el-table
-              :data="tableData"
-              style="width: 100%">
-              <el-table-column prop="status" :label="$t('resource.status')" min-width="100" v-slot:default="scope">
-                <el-button plain size="mini" type="primary" class="el-btn" v-if="scope.row.status === 'APPROVED'">
-                  <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                </el-button>
-                <el-button plain size="mini" type="success" class="el-btn" v-if="scope.row.status === 'FINISHED'">
-                  <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                </el-button>
-                <el-button plain size="mini" type="danger" class="el-btn" v-if="scope.row.status === 'ERROR'">
-                  <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-                </el-button>
-                <el-button plain size="mini" type="warning" class="el-btn" v-if="scope.row.status === 'WARNING'">
-                  <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-                </el-button>
-              </el-table-column>
-              <el-table-column prop="cloud" :label="$t('commons.cloud_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.cloud }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.cloud }}</span>
-              </el-table-column>
-              <el-table-column prop="vuln" :label="$t('dashboard.vuln_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.vuln }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.vuln }}</span>
-              </el-table-column>
-              <el-table-column prop="server" :label="$t('dashboard.server_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.server }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.server }}</span>
-              </el-table-column>
-              <el-table-column prop="k8s" :label="$t('commons.k8s_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.k8s }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.k8s }}</span>
-              </el-table-column>
-              <el-table-column prop="config" :label="$t('dashboard.config_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.config }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.config }}</span>
-              </el-table-column>
-              <el-table-column prop="image" :label="$t('dashboard.image_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.image }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.image }}</span>
-              </el-table-column>
-              <el-table-column prop="code" :label="$t('dashboard.code_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.code }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.code }}</span>
-              </el-table-column>
-              <el-table-column prop="fs" :label="$t('dashboard.fs_scan')" min-width="100" v-slot:default="scope">
-                <span v-if="scope.row.status === 'APPROVED'" class="scan-span">{{ scope.row.fs }}</span>
-                <span v-else class="scan-span-ing">{{ scope.row.fs }}</span>
-              </el-table-column>
-            </el-table>
+            <span class="hr-card-desc"></span>
           </el-col>
+          <el-col :span="19">
+            <el-row class="lb-row-txt-white">
+              <el-col :span="6">
+                <el-button size="medium" @click="goResource('cloud')"><i class="iconfont icon-guanyuyunguanjia"></i> {{ $t('commons.cloud_entry') }}</el-button>
+              </el-col>
+              <el-col :span="6">
+                <el-button size="medium" @click="goResource('k8s')"><i class="iconfont icon-adsyunyuanshengshujuku"></i> {{ $t('commons.k8s_entry') }}</el-button>
+              </el-col>
+              <el-col :span="6">
+                <el-button size="medium" @click="goResource('server')"><i class="iconfont icon-fuwuqi"></i> {{ $t('commons.server_entry') }}</el-button>
+              </el-col>
+              <el-col :span="6">
+                <el-button size="medium" @click="goResource('image')"><i class="iconfont icon-jingxiang2"></i> {{ $t('commons.image_entry') }}</el-button>
+              </el-col>
+            </el-row>
+          </el-col>
+          </el-row>
         </el-card>
-      </el-col>
-    </container>
-  </div>
+      </el-row>
+    </el-col>
+  </container>
 </template>
 
 <script>
 import Container from "../.././common/components/Container";
-import CurrentUser from "@/business/components/settings/CurrentUser";
 import {getCurrentUser} from "@/common/js/utils";
-import {topInfoUrl, topScanInfoUrl} from "@/api/cloud/dashboard/dashboard";
+import {topInfoUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
   components: {
     Container,
-    CurrentUser,
   },
   data() {
     return {
       result: {},
       currentUser: {},
       topInfo: {},
-      tableData: [],
     }
   },
   methods: {
@@ -142,10 +57,30 @@ export default {
         let data = response.data;
         this.topInfo = data;
       });
-      this.result = this.$get(topScanInfoUrl, response => {
-        let data = response.data;
-        this.tableData = data;
-      });
+    },
+    goResource(type) {
+      switch (type) {
+        case 'cloud':
+          this.$router.push({
+            path: '/account/cloudaccount'
+          }).catch(error => error);
+          break;
+        case 'k8s':
+          this.$router.push({
+            path: '/k8s/k8s'
+          }).catch(error => error);
+          break;
+        case 'server':
+          this.$router.push({
+            path: '/server/server'
+          }).catch(error => error);
+          break;
+        case 'image':
+          this.$router.push({
+            path: '/image/image'
+          }).catch(error => error);
+          break;
+      }
     },
   },
   created() {
@@ -156,8 +91,16 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  padding: 3px 5px 3px 15px;
+}
+
 .table-card {
   min-height: 10%;
+}
+
+.table-card >>> .el-card__body {
+  padding-top: 10px;
 }
 
 .hr-card-index-1 .hr-card-data-digital {
@@ -217,7 +160,7 @@ export default {
 .hr-card-data {
   text-align: left;
   display: block;
-  margin-bottom: 5px;
+  margin: 5px 0;
 }
 
 .hr-card-desc {
@@ -232,10 +175,6 @@ export default {
 .hr-card-data-unit {
   color: #8492a6;
   font-size: 10px;
-}
-
-.container {
-  padding: 3px 15px;
 }
 
 .split {
@@ -275,10 +214,6 @@ export default {
   text-align: center;
 }
 
-.el-card__body {
-  padding: 10px;
-}
-
 .scan-span {
   font-style:italic;
   color: #72abf9;
@@ -287,5 +222,14 @@ export default {
 .scan-span-ing {
   font-style:italic;
 }
+
+.lb-row-txt-white {
+  padding-top: 20px;
+}
+
+.lb-row-txt-white >>> .el-button {
+  min-width: 150px;
+}
+
 </style>
 
