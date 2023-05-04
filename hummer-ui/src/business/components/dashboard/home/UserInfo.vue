@@ -2,10 +2,20 @@
   <container v-loading="result.loading" class="container">
     <el-col :span="24" style="padding: 0;">
       <el-card class="table-card" v-loading="result.loading">
-        <span class="hr-card-data">
-          <current-user/>
-        </span>
-        <span class="hr-card-desc">{{ currentUser.email }}</span>
+        <el-row>
+          <el-col :span="24">
+            <span class="hr-card-data">
+              <current-user/>
+            </span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-row class="lb-row-txt-white">
+              <span class="hr-card-desc">{{ currentUser.email }}</span>
+            </el-row>
+          </el-col>
+        </el-row>
       </el-card>
     </el-col>
   </container>
@@ -50,7 +60,7 @@ export default {
 }
 
 .table-card >>> .el-card__body {
-  padding-top: 10px;
+  padding-top: 15px;
 }
 
 .hr-card-index-1 .hr-card-data-digital {
@@ -115,7 +125,7 @@ export default {
 
 .hr-card-desc {
   display: block;
-  text-align: left;
+  min-height: 25px;
 }
 
 .hr-card-data-digital {
@@ -172,5 +182,10 @@ export default {
 .scan-span-ing {
   font-style:italic;
 }
+
+.lb-row-txt-white {
+  margin-top: 4px;
+}
+
 </style>
 

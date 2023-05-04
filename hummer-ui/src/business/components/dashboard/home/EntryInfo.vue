@@ -9,7 +9,6 @@
                 <span class="hr-card-data-digital">{{ $t('commons.fast_entry') }}</span>
                 <span class="hr-card-data-unit"> {{ 'Entry' }}</span>
               </span>
-              <span class="hr-card-desc"></span>
             </el-col>
           </el-row>
           <el-row>
