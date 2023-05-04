@@ -457,4 +457,40 @@
         </where>
         order by tt.create_time desc
     </select>
+
+    <select id="getClouds" resultType="java.lang.Integer">
+        select count(*)
+        from plugin p
+        where p.id in (select t.plugin_id from cloud_account t where p.type = 'cloud')
+    </select>
+
+    <select id="getAccounts" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_account t
+        left join plugin p on t.plugin_id = p.id
+        where p.type = 'cloud'
+    </select>
+
+    <select id="getResources" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_resource_item t
+        left join plugin p on t.plugin_id = p.id
+        where p.type = 'cloud'
+    </select>
+
+    <resultMap id="getPluginsResultMap" type="com.hummer.common.core.domain.Plugin">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="order_" jdbcType="BIGINT" property="order" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="getPlugins" resultMap="getPluginsResultMap">
+        select *
+        from plugin p
+        where p.id in (select t.plugin_id from cloud_account t where p.type = 'cloud')
+    </select>
 </mapper>

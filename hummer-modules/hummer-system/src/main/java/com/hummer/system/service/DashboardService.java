@@ -9,10 +9,7 @@ import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.chart.ChartData;
-import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
-import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
-import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
-import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
+import com.hummer.common.core.domain.request.dashboard.*;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
@@ -299,6 +296,15 @@ public class DashboardService {
 
     public List<HistoryScanVo> historyScanVo(HistoryScanVo historyScanVo) {
         return extDashboardMapper.historyScanVo(historyScanVo);
+    }
+
+    public CloudInfo cloudInfo() {
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setClouds(extDashboardMapper.getClouds());
+        cloudInfo.setAccounts(extDashboardMapper.getAccounts());
+        cloudInfo.setResources(extDashboardMapper.getResources());
+        cloudInfo.setPlugins(extDashboardMapper.getPlugins());
+        return cloudInfo;
     }
 
 }

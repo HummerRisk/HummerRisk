@@ -3,10 +3,7 @@ package com.hummer.system.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.domain.request.chart.ChartData;
-import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
-import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
-import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
-import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
+import com.hummer.common.core.domain.request.dashboard.*;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
@@ -15,8 +12,8 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.DashboardService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -155,5 +152,12 @@ public class DashboardController {
     public Pager<List<HistoryScanVo>> historyScanVo(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody HistoryScanVo historyScanVo) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.historyScanVo(historyScanVo));
+    }
+
+    @I18n
+    @Operation(summary = "首页Cloud统计")
+    @PostMapping("cloudInfo")
+    public CloudInfo cloudInfo() {
+        return dashboardService.cloudInfo();
     }
 }

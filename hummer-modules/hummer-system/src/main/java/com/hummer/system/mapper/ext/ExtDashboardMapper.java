@@ -1,6 +1,7 @@
 package com.hummer.system.mapper.ext;
 
 
+import com.hummer.common.core.domain.Plugin;
 import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
 import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
 import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
@@ -47,5 +48,13 @@ public interface ExtDashboardMapper {
     List<Integer> analysisChartY(AnslysisVo anslysisVo);
 
     List<HistoryScanVo> historyScanVo(HistoryScanVo historyScanVo);
+
+    Integer getClouds();
+
+    Integer getAccounts();
+
+    Integer getResources();
+
+    List<Plugin> getPlugins();
 
 }
