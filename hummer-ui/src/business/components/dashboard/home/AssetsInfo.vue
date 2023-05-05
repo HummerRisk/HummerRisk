@@ -128,24 +128,24 @@
                     <div class="text item">
                       <el-row>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                          <h1 class="cloud-h1">{{ imageInfo.param1 }}</h1>
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
+                          <h1 class="cloud-h1">{{ imageInfo.param2 }}</h1>
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                          <h1 class="cloud-h1">{{ imageInfo.param3 }}</h1>
                         </el-col>
                       </el-row>
                       <el-row>
                         <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                          <h5 class="cloud-h2">{{ $t('image.image_repo') }}</h5>
                         </el-col>
                         <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
+                          <h5 class="cloud-h2">{{ $t('k8s.image') }}</h5>
                         </el-col>
                         <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                          <h5 class="cloud-h2">{{ $t('dashboard.image_scan') }}</h5>
                         </el-col>
                       </el-row>
                     </div>
@@ -154,25 +154,19 @@
                     </div>
                     <div class="text item">
                       <el-row>
-                        <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                        <el-col :span="12">
+                          <h1 class="cloud-h1">{{ configInfo.param1 }}</h1>
                         </el-col>
-                        <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
-                        </el-col>
-                        <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                        <el-col :span="12">
+                          <h1 class="cloud-h1">{{ configInfo.param2 }}</h1>
                         </el-col>
                       </el-row>
                       <el-row>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+                        <el-col :span="12">
+                          <h5 class="cloud-h2">{{ $t('config.config_settings') }}</h5>
                         </el-col>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
-                        </el-col>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
+                        <el-col :span="12">
+                          <h5 class="cloud-h2">{{ $t('dashboard.config_scan') }}</h5>
                         </el-col>
                       </el-row>
                     </div>
@@ -248,7 +242,14 @@
 <script>
 import Container from "../.././common/components/Container";
 import {getCurrentUser} from "@/common/js/utils";
-import {cloudInfoUrl, k8sInfoUrl, serverInfoUrl, topInfoUrl} from "@/api/cloud/dashboard/dashboard";
+import {
+  cloudInfoUrl,
+  configInfoUrl,
+  imageInfoUrl,
+  k8sInfoUrl,
+  serverInfoUrl,
+  topInfoUrl
+} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -261,6 +262,8 @@ export default {
       cloudInfo: {},
       k8sInfo: {},
       serverInfo: {},
+      imageInfo: {},
+      configInfo: {},
     }
   },
   methods: {
@@ -277,6 +280,14 @@ export default {
       this.result = this.$post(serverInfoUrl, {}, response => {
         let data = response.data;
         this.serverInfo = data;
+      });
+      this.result = this.$post(imageInfoUrl, {}, response => {
+        let data = response.data;
+        this.imageInfo = data;
+      });
+      this.result = this.$post(configInfoUrl, {}, response => {
+        let data = response.data;
+        this.configInfo = data;
       });
     },
   },

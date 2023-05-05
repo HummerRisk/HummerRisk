@@ -320,5 +320,13 @@ public class DashboardService {
         return extDashboardMapper.serverInfo();
     }
 
+    public AssetsInfo imageInfo() {
+        return extDashboardMapper.imageInfo();
+    }
+
+    public AssetsInfo configInfo() {
+        return extDashboardMapper.configInfo();
+    }
+
 }
 

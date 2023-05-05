@@ -6,11 +6,11 @@ package com.hummer.common.core.domain.request.dashboard;
  **/
 public class AssetsInfo {
 
-    private Integer param1;
+    private Integer param1 = 0;
 
-    private Integer param2;
+    private Integer param2 = 0;
 
-    private Integer param3;
+    private Integer param3 = 0;
 
     public Integer getParam1() {
         return param1;

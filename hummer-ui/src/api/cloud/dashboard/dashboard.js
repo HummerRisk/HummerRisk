@@ -39,4 +39,8 @@ export const k8sInfoUrl = "/system/dashboard/k8sInfo";
 
 export const serverInfoUrl = "/system/dashboard/serverInfo";
 
+export const imageInfoUrl = "/system/dashboard/imageInfo";
+
+export const configInfoUrl = "/system/dashboard/configInfo";
+
 

@@ -175,4 +175,18 @@ public class DashboardController {
         return dashboardService.serverInfo();
     }
 
+    @I18n
+    @Operation(summary = "首页Image统计")
+    @PostMapping("imageInfo")
+    public AssetsInfo imageInfo() {
+        return dashboardService.imageInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页Config统计")
+    @PostMapping("configInfo")
+    public AssetsInfo configInfo() {
+        return dashboardService.configInfo();
+    }
+
 }

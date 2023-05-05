@@ -10,11 +10,11 @@ import java.util.List;
  **/
 public class CloudInfo {
 
-    private Integer clouds;
+    private Integer clouds = 0;
 
-    private Integer accounts;
+    private Integer accounts = 0;
 
-    private Integer resources;
+    private Integer resources = 0;
 
     private List<PluginDTO> plugins;
 

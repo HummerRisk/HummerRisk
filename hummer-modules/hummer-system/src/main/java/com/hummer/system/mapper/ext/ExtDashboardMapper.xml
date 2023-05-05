@@ -537,4 +537,21 @@
         (select count(*) as param3 from server where type = 'windows') as param3
         )
     </select>
+
+    <select id="imageInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from image_repo) as param1,
+        (select count(*) as param2 from image) as param2,
+        (select count(*) as param3 from image t join image_result t2 on t.id = t2.image_id) as param3
+        )
+    </select>
+
+    <select id="configInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from cloud_native_config) as param1,
+        (select count(*) as param2 from cloud_native_config t join cloud_native_config_result t2 on t.id = t2.config_id) as param2
+        )
+    </select>
 </mapper>
