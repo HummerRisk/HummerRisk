@@ -189,4 +189,18 @@ public class DashboardController {
         return dashboardService.configInfo();
     }
 
+    @I18n
+    @Operation(summary = "首页Code统计")
+    @PostMapping("codeInfo")
+    public AssetsInfo codeInfo() {
+        return dashboardService.codeInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页FileSystem统计")
+    @PostMapping("fsInfo")
+    public AssetsInfo fsInfo() {
+        return dashboardService.fsInfo();
+    }
+
 }

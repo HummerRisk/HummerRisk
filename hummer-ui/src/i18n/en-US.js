@@ -1455,6 +1455,7 @@ export default {
     all_label: 'All deployment configurations',
   },
   code: {
+    code: 'Code',
     code_scan: 'Source code detection',
     code_setting: 'Project source configuration',
     code_rule: 'Source code detection rule',

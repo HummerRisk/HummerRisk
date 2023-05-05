@@ -43,4 +43,7 @@ export const imageInfoUrl = "/system/dashboard/imageInfo";
 
 export const configInfoUrl = "/system/dashboard/configInfo";
 
+export const codeInfoUrl = "/system/dashboard/codeInfo";
+
+export const fsInfoUrl = "/system/dashboard/fsInfo";
 

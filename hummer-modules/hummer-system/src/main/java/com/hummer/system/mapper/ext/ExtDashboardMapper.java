@@ -72,4 +72,8 @@ public interface ExtDashboardMapper {
 
     AssetsInfo configInfo();
 
+    AssetsInfo codeInfo();
+
+    AssetsInfo fsInfo();
+
 }

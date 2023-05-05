@@ -554,4 +554,20 @@
         (select count(*) as param2 from cloud_native_config t join cloud_native_config_result t2 on t.id = t2.config_id) as param2
         )
     </select>
+
+    <select id="codeInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from code) as param1,
+        (select count(*) as param2 from code t join code_result t2 on t.id = t2.code_id) as param2
+        )
+    </select>
+
+    <select id="fsInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from file_system) as param1,
+        (select count(*) as param2 from file_system t join file_system_result t2 on t.id = t2.fs_id) as param2
+        )
+    </select>
 </mapper>

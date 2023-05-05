@@ -1454,6 +1454,7 @@ export default {
     all_label: '全部部署配置',
   },
   code: {
+    code: '源碼',
     code_scan: '源碼檢測',
     code_setting: '項目源碼配置',
     code_rule: '源碼檢測規則',
