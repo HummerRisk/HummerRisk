@@ -2,16 +2,9 @@
   <main-container v-loading="result.loading">
 
     <div id="pdfDom">
-
-      <el-card class="table-card el-row-card">
-
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
-
-        <el-divider><i class="el-icon-tickets"></i></el-divider>
-
-      </el-card>
-
       <el-card class="table-card el-row-card" v-if="source">
+        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
+        <el-divider></el-divider>
         <h2 style="font-size: 18px;">{{ $t('account.cloud_account') }}</h2>
         <el-row>
           <el-col :span="8">
@@ -122,6 +115,70 @@
         <!-- 进度条 -->
         <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
                      :stroke-width="26" :percentage="progressResult"></el-progress>
+      </el-card>
+
+      <el-card class="table-card el-row-card">
+        <el-row>
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData1"
+                  :key="index" class="el-col el-col-group">
+            <el-card :body-style="{ padding: '15px', margin: '10px' }">
+              <div slot="header" class="clearfix">
+                <span>{{ data.name }}</span>
+              </div>
+              <div class="text item">
+                <el-row>
+                  <el-col :span="24">
+                    <span class="desc">{{ '不合规规则' }}</span>
+                    <span class="not_compliance_num">{{ 12 }}</span>
+                    <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ 18 }}</span>
+                  </el-col>
+                </el-row>
+                <el-row style="margin-top: 15px;">
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: rgb(247, 105, 100);margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: rgb(255, 165, 61);margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: rgb(110, 116, 142);margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: rgb(222, 224, 227);margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                </el-row>
+                <el-row style="margin-top: 15px;">
+                  <el-col :span="6">
+                    <span class="label"> {{ '高危:' }} </span>
+                    <span class="value critical"> {{ 3 }}</span>
+                  </el-col>
+                  <el-col :span="6">
+                    <span class="label"> {{ '高:' }} </span>
+                    <span class="value high"> {{ 3 }}</span>
+                  </el-col>
+                  <el-col :span="6">
+                    <span class="label"> {{ '中:' }} </span>
+                    <span class="value middle"> {{ 3 }}</span>
+                  </el-col>
+                  <el-col :span="6">
+                    <span class="label"> {{ '低:' }} </span>
+                    <span class="value low"> {{ 3 }}</span>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24" class="operate" v-if="groups === 1">
+            <span class="expand">展开</span> &nbsp;
+            <i class="el-icon-arrow-down" style="font-size: 12px;"></i>
+          </el-col>
+          <el-col :span="24" class="operate" v-if="groups === 2">
+            <span class="expand">收起</span> &nbsp;
+            <i class="el-icon-arrow-up" style="font-size: 12px;"></i>
+          </el-col>
+        </el-row>
       </el-card>
 
       <el-card class="table-card">
@@ -829,6 +886,21 @@ export default {
         timeConstant : 10000,
         autoStart : true
       }),
+      groupsData1: [
+        {name: 'AWS CIS合规检查'},
+        {name: 'AWS S3合规基线'},
+        {name: 'AWS 等保预检'},
+        {name: 'AWS IAM 安全检查'},
+      ],
+      groupsData2: [
+        {name: 'AWS CIS合规检查'},
+        {name: 'AWS S3合规基线'},
+        {name: 'AWS 等保预检'},
+        {name: 'AWS IAM 安全检查'},
+        {name: 'AWS HIPAA 安全检查'},
+        {name: 'AWS 密钥/密码安全检查'},
+      ],
+      groups: 1,
     }
   },
   watch: {
@@ -1324,7 +1396,7 @@ export default {
 
 .el-row-card {
   padding: 0 20px 0 20px;
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
 }
 
 .el-row-card >>> .el-card__body {
@@ -1370,4 +1442,68 @@ export default {
 /deep/ :focus {
   outline: 0;
 }
+
+.desc {
+  color: #646a73;
+  height: 22px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.not_compliance_num {
+  margin-left: 12px;
+  color: #1f2329;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+}
+
+.compliance_num {
+  color: #646a73;
+}
+
+.label {
+  height: 22px;
+  font-size: 14px;
+  color: #646a73;
+  font-weight: 400;
+  display: inline-block;
+}
+
+.value {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  height: 22px;
+}
+
+.critical {
+  color: #f54a45;
+}
+
+.high {
+  color: #f80;
+}
+
+.middle {
+  color: #1f2329;
+}
+
+.low {
+  color: rgb(222, 224, 227);
+}
+
+.el-col-group >>> .el-card {
+  margin: 10px;
+}
+
+.operate {
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 16px;
+  height: 22px;
+  text-align: center;
+}
+
 </style>
