@@ -316,5 +316,9 @@ public class DashboardService {
         return cloudInfo;
     }
 
+    public AssetsInfo serverInfo() {
+        return extDashboardMapper.serverInfo();
+    }
+
 }
 

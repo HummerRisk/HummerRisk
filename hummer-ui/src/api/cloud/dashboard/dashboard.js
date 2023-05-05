@@ -37,4 +37,6 @@ export const cloudInfoUrl = "/system/dashboard/cloudInfo";
 
 export const k8sInfoUrl = "/system/dashboard/k8sInfo";
 
+export const serverInfoUrl = "/system/dashboard/serverInfo";
+
 

@@ -1,6 +1,6 @@
 package com.hummer.common.core.domain.request.dashboard;
 
-import com.hummer.common.core.domain.Plugin;
+import com.hummer.common.core.dto.PluginDTO;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class CloudInfo {
 
     private Integer resources;
 
-    private List<Plugin> plugins;
+    private List<PluginDTO> plugins;
 
     public Integer getClouds() {
         return clouds;
@@ -42,11 +42,11 @@ public class CloudInfo {
         this.resources = resources;
     }
 
-    public List<Plugin> getPlugins() {
+    public List<PluginDTO> getPlugins() {
         return plugins;
     }
 
-    public void setPlugins(List<Plugin> plugins) {
+    public void setPlugins(List<PluginDTO> plugins) {
         this.plugins = plugins;
     }
 }

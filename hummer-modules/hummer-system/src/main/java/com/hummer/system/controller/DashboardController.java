@@ -167,4 +167,12 @@ public class DashboardController {
     public CloudInfo k8sInfo() {
         return dashboardService.k8sInfo();
     }
+
+    @I18n
+    @Operation(summary = "首页Server统计")
+    @PostMapping("serverInfo")
+    public AssetsInfo serverInfo() {
+        return dashboardService.serverInfo();
+    }
+
 }

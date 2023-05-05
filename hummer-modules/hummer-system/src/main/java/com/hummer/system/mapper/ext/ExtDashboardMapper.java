@@ -1,10 +1,11 @@
 package com.hummer.system.mapper.ext;
 
 
-import com.hummer.common.core.domain.Plugin;
 import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
+import com.hummer.common.core.domain.request.dashboard.AssetsInfo;
 import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
 import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
+import com.hummer.common.core.dto.PluginDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
 import com.hummer.common.core.dto.TopScanDTO;
 import org.apache.ibatis.annotations.Param;
@@ -55,7 +56,7 @@ public interface ExtDashboardMapper {
 
     Integer getResources();
 
-    List<Plugin> getPlugins();
+    List<PluginDTO> getPlugins();
 
     Integer getK8sClouds();
 
@@ -63,6 +64,8 @@ public interface ExtDashboardMapper {
 
     Integer getK8sResources();
 
-    List<Plugin> getK8sPlugins();
+    List<PluginDTO> getK8sPlugins();
+
+    AssetsInfo serverInfo();
 
 }
