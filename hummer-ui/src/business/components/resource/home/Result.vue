@@ -135,16 +135,16 @@
                 </el-row>
                 <el-row style="margin-top: 15px;">
                   <el-col :span="6">
-                    <div style="height: 12px;background-color: rgb(247, 105, 100);margin: 1px;border-radius: 3px;"></div>
+                    <div style="height: 12px;background-color: #8B0000;margin: 1px;border-radius: 3px;"></div>
                   </el-col>
                   <el-col :span="6">
-                    <div style="height: 12px;background-color: rgb(255, 165, 61);margin: 1px;border-radius: 3px;"></div>
+                    <div style="height: 12px;background-color: #FF4D4D;margin: 1px;border-radius: 3px;"></div>
                   </el-col>
                   <el-col :span="6">
-                    <div style="height: 12px;background-color: rgb(110, 116, 142);margin: 1px;border-radius: 3px;"></div>
+                    <div style="height: 12px;background-color: #FF8000;margin: 1px;border-radius: 3px;"></div>
                   </el-col>
                   <el-col :span="6">
-                    <div style="height: 12px;background-color: rgb(222, 224, 227);margin: 1px;border-radius: 3px;"></div>
+                    <div style="height: 12px;background-color: #336D9F;margin: 1px;border-radius: 3px;"></div>
                   </el-col>
                 </el-row>
                 <el-row style="margin-top: 15px;">
@@ -1479,19 +1479,19 @@ export default {
 }
 
 .critical {
-  color: #f54a45;
+  color: #8B0000;
 }
 
 .high {
-  color: #f80;
+  color: #FF4D4D;
 }
 
 .middle {
-  color: #1f2329;
+  color: #FF8000;
 }
 
 .low {
-  color: rgb(222, 224, 227);
+  color: #336D9F;
 }
 
 .el-col-group >>> .el-card {

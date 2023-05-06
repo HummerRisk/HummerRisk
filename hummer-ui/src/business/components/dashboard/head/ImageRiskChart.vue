@@ -54,7 +54,7 @@ export default {
               type: 'bar',
               stack: 'total',
               label: {
-                show: true
+                show: false
               },
               emphasis: {
                 focus: 'series'
@@ -66,7 +66,7 @@ export default {
               type: 'bar',
               stack: 'total',
               label: {
-                show: true
+                show: false
               },
               emphasis: {
                 focus: 'series'
@@ -78,7 +78,7 @@ export default {
               type: 'bar',
               stack: 'total',
               label: {
-                show: true
+                show: false
               },
               emphasis: {
                 focus: 'series'
@@ -90,7 +90,7 @@ export default {
               type: 'bar',
               stack: 'total',
               label: {
-                show: true
+                show: false
               },
               emphasis: {
                 focus: 'series'
@@ -102,7 +102,7 @@ export default {
               type: 'bar',
               stack: 'total',
               label: {
-                show: true
+                show: false
               },
               emphasis: {
                 focus: 'series'
@@ -110,7 +110,7 @@ export default {
               data: [85, 65, 50, 45, 40, 39, 35, 25, 20, 33]
             },
           ],
-          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
+          color: ['#8B0000', '#FF4D4D', '#FF8000', '#336D9F', '#67C23A']
         };
       });
     },

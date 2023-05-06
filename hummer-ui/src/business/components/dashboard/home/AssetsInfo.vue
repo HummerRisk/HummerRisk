@@ -24,10 +24,10 @@
                     <div class="text item">
                       <el-row>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ cloudInfo.clouds }}</h1>
+                          <h1 class="cloud-h4">{{ cloudInfo.clouds }}</h1>
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ cloudInfo.accounts }}</h1>
+                          <h1 class="cloud-h3">{{ cloudInfo.accounts }}</h1>
                         </el-col>
                         <el-col :span="8">
                           <h1 class="cloud-h1">{{ cloudInfo.resources }}</h1>
@@ -63,10 +63,10 @@
                     <div class="text item">
                       <el-row>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.clouds }}</h1>
+                          <h1 class="cloud-h4">{{ k8sInfo.clouds }}</h1>
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.accounts }}</h1>
+                          <h1 class="cloud-h3">{{ k8sInfo.accounts }}</h1>
                         </el-col>
                         <el-col :span="8">
                           <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
@@ -96,13 +96,13 @@
                     <div class="text item">
                       <el-row>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ serverInfo.param1 }}</h1>
+                          <h1 class="cloud-h5">{{ serverInfo.param1 }}</h1>
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ serverInfo.param2 }}</h1>
+                          <h1 class="cloud-h4">{{ serverInfo.param2 }}</h1>
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ serverInfo.param3 }}</h1>
+                          <h1 class="cloud-h4">{{ serverInfo.param3 }}</h1>
                         </el-col>
                       </el-row>
                       <el-row>
@@ -129,13 +129,13 @@
                     <div class="text item">
                       <el-row>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ imageInfo.param1 }}</h1>
+                          <h1 class="cloud-h5">{{ imageInfo.param1 }}</h1>
                         </el-col>
                         <el-col :span="8">
                           <h1 class="cloud-h1">{{ imageInfo.param2 }}</h1>
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h1">{{ imageInfo.param3 }}</h1>
+                          <h1 class="cloud-h3">{{ imageInfo.param3 }}</h1>
                         </el-col>
                       </el-row>
                       <el-row>
@@ -149,6 +149,20 @@
                           <h5 class="cloud-h2">{{ $t('dashboard.image_scan') }}</h5>
                         </el-col>
                       </el-row>
+                      <el-row style="margin-top: 4px;">
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                      </el-row>
                     </div>
                     <div class="cs-scan">
                       <span></span>
@@ -159,7 +173,7 @@
                           <h1 class="cloud-h1">{{ configInfo.param1 }}</h1>
                         </el-col>
                         <el-col :span="12">
-                          <h1 class="cloud-h1">{{ configInfo.param2 }}</h1>
+                          <h1 class="cloud-h3">{{ configInfo.param2 }}</h1>
                         </el-col>
                       </el-row>
                       <el-row>
@@ -168,6 +182,20 @@
                         </el-col>
                         <el-col :span="12">
                           <h5 class="cloud-h2">{{ $t('dashboard.config_scan') }}</h5>
+                        </el-col>
+                      </el-row>
+                      <el-row style="margin-top: 4px;">
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
                         </el-col>
                       </el-row>
                     </div>
@@ -186,7 +214,7 @@
                           <h1 class="cloud-h1">{{ codeInfo.param1 }}</h1>
                         </el-col>
                         <el-col :span="12">
-                          <h1 class="cloud-h1">{{ codeInfo.param2 }}</h1>
+                          <h1 class="cloud-h3">{{ codeInfo.param2 }}</h1>
                         </el-col>
                       </el-row>
                       <el-row>
@@ -195,6 +223,20 @@
                         </el-col>
                         <el-col :span="12">
                           <h5 class="cloud-h2">{{ $t('dashboard.code_scan') }}</h5>
+                        </el-col>
+                      </el-row>
+                      <el-row style="margin-top: 4px;">
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
                         </el-col>
                       </el-row>
                     </div>
@@ -207,7 +249,7 @@
                           <h1 class="cloud-h1">{{ fsInfo.param1 }}</h1>
                         </el-col>
                         <el-col :span="12">
-                          <h1 class="cloud-h1">{{ fsInfo.param2 }}</h1>
+                          <h1 class="cloud-h3">{{ fsInfo.param2 }}</h1>
                         </el-col>
                       </el-row>
                       <el-row>
@@ -216,6 +258,20 @@
                         </el-col>
                         <el-col :span="12">
                           <h5 class="cloud-h2">{{ $t('dashboard.fs_scan') }}</h5>
+                        </el-col>
+                      </el-row>
+                      <el-row style="margin-top: 4px;">
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
+                        </el-col>
+                        <el-col :span="6">
+                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
                         </el-col>
                       </el-row>
                     </div>
@@ -445,7 +501,7 @@ export default {
 .cloud-h1 {
   font-size: 24px;
   font-weight: bold;
-  font-style:italic;
+  /*font-style:italic;//斜体*/
   margin: 8px 5px 0 5px;
 }
 
@@ -456,6 +512,27 @@ export default {
   font-size: 12px;
   display:inline-block;
   transform: scale(0.83);
+}
+
+.cloud-h3 {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(247, 105, 100);
+  margin: 8px 5px 0 5px;
+}
+
+.cloud-h4 {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(255, 165, 61);
+  margin: 8px 5px 0 5px;
+}
+
+.cloud-h5 {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(110, 116, 142);
+  margin: 8px 5px 0 5px;
 }
 
 .cs-scan {

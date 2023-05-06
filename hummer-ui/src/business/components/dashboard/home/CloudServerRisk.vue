@@ -1,36 +1,30 @@
 <template>
-  <div v-loading="result.loading">
+  <container v-loading="result.loading" class="container">
     <el-col :span="8" style="padding-right: 0;">
-      <container class="container1" >
-        <el-card class="table-card">
-          <template v-slot:header>
-            <span class="title">{{ $t('dashboard.non_compliant_assets') }}</span>
-          </template>
-          <cloud-resource-chart/>
-        </el-card>
-      </container>
+      <el-card class="table-card">
+        <template v-slot:header>
+          <span class="title">{{ $t('dashboard.non_compliant_assets') }}</span>
+        </template>
+        <cloud-resource-chart/>
+      </el-card>
     </el-col>
     <el-col :span="8">
-      <container class="container2" >
-        <el-card class="table-card">
-          <template v-slot:header>
-            <span class="title">{{ $t('dashboard.non_compliant_risk') }}</span>
-          </template>
-          <cloud-risk-chart/>
-        </el-card>
-      </container>
+      <el-card class="table-card">
+        <template v-slot:header>
+          <span class="title">{{ $t('dashboard.non_compliant_risk') }}</span>
+        </template>
+        <cloud-risk-chart/>
+      </el-card>
     </el-col>
     <el-col :span="8" style="padding-left: 0;">
-      <container class="container3">
-        <el-card class="table-card">
-          <template v-slot:header>
-            <span class="title">{{ $t('dashboard.server_top10_risk') }}</span>
-          </template>
-          <server-risk-chart/>
-        </el-card>
-      </container>
+      <el-card class="table-card">
+        <template v-slot:header>
+          <span class="title">{{ $t('dashboard.server_top10_risk') }}</span>
+        </template>
+        <server-risk-chart/>
+      </el-card>
     </el-col>
-  </div>
+  </container>
 </template>
 
 <script>
@@ -67,16 +61,9 @@ export default {
   min-height: 10%;
 }
 
-.container1 {
-  padding: 3px 0 3px 15px;
+.container {
+  padding: 0 15px 3px 15px;
 }
 
-.container2 {
-  padding: 3px 0;
-}
-
-.container3 {
-  padding: 3px 15px 3px 0;
-}
 </style>
 
