@@ -1133,6 +1133,8 @@ export default {
     by_image: '按鏡像檢測統計',
     batch_settings_repo: '批量設置鏡像倉庫名稱',
     image_repo_name_old: '舊鏡像倉庫名稱',
+    all_image_group: '全部鏡像分組',
+    image_group_search: '搜索鏡像分組',
   },
   package: {
     package_setting: '軟件包管理',

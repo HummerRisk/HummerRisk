@@ -15,7 +15,7 @@ export default {
     {
       path: "image",
       name: "image",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Image'),
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Image.vue'),
     },
     {
       path: "rule",

@@ -1134,6 +1134,8 @@ export default {
     by_image: '按镜像检测统计',
     batch_settings_repo: '批量设置镜像仓库名称',
     image_repo_name_old: '旧镜像仓库名称',
+    all_image_group: '全部镜像分组',
+    image_group_search: '搜索镜像分组',
   },
   package: {
     package_setting: '软件包管理',

@@ -1134,6 +1134,8 @@ export default {
     by_image: 'Statistics by image detection',
     batch_settings_repo: 'Batch setting mirror warehouse name',
     image_repo_name_old: 'Old mirror warehouse name',
+    all_image_group: 'All image groups',
+    image_group_search: 'Search image group',
   },
   package: {
     package_setting: 'Package Management',
