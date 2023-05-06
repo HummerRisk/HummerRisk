@@ -1,25 +1,14 @@
 <template>
   <div>
-    <el-col :span="4" :offset="1">
+    <el-col :span="4" :offset="1" style="margin-top: 50px;">
       <el-row :gutter="24">
-            <!-- <el-menu :unique-opened="true" mode="horizontal" default-active="1" router background-color="#364f6c;" active-text-color="red">
-              <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
-              <el-submenu index="2" popper-class="submenu">
-                <template v-slot:title>
-                <span class="account-name" :title="currentAccount">
-                  全部命名空间
-                </span>
-                </template>
-                <search-list v-if="items.length>0" :items="items" @namespaceSwitch="namespaceSwitch"/>
-              </el-submenu>
-            </el-menu> -->
-            <template>
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="namespaceAllChange">全部命名空间</el-checkbox>
-              <div style="margin: 15px 0;"></div>
-              <el-checkbox-group v-model="choosedNamespace" @change="handleNamespaceChange">
-                <el-checkbox v-for="(item,index) in allNamesapce" :label="item.sourceName" :key="item.id" style="display:block;" checked>{{item.sourceName}}</el-checkbox>
-              </el-checkbox-group>
-            </template>
+        <template>
+          <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="namespaceAllChange">{{ $t('rule.all') }}{{ $t('k8s.namespace') }}</el-checkbox>
+          <div style="margin: 15px 0;"></div>
+          <el-checkbox-group v-model="choosedNamespace" @change="handleNamespaceChange">
+            <el-checkbox v-for="(item,index) in allNamesapce" :label="item.sourceName" :key="item.id" style="display:block;" checked>{{item.sourceName}}</el-checkbox>
+          </el-checkbox-group>
+        </template>
       </el-row>
     </el-col>
     <hr-chart :options="options" :width="1335" :height="800"></hr-chart>
@@ -51,8 +40,6 @@ export default {
       allNamesapce:{},
       allNamesapceLabel:[],
       initData:[],
-      checkAll: false,
-      currentAccount : "hummerrisk",
       choosedNamespace:[],
       isIndeterminate: true,
       checkAll:true,
@@ -70,7 +57,7 @@ export default {
           let nodes = response.data.nodes;
           for (let obj of nodes) {
             if(!!obj.symbol) {
-              obj.symbol = 'image://'+ require('../../../../assets/img/platform/k8s.png');
+              obj.symbol = 'image://'+ require('@/assets/img/platform/k8s.png');
               break;
             }
           }
@@ -120,7 +107,7 @@ export default {
                 let tooltipdata = params.data;
                 var result = '';
                 if(params.dataType == 'node'&&(!!tooltipdata.name)){
-                  let nodename = tooltipdata.name.split("/") 
+                  let nodename = tooltipdata.name.split("/")
                   return `<b>资源名称: <b/>  ${nodename[1]}
                   <br/>命名空间:  ${nodename[0]}
                   <br/>资源类型:  ${tooltipdata.category}`
@@ -178,12 +165,12 @@ export default {
                     width: 10
                   }
                 }
-                
+
               }
             ],
             color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
           };
-          this.initData = this.options.series[0].data 
+          this.initData = this.options.series[0].data
         });
       }
     },
@@ -191,7 +178,7 @@ export default {
       let resultdata = [this.initData[0]]
       this.initData.forEach(function(item,index){
         if(!!item.name){
-          let nodename = item.name.split("/") 
+          let nodename = item.name.split("/")
           let namepsaceName = nodename[0]
           if(this.choosedNamespace.includes(namepsaceName)){
             resultdata.push(item)
@@ -231,7 +218,7 @@ export default {
   created() {
     this.init();
   },
-  
+
 }
 
 </script>
