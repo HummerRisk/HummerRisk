@@ -609,6 +609,12 @@ export default {
     last_three_month: '最近三个月',
     i18n_scan: '执行检测',
     i18n_rescan: '重新执行检测',
+    non_compliant_assets: '混合云不合规资产数量统计',
+    non_compliant_risk: '混合云不合规资产风险统计',
+    server_top10_risk: '主机检测 TOP 10 风险统计',
+    k8s_risk: 'K8s 风险统计',
+    image_risk: '镜像检测 TOP 10 风险统计',
+    k8s_compliance_scan_statistics: 'K8s 合规检测统计',
   },
   rule: {
     rule: '检测规则',

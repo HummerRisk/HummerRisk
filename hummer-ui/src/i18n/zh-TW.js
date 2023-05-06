@@ -608,6 +608,12 @@ export default {
     last_three_month: '最近三個月',
     i18n_scan: '執行檢測',
     i18n_rescan: '重新執行檢測',
+    non_compliant_assets: '混合云不合規資產數量統計',
+    non_compliant_risk: '混合云不合規資產風險統計',
+    server_top10_risk: '主機檢測 TOP 10 風險統計',
+    k8s_risk: 'K8s 風險統計',
+    image_risk: '鏡像檢測 TOP 10 風險統計',
+    k8s_compliance_scan_statistics: 'K8s 合規檢測統計',
   },
   rule: {
     rule: '檢測規則',

@@ -609,6 +609,12 @@ export default {
     last_three_month: 'Last three months',
     i18n_scan: 'Execute detection',
     i18n_rescan: 'Re-execute detection',
+    non_compliant_assets: 'Statistics of the number of hybrid cloud non-compliant assets',
+    non_compliant_risk: 'Hybrid cloud non-compliant asset risk statistics',
+    server_top10_risk: 'Host detection TOP 10 risk statistics',
+    k8s_risk: 'K8s risk statistics',
+    image_risk: 'Image detection TOP 10 risk statistics',
+    k8s_compliance_scan_statistics: 'K8s compliance detection statistics',
   },
   rule: {
     rule:'Scan Rule',
