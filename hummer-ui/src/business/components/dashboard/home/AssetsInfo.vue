@@ -121,6 +121,7 @@
                   <!-- k8s -->
                 </el-col>
                 <el-col :span="6">
+                  <!-- image & config -->
                   <el-card class="cloud-card">
                     <div slot="header" class="clearfix">
                       <span>{{ $t('dashboard.image_scan') }} & {{ $t('dashboard.config_scan') }}</span>
@@ -171,8 +172,10 @@
                       </el-row>
                     </div>
                   </el-card>
+                  <!-- image & config -->
                 </el-col>
                 <el-col :span="6">
+                  <!-- code & fs -->
                   <el-card class="cloud-card">
                     <div slot="header" class="clearfix">
                       <span>{{ $t('dashboard.code_scan') }} & {{ $t('dashboard.fs_scan') }}</span>
@@ -217,6 +220,7 @@
                       </el-row>
                     </div>
                   </el-card>
+                  <!-- code & fs -->
                 </el-col>
               </el-row>
             </el-col>
@@ -259,7 +263,6 @@ export default {
       this.result = this.$post(cloudInfoUrl, {}, response => {
         let data = response.data;
         this.cloudInfo = data;
-        console.log(this.cloudInfo)
       });
       this.result = this.$post(k8sInfoUrl, {}, response => {
         let data = response.data;
