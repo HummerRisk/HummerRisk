@@ -23,7 +23,17 @@ public interface ExtVulnMapper {
 
     List<ChartData> accountList(Map<String, Object> params);
 
+    List<ChartData> k8sVulnList(Map<String, Object> params);
+
+    List<ChartData> k8sConfigList(Map<String, Object> params);
+
+    List<ChartData> k8sKubenchList(Map<String, Object> params);
+
+    List<ChartData> k8sRuleList(Map<String, Object> params);
+
     List<Map<String, Object>> riskList(Map<String, Object> params);
+
+    List<Map<String, Object>> k8sScanRiskChart(Map<String, Object> params);
 
     List<ChartData> regionsList(Map<String, Object> params);
 

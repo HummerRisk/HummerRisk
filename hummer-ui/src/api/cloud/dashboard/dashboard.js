@@ -53,3 +53,11 @@ export const serverRiskChartUrl = "/system/dashboard/serverRiskChart";
 
 export const imageRiskChartUrl = "/system/dashboard/imageRiskChart";
 
+export const k8sVulnRiskChartUrl = "/system/dashboard/k8sVulnRiskChart";
+
+export const k8sConfigRiskChartUrl = "/system/dashboard/k8sConfigRiskChart";
+
+export const k8sKubenchRiskChartUrl = "/system/dashboard/k8sKubenchRiskChart";
+
+export const k8sScanRiskChartUrl = "/system/dashboard/k8sScanRiskChart";
+

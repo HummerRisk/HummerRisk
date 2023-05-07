@@ -65,7 +65,7 @@ export default {
           },
           series: [
             {
-              name: 'CRITICAL',
+              name: 'Critical',
               type: 'bar',
               stack: 'total',
               label: {
@@ -77,7 +77,7 @@ export default {
               data: criticalData
             },
             {
-              name: 'HIGH',
+              name: 'High',
               type: 'bar',
               stack: 'total',
               label: {
@@ -89,7 +89,7 @@ export default {
               data: highData
             },
             {
-              name: 'MEDIUM',
+              name: 'Medium',
               type: 'bar',
               stack: 'total',
               label: {
@@ -101,7 +101,7 @@ export default {
               data: mediumData
             },
             {
-              name: 'LOW',
+              name: 'Low',
               type: 'bar',
               stack: 'total',
               label: {
@@ -113,7 +113,7 @@ export default {
               data: lowData
             },
             {
-              name: 'UNKNOWN',
+              name: 'Unknown',
               type: 'bar',
               stack: 'total',
               label: {
@@ -125,7 +125,7 @@ export default {
               data: unknownData
             },
           ],
-          color: ['#8B0000', '#FF4D4D', '#FF8000', '#336D9F', '#67C23A']
+          color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });
     },

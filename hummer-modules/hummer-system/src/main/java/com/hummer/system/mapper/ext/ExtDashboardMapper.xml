@@ -599,4 +599,51 @@
             LIMIT #{limit}
         </if>
     </select>
+
+    <select id="k8sVulnRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `product`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'CRITICAL' and t3.cloud_native_id = t.id) AS `Critical`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'HIGH' and t3.cloud_native_id = t.id) AS `High`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'MEDIUM' and t3.cloud_native_id = t.id) AS `Medium`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'LOW' and t3.cloud_native_id = t.id) AS `Low`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'UNKNOWN' and t3.cloud_native_id = t.id) AS `Unknown`
+        FROM cloud_native t
+        JOIN cloud_native_result t1 on t1.cloud_native_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sConfigRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `product`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'CRITICAL' and t3.cloud_native_id = t.id) AS `Critical`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'HIGH' and t3.cloud_native_id = t.id) AS `High`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'MEDIUM' and t3.cloud_native_id = t.id) AS `Medium`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'LOW' and t3.cloud_native_id = t.id) AS `Low`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'UNKNOWN' and t3.cloud_native_id = t.id) AS `Unknown`
+        FROM cloud_native t
+        JOIN cloud_native_result t1 on t1.cloud_native_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sKubenchRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `product`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'FAIL' and t3.cloud_native_id = t.id) AS `Fail`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'WARN' and t3.cloud_native_id = t.id) AS `Warn`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'INFO' and t3.cloud_native_id = t.id) AS `Info`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'PASS' and t3.cloud_native_id = t.id) AS `Pass`
+        FROM cloud_native t
+        JOIN cloud_native_result t1 on t1.cloud_native_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
 </mapper>

@@ -28,7 +28,7 @@ export default {
         let legendData = [];
         let seriesData = [];
         for (let obj of response.data) {
-          legendData.push(obj.groupName);
+          legendData.push(obj.groupName + ' ' + obj.yAxis + '/' + obj.yAxis2 + '(' + obj.xAxis + '分)');
           seriesData.push({
             name: obj.groupName + ' ' + obj.yAxis + '/' + obj.yAxis2 + '(' + obj.xAxis + '分)',
             value: obj.yAxis

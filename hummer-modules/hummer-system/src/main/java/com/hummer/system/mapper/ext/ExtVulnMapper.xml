@@ -95,6 +95,17 @@
         GROUP BY t.severity
     </select>
 
+    <select id="k8sScanRiskChart" resultType="java.util.Map">
+        SELECT
+            t.severity as `name`,
+            IFNULL( sum(t.return_sum), 0 ) AS `value`,
+            IFNULL( sum(t.resources_sum), 0 ) AS resourcesSum
+        FROM cloud_task t
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'native'
+        GROUP BY t.severity
+    </select>
+
     <select id="overall" resultType="com.hummer.common.core.domain.request.chart.ChartData">
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,
@@ -205,15 +216,82 @@
             IFNULL( (SELECT scan_score FROM history_scan tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
         FROM
             cloud_account t
-            LEFT JOIN resource t1 ON t1.account_id = t.id
-            LEFT JOIN plugin p on t.plugin_id = p.id
+            JOIN resource t1 ON t1.account_id = t.id
+            JOIN plugin p on t.plugin_id = p.id
         WHERE p.type = 'cloud'
         GROUP BY
             t.id
-        HAVING
-            yAxis != 0
         ORDER BY
             yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sVulnList" resultType="com.hummer.common.core.domain.request.chart.ChartData">
+        SELECT
+        IFNULL( sum( t1.return_sum ), 0 ) AS yAxis,
+        t.name AS groupName
+        FROM
+        cloud_native t
+        JOIN cloud_native_result t1 ON t1.cloud_native_id = t.id
+        JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'native'
+        GROUP BY t.id
+        ORDER BY yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sConfigList" resultType="com.hummer.common.core.domain.request.chart.ChartData">
+        SELECT
+        IFNULL( sum( t1.return_config_sum ), 0 ) AS yAxis,
+        t.name AS groupName
+        FROM
+        cloud_native t
+        JOIN cloud_native_result t1 ON t1.cloud_native_id = t.id
+        JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'native'
+        GROUP BY t.id
+        ORDER BY yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sKubenchList" resultType="com.hummer.common.core.domain.request.chart.ChartData">
+        SELECT
+        IFNULL( count( t2.id ), 0 ) AS yAxis,
+        t.name AS groupName
+        FROM
+        cloud_native t
+        JOIN cloud_native_result t1 ON t1.cloud_native_id = t.id
+        JOIN cloud_native_result_kubench t2 ON t2.result_id = t1.id
+        JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'native'
+        GROUP BY t.id
+        ORDER BY yAxis desc
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sRuleList" resultType="com.hummer.common.core.domain.request.chart.ChartData">
+        SELECT
+        IFNULL( sum( t1.cloud_return_sum ), 0 ) AS yAxis,
+        IFNULL( sum( t1.cloud_resources_sum ), 0 ) AS yAxis2,
+        t.name AS groupName,
+        IFNULL( (SELECT scan_score FROM history_scan tt WHERE tt.account_id = t.id ORDER BY tt.create_time DESC limit 1), 100) AS xAxis
+        FROM
+        cloud_native t
+        JOIN cloud_native_result t1 ON t1.cloud_native_id = t.id
+        JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'native'
+        GROUP BY
+        t.id
+        ORDER BY
+        yAxis desc
         <if test="limit != null">
             LIMIT #{limit}
         </if>

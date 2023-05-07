@@ -6,7 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {codeSeverityChartUrl} from "@/api/k8s/code/code";
+import {k8sScanRiskChartUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -24,23 +24,59 @@ export default {
   },
   methods: {
     init() {
-      this.$get(codeSeverityChartUrl, response => {
-        let data = response.data;
+      this.$post(k8sScanRiskChartUrl, {}, response => {
+        let seriesData = [];
+        let sum = 0;
+        for (let obj of response.data) {
+          seriesData.push({
+            name: this.$t('rule.' + obj.name),
+            value: obj.value
+          });
+          sum += obj.value;
+        }
+        seriesData.push(
+          {
+            value: sum,
+            itemStyle: {
+              // stop the chart from rendering this piece
+              color: 'none',
+              decal: {
+                symbol: 'none'
+              }
+            }, label: {
+              show: false
+            }
+          }
+        );
         this.options = {
+          tooltip: {
+            trigger: 'item'
+          },
           legend: {
             top: '5%',
-            left: 'center'
+            left: 'center',
+            // doesn't perfectly work with our tricks, disable it
+            selectedMode: false
           },
-          tooltip: {},
-          dataset: {
-            dimensions: ['product', 'Critical', 'High', 'Medium', 'Low', 'Unknown'],
-            source: data
-          },
-          xAxis: { type: 'category' },
-          yAxis: {},
-          // Declare several bar series, each will be mapped
-          // to a column of dataset.source by default.
-          series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+          series: [
+            {
+              name: this.$t('dashboard.non_compliant_risk'),
+              type: 'pie',
+              radius: ['45%', '65%'],
+              center: ['50%', '70%'],
+              // adjust the start angle
+              startAngle: 180,
+              top: 50,
+              label: {
+                show: true,
+                formatter(param) {
+                  // correct the percentage
+                  return param.name + ' (' + param.percent * 2 + '%)';
+                }
+              },
+              data: seriesData
+            }
+          ],
           color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']
         };
       });

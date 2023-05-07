@@ -24,7 +24,6 @@ export default {
   methods: {
     init() {
       this.$post(dashboardRiskListUrl, {}, response => {
-        console.log(response.data)
         let seriesData = [];
         let sum = 0;
         for (let obj of response.data) {
@@ -48,7 +47,6 @@ export default {
             }
           }
         );
-        console.log(JSON.stringify(seriesData))
         this.options = {
           tooltip: {
             trigger: 'item'

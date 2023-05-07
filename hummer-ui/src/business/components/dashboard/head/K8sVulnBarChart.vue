@@ -7,6 +7,7 @@
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
 import {codeSeverityChartUrl} from "@/api/k8s/code/code";
+import {k8sVulnRiskChartUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -24,7 +25,7 @@ export default {
   },
   methods: {
     init() {
-      this.$get(codeSeverityChartUrl, response => {
+      this.$post(k8sVulnRiskChartUrl,{limit: 10}, response => {
         let data = response.data;
         this.options = {
           legend: {

@@ -224,4 +224,32 @@ public class DashboardController {
         return dashboardService.imageRiskChart(params);
     }
 
+    @I18n
+    @Operation(summary = "K8s漏洞检测风险统计")
+    @PostMapping("k8sVulnRiskChart")
+    public List<Map<String, Object>> k8sVulnRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sVulnRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "K8s配置审计风险统计")
+    @PostMapping("k8sConfigRiskChart")
+    public List<Map<String, Object>> k8sConfigRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sConfigRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "K8s Benchmark 风险统计")
+    @PostMapping("k8sKubenchRiskChart")
+    public List<Map<String, Object>> k8sKubenchRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sKubenchRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "K8s合规检测风险统计")
+    @PostMapping("k8sScanRiskChart")
+    public List<Map<String, Object>> k8sScanRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sScanRiskChart(params);
+    }
+
 }

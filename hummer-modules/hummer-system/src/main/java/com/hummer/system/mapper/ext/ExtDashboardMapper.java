@@ -80,4 +80,10 @@ public interface ExtDashboardMapper {
 
     List<Map<String, Object>> imageRiskChart(Map<String, Object> params);
 
+    List<Map<String, Object>> k8sVulnRiskChart(Map<String, Object> params);
+
+    List<Map<String, Object>> k8sConfigRiskChart(Map<String, Object> params);
+
+    List<Map<String, Object>> k8sKubenchRiskChart(Map<String, Object> params);
+
 }
