@@ -76,4 +76,6 @@ public interface ExtDashboardMapper {
 
     AssetsInfo fsInfo();
 
+    List<Map<String, Object>> serverRiskChart(Map<String, Object> params);
+
 }

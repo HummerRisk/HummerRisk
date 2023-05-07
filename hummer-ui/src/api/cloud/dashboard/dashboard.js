@@ -49,3 +49,5 @@ export const fsInfoUrl = "/system/dashboard/fsInfo";
 
 export const dashboardRiskListUrl = "/system/dashboard/point/riskList";
 
+export const serverRiskChartUrl = "/system/dashboard/serverRiskChart";
+

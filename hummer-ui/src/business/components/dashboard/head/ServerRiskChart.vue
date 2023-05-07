@@ -6,7 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {imageChartUrl} from "@/api/cloud/dashboard/dashboard";
+import {serverRiskChartUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "ServerRiskChart",
@@ -23,8 +23,15 @@ export default {
   },
   methods: {
     init() {
-      this.$post(imageChartUrl, {}, response => {
-        let data = response.data;
+      this.$post(serverRiskChartUrl, {limit: 10}, response => {
+        let nameData = [];
+        let complianceData = [];
+        let noComplianceData = [];
+        for (let obj of response.data) {
+          nameData.push(obj.name);
+          complianceData.push(obj.compliance);
+          noComplianceData.push(obj.noCompliance);
+        }
         this.options = {
           tooltip: {
             trigger: 'axis',
@@ -33,7 +40,9 @@ export default {
               type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
             }
           },
-          legend: {},
+          legend: {
+            top: '5%',
+          },
           grid: {
             left: '3%',
             right: '4%',
@@ -46,7 +55,7 @@ export default {
           },
           yAxis: {
             type: 'category',
-            data: ['主机1', '主机2', '主机3', '主机4', '主机5', '主机6', '主机7', '主机8', '主机9', '主机10']
+            data: nameData
           },
           series: [
             {
@@ -59,7 +68,7 @@ export default {
               emphasis: {
                 focus: 'series'
               },
-              data: [85, 65, 50, 45, 40, 39, 35, 25, 20, 10]
+              data: complianceData
             },
             {
               name: '不合规',
@@ -71,7 +80,7 @@ export default {
               emphasis: {
                 focus: 'series'
               },
-              data: [10, 30, 45, 50, 55, 56, 60, 70, 75, 85]
+              data: noComplianceData
             },
           ],
           color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']

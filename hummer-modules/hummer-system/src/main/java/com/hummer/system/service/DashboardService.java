@@ -340,5 +340,9 @@ public class DashboardService {
         return extDashboardMapper.fsInfo();
     }
 
+    public List<Map<String, Object>> serverRiskChart(Map<String, Object> params) {
+        return extDashboardMapper.serverRiskChart(params);
+    }
+
 }
 

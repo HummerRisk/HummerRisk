@@ -44,7 +44,7 @@ public class DashboardController {
     }
 
     @I18n
-    @Operation(summary = "风险等级统计")
+    @Operation(summary = "混合云不合规资产风险等级统计")
     @PostMapping("point/riskList")
     public List<Map<String, Object>> riskList(@RequestBody Map<String, Object> params) {
         return dashboardService.riskList(params);
@@ -208,6 +208,13 @@ public class DashboardController {
     @PostMapping("fsInfo")
     public AssetsInfo fsInfo() {
         return dashboardService.fsInfo();
+    }
+
+    @I18n
+    @Operation(summary = "主机不合规风险统计")
+    @PostMapping("serverRiskChart")
+    public List<Map<String, Object>> serverRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.serverRiskChart(params);
     }
 
 }
