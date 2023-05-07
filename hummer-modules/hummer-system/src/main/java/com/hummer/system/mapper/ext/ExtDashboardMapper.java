@@ -78,4 +78,6 @@ public interface ExtDashboardMapper {
 
     List<Map<String, Object>> serverRiskChart(Map<String, Object> params);
 
+    List<Map<String, Object>> imageRiskChart(Map<String, Object> params);
+
 }

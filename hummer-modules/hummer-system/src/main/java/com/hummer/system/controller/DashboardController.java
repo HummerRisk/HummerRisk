@@ -217,4 +217,11 @@ public class DashboardController {
         return dashboardService.serverRiskChart(params);
     }
 
+    @I18n
+    @Operation(summary = "镜像检测风险统计")
+    @PostMapping("imageRiskChart")
+    public List<Map<String, Object>> imageRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.imageRiskChart(params);
+    }
+
 }

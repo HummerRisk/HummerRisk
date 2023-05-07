@@ -344,5 +344,9 @@ public class DashboardService {
         return extDashboardMapper.serverRiskChart(params);
     }
 
+    public List<Map<String, Object>> imageRiskChart(Map<String, Object> params) {
+        return extDashboardMapper.imageRiskChart(params);
+    }
+
 }
 

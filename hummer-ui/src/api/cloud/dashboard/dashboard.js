@@ -51,3 +51,5 @@ export const dashboardRiskListUrl = "/system/dashboard/point/riskList";
 
 export const serverRiskChartUrl = "/system/dashboard/serverRiskChart";
 
+export const imageRiskChartUrl = "/system/dashboard/imageRiskChart";
+

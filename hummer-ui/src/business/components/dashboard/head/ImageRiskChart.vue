@@ -6,7 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {imageChartUrl} from "@/api/cloud/dashboard/dashboard";
+import {imageChartUrl, imageRiskChartUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "ImageRiskChart",
@@ -23,8 +23,21 @@ export default {
   },
   methods: {
     init() {
-      this.$post(imageChartUrl, {}, response => {
-        let data = response.data;
+      this.$post(imageRiskChartUrl, {limit: 10}, response => {
+        let nameData = [];
+        let criticalData = [];
+        let highData = [];
+        let mediumData = [];
+        let lowData = [];
+        let unknownData = [];
+        for (let obj of response.data) {
+          nameData.push(obj.name);
+          criticalData.push(obj.critical);
+          highData.push(obj.high);
+          mediumData.push(obj.medium);
+          lowData.push(obj.low);
+          unknownData.push(obj.unknown);
+        }
         this.options = {
           tooltip: {
             trigger: 'axis',
@@ -33,7 +46,9 @@ export default {
               type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
             }
           },
-          legend: {},
+          legend: {
+            top: '5%',
+          },
           grid: {
             left: '3%',
             right: '4%',
@@ -46,7 +61,7 @@ export default {
           },
           yAxis: {
             type: 'category',
-            data: ['image1', 'image2', 'image3', 'image4', 'image5', 'image6', 'image7', 'image8', 'image9', 'image10']
+            data: nameData
           },
           series: [
             {
@@ -59,7 +74,7 @@ export default {
               emphasis: {
                 focus: 'series'
               },
-              data: [66, 65, 50, 55, 40, 39, 35, 25, 20, 44]
+              data: criticalData
             },
             {
               name: 'HIGH',
@@ -71,7 +86,7 @@ export default {
               emphasis: {
                 focus: 'series'
               },
-              data: [10, 30, 45, 50, 55, 56, 60, 70, 75, 85]
+              data: highData
             },
             {
               name: 'MEDIUM',
@@ -83,7 +98,7 @@ export default {
               emphasis: {
                 focus: 'series'
               },
-              data: [85, 65, 50, 45, 40, 39, 35, 25, 20, 66]
+              data: mediumData
             },
             {
               name: 'LOW',
@@ -95,7 +110,7 @@ export default {
               emphasis: {
                 focus: 'series'
               },
-              data: [10, 30, 45, 50, 55, 56, 60, 70, 75, 29]
+              data: lowData
             },
             {
               name: 'UNKNOWN',
@@ -107,7 +122,7 @@ export default {
               emphasis: {
                 focus: 'series'
               },
-              data: [85, 65, 50, 45, 40, 39, 35, 25, 20, 33]
+              data: unknownData
             },
           ],
           color: ['#8B0000', '#FF4D4D', '#FF8000', '#336D9F', '#67C23A']

@@ -583,4 +583,20 @@
             LIMIT #{limit}
         </if>
     </select>
+
+    <select id="imageRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `name`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'CRITICAL' and t3.image_id = t.id) AS `critical`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'HIGH' and t3.image_id = t.id) AS `high`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'MEDIUM' and t3.image_id = t.id) AS `medium`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'LOW' and t3.image_id = t.id) AS `low`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'UNKNOWN' and t3.image_id = t.id) AS `unknown`
+        FROM image t
+        JOIN image_result t1 on t1.image_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
 </mapper>
