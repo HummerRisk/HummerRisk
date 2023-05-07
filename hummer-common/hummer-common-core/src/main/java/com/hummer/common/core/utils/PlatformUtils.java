@@ -1,9 +1,9 @@
 package com.hummer.common.core.utils;
 
-import cn.ucloud.common.client.DefaultUcloudClient;
-import cn.ucloud.common.client.UcloudClient;
-import cn.ucloud.common.pojo.Account;
-import cn.ucloud.common.pojo.UcloudConfig;
+import cn.ucloud.common.config.Config;
+import cn.ucloud.uhost.client.UHostClient;
+import cn.ucloud.uhost.models.DescribeUHostInstanceRequest;
+import cn.ucloud.uhost.models.DescribeUHostInstanceResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -20,6 +20,7 @@ import com.amazonaws.services.ec2.model.DescribeRegionsResult;
 import com.baidubce.auth.DefaultBceCredentials;
 import com.baidubce.services.bcc.BccClient;
 import com.baidubce.services.bcc.BccClientConfiguration;
+import com.baidubce.services.bcc.model.instance.ListInstancesResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
@@ -78,6 +79,9 @@ import com.jdcloud.sdk.service.iam.model.DescribeGroupsRequest;
 import com.jdcloud.sdk.service.iam.model.DescribeGroupsResponse;
 import com.qingcloud.sdk.config.EnvContext;
 import com.qingcloud.sdk.service.InstanceService;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.Region;
 import com.qiniu.util.Auth;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.cvm.v20170312.CvmClient;
@@ -102,6 +106,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.amazonaws.services.ec2.model.PrincipalType.Account;
 
 /**
  * @author harris
@@ -1040,7 +1046,9 @@ public class PlatformUtils {
                     BccClientConfiguration config = new BccClientConfiguration();
                     config.setCredentials(new DefaultBceCredentials(baiduCredential.getAccessKeyId(), baiduCredential.getSecretAccessKey()));
                     config.setEndpoint(baiduCredential.getEndpoint());
-                    return new BccClient(config) != null;
+                    BccClient bccClient = new BccClient(config);
+                    ListInstancesResponse listInstancesResponse = bccClient.listInstances();
+                    return true;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1049,8 +1057,10 @@ public class PlatformUtils {
 
                 try {
                     Auth auth = Auth.create(qiniuCredential.getAccessKey(), qiniuCredential.getSecretKey());
-                    String upToken = auth.uploadToken(qiniuCredential.getBucket());
-                    return upToken != null;
+                    Configuration cfg = new Configuration(Region.autoRegion());
+                    BucketManager bucketManager = new BucketManager(auth, cfg);
+                    String[] strings = bucketManager.domainList(qiniuCredential.getBucket());
+                    return true;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1068,9 +1078,8 @@ public class PlatformUtils {
 
                     InstanceService.DescribeInstancesInput input = new InstanceService.DescribeInstancesInput();
                     input.setLimit(1);
-
                     InstanceService.DescribeInstancesOutput output = service.describeInstances(input);
-                    return output != null;
+                    return output.getRetCode() == 0 ;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1078,13 +1087,12 @@ public class PlatformUtils {
                 UCloudCredential uCloudCredential = new Gson().fromJson(account.getCredential(), UCloudCredential.class);
 
                 try {
-                    UcloudClient ucloudClient = new DefaultUcloudClient(new UcloudConfig(
-                            new Account(
-                                    System.getenv(uCloudCredential.getUcloudPrivateKey()),
-                                    System.getenv(uCloudCredential.getUcloudPublicKey())
-                            )
-                    ));
-                    return ucloudClient != null;
+                    cn.ucloud.common.credential.Credential credential = new cn.ucloud.common.credential.Credential(uCloudCredential.getUcloudPublicKey(),uCloudCredential.getUcloudPrivateKey());
+                    Config config = new Config();
+                    config.setRegion("cn-bj2");
+                    UHostClient uHostClient = new UHostClient(config, credential);
+                    DescribeUHostInstanceResponse response = uHostClient.describeUHostInstance(new DescribeUHostInstanceRequest());
+                    return response.getRetCode() == 0;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
