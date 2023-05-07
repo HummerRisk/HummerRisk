@@ -6,7 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {imageChartUrl} from "@/api/cloud/dashboard/dashboard";
+import {dashboardDistributionUrl} from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
@@ -24,19 +24,28 @@ export default {
   },
   methods: {
     init() {
-      this.$post(imageChartUrl, {}, response => {
-        let data = response.data;
+      this.$post(dashboardDistributionUrl, {group: "accountList", limit: 10}, response => {
+        let legendData = [];
+        let seriesData = [];
+        for (let obj of response.data) {
+          legendData.push(obj.groupName);
+          seriesData.push({
+            name: obj.groupName + ' ' + obj.yAxis + '/' + obj.yAxis2 + '(' + obj.xAxis + '分)',
+            value: obj.yAxis
+          });
+        }
         this.options = {
           tooltip: {
             trigger: 'item'
           },
           legend: {
             top: '5%',
-            left: 'center'
+            left: 'center',
+            data: legendData,
           },
           series: [
             {
-              name: this.$t('dashboard.non_compliant_assets'),
+              name: this.$t('resource.resource_result_score'),
               type: 'pie',
               radius: ['45%', '65%'],
               avoidLabelOverlap: false,
@@ -60,18 +69,7 @@ export default {
               labelLine: {
                 show: false
               },
-              data: [
-                { value: 1048, name: 'aliyun' },
-                { value: 735, name: 'aws' },
-                { value: 580, name: 'huawei' },
-                { value: 484, name: 'tencent' },
-                { value: 300, name: 'huoshan' },
-                { value: 1048, name: 'aliyun-test' },
-                { value: 735, name: 'aws2' },
-                { value: 580, name: 'jinshan' },
-                { value: 484, name: 'azure' },
-                { value: 300, name: 'jd' }
-              ]
+              data: seriesData,
             }
           ],
           color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']

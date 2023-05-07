@@ -68,6 +68,10 @@ public class DashboardService {
         }
     }
 
+    public List<Map<String, Object>> riskList(Map<String, Object> params) {
+        return extVulnMapper.riskList(params);
+    }
+
     public List<Map<String, Object>> severityList(Map<String, Object> params) {
         return extVulnMapper.severityList(params);
     }

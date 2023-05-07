@@ -84,6 +84,17 @@
         GROUP BY t.severity
     </select>
 
+    <select id="riskList" resultType="java.util.Map">
+        SELECT
+            t.severity as `name`,
+            IFNULL( sum(t.return_sum), 0 ) AS `value`,
+            IFNULL( sum(t.resources_sum), 0 ) AS resourcesSum
+        FROM cloud_task t
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        WHERE p.type = 'cloud'
+        GROUP BY t.severity
+    </select>
+
     <select id="overall" resultType="com.hummer.common.core.domain.request.chart.ChartData">
         SELECT
             IFNULL( sum( t4.return_sum ), 0 ) AS yAxis,

@@ -6,7 +6,7 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {imageChartUrl} from "@/api/cloud/dashboard/dashboard";
+import {dashboardRiskListUrl, dashboardSeverityUrl, imageChartUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "CloudRiskChart",
@@ -23,8 +23,32 @@ export default {
   },
   methods: {
     init() {
-      this.$post(imageChartUrl, {}, response => {
-        let data = response.data;
+      this.$post(dashboardRiskListUrl, {}, response => {
+        console.log(response.data)
+        let seriesData = [];
+        let sum = 0;
+        for (let obj of response.data) {
+          seriesData.push({
+            name: this.$t('rule.' + obj.name),
+            value: obj.value
+          });
+          sum += obj.value;
+        }
+        seriesData.push(
+          {
+            value: sum,
+            itemStyle: {
+              // stop the chart from rendering this piece
+              color: 'none',
+              decal: {
+                symbol: 'none'
+              }
+            }, label: {
+              show: false
+            }
+          }
+        );
+        console.log(JSON.stringify(seriesData))
         this.options = {
           tooltip: {
             trigger: 'item'
@@ -51,27 +75,7 @@ export default {
                   return param.name + ' (' + param.percent * 2 + '%)';
                 }
               },
-              data: [
-                { value: 1048, name: '高危风险' },
-                { value: 735, name: '高风险' },
-                { value: 580, name: '中风险' },
-                { value: 484, name: '低风险' },
-                { value: 300, name: '无风险' },
-                {
-                  // make an record to fill the bottom 50%
-                  value: 1048 + 735 + 580 + 484 + 300,
-                  itemStyle: {
-                    // stop the chart from rendering this piece
-                    color: 'none',
-                    decal: {
-                      symbol: 'none'
-                    }
-                  },
-                  label: {
-                    show: false
-                  }
-                }
-              ]
+              data: seriesData
             }
           ],
           color: ['#11cfae', '#009ef0', '#627dec', '#893fdc', '#89ffff','#0051a4', '#8B0000', '#FF4D4D', '#FF8000', '#336D9F']

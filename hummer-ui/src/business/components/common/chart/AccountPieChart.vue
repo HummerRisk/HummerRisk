@@ -50,11 +50,9 @@ export default {
             top: 20,
             bottom: 20,
             data: legendData,
-
           },
           series: [
             {
-
               name: this.$t('resource.resource_result_score'),
               type: 'pie',
               radius: '55%',

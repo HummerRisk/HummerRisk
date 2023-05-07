@@ -47,3 +47,5 @@ export const codeInfoUrl = "/system/dashboard/codeInfo";
 
 export const fsInfoUrl = "/system/dashboard/fsInfo";
 
+export const dashboardRiskListUrl = "/system/dashboard/point/riskList";
+

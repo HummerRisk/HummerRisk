@@ -44,6 +44,13 @@ public class DashboardController {
     }
 
     @I18n
+    @Operation(summary = "风险等级统计")
+    @PostMapping("point/riskList")
+    public List<Map<String, Object>> riskList(@RequestBody Map<String, Object> params) {
+        return dashboardService.riskList(params);
+    }
+
+    @I18n
     @Operation(summary = "分组统计")
     @PostMapping("distribution")
     public List<ChartData> getDistribution(@RequestBody Map<String, Object> params) {

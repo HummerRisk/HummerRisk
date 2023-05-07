@@ -23,6 +23,8 @@ public interface ExtVulnMapper {
 
     List<ChartData> accountList(Map<String, Object> params);
 
+    List<Map<String, Object>> riskList(Map<String, Object> params);
+
     List<ChartData> regionsList(Map<String, Object> params);
 
     List<ChartData> countList(Map<String, Object> params);
