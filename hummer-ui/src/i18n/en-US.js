@@ -247,6 +247,12 @@ export default {
     k8s_platform: 'K8s platform',
     k8s_account: 'K8s account',
     k8s_resource: 'K8s resource',
+    critical: 'Critical',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low',
+    expand: 'Expand',
+    put_away: 'Put',
   },
   workspace: {
     create:'Create a workspace',

@@ -247,6 +247,12 @@ export default {
     k8s_platform: 'K8s平台',
     k8s_account: 'K8s账号',
     k8s_resource: 'K8s资源',
+    critical: '高危',
+    high: '高',
+    medium: '中',
+    low: '低',
+    expand: '展开',
+    put_away: '收起',
   },
   workspace: {
     create: '创建工作空间',

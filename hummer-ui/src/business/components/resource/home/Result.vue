@@ -117,9 +117,9 @@
                      :stroke-width="26" :percentage="progressResult"></el-progress>
       </el-card>
 
-      <el-card class="table-card el-row-card">
+      <el-card class="table-card el-row-card" v-if="groupsData.length > 0">
         <el-row>
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData1"
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData"
                   :key="index" class="el-col el-col-group">
             <el-card :body-style="{ padding: '15px', margin: '10px' }">
               <div slot="header" class="clearfix">
@@ -128,9 +128,9 @@
               <div class="text item">
                 <el-row>
                   <el-col :span="24">
-                    <span class="desc">{{ '不合规规则' }}</span>
-                    <span class="not_compliance_num">{{ 12 }}</span>
-                    <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ 18 }}</span>
+                    <span class="desc">{{ $t('dashboard.rule_detail') }}</span>
+                    <span class="not_compliance_num">{{ data.noComplianceRule }}</span>
+                    <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ data.sumRule }}</span>
                   </el-col>
                 </el-row>
                 <el-row style="margin-top: 15px;">
@@ -149,20 +149,20 @@
                 </el-row>
                 <el-row style="margin-top: 15px;">
                   <el-col :span="6">
-                    <span class="label"> {{ '高危:' }} </span>
-                    <span class="value critical"> {{ 3 }}</span>
+                    <span class="label"> {{ $t('commons.critical') }} :</span>
+                    <span class="value critical"> {{ data.critical }}</span>
                   </el-col>
                   <el-col :span="6">
-                    <span class="label"> {{ '高:' }} </span>
-                    <span class="value high"> {{ 3 }}</span>
+                    <span class="label"> {{ $t('commons.high') }} :</span>
+                    <span class="value high"> {{ data.high }}</span>
                   </el-col>
                   <el-col :span="6">
-                    <span class="label"> {{ '中:' }} </span>
-                    <span class="value middle"> {{ 3 }}</span>
+                    <span class="label"> {{ $t('commons.medium') }} :</span>
+                    <span class="value middle"> {{ data.medium }}</span>
                   </el-col>
                   <el-col :span="6">
-                    <span class="label"> {{ '低:' }} </span>
-                    <span class="value low"> {{ 3 }}</span>
+                    <span class="label"> {{ $t('commons.low') }} :</span>
+                    <span class="value low"> {{ data.low }}</span>
                   </el-col>
                 </el-row>
               </div>
@@ -170,12 +170,12 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24" class="operate" v-if="groups === 1">
-            <span class="expand">展开</span> &nbsp;
+          <el-col :span="24" class="operate" v-if="groups === 1" @click.native="expandGroup">
+            <span class="expand">{{ $t('commons.expand') }}</span> &nbsp;
             <i class="el-icon-arrow-down" style="font-size: 12px;"></i>
           </el-col>
-          <el-col :span="24" class="operate" v-if="groups === 2">
-            <span class="expand">收起</span> &nbsp;
+          <el-col :span="24" class="operate" v-if="groups === 2" @click.native="expandGroup">
+            <span class="expand">{{ $t('commons.put_away') }}</span> &nbsp;
             <i class="el-icon-arrow-up" style="font-size: 12px;"></i>
           </el-col>
         </el-row>
@@ -618,7 +618,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl,
+  cloudResourceListUrl, resouceGroupsUrl,
   resourceAccountDeleteUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
@@ -886,20 +886,7 @@ export default {
         timeConstant : 10000,
         autoStart : true
       }),
-      groupsData1: [
-        {name: 'AWS CIS合规检查'},
-        {name: 'AWS S3合规基线'},
-        {name: 'AWS 等保预检'},
-        {name: 'AWS IAM 安全检查'},
-      ],
-      groupsData2: [
-        {name: 'AWS CIS合规检查'},
-        {name: 'AWS S3合规基线'},
-        {name: 'AWS 等保预检'},
-        {name: 'AWS IAM 安全检查'},
-        {name: 'AWS HIPAA 安全检查'},
-        {name: 'AWS 密钥/密码安全检查'},
-      ],
+      groupsData: [],
       groups: 1,
     }
   },
@@ -968,6 +955,7 @@ export default {
     cloudAccountSwitch(accountId) {
       this.accountId = accountId;
       this.search();
+      this.initGroup();
       this.regionDataSearch();
       this.ruleDataSearch();
       this.resourceTypeDataSearch();
@@ -1043,6 +1031,7 @@ export default {
     init() {
       this.initSelect();
       this.search();
+      this.initGroup();
       this.regionDataSearch();
       this.severityDataSearch();
       this.resourceTypeDataSearch();
@@ -1293,6 +1282,20 @@ export default {
       this.$router.push({
         path: p
       }).catch(error => error);
+    },
+    initGroup() {
+      console.log(this.accountId)
+      this.result = this.$post(resouceGroupsUrl, {id: this.accountId}, response => {
+        let groupsData = response.data;
+      });
+    },
+    expandGroup() {
+      if(this.groups === 1) {
+        this.groups = 2;
+      } else {
+        this.groups = 1;
+      }
+      this.initGroup();
     },
   },
   computed: {
