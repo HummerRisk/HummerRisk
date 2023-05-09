@@ -2,11 +2,11 @@
   <main-container v-loading="result.loading">
 
     <div id="pdfDom">
-      <el-card class="table-card el-row-card" v-if="source">
+      <el-card class="table-card el-row-card">
         <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
         <el-divider></el-divider>
-        <h2 style="font-size: 18px;">{{ $t('account.cloud_account') }}</h2>
-        <el-row>
+        <h2 style="font-size: 18px;" v-if="source">{{ $t('account.cloud_account') }}</h2>
+        <el-row v-if="source">
           <el-col :span="8">
             <div class="grid-content">
               <el-row>
@@ -118,12 +118,12 @@
       </el-card>
 
       <el-card class="table-card el-row-card" v-if="groupsData.length > 0">
-        <el-row>
+        <el-row v-bind:class="{'box-card1': groups === 1, 'box-card2': groups === 2}">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData"
                   :key="index" class="el-col el-col-group">
             <el-card :body-style="{ padding: '15px', margin: '10px' }">
               <div slot="header" class="clearfix">
-                <span>{{ data.name }}</span>
+                <span class="table-card-header">{{ data.name }}</span>
               </div>
               <div class="text item">
                 <el-row>
@@ -1284,9 +1284,8 @@ export default {
       }).catch(error => error);
     },
     initGroup() {
-      console.log(this.accountId)
       this.result = this.$post(resouceGroupsUrl, {id: this.accountId}, response => {
-        let groupsData = response.data;
+        this.groupsData = response.data;
       });
     },
     expandGroup() {
@@ -1509,4 +1508,21 @@ export default {
   text-align: center;
 }
 
+.box-card1 {
+  height: 230px;
+  overflow-y: hidden;
+}
+
+.box-card2 {
+}
+
+/*一行显示，超出显示省略号*/
+.table-card-header {
+  display: inline-block;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  min-height: 20px;
+}
 </style>

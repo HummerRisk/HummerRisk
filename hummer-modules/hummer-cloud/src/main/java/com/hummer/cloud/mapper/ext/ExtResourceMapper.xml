@@ -807,12 +807,12 @@
     <select id="resouceGroups" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT
         t.name as `name`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.account_id = #{id}) AS `noComplianceRule`,
-        (select count(t2.id) from cloud_task t2 where t2.account_id = #{id}) AS `sumRule`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'CriticalRisk' and t2.account_id = #{id}) AS `critical`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'HighRisk' and t2.account_id = #{id}) AS `high`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'MediumRisk' and t2.account_id = #{id}) AS `medium`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'LowRisk' and t2.account_id = #{id}) AS `low`
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.account_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `noComplianceRule`,
+        (select count(t2.id) from cloud_task t2 where t2.account_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `sumRule`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'CriticalRisk' and t2.account_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `critical`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'HighRisk' and t2.account_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `high`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'MediumRisk' and t2.account_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `medium`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'LowRisk' and t2.account_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `low`
         FROM rule_group t
         JOIN rule_group_mapping t1 on t.id = t1.group_id
         <where>
