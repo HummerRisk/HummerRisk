@@ -3,10 +3,7 @@ package com.hummer.system.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.domain.request.chart.ChartData;
-import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
-import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
-import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
-import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
+import com.hummer.common.core.domain.request.dashboard.*;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
@@ -15,8 +12,8 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.DashboardService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +41,13 @@ public class DashboardController {
     @PostMapping("point/severity")
     public List<Map<String, Object>> severityList(@RequestBody Map<String, Object> params) {
         return dashboardService.severityList(params);
+    }
+
+    @I18n
+    @Operation(summary = "混合云不合规资产风险等级统计")
+    @PostMapping("point/riskList")
+    public List<Map<String, Object>> riskList(@RequestBody Map<String, Object> params) {
+        return dashboardService.riskList(params);
     }
 
     @I18n
@@ -156,4 +160,96 @@ public class DashboardController {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.historyScanVo(historyScanVo));
     }
+
+    @I18n
+    @Operation(summary = "首页Cloud统计")
+    @PostMapping("cloudInfo")
+    public CloudInfo cloudInfo() {
+        return dashboardService.cloudInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页K8s统计")
+    @PostMapping("k8sInfo")
+    public CloudInfo k8sInfo() {
+        return dashboardService.k8sInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页Server统计")
+    @PostMapping("serverInfo")
+    public AssetsInfo serverInfo() {
+        return dashboardService.serverInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页Image统计")
+    @PostMapping("imageInfo")
+    public AssetsInfo imageInfo() {
+        return dashboardService.imageInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页Config统计")
+    @PostMapping("configInfo")
+    public AssetsInfo configInfo() {
+        return dashboardService.configInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页Code统计")
+    @PostMapping("codeInfo")
+    public AssetsInfo codeInfo() {
+        return dashboardService.codeInfo();
+    }
+
+    @I18n
+    @Operation(summary = "首页FileSystem统计")
+    @PostMapping("fsInfo")
+    public AssetsInfo fsInfo() {
+        return dashboardService.fsInfo();
+    }
+
+    @I18n
+    @Operation(summary = "主机不合规风险统计")
+    @PostMapping("serverRiskChart")
+    public List<Map<String, Object>> serverRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.serverRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "镜像检测风险统计")
+    @PostMapping("imageRiskChart")
+    public List<Map<String, Object>> imageRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.imageRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "K8s漏洞检测风险统计")
+    @PostMapping("k8sVulnRiskChart")
+    public List<Map<String, Object>> k8sVulnRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sVulnRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "K8s配置审计风险统计")
+    @PostMapping("k8sConfigRiskChart")
+    public List<Map<String, Object>> k8sConfigRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sConfigRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "K8s Benchmark 风险统计")
+    @PostMapping("k8sKubenchRiskChart")
+    public List<Map<String, Object>> k8sKubenchRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sKubenchRiskChart(params);
+    }
+
+    @I18n
+    @Operation(summary = "K8s合规检测风险统计")
+    @PostMapping("k8sScanRiskChart")
+    public List<Map<String, Object>> k8sScanRiskChart(@RequestBody Map<String, Object> params) {
+        return dashboardService.k8sScanRiskChart(params);
+    }
+
 }

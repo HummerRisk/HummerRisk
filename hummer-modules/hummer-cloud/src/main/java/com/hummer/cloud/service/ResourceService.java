@@ -709,4 +709,8 @@ public class ResourceService {
     public List<ResourceDTO> resourceList(ResourceRequest resourceRequest) {
         return extResourceMapper.getComplianceResult(resourceRequest);
     }
+
+    public List<Map<String, Object>> resouceGroups(Map<String, Object> params) {
+        return extResourceMapper.resouceGroups(params);
+    }
 }

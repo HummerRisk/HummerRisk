@@ -1,15 +1,26 @@
 <template>
   <main-container class="main-container" v-loading="result.loading">
     <el-row :gutter="20">
-      <top-info/>
+      <el-col :span="18" style="padding-right: 0">
+        <entry-info/>
+      </el-col>
+      <el-col :span="6" style="padding-left: 0">
+        <user-info/>
+      </el-col>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="18" style="padding-right: 0">
-        <left-info/>
+        <assets-info/>
       </el-col>
       <el-col :span="6" style="padding-left: 0">
-        <right-info/>
+        <score-info/>
       </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <cloud-server-risk/>
+    </el-row>
+    <el-row :gutter="20">
+      <k8s-image-risk/>
     </el-row>
     <el-row :gutter="20">
       <bottom-info/>
@@ -18,20 +29,26 @@
 </template>
 
 <script>
-import MainContainer from "../../common/components/MainContainer";
-import TopInfo from "./TopInfo";
-import LeftInfo from "./LeftInfo";
-import RightInfo from "./RightInfo";
+import MainContainer from "@/business/components/common/components/MainContainer";
+import EntryInfo from "@/business/components/dashboard/home/EntryInfo";
+import AssetsInfo from "@/business/components/dashboard/home/AssetsInfo";
+import ScoreInfo from "@/business/components/dashboard/home/ScoreInfo";
 import BottomInfo from "@/business/components/dashboard/home/BottomInfo";
+import CloudServerRisk from "@/business/components/dashboard/home/CloudServerRisk";
+import K8sImageRisk from "@/business/components/dashboard/home/K8sImageRisk";
+import UserInfo from "@/business/components/dashboard/home/UserInfo";
 
 /* eslint-disable */
 export default {
   components: {
+    UserInfo,
     MainContainer,
-    TopInfo,
-    LeftInfo,
-    RightInfo,
+    EntryInfo,
+    AssetsInfo,
+    ScoreInfo,
     BottomInfo,
+    CloudServerRisk,
+    K8sImageRisk,
   },
   data() {
     return {

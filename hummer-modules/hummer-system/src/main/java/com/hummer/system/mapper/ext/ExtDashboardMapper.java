@@ -2,8 +2,10 @@ package com.hummer.system.mapper.ext;
 
 
 import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
+import com.hummer.common.core.domain.request.dashboard.AssetsInfo;
 import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
 import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
+import com.hummer.common.core.dto.PluginDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
 import com.hummer.common.core.dto.TopScanDTO;
 import org.apache.ibatis.annotations.Param;
@@ -47,5 +49,41 @@ public interface ExtDashboardMapper {
     List<Integer> analysisChartY(AnslysisVo anslysisVo);
 
     List<HistoryScanVo> historyScanVo(HistoryScanVo historyScanVo);
+
+    Integer getClouds();
+
+    Integer getAccounts();
+
+    Integer getResources();
+
+    List<PluginDTO> getPlugins();
+
+    Integer getK8sClouds();
+
+    Integer getK8sAccounts();
+
+    Integer getK8sResources();
+
+    List<PluginDTO> getK8sPlugins();
+
+    AssetsInfo serverInfo();
+
+    AssetsInfo imageInfo();
+
+    AssetsInfo configInfo();
+
+    AssetsInfo codeInfo();
+
+    AssetsInfo fsInfo();
+
+    List<Map<String, Object>> serverRiskChart(Map<String, Object> params);
+
+    List<Map<String, Object>> imageRiskChart(Map<String, Object> params);
+
+    List<Map<String, Object>> k8sVulnRiskChart(Map<String, Object> params);
+
+    List<Map<String, Object>> k8sConfigRiskChart(Map<String, Object> params);
+
+    List<Map<String, Object>> k8sKubenchRiskChart(Map<String, Object> params);
 
 }

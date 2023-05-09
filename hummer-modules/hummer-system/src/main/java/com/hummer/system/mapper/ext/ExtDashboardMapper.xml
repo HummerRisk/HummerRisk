@@ -457,4 +457,193 @@
         </where>
         order by tt.create_time desc
     </select>
+
+    <select id="getClouds" resultType="java.lang.Integer">
+        select count(*)
+        from plugin p
+        where p.id in (select t.plugin_id from cloud_account t where p.type = 'cloud')
+    </select>
+
+    <select id="getAccounts" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_account t
+        left join plugin p on t.plugin_id = p.id
+        where p.type = 'cloud'
+    </select>
+
+    <select id="getResources" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_resource_item t
+        left join plugin p on t.plugin_id = p.id
+        where p.type = 'cloud'
+    </select>
+
+    <resultMap id="getPluginsResultMap" type="com.hummer.common.core.dto.PluginDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="order_" jdbcType="BIGINT" property="order" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="isExist" jdbcType="BIT" property="isExist" />
+    </resultMap>
+
+    <select id="getPlugins" resultMap="getPluginsResultMap">
+        select p.*,
+        CASE WHEN p.id in (select t.plugin_id from cloud_account t where p.type = 'cloud')
+        THEN true
+        ELSE false
+        END AS isExist
+        from plugin p
+        where p.type = 'cloud'
+        order by FIELD(isExist, true, false)
+    </select>
+
+    <select id="getK8sClouds" resultType="java.lang.Integer">
+        select count(*)
+        from plugin p
+        where p.id in (select t.plugin_id from cloud_native t where p.type = 'native')
+    </select>
+
+    <select id="getK8sAccounts" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_native t
+        left join plugin p on t.plugin_id = p.id
+        where p.type = 'native'
+    </select>
+
+    <select id="getK8sResources" resultType="java.lang.Integer">
+        select count(*)
+        from cloud_native_source t
+    </select>
+
+    <select id="getK8sPlugins" resultMap="getPluginsResultMap">
+        select p.*,
+        CASE WHEN p.id in (select t.plugin_id from cloud_native t where p.type = 'native')
+        THEN true
+        ELSE false
+        END AS isExist
+        from plugin p
+        where p.type = 'native'
+        order by FIELD(isExist, true, false)
+    </select>
+
+    <select id="serverInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from server_certificate) as param1,
+        (select count(*) as param2 from server where type = 'linux') as param2,
+        (select count(*) as param3 from server where type = 'windows') as param3
+        )
+    </select>
+
+    <select id="imageInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from image_repo) as param1,
+        (select count(*) as param2 from image) as param2,
+        (select count(*) as param3 from image t join image_result t2 on t.id = t2.image_id) as param3
+        )
+    </select>
+
+    <select id="configInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from cloud_native_config) as param1,
+        (select count(*) as param2 from cloud_native_config t join cloud_native_config_result t2 on t.id = t2.config_id) as param2
+        )
+    </select>
+
+    <select id="codeInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from code) as param1,
+        (select count(*) as param2 from code t join code_result t2 on t.id = t2.code_id) as param2
+        )
+    </select>
+
+    <select id="fsInfo" resultType="com.hummer.common.core.domain.request.dashboard.AssetsInfo">
+        SELECT *
+        from (
+        (select count(*) as param1 from file_system) as param1,
+        (select count(*) as param2 from file_system t join file_system_result t2 on t.id = t2.fs_id) as param2
+        )
+    </select>
+
+    <select id="serverRiskChart" resultType="java.util.Map">
+        SELECT
+            t.name AS `name`,
+            (select count(t2.id) from server_result t2 where t2.is_severity is true and t2.server_id = t.id) AS `compliance`,
+            (select count(t2.id) from server_result t2 where t2.is_severity is false and t2.server_id = t.id) AS `noCompliance`
+        FROM server t
+        JOIN server_result t1 on t1.server_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="imageRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `name`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'CRITICAL' and t3.image_id = t.id) AS `critical`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'HIGH' and t3.image_id = t.id) AS `high`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'MEDIUM' and t3.image_id = t.id) AS `medium`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'LOW' and t3.image_id = t.id) AS `low`,
+        (select count(t2.id) from image_result_item t2 join image_result t3 on t2.result_id = t3.id where t2.severity = 'UNKNOWN' and t3.image_id = t.id) AS `unknown`
+        FROM image t
+        JOIN image_result t1 on t1.image_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sVulnRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `product`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'CRITICAL' and t3.cloud_native_id = t.id) AS `Critical`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'HIGH' and t3.cloud_native_id = t.id) AS `High`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'MEDIUM' and t3.cloud_native_id = t.id) AS `Medium`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'LOW' and t3.cloud_native_id = t.id) AS `Low`,
+        (select count(t2.id) from cloud_native_result_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'UNKNOWN' and t3.cloud_native_id = t.id) AS `Unknown`
+        FROM cloud_native t
+        JOIN cloud_native_result t1 on t1.cloud_native_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sConfigRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `product`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'CRITICAL' and t3.cloud_native_id = t.id) AS `Critical`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'HIGH' and t3.cloud_native_id = t.id) AS `High`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'MEDIUM' and t3.cloud_native_id = t.id) AS `Medium`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'LOW' and t3.cloud_native_id = t.id) AS `Low`,
+        (select count(t2.id) from cloud_native_result_config_item t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'UNKNOWN' and t3.cloud_native_id = t.id) AS `Unknown`
+        FROM cloud_native t
+        JOIN cloud_native_result t1 on t1.cloud_native_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="k8sKubenchRiskChart" resultType="java.util.Map">
+        SELECT
+        t.name AS `product`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'FAIL' and t3.cloud_native_id = t.id) AS `Fail`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'WARN' and t3.cloud_native_id = t.id) AS `Warn`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'INFO' and t3.cloud_native_id = t.id) AS `Info`,
+        (select count(t2.id) from cloud_native_result_kubench t2 join cloud_native_result t3 on t2.result_id = t3.id where t2.severity = 'PASS' and t3.cloud_native_id = t.id) AS `Pass`
+        FROM cloud_native t
+        JOIN cloud_native_result t1 on t1.cloud_native_id = t.id
+        GROUP BY t.id, t.name
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
 </mapper>

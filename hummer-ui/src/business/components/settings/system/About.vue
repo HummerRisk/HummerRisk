@@ -36,7 +36,7 @@
             <span>{{ $t('system.version_number') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ license?license.expiration:'v1.0.1' }}</span>
+            <span>{{ license?license.expiration:'v1.1.0' }}</span>
           </el-col>
         </el-row>
       </div>

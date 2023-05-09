@@ -804,4 +804,22 @@
         order by `status`, createTime desc
     </select>
 
+    <select id="resouceGroups" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+        t.name as `name`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.account_id = #{id}) AS `noComplianceRule`,
+        (select count(t2.id) from cloud_task t2 where t2.account_id = #{id}) AS `sumRule`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'CriticalRisk' and t2.account_id = #{id}) AS `critical`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'HighRisk' and t2.account_id = #{id}) AS `high`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'MediumRisk' and t2.account_id = #{id}) AS `medium`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum > 0 and t2.severity = 'LowRisk' and t2.account_id = #{id}) AS `low`
+        FROM rule_group t
+        JOIN rule_group_mapping t1 on t.id = t1.group_id
+        <where>
+            AND t1.rule_id in (select c.rule_id from cloud_task c where c.account_id = #{id})
+        </where>
+        GROUP BY t.id, t.name
+        ORDER BY noComplianceRule desc
+    </select>
+
 </mapper>

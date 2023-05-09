@@ -34,3 +34,5 @@ export const resourceGroupExportUrl = "/cloud/resource/groupExport";
 export const resourceSourceUrl = "/cloud/resource/source/";
 
 export const resourceK8sSourceUrl = "/cloud/resource/k8sSource/";
+
+export const resouceGroupsUrl = "/cloud/resource/resouceGroups";

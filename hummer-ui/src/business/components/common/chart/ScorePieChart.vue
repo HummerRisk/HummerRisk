@@ -28,10 +28,10 @@ export default {
             value: 99,
             name: this.$t('dashboard.safe_score_all'),
             title: {
-              offsetCenter: ['0%', '80%']
+              offsetCenter: ['0%', '75%']
             },
             detail: {
-              offsetCenter: ['0%', '95%']
+              offsetCenter: ['0%', '100%']
             }
           },
         ];
@@ -60,6 +60,9 @@ export default {
               },
               axisLine: {
                 roundCap: true
+              },
+              axisTick: {
+                splitNumber: 1//刻度
               },
               data: gaugeData,
               title: {

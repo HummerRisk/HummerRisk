@@ -9,10 +9,7 @@ import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.chart.ChartData;
-import com.hummer.common.core.domain.request.dashboard.AnslysisVo;
-import com.hummer.common.core.domain.request.dashboard.DashboardTarget;
-import com.hummer.common.core.domain.request.dashboard.HistoryScanVo;
-import com.hummer.common.core.domain.request.dashboard.TaskCalendarVo;
+import com.hummer.common.core.domain.request.dashboard.*;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
@@ -62,6 +59,14 @@ public class DashboardService {
                 return extVulnMapper.ruleList(params);
             case "accountList":
                 return extVulnMapper.accountList(params);
+            case "k8sVulnList":
+                return extVulnMapper.k8sVulnList(params);
+            case "k8sConfigList":
+                return extVulnMapper.k8sConfigList(params);
+            case "k8sKubenchList":
+                return extVulnMapper.k8sKubenchList(params);
+            case "k8sRuleList":
+                return extVulnMapper.k8sRuleList(params);
             case "regionsList":
                 return extVulnMapper.regionsList(params);
             case "countList":
@@ -69,6 +74,10 @@ public class DashboardService {
             default:
                 return new LinkedList<>();
         }
+    }
+
+    public List<Map<String, Object>> riskList(Map<String, Object> params) {
+        return extVulnMapper.riskList(params);
     }
 
     public List<Map<String, Object>> severityList(Map<String, Object> params) {
@@ -299,6 +308,68 @@ public class DashboardService {
 
     public List<HistoryScanVo> historyScanVo(HistoryScanVo historyScanVo) {
         return extDashboardMapper.historyScanVo(historyScanVo);
+    }
+
+    public CloudInfo cloudInfo() {
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setClouds(extDashboardMapper.getClouds());
+        cloudInfo.setAccounts(extDashboardMapper.getAccounts());
+        cloudInfo.setResources(extDashboardMapper.getResources());
+        cloudInfo.setPlugins(extDashboardMapper.getPlugins());
+        return cloudInfo;
+    }
+
+    public CloudInfo k8sInfo() {
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setClouds(extDashboardMapper.getK8sClouds());
+        cloudInfo.setAccounts(extDashboardMapper.getK8sAccounts());
+        cloudInfo.setResources(extDashboardMapper.getK8sResources());
+        cloudInfo.setPlugins(extDashboardMapper.getK8sPlugins());
+        return cloudInfo;
+    }
+
+    public AssetsInfo serverInfo() {
+        return extDashboardMapper.serverInfo();
+    }
+
+    public AssetsInfo imageInfo() {
+        return extDashboardMapper.imageInfo();
+    }
+
+    public AssetsInfo configInfo() {
+        return extDashboardMapper.configInfo();
+    }
+
+    public AssetsInfo codeInfo() {
+        return extDashboardMapper.codeInfo();
+    }
+
+    public AssetsInfo fsInfo() {
+        return extDashboardMapper.fsInfo();
+    }
+
+    public List<Map<String, Object>> serverRiskChart(Map<String, Object> params) {
+        return extDashboardMapper.serverRiskChart(params);
+    }
+
+    public List<Map<String, Object>> imageRiskChart(Map<String, Object> params) {
+        return extDashboardMapper.imageRiskChart(params);
+    }
+
+    public List<Map<String, Object>> k8sVulnRiskChart(Map<String, Object> params) {
+        return extDashboardMapper.k8sVulnRiskChart(params);
+    }
+
+    public List<Map<String, Object>> k8sConfigRiskChart(Map<String, Object> params) {
+        return extDashboardMapper.k8sConfigRiskChart(params);
+    }
+
+    public List<Map<String, Object>> k8sKubenchRiskChart(Map<String, Object> params) {
+        return extDashboardMapper.k8sKubenchRiskChart(params);
+    }
+
+    public List<Map<String, Object>> k8sScanRiskChart(Map<String, Object> params) {
+        return extVulnMapper.k8sScanRiskChart(params);
     }
 
 }

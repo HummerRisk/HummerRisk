@@ -2,16 +2,9 @@
   <main-container v-loading="result.loading">
 
     <div id="pdfDom">
-
-      <el-card class="table-card el-row-card">
-
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
-
-        <el-divider><i class="el-icon-tickets"></i></el-divider>
-
-      </el-card>
-
       <el-card class="table-card el-row-card" v-if="source">
+        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
+        <el-divider></el-divider>
         <h2 style="font-size: 18px;">{{ $t('account.cloud_account') }}</h2>
         <el-row>
           <el-col :span="8">
@@ -122,6 +115,70 @@
         <!-- 进度条 -->
         <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
                      :stroke-width="26" :percentage="progressResult"></el-progress>
+      </el-card>
+
+      <el-card class="table-card el-row-card" v-if="groupsData.length > 0">
+        <el-row>
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData"
+                  :key="index" class="el-col el-col-group">
+            <el-card :body-style="{ padding: '15px', margin: '10px' }">
+              <div slot="header" class="clearfix">
+                <span>{{ data.name }}</span>
+              </div>
+              <div class="text item">
+                <el-row>
+                  <el-col :span="24">
+                    <span class="desc">{{ $t('dashboard.rule_detail') }}</span>
+                    <span class="not_compliance_num">{{ data.noComplianceRule }}</span>
+                    <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ data.sumRule }}</span>
+                  </el-col>
+                </el-row>
+                <el-row style="margin-top: 15px;">
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: #8B0000;margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: #FF4D4D;margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: #FF8000;margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="height: 12px;background-color: #336D9F;margin: 1px;border-radius: 3px;"></div>
+                  </el-col>
+                </el-row>
+                <el-row style="margin-top: 15px;">
+                  <el-col :span="6">
+                    <span class="label"> {{ $t('commons.critical') }} :</span>
+                    <span class="value critical"> {{ data.critical }}</span>
+                  </el-col>
+                  <el-col :span="6">
+                    <span class="label"> {{ $t('commons.high') }} :</span>
+                    <span class="value high"> {{ data.high }}</span>
+                  </el-col>
+                  <el-col :span="6">
+                    <span class="label"> {{ $t('commons.medium') }} :</span>
+                    <span class="value middle"> {{ data.medium }}</span>
+                  </el-col>
+                  <el-col :span="6">
+                    <span class="label"> {{ $t('commons.low') }} :</span>
+                    <span class="value low"> {{ data.low }}</span>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24" class="operate" v-if="groups === 1" @click.native="expandGroup">
+            <span class="expand">{{ $t('commons.expand') }}</span> &nbsp;
+            <i class="el-icon-arrow-down" style="font-size: 12px;"></i>
+          </el-col>
+          <el-col :span="24" class="operate" v-if="groups === 2" @click.native="expandGroup">
+            <span class="expand">{{ $t('commons.put_away') }}</span> &nbsp;
+            <i class="el-icon-arrow-up" style="font-size: 12px;"></i>
+          </el-col>
+        </el-row>
       </el-card>
 
       <el-card class="table-card">
@@ -561,7 +618,7 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl,
+  cloudResourceListUrl, resouceGroupsUrl,
   resourceAccountDeleteUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
@@ -829,6 +886,8 @@ export default {
         timeConstant : 10000,
         autoStart : true
       }),
+      groupsData: [],
+      groups: 1,
     }
   },
   watch: {
@@ -896,6 +955,7 @@ export default {
     cloudAccountSwitch(accountId) {
       this.accountId = accountId;
       this.search();
+      this.initGroup();
       this.regionDataSearch();
       this.ruleDataSearch();
       this.resourceTypeDataSearch();
@@ -971,6 +1031,7 @@ export default {
     init() {
       this.initSelect();
       this.search();
+      this.initGroup();
       this.regionDataSearch();
       this.severityDataSearch();
       this.resourceTypeDataSearch();
@@ -1222,6 +1283,20 @@ export default {
         path: p
       }).catch(error => error);
     },
+    initGroup() {
+      console.log(this.accountId)
+      this.result = this.$post(resouceGroupsUrl, {id: this.accountId}, response => {
+        let groupsData = response.data;
+      });
+    },
+    expandGroup() {
+      if(this.groups === 1) {
+        this.groups = 2;
+      } else {
+        this.groups = 1;
+      }
+      this.initGroup();
+    },
   },
   computed: {
     codemirror() {
@@ -1324,7 +1399,7 @@ export default {
 
 .el-row-card {
   padding: 0 20px 0 20px;
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
 }
 
 .el-row-card >>> .el-card__body {
@@ -1370,4 +1445,68 @@ export default {
 /deep/ :focus {
   outline: 0;
 }
+
+.desc {
+  color: #646a73;
+  height: 22px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.not_compliance_num {
+  margin-left: 12px;
+  color: #1f2329;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+}
+
+.compliance_num {
+  color: #646a73;
+}
+
+.label {
+  height: 22px;
+  font-size: 14px;
+  color: #646a73;
+  font-weight: 400;
+  display: inline-block;
+}
+
+.value {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  height: 22px;
+}
+
+.critical {
+  color: #8B0000;
+}
+
+.high {
+  color: #FF4D4D;
+}
+
+.middle {
+  color: #FF8000;
+}
+
+.low {
+  color: #336D9F;
+}
+
+.el-col-group >>> .el-card {
+  margin: 10px;
+}
+
+.operate {
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 16px;
+  height: 22px;
+  text-align: center;
+}
+
 </style>

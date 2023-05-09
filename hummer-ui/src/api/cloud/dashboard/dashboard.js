@@ -33,4 +33,31 @@ export const topScanInfoUrl = "/system/dashboard/topScanInfo";
 
 export const dashboardScoreUrl = "/system/dashboard/score";
 
+export const cloudInfoUrl = "/system/dashboard/cloudInfo";
+
+export const k8sInfoUrl = "/system/dashboard/k8sInfo";
+
+export const serverInfoUrl = "/system/dashboard/serverInfo";
+
+export const imageInfoUrl = "/system/dashboard/imageInfo";
+
+export const configInfoUrl = "/system/dashboard/configInfo";
+
+export const codeInfoUrl = "/system/dashboard/codeInfo";
+
+export const fsInfoUrl = "/system/dashboard/fsInfo";
+
+export const dashboardRiskListUrl = "/system/dashboard/point/riskList";
+
+export const serverRiskChartUrl = "/system/dashboard/serverRiskChart";
+
+export const imageRiskChartUrl = "/system/dashboard/imageRiskChart";
+
+export const k8sVulnRiskChartUrl = "/system/dashboard/k8sVulnRiskChart";
+
+export const k8sConfigRiskChartUrl = "/system/dashboard/k8sConfigRiskChart";
+
+export const k8sKubenchRiskChartUrl = "/system/dashboard/k8sKubenchRiskChart";
+
+export const k8sScanRiskChartUrl = "/system/dashboard/k8sScanRiskChart";
 

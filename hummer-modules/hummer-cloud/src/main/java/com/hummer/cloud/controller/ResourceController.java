@@ -222,4 +222,11 @@ public class ResourceController {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.resourceList(request));
     }
+
+    @I18n
+    @Operation(summary = "云资源检测规则组结果")
+    @PostMapping("resouceGroups")
+    public List<Map<String, Object>> resouceGroups(@RequestBody Map<String, Object> params) {
+        return resourceService.resouceGroups(params);
+    }
 }

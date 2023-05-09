@@ -6,7 +6,7 @@
                         :title="$t('rule.rule_list')"
                         @save="save" :saveTip="$t('account.save_settings')"
                         @create="create" :createTip="$t('account.start_batch')"
-                        @setting="setting" :settingTip="$t('account.quick_settings')"
+                        @setting="setting" :settingTip="$t('commons.batch_settings')"
                         @clean="clean" :cleanTip="$t('account.clean_settings')"
                         @back="back" :backTip="$t('account.back_account')"
                         :show-save="true" :show-create="true" :show-setting="true" :show-clean="true"/>
@@ -207,7 +207,7 @@ import {
           }
           params.push(param);
         }
-        this.$post(saveParameterUrl, params, response => {
+        this.result = this.$post(saveParameterUrl, params, response => {
           this.search();
           this.$success(this.$t('commons.save_success'));
         });
@@ -264,19 +264,26 @@ import {
           }
         });
         if (this.selectIds.size == 0) {
-          this.$error(this.$t('rule.please_choose_rule'));
+          this.$warning(this.$t('rule.please_choose_rule'));
           return false;
         }
         return true;
       },
       saveQuickSettings(form) {
         if (this.selectIds.size == 0) {
-          this.$warning(this.$t('account.quick_settings_all'));
-          for (let obj of this.tableData) {
-            obj.regions = form.quickSettingRegions;
-          }
+          this.$alert(this.$t('account.i18n_comfirm_rule_scan'), this.$t('account.save_settings'), {
+            confirmButtonText: this.$t('commons.confirm'),
+            callback: (action) => {
+              if (action === 'confirm') {
+                for (let obj of this.tableData) {
+                  obj.regions = form.quickSettingRegions;
+                }
+                this.$success(this.$t('commons.save_success'));
+                this.regionsVisible = false;
+              }
+            }
+          });
         } else {
-          this.$warning(this.$t('account.quick_settings_select'));
           for (let id of this.selectIds) {
             for (let obj of this.tableData) {
               if (id == obj.id) {
@@ -284,9 +291,9 @@ import {
               }
             }
           }
+          this.$success(this.$t('commons.save_success'));
+          this.regionsVisible = false;
         }
-
-        this.regionsVisible = false;
       },
       setting () {
         this.form = {};

@@ -55,4 +55,6 @@ public interface ExtResourceMapper {
 
     List<RuleGroupDTO> ruleGroupList(@Param("request") RuleGroupRequest request);
 
+    List<Map<String, Object>> resouceGroups(Map<String, Object> map);
+
 }
