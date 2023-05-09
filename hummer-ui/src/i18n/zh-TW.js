@@ -1142,6 +1142,9 @@ export default {
     image_repo_name_old: '舊鏡像倉庫名稱',
     all_image_group: '全部鏡像分組',
     image_group_search: '搜索鏡像分組',
+    image_group_name: '鏡像分組名稱',
+    image_group_create: '創建鏡像分組',
+    image_group_rename: '修改鏡像分組名稱',
   },
   package: {
     package_setting: '軟件包管理',

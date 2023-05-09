@@ -1142,6 +1142,9 @@ export default {
     image_repo_name_old: 'Old mirror warehouse name',
     all_image_group: 'All image groups',
     image_group_search: 'Search image group',
+    image_group_name: 'Image group name',
+    image_group_create: 'Create image group',
+    image_group_rename: 'Modify image group name',
   },
   package: {
     package_setting: 'Package Management',

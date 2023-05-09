@@ -83,3 +83,13 @@ export const deleteImageReposUrl = "/k8s/image/deleteImageRepos";
 
 export const deleteImagesUrl = "/k8s/image/deleteImages";
 
+export const imageGroupListUrl = "/k8s/image/imageGroupList";
+
+export const addImageGroupUrl = "/k8s/image/addImageGroup";
+
+export const editImageGroupUrl = "/k8s/image/editImageGroup";
+
+export const deleteImageGroupUrl = "/k8s/image/deleteImageGroup";
+
+export const dragImageGroupUrl = "/k8s/image/dragImageGroup";
+

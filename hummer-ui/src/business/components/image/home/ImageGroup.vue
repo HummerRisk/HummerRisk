@@ -18,7 +18,7 @@
         <el-input class="module-input" :placeholder="$t('image.image_group_search')" v-model="condition.filterText"
                   size="mini">
           <template v-slot:append>
-            <el-button icon="el-icon-folder-add" @click="addServer"/>
+            <el-button icon="el-icon-folder-add" @click="addImageGroup"/>
           </template>
         </el-input>
       </template>
@@ -26,16 +26,16 @@
     </image-group-tree>
 
     <!--Create group-->
-    <el-drawer class="rtl" :title="$t('server.server_group_create')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.image_group_name')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createServerGroupCreateForm">
-        <el-form-item :label="$t('server.server_group_name')" ref="name" prop="name">
-          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('server.server_group_name')"/>
+      <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createImageGroupCreateForm">
+        <el-form-item :label="$t('image.image_group_name')" ref="name" prop="name">
+          <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_group_name')"/>
         </el-form-item>
       </el-form>
       <dialog-footer
         @cancel="createVisible = false"
-        @confirm="saveGroup(form, 'add')"/>
+        @confirm="imageGroup(form, 'add')"/>
     </el-drawer>
     <!--Create group-->
 
@@ -48,12 +48,12 @@ import ImageGroupTree from "@/business/components/common/components/ImageGroupTr
 import {buildNodePath} from "@/common/js/NodeTree";
 import DialogFooter from "../../common/components/DialogFooter";
 import {
-  addServerGroupUrl,
-  deleteServerGroupUrl,
-  dragServerGroupUrl,
-  editServerGroupUrl,
-  serverGroupListUrl
-} from "@/api/k8s/server/server";
+  addImageGroupUrl,
+  deleteImageGroupUrl,
+  dragImageGroupUrl,
+  editImageGroupUrl,
+  imageGroupListUrl
+} from "@/api/k8s/image/image";
 /* eslint-disable */
   export default {
     name: 'ImageGroup',
@@ -110,7 +110,7 @@ import {
     },
     methods: {
       list() {
-        this.result = this.$get(serverGroupListUrl, response => {
+        this.result = this.$get(imageGroupListUrl, response => {
           if (response.data != undefined && response.data != null) {
             this.data = response.data;
             let moduleOptions = [];
@@ -122,7 +122,7 @@ import {
         });
       },
       edit(param) {
-        this.$post(editServerGroupUrl, param, () => {
+        this.$post(editImageGroupUrl, param, () => {
           this.$success(this.$t('commons.save_success'));
           this.list();
           this.refresh();
@@ -131,7 +131,7 @@ import {
         });
       },
       add(param) {
-        this.$post(addServerGroupUrl, param, () => {
+        this.$post(addImageGroupUrl, param, () => {
           this.$success(this.$t('commons.save_success'));
           this.list();
         }, (error) => {
@@ -139,7 +139,7 @@ import {
         });
       },
       remove(data) {
-        this.$post(deleteServerGroupUrl, data, () => {
+        this.$post(deleteImageGroupUrl, data, () => {
           this.list();
           this.refresh();
         }, (error) => {
@@ -147,7 +147,7 @@ import {
         });
       },
       drag(param, list) {
-        this.$post(dragServerGroupUrl, param, () => {
+        this.$post(dragImageGroupUrl, param, () => {
           this.list();
         }, (error) => {
           this.list();
@@ -168,7 +168,7 @@ import {
       refresh() {
         this.$emit("refreshTable");
       },
-      addServer() {
+      addImageGroup() {
         this.form = {};
         this.createVisible = true;
       },
@@ -176,9 +176,9 @@ import {
         this.condition.trashEnable = true;
       },
       //保存虚拟机分组
-      saveGroup(item, type){
+      imageGroup(item, type){
         if (type === 'add') {
-          this.$post(addServerGroupUrl, item,response => {
+          this.$post(addImageGroupUrl, item,response => {
             if (response.success) {
               this.$success(this.$t('server.i18n_hr_create_success'));
               this.handleClose();

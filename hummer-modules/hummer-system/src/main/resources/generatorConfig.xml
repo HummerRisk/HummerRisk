@@ -167,5 +167,6 @@
 <!--        <table tableName="cloud_native_source_rbac_link" domainObjectName="CloudNativeSourceRbacLink"/>-->
 <!--        <table tableName="cloud_native_source_rbac_relation" domainObjectName="CloudNativeSourceRbacRelation"/>-->
 <!--        <table tableName="hummer_license" domainObjectName="HummerLicense"/>-->
+<!--        <table tableName="image_group" domainObjectName="ImageGroup"/>-->
     </context>
 </generatorConfiguration>

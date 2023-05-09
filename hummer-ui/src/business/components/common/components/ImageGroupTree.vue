@@ -26,7 +26,7 @@
         </span>
 
         <span class="node-icon">
-          <i class="iconfont icon-fuwuqi"/>
+          <i class="iconfont icon-jingxiang2"/>
         </span>
         <span v-if="!data.isEdit" class="node-title" v-text="data.name"/>
 
@@ -35,7 +35,7 @@
             class="item"
             effect="dark"
             :open-delay="200"
-            :content="$t('server.server_group_rename')"
+            :content="$t('image.image_group_rename')"
             placement="top">
             <i @click.stop="edit(node, data)" class="el-icon-edit"></i>
           </el-tooltip>
@@ -160,11 +160,11 @@ export default {
     },
     save(node, data) {
       if (data.name.trim() === '') {
-        this.$warning(this.$t('server.server_group_create'));
+        this.$warning(this.$t('image.image_group_create'));
         return;
       }
       if (data.name.trim().length > 50) {
-        this.$warning(this.$t('server.server_group_name') + '50 limit');
+        this.$warning(this.$t('image.image_group_name') + '50 limit');
         return;
       }
       let param = {};

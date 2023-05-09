@@ -1142,6 +1142,9 @@ export default {
     image_repo_name_old: '旧镜像仓库名称',
     all_image_group: '全部镜像分组',
     image_group_search: '搜索镜像分组',
+    image_group_name: '镜像分组名称',
+    image_group_create: '创建镜像分组',
+    image_group_rename: '修改镜像分组名称',
   },
   package: {
     package_setting: '软件包管理',

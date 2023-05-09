@@ -9,6 +9,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.image.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
+import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.*;
@@ -75,6 +76,8 @@ public class ImageService {
     private ProxyMapper proxyMapper;
     @Autowired
     private PluginMapper pluginMapper;
+    @Autowired
+    private ImageGroupMapper imageGroupMapper;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -1081,6 +1084,40 @@ public class ImageService {
                 throw new RuntimeException(e.getMessage());
             }
         });
+    }
+
+    public List<ImageGroup> imageGroupList() {
+        return imageGroupMapper.selectByExample(null);
+    }
+
+    public int addImageGroup(ImageGroup imageGroup, LoginUser loginUser) {
+        imageGroup.setId(UUIDUtil.newUUID());
+        imageGroup.setCreator(loginUser.getUserId());
+        imageGroup.setCreateTime(System.currentTimeMillis());
+        imageGroup.setUpdateTime(System.currentTimeMillis());
+        operationLogService.log(loginUser, imageGroup.getId(), imageGroup.getId(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_group");
+
+        return imageGroupMapper.insertSelective(imageGroup);
+    }
+
+    public int editImageGroup(ImageGroup imageGroup, LoginUser loginUser) {
+        imageGroup.setUpdateTime(System.currentTimeMillis());
+        operationLogService.log(loginUser, imageGroup.getId(), imageGroup.getId(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.UPDATE, "i18n_update_image_group");
+        return imageGroupMapper.updateByPrimaryKeySelective(imageGroup);
+    }
+
+    public void deleteImageGroup(ImageGroup imageGroup, LoginUser loginUser) {
+
+        ImageExample example = new ImageExample();
+        example.createCriteria().andGroupIdEqualTo(imageGroup.getId());
+        List<Image> list = imageMapper.selectByExample(example);
+        if (list.size() > 0) {
+            HRException.throwException(Translator.get("i18n_ex_image_validate"));
+        } else {
+            imageGroupMapper.deleteByPrimaryKey(imageGroup.getId());
+        }
+        operationLogService.log(loginUser, imageGroup.getId(), imageGroup.getId(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.DELETE, "i18n_delete_image_group");
+
     }
 
 

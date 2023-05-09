@@ -10,12 +10,12 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.k8s.service.ImageService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -329,6 +329,30 @@ public class ImageController {
     @PostMapping("deleteImages")
     public void deleteImages(@RequestBody List<String> selectIds) throws Exception {
         imageService.deleteImages(selectIds, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "所有镜像分组")
+    @GetMapping("imageGroupList")
+    public List<ImageGroup> imageGroupList() {
+        return imageService.imageGroupList();
+    }
+
+    @Operation(summary = "添加镜像分组")
+    @PostMapping("addImageGroup")
+    public int addImageGroup(@RequestBody ImageGroup imageGroup) {
+        return imageService.addImageGroup(imageGroup, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "修改镜像分组")
+    @PostMapping("editImageGroup")
+    public int editImageGroup(@RequestBody ImageGroup imageGroup) throws Exception {
+        return imageService.editImageGroup(imageGroup, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "删除镜像分组")
+    @PostMapping("deleteImageGroup")
+    public void deleteImageGroup(@RequestBody ImageGroup imageGroup) throws Exception {
+        imageService.deleteImageGroup(imageGroup, tokenService.getLoginUser());
     }
 
 }

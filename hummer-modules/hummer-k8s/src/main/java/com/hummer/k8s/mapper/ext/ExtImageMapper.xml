@@ -97,14 +97,15 @@
         <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
         <result column="image_tag" jdbcType="VARCHAR" property="imageTag" />
         <result column="path" jdbcType="VARCHAR" property="path" />
-        <result column="is_image_repo" jdbcType="BIT" property="isImageRepo" />
-        <result column="is_image_icon" jdbcType="BIT" property="isImageIcon" />
-        <result column="is_proxy" jdbcType="BIT" property="isProxy" />
+        <result column="is_image_repo" jdbcType="TINYINT" property="isImageRepo" />
+        <result column="is_image_icon" jdbcType="TINYINT" property="isImageIcon" />
+        <result column="is_proxy" jdbcType="TINYINT" property="isProxy" />
         <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
         <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
         <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
-        <result column="unfixed" jdbcType="BIT" property="unfixed" />
+        <result column="unfixed" jdbcType="TINYINT" property="unfixed" />
         <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="group_id" jdbcType="VARCHAR" property="groupId" />
         <!-- image result -->
         <result column="result_id" jdbcType="VARCHAR" property="resultId" />
         <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
