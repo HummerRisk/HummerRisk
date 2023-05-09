@@ -262,7 +262,7 @@
                   <i class="el-icon-document-copy" @click="copy(logForm)" style="display: none;"></i>
                 </span>
                 <span class="grid-content-log-span">
-                  <img :src="require(`@/assets/img/code/${logForm.pluginIcon}`)" style="width: 40px; height: 25px; vertical-align:middle" alt=""/>
+                  <img :src="require(`@/assets/img/code/${logForm.pluginIcon}`)" style="width: 25px; height: 25px; vertical-align:middle" alt=""/>
                   {{ 'C:' + logForm.critical + ' H:' +  logForm.high + ' M:' + logForm.medium + ' L:' + logForm.low + ' U:' + logForm.unknown}}
                 </span>
                 <span class="grid-content-status-span" v-if="logForm.resultStatus === 'APPROVED'" style="color: #579df8">
