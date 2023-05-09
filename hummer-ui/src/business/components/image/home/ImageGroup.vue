@@ -26,10 +26,10 @@
     </image-group-tree>
 
     <!--Create group-->
-    <el-drawer class="rtl" :title="$t('image.image_group_name')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('image.image_group')" :visible.sync="createVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="createImageGroupCreateForm">
-        <el-form-item :label="$t('image.image_group_name')" ref="name" prop="name">
+        <el-form-item :label="$t('image.image_group')" ref="name" prop="name">
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_group_name')"/>
         </el-form-item>
       </el-form>

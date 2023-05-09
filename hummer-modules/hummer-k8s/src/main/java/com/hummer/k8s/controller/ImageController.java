@@ -355,4 +355,10 @@ public class ImageController {
         imageService.deleteImageGroup(imageGroup, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "一键检测镜像")
+    @PostMapping("scanImages")
+    public void scanImages(@RequestBody List<String> selectIds) {
+        imageService.scanImages(selectIds, tokenService.getLoginUser());
+    }
+
 }

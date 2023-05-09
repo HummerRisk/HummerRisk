@@ -14,6 +14,8 @@ public class ImageResultRequest extends ImageResult {
 
     private String imageUrl;
 
+    private String groupName;
+
     private Map<String, Object> combine;
 
     public String getName() {
@@ -30,6 +32,14 @@ public class ImageResultRequest extends ImageResult {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public Map<String, Object> getCombine() {

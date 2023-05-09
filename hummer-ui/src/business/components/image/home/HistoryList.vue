@@ -58,6 +58,9 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
+          <el-table-column prop="groupName" v-slot:default="scope" v-if="checkedColumnNames.includes('groupName')" :label="$t('image.image_group_name')" min-width="150" show-overflow-tooltip>
+            {{ scope.row.groupName }}
+          </el-table-column>
           <el-table-column prop="updateTime" min-width="160" :label="$t('image.last_modified')" sortable>
             <template v-slot:default="scope">
               <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
@@ -269,6 +272,11 @@ const columnOptions = [
   {
     label: 'image.result_status',
     props: 'resultStatus',
+    disabled: false
+  },
+  {
+    label: 'image.image_group_name',
+    props: 'groupName',
     disabled: false
   },
   {

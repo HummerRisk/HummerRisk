@@ -26,6 +26,8 @@ public class HistoryImageResultDTO extends HistoryImageResultWithBLOBs {
 
     private String unknown;
 
+    private String groupName;
+
     public String getType() {
         return type;
     }
@@ -96,5 +98,13 @@ public class HistoryImageResultDTO extends HistoryImageResultWithBLOBs {
 
     public void setUnknown(String unknown) {
         this.unknown = unknown;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

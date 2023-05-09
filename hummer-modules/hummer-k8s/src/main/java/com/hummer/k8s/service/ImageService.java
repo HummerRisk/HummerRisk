@@ -1120,5 +1120,14 @@ public class ImageService {
 
     }
 
+    public void scanImages(List<String> ids, LoginUser loginUser) {
+        ids.forEach(id -> {
+            try {
+                scan(id, loginUser);
+            } catch (Exception e) {
+                throw new HRException(e.getMessage());
+            }
+        });
+    }
 
 }

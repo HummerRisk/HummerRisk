@@ -21,6 +21,8 @@ export const updateImageUrl = "/k8s/image/updateImage";
 
 export const scanImageUrl = "/k8s/image/scan/";
 
+export const scanImagesUrl = "/k8s/image/scanImages";
+
 export const imageRepoListUrl = "/k8s/image/imageRepoList/";
 
 export const deleteImageRepoUrl = "/k8s/image/deleteImageRepo/";

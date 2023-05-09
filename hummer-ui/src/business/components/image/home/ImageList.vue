@@ -4,9 +4,9 @@
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('image.image_list')"
-                      @create="create" :createTip="$t('image.create')"
+                      @create="create" :createTip="$t('image.create')" @scan="scan" :scanTip="$t('account.one_scan')"
                       :show-create="true" @delete="deleteBatch" :show-delete="true"
-                      :items="items" :columnNames="columnNames"
+                      :items="items" :columnNames="columnNames" :show-scan="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
@@ -93,6 +93,9 @@
           <span v-if="scope.row.size">{{ scope.row.size }}</span>
           <span v-else>{{ '--' }}</span>
         </el-table-column>
+        <el-table-column prop="groupName" v-slot:default="scope" v-if="checkedColumnNames.includes('groupName')" :label="$t('image.image_group_name')" min-width="150" show-overflow-tooltip>
+          {{ scope.row.groupName }}
+        </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
                          prop="createTime">
           <template v-slot:default="scope">
@@ -141,6 +144,16 @@
               :value="item.id">
               <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
               {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_group')" ref="groupId" prop="groupId" :rules="{required: true, message: $t('image.image_group') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.groupId" :placeholder="$t('image.image_group_name')">
+            <el-option
+              v-for="item in groups"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -244,6 +257,16 @@
               :value="item.id">
               <i class="iconfont icon-lianmenglian sbom-icon-2"></i>
               {{ item.name }}
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('image.image_group')" ref="groupId" prop="groupId" :rules="{required: true, message: $t('image.image_group') + $t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.groupId" :placeholder="$t('image.image_group_name')">
+            <el-option
+              v-for="item in groups"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -408,15 +431,16 @@ import {
   deleteImageUrl,
   getImageResultUrl,
   getImageResultWithBLOBsUrl,
-  imageDownloadUrl,
+  imageDownloadUrl, imageGroupListUrl,
   imageListUrl,
-  imageLogUrl,
+  imageLogUrl, scanImagesUrl,
   scanImageUrl,
   updateImageUrl
 } from "@/api/k8s/image/image";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 import {proxyListAllUrl} from "@/api/system/system";
 import {saveAs} from "@/common/js/FileSaver";
+import {serverGroupListUrl} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -456,6 +480,11 @@ const columnOptions = [
     disabled: false
   },
   {
+    label: 'image.image_group_name',
+    props: 'groupName',
+    disabled: false
+  },
+  {
     label: 'commons.create_time',
     props: 'createTime',
     disabled: false
@@ -488,6 +517,11 @@ export default {
     MainContainer,
     HideTable,
     LogForm,
+  },
+  provide() {
+    return {
+      search: this.search,
+    }
   },
   data() {
     return {
@@ -577,7 +611,18 @@ export default {
       logForm: {},
       logData: [],
       detailForm: {},
+      groupId: 'd661se75-1r8c-2s54-cbe6-351sd29e91ff',
+      groups: [],
     }
+  },
+  props: {
+    selectNodeIds: Array,
+  },
+  watch: {
+    selectNodeIds() {
+      this.search();
+    },
+    '$route': 'init',
   },
   methods: {
     handleCheckedColumnNamesChange(value) {
@@ -730,6 +775,12 @@ export default {
       this.changeImage(row.repoId);
     },
     search() {
+      if(this.selectNodeIds.length!=0) {
+        this.condition.groupId = this.selectNodeIds[0];
+        this.groupId = this.selectNodeIds[0];
+      } else {
+        this.condition.groupId = "";
+      }
       this.result = this.$post(this.buildPagePath(imageListUrl), this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -898,6 +949,37 @@ export default {
         }
       });
     },
+    initGroup() {
+      this.result = this.$get(imageGroupListUrl, response => {
+        if (response.data != undefined && response.data != null) {
+          this.groups = response.data;
+        }
+      });
+    },
+    scan() {
+      if (this.selectIds.size === 0) {
+        this.$warning(this.$t('commons.please_select') + this.$t('k8s.image'));
+        return;
+      }
+      this.$alert(this.$t('account.one_scan') + this.$t('k8s.image') + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$request({
+              method: 'POST',
+              url: scanImagesUrl,
+              data: Array.from(this.selectIds),
+              headers: {
+                'Content-Type': undefined
+              }
+            }, res => {
+              this.$success(this.$t('commons.success'));
+              this.search();
+            });
+          }
+        }
+      });
+    },
   },
   computed: {
     codemirror() {
@@ -906,6 +988,7 @@ export default {
   },
   activated() {
     this.search();
+    this.initGroup();
     this.activeProxy();
     this.activeRepo();
     this.timer = setInterval(this.getStatus, 10000);

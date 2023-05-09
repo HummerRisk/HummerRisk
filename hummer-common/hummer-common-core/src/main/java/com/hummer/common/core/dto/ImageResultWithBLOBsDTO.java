@@ -33,6 +33,8 @@ public class ImageResultWithBLOBsDTO extends ImageResultWithBLOBs {
 
     private String unknown;
 
+    private String groupName;
+
     public String getName() {
         return name;
     }
@@ -135,5 +137,13 @@ public class ImageResultWithBLOBsDTO extends ImageResultWithBLOBs {
 
     public void setUnknown(String unknown) {
         this.unknown = unknown;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

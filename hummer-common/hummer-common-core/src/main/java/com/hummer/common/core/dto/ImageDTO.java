@@ -55,6 +55,8 @@ public class ImageDTO extends Image {
 
     private String unknown;
 
+    private String groupName;
+
     public String getUserName() {
         return userName;
     }
@@ -253,5 +255,13 @@ public class ImageDTO extends Image {
 
     public void setUnknown(String unknown) {
         this.unknown = unknown;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }
