@@ -52,3 +52,5 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('51fbb16b-8ddd-459
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('f227b3e6-a7f9-4f3f-b754-426255255f69', 'safety');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('8d55cfc5-ca80-4e34-8abb-81d796eb3516', 'safety');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('50269479-4669-4819-a702-1a4e1f8d22cd', 'safety');
+
+ALTER TABLE `server_result` modify COLUMN `command` mediumtext DEFAULT NULL COMMENT 'command';
