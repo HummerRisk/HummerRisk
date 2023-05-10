@@ -16,6 +16,8 @@ public class ServerListDTO extends Server {
 
     private Integer riskSum;
 
+    private String resultStatus;
+
     private List<ServerResultDTO> serverResultDTOS;
 
     public String getUser() {
@@ -48,5 +50,13 @@ public class ServerListDTO extends Server {
 
     public void setServerResultDTOS(List<ServerResultDTO> serverResultDTOS) {
         this.serverResultDTOS = serverResultDTOS;
+    }
+
+    public String getResultStatus() {
+        return resultStatus;
+    }
+
+    public void setResultStatus(String resultStatus) {
+        this.resultStatus = resultStatus;
     }
 }

@@ -4,38 +4,128 @@
     <el-card class="table-card">
       <template v-slot:header>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-          <el-tab-pane :label="$t('server.rule_dimension')" name="first"></el-tab-pane>
-          <el-tab-pane :label="$t('server.server_dimension')" name="second"></el-tab-pane>
+          <el-tab-pane :label="$t('server.server_dimension')" name="first"></el-tab-pane>
+          <el-tab-pane :label="$t('server.rule_dimension')" name="second"></el-tab-pane>
         </el-tabs>
-        <table-header :condition.sync="condition" @search="search"
-                      :title="$t('server.result_list')" v-if="activeName === 'first'"
-                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
-                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
         <table-header :condition.sync="serverCondition" @search="search"
-                      :title="$t('server.result_list')" v-if="activeName === 'second'"
+                      :title="$t('server.result_list')" v-if="activeName === 'first'"
                       :items="items2" :columnNames="columnNames2"
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
+        <table-header :condition.sync="condition" @search="search"
+                      :title="$t('server.result_list')" v-if="activeName === 'second'"
+                      :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
+                      :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
+                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
+      <el-row :gutter="20" class="el-row-body" v-if="activeName === 'first'">
+        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in serverData"
+                :key="index" class="el-col el-col-su">
+          <el-card :body-style="{ padding: '15px' }">
+            <div>
+              <el-row :gutter="20">
+                <el-col :span="24">
+                  <el-row>
+                    <el-col :span="16">
+                      <el-tooltip class="item" effect="dark" :content="data.name" placement="top">
+                          <span class="da-na" v-if="checkedColumnNames2.includes('name') && checkedColumnNames2.includes('groupName')">
+                            <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                              <div slot="error" class="image-slot">
+                                <i class="el-icon-picture-outline"></i>
+                              </div>
+                            </el-image>
+                            {{ $t('server.server_group') }} : {{ data.groupName }} | {{ $t('server.server_name') }} : {{ data.name }}
+                          </span>
+                      </el-tooltip>
+                    </el-col>
+                    <el-col :span="8">
+                      <el-tooltip class="item" effect="dark" :content="$t('history.resource_result') + ':' + data.riskSum" placement="top">
+                          <span v-if="data.riskSum > 0" style="color: red;float: right">
+                            <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                            <I style="color: #e8a97e;">{{ '(' + data.riskSum + ')'}}</I>
+                          </span>
+                        <span v-if="data.riskSum == 0" style="color: green;float: right">
+                            <i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}
+                            <I style="color: #e8a97e;">{{ '(' + data.riskSum + ')'}}</I>
+                          </span>
+                      </el-tooltip>
+                    </el-col>
+                  </el-row>
+                </el-col>
+              </el-row>
+            </div>
+            <el-divider style="margin-top: 0;"></el-divider>
+            <div style="padding: 0 14px 10px 14px;">
+              <el-row>
+                <span style="color: #1e6427;margin: 2px 0 0 0;" v-if="checkedColumnNames2.includes('ip')">{{ data.ip + ' : ' + data.port }}</span>
+                <span style="margin: 2px 0 0 10px;" v-if="checkedColumnNames2.includes('resultStatus')">
+                  <el-button @click="handleList(data)" plain size="mini" type="primary" v-if="data.resultStatus === 'UNCHECKED'">
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                  </el-button>
+                  <el-button @click="handleList(data)" plain size="mini" type="primary" v-else-if="data.resultStatus === 'APPROVED'">
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                  </el-button>
+                  <el-button @click="handleList(data)" plain size="mini" type="primary" v-else-if="data.resultStatus === 'PROCESSING'">
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                  </el-button>
+                  <el-button @click="handleList(data)" plain size="mini" type="success" v-else-if="data.resultStatus === 'FINISHED'">
+                    <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                  </el-button>
+                  <el-button @click="handleList(data)" plain size="mini" type="danger" v-else-if="data.resultStatus === 'ERROR'">
+                    <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                  </el-button>
+                  <el-button @click="handleList(data)" plain size="mini" type="warning" v-else-if="data.resultStatus === 'WARNING'">
+                    <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                  </el-button>
+                </span>
+                <span v-if="checkedColumnNames2.includes('status')">
+                  <el-tag size="mini" type="info" class="round el-btn" v-if="data.status === 'UNLINK'">
+                    {{ $t('server.UNLINK') }}
+                  </el-tag>
+                  <el-tag size="mini" type="warning" class="round el-btn" v-else-if="data.status === 'DELETE'">
+                    {{ $t('server.DELETE') }}
+                  </el-tag>
+                  <el-tag size="mini" type="success" class="round el-btn" v-else-if="data.status === 'VALID'">
+                    {{ $t('server.VALID') }}
+                  </el-tag>
+                  <el-tag size="mini" type="danger" class="round el-btn" v-else-if="data.status === 'INVALID'">
+                    {{ $t('server.INVALID') }}
+                  </el-tag>
+                </span>
+                <span class="round" style="margin: 2px 0 0 5px;" v-if="checkedColumnNames2.includes('updateTime')">{{ data.updateTime | timestampFormatDate }}</span>
+              </el-row>
+              <span class="button time pa-na"></span>
+            </div>
+            <div class="bottom clearfix" style="padding: 0 14px 10px 14px;">
+              <time class="time">
+                <span class="pa-time" v-if="checkedColumnNames2.includes('type')">{{ $t('server.server_type') }}&nbsp;({{ data.type }})&nbsp;| &nbsp;</span>
+                <span class="pa-time2" v-if="checkedColumnNames2.includes('userName')">{{ $t('server.server_user_name') }}&nbsp;({{ data.userName }})&nbsp;| &nbsp;</span>
+                <span class="pa-time2" v-if="checkedColumnNames2.includes('user')">{{ $t('account.creator') }}&nbsp;({{ data.user }})&nbsp;| &nbsp;</span>
+              </time>
+              <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
+                <span class="el-dropdown-link">
+                  {{ $t('package.operate') }}
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="handleList">{{ $t('commons.detail') }}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="serverPage" :page-size.sync="serverSize" :total="serverTotal"/>
+
       <hide-table
-        v-if="activeName === 'first'"
-        :table-data="tableData"
-        @sort-change="sort"
-        @filter-change="filter"
-        @select-all="select"
-        @select="select"
+          v-if="activeName === 'second'"
+          :table-data="tableData"
+          @sort-change="sort"
+          @filter-change="filter"
+          @select-all="select"
+          @select="select"
       >
-        <!-- 展开 start -->
-<!--        <el-table-column type="expand" min-width="40">-->
-<!--          <template slot-scope="props">-->
-<!--            <el-form>-->
-<!--              <codemirror ref="cmEditor" v-model="props.row.returnLog" class="code-mirror" :options="cmOptions" />-->
-<!--            </el-form>-->
-<!--          </template>-->
-<!--        </el-table-column >-->
-        <!-- 展开 end -->
         <el-table-column type="selection" min-width="50">
         </el-table-column>
         <el-table-column type="index" min-width="40"/>
@@ -92,86 +182,7 @@
           </template>
         </el-table-column>
       </hide-table>
-      <table-pagination v-if="activeName === 'first'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
-
-      <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
-        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in serverData"
-                :key="index" class="el-col el-col-su">
-          <el-card :body-style="{ padding: '15px' }">
-            <div>
-              <el-row :gutter="20">
-                <el-col :span="24">
-                  <el-row>
-                    <el-col :span="16">
-                      <el-tooltip class="item" effect="dark" :content="data.name" placement="top">
-                          <span class="da-na" v-if="checkedColumnNames2.includes('name') && checkedColumnNames2.includes('groupName')">
-                            <el-image style="border-radius: 50%;width: 16px; height: 16px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
-                              <div slot="error" class="image-slot">
-                                <i class="el-icon-picture-outline"></i>
-                              </div>
-                            </el-image>
-                            {{ $t('server.server_group') }} : {{ data.groupName }} | {{ $t('server.server_name') }} : {{ data.name }}
-                          </span>
-                      </el-tooltip>
-                    </el-col>
-                    <el-col :span="8">
-                      <el-tooltip class="item" effect="dark" :content="$t('history.resource_result') + ':' + data.riskSum" placement="top">
-                          <span v-if="data.riskSum > 0" style="color: red;float: right">
-                            <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
-                            <I style="color: #e8a97e;">{{ '(' + data.riskSum + ')'}}</I>
-                          </span>
-                        <span v-if="data.riskSum == 0" style="color: green;float: right">
-                            <i class="el-icon-warning"></i> {{ $t('resource.no_risk') }}
-                            <I style="color: #e8a97e;">{{ '(' + data.riskSum + ')'}}</I>
-                          </span>
-                      </el-tooltip>
-                    </el-col>
-                  </el-row>
-                </el-col>
-              </el-row>
-            </div>
-            <el-divider style="margin-top: 0;"></el-divider>
-            <div style="padding: 0 14px 10px 14px;">
-              <el-row>
-                <span style="color: #1e6427;" v-if="checkedColumnNames2.includes('ip')">{{ data.ip + ' : ' + data.port }}</span>
-                <span v-if="checkedColumnNames2.includes('status')">
-                  <el-tag size="mini" type="info" class="round el-btn" v-if="data.status === 'UNLINK'">
-                    {{ $t('server.UNLINK') }}
-                  </el-tag>
-                  <el-tag size="mini" type="warning" class="round el-btn" v-else-if="data.status === 'DELETE'">
-                    {{ $t('server.DELETE') }}
-                  </el-tag>
-                  <el-tag size="mini" type="success" class="round el-btn" v-else-if="data.status === 'VALID'">
-                    {{ $t('server.VALID') }}
-                  </el-tag>
-                  <el-tag size="mini" type="danger" class="round el-btn" v-else-if="data.status === 'INVALID'">
-                    {{ $t('server.INVALID') }}
-                  </el-tag>
-                </span>
-                <span class="round" v-if="checkedColumnNames2.includes('updateTime')">{{ data.updateTime | timestampFormatDate }}</span>
-              </el-row>
-              <span class="button time pa-na"></span>
-            </div>
-            <div class="bottom clearfix" style="padding: 0 14px 10px 14px;">
-              <time class="time">
-                <span class="pa-time" v-if="checkedColumnNames2.includes('type')">{{ $t('server.server_type') }}&nbsp;({{ data.type }})&nbsp;| &nbsp;</span>
-                <span class="pa-time2" v-if="checkedColumnNames2.includes('userName')">{{ $t('server.server_user_name') }}&nbsp;({{ data.userName }})&nbsp;| &nbsp;</span>
-                <span class="pa-time2" v-if="checkedColumnNames2.includes('user')">{{ $t('account.creator') }}&nbsp;({{ data.user }})&nbsp;| &nbsp;</span>
-              </time>
-              <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
-                <span class="el-dropdown-link">
-                  {{ $t('package.operate') }}
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="handleList">{{ $t('commons.detail') }}</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-      <table-pagination v-if="activeName === 'second'" :change="search" :current-page.sync="serverPage" :page-size.sync="serverSize" :total="serverTotal"/>
+      <table-pagination v-if="activeName === 'second'" :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
 
     <!--Result log-->
@@ -504,6 +515,11 @@ const columnOptions2 = [
   {
     label: 'server.server_group',
     props: 'groupName',
+    disabled: false
+  },
+  {
+    label: 'server.result_status',
+    props: 'resultStatus',
     disabled: false
   },
   {
