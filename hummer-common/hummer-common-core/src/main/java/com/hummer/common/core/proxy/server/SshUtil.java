@@ -187,7 +187,6 @@ public class SshUtil {
             // 通过主机IP、端口和用户名，连接主机，获取Session
             ClientSession session = client.connect(server.getUserName(), server.getIp(), Integer.valueOf(server.getPort())).verify(5000).getSession();
 
-
             if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
                 // 密钥模式
                 URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
@@ -259,6 +258,85 @@ public class SshUtil {
             throw e;
         }
         return result;
+    }
+
+    /**
+     * 远程执行shell脚本或者命令
+     *
+     * @return 命令执行完后返回的结果值
+     */
+    public static void executeScpLynis(Server server, Proxy proxy, String localPath, String fileName, String remotePath) throws Exception {
+        long startTime = Calendar.getInstance().getTimeInMillis();
+        String result = "";
+        try {
+            // 创建 SSH客户端
+            SshClient client = SshClient.setUpDefaultClient();
+            // 启动 SSH客户端
+            client.start();
+
+            // 通过主机IP、端口和用户名，连接主机，获取Session
+            ClientSession session = client.connect(server.getUserName(), server.getIp(), Integer.valueOf(server.getPort())).verify(5000).getSession();
+
+            if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "str")) {
+                // 密钥模式
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
+                }
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "file")) {
+                // 密钥模式
+                URLResource idenreplacedy = new URLResource(Paths.get(server.getPublicKeyPath()).toUri().toURL());
+                try (InputStream inputStream = idenreplacedy.openInputStream()) {
+                    session.addPublicKeyIdentity(GenericUtils.head(SecurityUtils.loadKeyPairIdentities(session, idenreplacedy, inputStream, (s, resourceKey, retryIndex) -> null)));
+                }
+            } else if (StringUtils.equalsIgnoreCase(server.getIsPublicKey(), "no")) {
+                // 密码模式
+                // 给Session添加密码
+                session.addPasswordIdentity(server.getPassword());
+            }
+
+            // 校验用户名和密码的有效性
+            boolean isSuccess = session.auth().verify(10000L).isSuccess();
+
+            // 认证成功
+            if (isSuccess) {
+                long middleTime = Calendar.getInstance().getTimeInMillis();
+                LogUtil.info("Connect host cost time: " + (middleTime - startTime) / 1000.0 + "s.");
+
+                ScpClientCreator creator = ScpClientCreator.instance();
+                // 创建 SCP 客户端
+                ScpClient scpClient = creator.createScpClient(session);
+
+                LogUtil.info("Scp beginning.");
+                // ScpClient.Option.Recursive：递归copy，可以将子文件夹和子文件遍历copy
+                scpClient.upload(localPath, remotePath, ScpClient.Option.Recursive, ScpClient.Option.TargetIsDirectory);
+                LogUtil.info("Scp finished.");
+
+                // 释放 SCP客户端
+                if (scpClient != null) {
+                    scpClient = null;
+                }
+
+                // 关闭 Session
+                if (session != null && session.isOpen()) {
+                    session.close();
+                }
+
+                // 关闭 SSH客户端
+                if (client != null && client.isOpen()) {
+                    client.stop();
+                    client.close();
+                }
+            }
+
+            long endTime = Calendar.getInstance().getTimeInMillis();
+
+            LogUtil.info("scp 传输用时: " + (endTime - startTime) / 1000.0 + "s\n" + splitStr);
+
+        } catch (Exception e) {
+            LogUtil.error(String.format(tipStr, "scp 传输失败") + e.getMessage());
+            throw e;
+        }
     }
 
     /**

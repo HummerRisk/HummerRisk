@@ -1033,5 +1033,48 @@ public class ServerService {
         });
     }
 
+    public void scanLynis(String serverId) throws Exception {
+        Server server = serverMapper.selectByPrimaryKey(serverId);
+        Proxy proxy = new Proxy();
+        if (server.getIsProxy() != null && server.getIsProxy()) {
+            proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
+        }
+
+        //先从本地生成文件
+        String dirPath = "/tmp/server";
+        String remotePath = "/tmp";
+        String fileName1 = DateUtils.datePath() + "-" + encodingFilename("server") + ".sh";
+        String filePath1 = dirPath + "/" + fileName1;
+        String cmd1 = "if [ -d lynis ];then echo 存在;fi";
+        CommandUtils.saveAsFile(cmd1, dirPath, fileName1, false);
+        //再scp到主机, 最后执行sudo sh检测
+        String isExist = SshUtil.executeScp(server, proxy, filePath1, fileName1, remotePath);
+
+        if (!StringUtils.equals(isExist, "存在")) {
+            String fileName2 = "lynis.tar.gz";
+            String filePath2 = "/tmp/lynis.tar.gz";
+            //scp tar 包到主机
+            SshUtil.executeScpLynis(server, proxy, filePath2, fileName2, remotePath);
+
+            //解压
+            String cmd3 = "tar zxvf /tmp/lynis.tar.gz";
+            String fileName3 = DateUtils.datePath() + "-" + encodingFilename("server") + ".sh";
+            String filePath3 = dirPath + "/" + fileName3;
+            CommandUtils.saveAsFile(cmd3, dirPath, fileName3, false);
+            SshUtil.executeScp(server, proxy, filePath3, fileName3, remotePath);
+        }
+
+        String resultStr = executeLynis(server, proxy, dirPath, remotePath);
+
+    }
+
+    public String executeLynis(Server server, Proxy proxy, String dirPath, String remotePath) throws Exception {
+        //解压
+        String cmd = "cd lynis && ./lynis audit system";
+        String fileName = DateUtils.datePath() + "-" + encodingFilename("server") + ".sh";
+        String filePath = dirPath + "/" + fileName;
+        CommandUtils.saveAsFile(cmd, dirPath, fileName, false);
+        return SshUtil.executeScp(server, proxy, filePath, fileName, remotePath);
+    }
 
 }
