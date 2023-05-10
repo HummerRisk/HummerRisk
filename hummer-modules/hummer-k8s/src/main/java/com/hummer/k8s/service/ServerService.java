@@ -567,10 +567,11 @@ public class ServerService {
     public int addServerRule(ServerRuleRequest request) throws Exception {
         ServerRule record = new ServerRule();
         BeanUtils.copyBean(record, request);
+        String ruleId = UUIDUtil.newUUID();
         record.setId(UUIDUtil.newUUID());
         record.setLastModified(System.currentTimeMillis());
-        saveRuleTagMapping(record.getId(), request.getTagKey());
-        saveRuleGroupMapping(request.getId(), request.getGroups());
+        saveRuleTagMapping(ruleId, request.getTagKey());
+        saveRuleGroupMapping(ruleId, request.getGroups());
         return serverRuleMapper.insertSelective(record);
     }
 
