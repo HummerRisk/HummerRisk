@@ -1893,4 +1893,8 @@ public class K8sService {
         return cloudNatives;
     }
 
+    public List<Map<String, String>> namespaces() {
+        return extCloudNativeSourceMapper.namespaces();
+    }
+
 }

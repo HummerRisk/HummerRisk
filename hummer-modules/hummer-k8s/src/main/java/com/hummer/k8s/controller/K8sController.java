@@ -421,5 +421,11 @@ public class K8sController {
         k8sService.deleteK8ss(selectIds, tokenService.getLoginUser());
     }
 
+    @I18n
+    @Operation(summary = "所有K8s命名空间")
+    @GetMapping("namespaces")
+    public List<Map<String, String>> namespaces() {
+        return k8sService.namespaces();
+    }
 
 }

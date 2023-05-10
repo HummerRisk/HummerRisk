@@ -249,12 +249,12 @@
 </template>
 
 <script>
-import Container from "../.././common/components/Container";
+import Container from "@/business/components/common/components/Container";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import TablePagination from "../../common/pagination/TablePagination";
-import TableOperators from "../../common/components/TableOperators";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {K8S_SITUATION_CONFIGS} from "../../common/components/search/search-components";
+import {K8S_SITUATION_CONFIGS} from "@/business/components/common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {cloudNativeSourceListUrl, k8sSituationUrl, k8sSourceImagesUrl} from "@/api/k8s/k8s/k8s";
 

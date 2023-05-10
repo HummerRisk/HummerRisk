@@ -101,4 +101,5 @@ export const deleteK8sSyncLogsUrl = "/k8s/k8s/deleteSyncLogs";
 
 export const deleteK8ssUrl = "/k8s/k8s/deleteK8ss";
 
+export const namespacesUrl = "/k8s/k8s/namespaces";
 

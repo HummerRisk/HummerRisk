@@ -285,8 +285,12 @@ import {cloneDeep} from "lodash";
           if (component.name === 'TableSearchInput') return this.$t(op) + ' ' + value;
           let str = '';
           if (component.name === 'TableSearchSelect') {
-            for (let o of value) {
-              str = str === '' ? this.operatorLabel(component, o) : str + ',' + this.operatorLabel(component, o);
+            if (typeof value === 'string') {
+              str = value;
+            } else {
+              for (let o of value) {
+                str = str === '' ? this.operatorLabel(component, o) : str + ',' + this.operatorLabel(component, o);
+              }
             }
             return this.$t(op) + ' ' + str;
           } else if (component.name === 'TableSearchDateTimePicker') {

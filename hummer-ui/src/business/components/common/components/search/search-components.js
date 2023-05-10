@@ -5,6 +5,7 @@ import TableSearchSelect from "./TableSearchSelect";
 import {cloudPluginUrl, nativePluginUrl, userAllListUrl} from "@/api/system/system";
 import {allListUrl} from "@/api/cloud/account/account";
 import {allCloudResourceTypesUrl, allCloudRuleGroupsUrl, ruleTagsUrl} from "@/api/cloud/rule/rule";
+import {namespacesUrl} from "@/api/k8s/k8s/k8s";
 
 /* eslint-disable */
 export default {
@@ -576,13 +577,23 @@ export const SOURCE_NAME = {
 }
 
 export const SOURCE_NAMESPACE = {
-  key: "name", // 返回结果Map的key
-  name: "TableSearchInput", // Vue控件名称
+  key: "sourceNamespace", // 返回结果Map的key
+  name: "TableSearchSelect", // Vue控件名称
   label: "k8s.source_namespace", // 显示名称
-  operator: { // 运算符设置
-    value: OPERATORS.LIKE.value, // 如果未设置value初始值，则value初始值为options[0]
-    options: [OPERATORS.LIKE, OPERATORS.NOT_LIKE] // 运算符候选项
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN]
   },
+  options: { // 异步获取候选项
+    url: namespacesUrl,
+    labelKey: "sourceNamespace",
+    valueKey: "sourceNamespace",
+    showLabel: option => {
+      return option.label;
+    }
+  },
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: false
+  }
 }
 
 export const SOURCE_TYPE = {

@@ -25,5 +25,7 @@ public interface ExtCloudNativeSourceMapper {
 
     NameSpaceTopology namespaceTopology();
 
+    List<Map<String, String>> namespaces();
+
 
 }

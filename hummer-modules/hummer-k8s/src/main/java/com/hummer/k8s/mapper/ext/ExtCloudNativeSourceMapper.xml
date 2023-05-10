@@ -862,4 +862,12 @@
         ORDER BY FIELD(t.severity, 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN')
     </select>
 
+    <select id="namespaces" resultType="java.util.Map">
+        select
+        t.source_namespace as `sourceNamespace`
+        from cloud_native_source t
+        where t.source_namespace is not null and t.source_namespace != ''
+        group by t.source_namespace
+    </select>
+
 </mapper>
