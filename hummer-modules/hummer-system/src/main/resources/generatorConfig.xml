@@ -168,5 +168,7 @@
 <!--        <table tableName="cloud_native_source_rbac_relation" domainObjectName="CloudNativeSourceRbacRelation"/>-->
 <!--        <table tableName="hummer_license" domainObjectName="HummerLicense"/>-->
 <!--        <table tableName="image_group" domainObjectName="ImageGroup"/>-->
+<!--        <table tableName="server_lynis_result" domainObjectName="ServerLynisResult"/>-->
+<!--        <table tableName="server_lynis_result_detail" domainObjectName="ServerLynisResultDetail"/>-->
     </context>
 </generatorConfiguration>
