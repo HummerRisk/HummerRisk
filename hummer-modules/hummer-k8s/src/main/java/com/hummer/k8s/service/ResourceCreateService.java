@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -61,10 +63,12 @@ public class ResourceCreateService {
         serverResultExample.setOrderByClause("create_time limit 1");
         List<ServerResult> serverResultList = serverResultMapper.selectByExample(serverResultExample);
         if (CollectionUtils.isNotEmpty(serverResultList)) {
+            Set<String> serverIds = new HashSet<>();
             serverResultList.forEach(serverResult -> {
                 final ServerResult serverToBeProceed;
                 try {
                     serverToBeProceed = BeanUtils.copyBean(new ServerResult(), serverResult);
+                    serverIds.add(serverResult.getServerId());
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
                 }
@@ -79,6 +83,15 @@ public class ResourceCreateService {
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(serverToBeProceed.getId());
+                    }
+                });
+            });
+            serverIds.forEach(serverId -> {
+                commonThreadPool.addTask(() -> {
+                    try {
+                        serverService.scanLynis(serverId, null);
+                    } catch (Exception e) {
+                        LogUtil.error(e.getMessage());
                     }
                 });
             });

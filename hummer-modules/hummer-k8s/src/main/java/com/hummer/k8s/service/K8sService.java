@@ -1018,7 +1018,7 @@ public class K8sService {
                         for (String desc : descriptions) {
                             if (StringUtils.isEmpty(desc) || desc == null) continue;
                             if (desc.startsWith("\n")) desc = desc.replaceFirst("\n", "");
-                            String number = desc.split("\\s+")[0];
+                            String number = desc.split("\\s+")[0];//空格,回车,换行等空白符
                             CloudNativeResultKubenchExample example = new CloudNativeResultKubenchExample();
                             example.createCriteria().andResultIdEqualTo(resultId).andNumberEqualTo(number);
                             List<CloudNativeResultKubenchWithBLOBs> list = cloudNativeResultKubenchMapper.selectByExampleWithBLOBs(example);

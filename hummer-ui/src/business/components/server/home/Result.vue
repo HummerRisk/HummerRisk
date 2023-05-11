@@ -13,7 +13,7 @@
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
         <table-header :condition.sync="condition" @search="search"
-                      :title="$t('server.result_list')" v-if="activeName === 'second'"
+                      :title="$t('server.result')" v-if="activeName === 'second'"
                       :items="items" :columnNames="columnNames" @delete="deleteBatch" :show-delete="true"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -266,7 +266,7 @@
     <!--Result log-->
 
     <!--Result details-->
-    <el-drawer class="rtl" :title="$t('server.result')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('server.server_result') + $t('commons.detail')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-table border :data="serverResultDetails" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
         <el-table-column type="index" min-width="40"/>

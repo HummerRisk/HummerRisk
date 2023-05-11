@@ -43,5 +43,6 @@ CREATE TABLE IF NOT EXISTS `server_lynis_result_detail` (
     `type`                         varchar(128)        DEFAULT NULL COMMENT '所属类型',
     `output`                       mediumtext          DEFAULT NULL COMMENT '输出',
     `status`                       varchar(100)        DEFAULT NULL COMMENT '状态',
+    `order_index`                  bigint              DEFAULT NULL COMMENT '排序',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
