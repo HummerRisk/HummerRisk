@@ -266,6 +266,11 @@ public class ServerService {
 
     }
 
+    public void deleteServerResultByServerId(String id, LoginUser loginUser) throws Exception {
+        deleteServerResultById(id, loginUser);
+        deleteLynisResult(serverMapper.selectByPrimaryKey(id));
+    }
+
     public void deleteServerResult(String id, LoginUser loginUser) throws Exception {
         ServerResultLogExample logExample = new ServerResultLogExample();
         logExample.createCriteria().andResultIdEqualTo(id);
@@ -650,7 +655,28 @@ public class ServerService {
     }
 
     public List<ServerListDTO> resultServerList(ServerRequest request) {
-        return extServerResultMapper.resultServerList(request);
+        List<ServerListDTO> list = extServerResultMapper.resultServerList(request);
+        for (ServerListDTO serverListDTO : list) {
+            ServerLynisResultExample serverLynisResultExample = new ServerLynisResultExample();
+            serverLynisResultExample.createCriteria().andServerIdEqualTo(serverListDTO.getId());
+            List<ServerLynisResultWithBLOBs> serverLynisResults = serverLynisResultMapper.selectByExampleWithBLOBs(serverLynisResultExample);
+            if(serverLynisResults.size() > 0) {
+                ServerLynisResultWithBLOBs serverLynisResultWithBLOBs = serverLynisResults.get(0);
+                serverListDTO.setServerLynisResult(serverLynisResultWithBLOBs);
+
+                ServerLynisResultDetailExample serverLynisResultDetailExample = new ServerLynisResultDetailExample();
+                serverLynisResultDetailExample.createCriteria().andLynisIdEqualTo(serverLynisResultWithBLOBs.getId());
+                serverLynisResultDetailExample.setOrderByClause("create_time desc, order_index");
+                List<ServerLynisResultDetail> serverLynisResultDetails = serverLynisResultDetailMapper.selectByExampleWithBLOBs(serverLynisResultDetailExample);
+                serverListDTO.setServerLynisResultDetails(serverLynisResultDetails);
+            }
+
+        }
+        return list;
+    }
+
+    public ServerListDTO resultServer(String serverId) {
+        return extServerResultMapper.resultServer(serverId);
     }
 
     public ServerResultDTO getServerResult(String resultId) {
@@ -1107,7 +1133,7 @@ public class ServerService {
             if (StringUtils.isNotEmpty(resultStr)) {
                 resultStr = resultStr.replaceAll("", "").replaceAll("\u001B", "");
                 List<String> colors = Arrays.asList("\\[0;30m", "\\[1;30m", "\\[0;34m", "\\[1;34m", "\\[0;32m", "\\[1;32m", "\\[0;36m", "\\[0;31m", "\\[1;31m", "\\[0;35m", "\\[1;35m", "\\[0;33m", "\\[1;33m", "\\[0;37m", "\\[1;37m", "\\[30;43m",
-                "\\[0m", "\\[1m", "\\[4m", "\\[5m", "\\[7m", "\\[8m");
+                "\\[0m", "\\[1m", "\\[4m", "\\[5m", "\\[7m", "\\[8m", "\\[0;44m", "\\[0;94m");
                 for (String color : colors) {
                     resultStr = resultStr.replaceAll(color, "");//python颜色
                 }

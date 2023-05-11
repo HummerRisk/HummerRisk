@@ -15,6 +15,8 @@ public interface ExtServerResultMapper {
 
     List<ServerListDTO> resultServerList(@Param("request") ServerRequest request);
 
+    ServerListDTO resultServer(@Param("serverId") String serverId);
+
     List<Map<String, Object>> serverChart();
 
     List<Map<String, Object>> severityChart();

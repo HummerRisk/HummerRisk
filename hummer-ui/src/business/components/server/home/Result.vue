@@ -110,6 +110,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="handleList">{{ $t('commons.detail') }}</el-dropdown-item>
+                  <el-dropdown-item command="serverDelete">{{ $t('commons.delete') }}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
@@ -268,56 +269,67 @@
     <!--Result details-->
     <el-drawer class="rtl" :title="$t('server.server_result') + $t('commons.detail')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
-      <el-table border :data="serverResultDetails" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
-        <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ip" :label="'IP'" min-width="130" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="180" show-overflow-tooltip></el-table-column>
-        <el-table-column min-width="100" :label="$t('server.severity')" column-key="severity">
-          <template v-slot:default="{row}">
-            <rule-type :row="row"/>
-          </template>
-        </el-table-column>
-        <el-table-column prop="type" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
-          <template v-slot:default="scope">
-            <span v-if="scope.row.type === 'linux'">Linux</span>
-            <span v-if="scope.row.type === 'windows'">Windows</span>
-            <span v-if="!scope.row.type">N/A</span>
-          </template>
-        </el-table-column>
-        <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
-          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-          </el-button>
-          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-          </el-button>
-          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
-            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-          </el-button>
-          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
-            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-          </el-button>
-          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
-            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
-          </el-button>
-          <el-button @click="showDetailLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
-            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-          </el-button>
-        </el-table-column>
-        <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="110" show-overflow-tooltip v-slot:default="scope" sortable>
-          <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
-            <span v-if="scope.row.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
-            <span v-if="scope.row.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
-            <span v-if="scope.row.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('resource.i18n_has_warn') }}</span>
-          </el-tooltip>
-        </el-table-column>
-        <el-table-column prop="updateTime" min-width="160" :label="$t('server.last_modified')" sortable>
-          <template v-slot:default="scope">
-            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-tabs v-model="detailsName" type="card">
+        <el-tab-pane :label="$t('server.server_result')" name="first">
+          <el-form>
+            <el-form-item>
+              <codemirror ref="cmEditor" v-if="serverLynisResult" v-model="serverLynisResult.returnLog" class="code-mirror-lynis" :options="cmOptions" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane :label="$t('server.result')" name="second">
+          <el-table border :data="serverResultDetails" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column prop="serverName" :label="$t('server.server_name')" min-width="140" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="ip" :label="'IP'" min-width="130" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="ruleName" :label="$t('server.rule_name')" min-width="180" show-overflow-tooltip></el-table-column>
+            <el-table-column min-width="100" :label="$t('server.severity')" column-key="severity">
+              <template v-slot:default="{row}">
+                <rule-type :row="row"/>
+              </template>
+            </el-table-column>
+            <el-table-column prop="type" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
+              <template v-slot:default="scope">
+                <span v-if="scope.row.type === 'linux'">Linux</span>
+                <span v-if="scope.row.type === 'windows'">Windows</span>
+                <span v-if="!scope.row.type">N/A</span>
+              </template>
+            </el-table-column>
+            <el-table-column v-slot:default="scope" :label="$t('server.result_status')" min-width="120" prop="resultStatus" sortable show-overflow-tooltip>
+              <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+                <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+              </el-button>
+              <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+                <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+              </el-button>
+              <el-button @click="showDetailLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+                <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+              </el-button>
+              <el-button @click="showDetailLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+                <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+              </el-button>
+              <el-button @click="showDetailLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+                <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+              </el-button>
+              <el-button @click="showDetailLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+                <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+              </el-button>
+            </el-table-column>
+            <el-table-column prop="isSeverity" :label="$t('server.is_severity')" min-width="110" show-overflow-tooltip v-slot:default="scope" sortable>
+              <el-tooltip class="item" effect="dark" :content="scope.row.returnLog" placement="top">
+                <span v-if="scope.row.isSeverity === 'true'" style="color: #46ad59">{{ $t('resource.risk_free') }}</span>
+                <span v-if="scope.row.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
+                <span v-if="scope.row.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('resource.i18n_has_warn') }}</span>
+              </el-tooltip>
+            </el-table-column>
+            <el-table-column prop="updateTime" min-width="160" :label="$t('server.last_modified')" sortable>
+              <template v-slot:default="scope">
+                <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
 
       <!--result log-->
       <el-drawer
@@ -428,10 +440,11 @@ import {SERVER_RESULT_CONFIGS, SERVER_RESULT_CONFIGS2} from "@/business/componen
 import {severityOptions} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
+  deleteServerResultByIdUrl,
   deleteServerResultsUrl,
   deleteServerResultUrl,
   getServerResultUrl,
-  resultServerListUrl,
+  resultServerListUrl, resultServerUrl,
   serverLogUrl,
   serverReScanUrl,
   serverResultListUrl
@@ -635,6 +648,9 @@ export default {
       serverResultDetails: [],
       detailsVisible: false,
       innerVisible: false,
+      detailsName: 'first',
+      serverLynisResult: {},
+      serverLynisResultDetails: [],
     }
   },
 
@@ -669,8 +685,7 @@ export default {
     },
     //查询列表
     search() {
-      let url = serverResultListUrl + this.currentPage + "/" + this.pageSize;
-      this.result = this.$post(url, this.condition, response => {
+      this.result = this.$post(serverResultListUrl + this.currentPage + "/" + this.pageSize, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
         this.tableData = data.listObject;
@@ -682,7 +697,7 @@ export default {
       });
     },
     getStatus () {
-      if (this.checkStatus(this.tableData)) {
+      if (this.checkStatus(this.tableData) && this.checkStatus(this.serverData)) {
         this.search();
         clearInterval(this.timer);
       } else {
@@ -692,6 +707,14 @@ export default {
             if (result && data.resultStatus !== result.resultStatus) {
               data.resultStatus = result.resultStatus;
               data.returnLog = result.returnLog;
+            }
+          });
+        }
+        for (let data of this.serverData) {
+          this.$get(resultServerUrl + data.id, response => {
+            let result = response.data;
+            if (result && data.resultStatus !== result.resultStatus) {
+              data.resultStatus = result.resultStatus;
             }
           });
         }
@@ -795,12 +818,17 @@ export default {
         case "handleList":
           this.handleList(data);
           break;
+        case "serverDelete":
+          this.serverDelete(data);
+          break;
         default:
           break;
       }
     },
     handleList(data) {
       this.serverResultDetails = data.serverResultDTOS;
+      this.serverLynisResult = data.serverLynisResult;
+      this.serverLynisResultDetails = data.serverLynisResultDetails;
       this.detailsVisible = true;
     },
     deleteBatch() {
@@ -827,6 +855,19 @@ export default {
         }
       });
     },
+    serverDelete(obj) {
+      this.$alert(this.$t('server.delete_confirm') + this.$t('server.result') + " ？", obj.ruleName, {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get(deleteServerResultByIdUrl + obj.id,  res => {
+              this.search();
+              this.$success(this.$t('commons.delete_success'));
+            });
+          }
+        }
+      });
+    },
   },
   computed: {
     codemirror() {
@@ -840,8 +881,11 @@ export default {
     this.timer = setInterval(this.getStatus,10000);
   },
   beforeDestroy() {
-    clearInterval(this.timer);
-  }
+    this.timer && clearInterval(this.timer);
+  },
+  destroyed() {
+    this.timer && clearInterval(this.timer);
+  },
 
 }
 </script>
@@ -1000,6 +1044,11 @@ export default {
 }
 .inner-log {
   margin: 10px;
+}
+
+.code-mirror-lynis >>> .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  height: 600px !important;
 }
 /deep/ :focus{outline:0;}
 </style>

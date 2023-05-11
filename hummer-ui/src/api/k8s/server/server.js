@@ -43,9 +43,13 @@ export const serverResultListUrl = "/k8s/server/resultList/";
 
 export const resultServerListUrl = "/k8s/server/resultServerList/";
 
+export const resultServerUrl = "/k8s/server/resultServer/";
+
 export const serverReScanUrl = "/k8s/server/rescan/";
 
 export const deleteServerResultUrl = "/k8s/server/deleteServerResult/";
+
+export const deleteServerResultByIdUrl = "/k8s/server/deleteServerResultById/";
 
 export const deleteServerRuleUrl = "/k8s/server/deleteServerRule/";
 

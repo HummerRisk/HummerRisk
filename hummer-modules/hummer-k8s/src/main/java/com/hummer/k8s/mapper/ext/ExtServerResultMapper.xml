@@ -216,15 +216,16 @@
         CASE
         WHEN 'APPROVED' in (select s.result_status from server_result s where s.server_id = t.id) THEN 'APPROVED'
         WHEN 'PROCESSING' in (select s.result_status from server_result s where s.server_id = t.id) THEN 'PROCESSING'
-        WHEN 'WARNING' in (select s.result_status from server_result s where s.server_id = t.id) THEN 'WARNING'
-        WHEN 'FINISHED' in (select s.result_status from server_result s where s.server_id = t.id) THEN 'FINISHED'
-        WHEN 'ERROR' in (select s.result_status from server_result s where s.server_id = t.id) THEN 'ERROR'
+        WHEN 'WARNING' in (select s.result_status from server_result s where s.server_id = t.id) AND 'FINISHED' in (select result_status from server_lynis_result l where l.server_id = t.id) THEN 'WARNING'
+        WHEN 'FINISHED' in (select s.result_status from server_result s where s.server_id = t.id) AND 'FINISHED' in (select result_status from server_lynis_result l where l.server_id = t.id) THEN 'FINISHED'
+        WHEN 'ERROR' in (select s.result_status from server_result s where s.server_id = t.id) AND 'FINISHED' in (select result_status from server_lynis_result l where l.server_id = t.id) THEN 'ERROR'
         ELSE 'FINISHED'
         END AS resultStatus,
         (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity is false) as riskSum
         FROM server t
-        left join server_group sg on sg.id = t.server_group_id
-        left join user u on u.id = t.creator
+        join server_result re on re.server_id = t.id
+        join server_group sg on sg.id = t.server_group_id
+        join user u on u.id = t.creator
         <where>
             <if test="request.combine != null">
                 <include refid="combine2">
@@ -247,6 +248,32 @@
             </if>
             <if test="request.userName != null and request.userName != ''">
                 and LOWER(t.user_name) like CONCAT('%', LOWER(#{request.userName}),'%')
+            </if>
+        </where>
+        ORDER BY t.update_time desc
+    </select>
+
+    <select id="resultServer" parameterType="java.lang.String" resultMap="ServerListBaseResultMap">
+        SELECT
+        t.*,
+        u.name as user,
+        sg.name as groupName,
+        CASE
+        WHEN 'APPROVED' in (select s.result_status from server_result s where s.server_id = t.id) THEN 'APPROVED'
+        WHEN 'PROCESSING' in (select s.result_status from server_result s where s.server_id = t.id) THEN 'PROCESSING'
+        WHEN 'WARNING' in (select s.result_status from server_result s where s.server_id = t.id) AND 'FINISHED' in (select result_status from server_lynis_result l where l.server_id = t.id) THEN 'WARNING'
+        WHEN 'FINISHED' in (select s.result_status from server_result s where s.server_id = t.id) AND 'FINISHED' in (select result_status from server_lynis_result l where l.server_id = t.id) THEN 'FINISHED'
+        WHEN 'ERROR' in (select s.result_status from server_result s where s.server_id = t.id) AND 'FINISHED' in (select result_status from server_lynis_result l where l.server_id = t.id) THEN 'ERROR'
+        ELSE 'FINISHED'
+        END AS resultStatus,
+        (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity is false) as riskSum
+        FROM server t
+        join server_result re on re.server_id = t.id
+        join server_group sg on sg.id = t.server_group_id
+        join user u on u.id = t.creator
+        <where>
+            <if test="serverId != null and serverId != ''">
+                and t.id = #{serverId}
             </if>
         </where>
         ORDER BY t.update_time desc

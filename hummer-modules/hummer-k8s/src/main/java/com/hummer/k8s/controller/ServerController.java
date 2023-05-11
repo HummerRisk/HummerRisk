@@ -181,7 +181,14 @@ public class ServerController {
     }
 
     @I18n
-    @Operation(summary = "主机检测结果")
+    @Operation(summary = "主机检测结果详情(主机视角)")
+    @GetMapping(value = "resultServer/{serverId}")
+    public ServerListDTO resultServer(@PathVariable String serverId) {
+        return serverService.resultServer(serverId);
+    }
+
+    @I18n
+    @Operation(summary = "主机检测结果详情")
     @GetMapping(value = "getServerResult/{resultId}")
     public ServerResultDTO getServerResult(@PathVariable String resultId) {
         return serverService.getServerResult(resultId);
@@ -200,10 +207,16 @@ public class ServerController {
         serverService.rescan(id, tokenService.getLoginUser());
     }
 
-    @Operation(summary = "删除主机检测记录")
+    @Operation(summary = "删除主机规则检测记录")
     @GetMapping("deleteServerResult/{id}")
     public void deleteServerResult(@PathVariable String id) throws Exception {
         serverService.deleteServerResult(id, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "删除主机整体检测记录")
+    @GetMapping("deleteServerResultById/{id}")
+    public void deleteServerResultById(@PathVariable String id) throws Exception {
+        serverService.deleteServerResultByServerId(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "所有主机凭据")
