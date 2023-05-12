@@ -20,6 +20,7 @@ HummerRisk
 │       └── hummer-system                              // 系统模块 [9300]
 │       └── hummer-cloud                               // 混合云服务 [9400]
 │       └── hummer-k8s                                 // 云原生服务 [9500]
+│       └── hummer-xpack                               // 扩展模块 [9600]
 ├── hummer-visual                                      // 图形化管理模块
 │       └── hummer-monitor                             // 监控中心 [9100]
 ├──pom.xml                                             // 公共依赖
@@ -71,6 +72,7 @@ HummerRisk
 - hmr-system [9300, 9301, 8001]
 - hmr-cloud [9400, 9401, 8002]
 - hmr-k8s [9500, 9501, 8003]
+- hmr-xpack [9600, 9601, 8004]
 - hmr-monitor [9100]
 - hmr-mysql [3306]
 - hmr-nacos [8848, 9848]
