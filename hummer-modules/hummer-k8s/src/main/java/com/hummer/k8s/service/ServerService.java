@@ -242,6 +242,20 @@ public class ServerService {
         return result.getId();
     }
 
+    public void rescanServer(String id, LoginUser loginUser) throws Exception {
+        ServerResultExample example = new ServerResultExample();
+        example.createCriteria().andServerIdEqualTo(id);
+        List<ServerResult> results = serverResultMapper.selectByExample(example);
+
+        for (ServerResult result : results) {
+            saveServerResultLog(result.getId(), "i18n_restart_server_result", "", true, loginUser);
+            result.setUpdateTime(System.currentTimeMillis());
+            result.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            serverResultMapper.updateByPrimaryKeySelective(result);
+            operationLogService.log(loginUser, result.getId(), result.getServerName(), ResourceTypeConstants.SERVER.name(), ResourceOperation.RESCAN, "i18n_restart_server_result");
+        }
+    }
+
     public void deleteRescanServerResultById(String id) {
         ServerResultExample example = new ServerResultExample();
         example.createCriteria().andServerIdEqualTo(id);//serverId
@@ -1066,6 +1080,9 @@ public class ServerService {
 
     public void scanLynis(String serverId, LoginUser loginUser) throws Exception {
         Server server = serverMapper.selectByPrimaryKey(serverId);
+        //删除旧数据
+        deleteLynisResult(server);
+
         Proxy proxy = new Proxy();
         if (server.getIsProxy() != null && server.getIsProxy()) {
             proxy = proxyMapper.selectByPrimaryKey(server.getProxyId());
@@ -1097,10 +1114,8 @@ public class ServerService {
 
         String resultStr = executeLynis(server, proxy, dirPath, remotePath);
 
-        //删除旧数据
-        deleteLynisResult(server);
-
         //插入新数据
+
         executeLynisResultStr(resultStr, server, loginUser);
     }
 
@@ -1131,14 +1146,17 @@ public class ServerService {
 
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
+                String lynisLog = resultStr;
                 resultStr = resultStr.replaceAll("", "").replaceAll("\u001B", "");
                 List<String> colors = Arrays.asList("\\[0;30m", "\\[1;30m", "\\[0;34m", "\\[1;34m", "\\[0;32m", "\\[1;32m", "\\[0;36m", "\\[0;31m", "\\[1;31m", "\\[0;35m", "\\[1;35m", "\\[0;33m", "\\[1;33m", "\\[0;37m", "\\[1;37m", "\\[30;43m",
                 "\\[0m", "\\[1m", "\\[4m", "\\[5m", "\\[7m", "\\[8m", "\\[0;44m", "\\[0;94m");
                 for (String color : colors) {
                     resultStr = resultStr.replaceAll(color, "");//python颜色
                 }
+                String space = " ";
                 for (int i = 0; i < 100; i++) {
-                    resultStr = resultStr.replaceAll("\\[" + i + "C", " ");//间隔
+                    space += space;
+                    resultStr = resultStr.replaceAll("\\[" + i + "C", space);//间隔
                 }
                 String lynisId = UUIDUtil.newUUID();
                 long hardeningIndex = 0, pluginsEnabled= 0, testsPerformed = 0;
@@ -1263,7 +1281,7 @@ public class ServerService {
                 ServerLynisResultWithBLOBs serverLynisResultWithBLOBs = new ServerLynisResultWithBLOBs();
                 serverLynisResultWithBLOBs.setId(lynisId);
                 serverLynisResultWithBLOBs.setReturnLog(resultStr);
-                serverLynisResultWithBLOBs.setLynisLog("");
+                serverLynisResultWithBLOBs.setLynisLog(lynisLog);
                 serverLynisResultWithBLOBs.setServerId(server.getId());
                 serverLynisResultWithBLOBs.setServerName(server.getName());
                 serverLynisResultWithBLOBs.setPluginIcon(server.getPluginIcon());

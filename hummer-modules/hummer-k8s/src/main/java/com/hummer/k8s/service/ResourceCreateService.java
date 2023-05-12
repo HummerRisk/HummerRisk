@@ -87,11 +87,17 @@ public class ResourceCreateService {
                 });
             });
             serverIds.forEach(serverId -> {
+                if (processingGroupIdMap.get(serverId) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(serverId, serverId);
                 commonThreadPool.addTask(() -> {
                     try {
                         serverService.scanLynis(serverId, null);
                     } catch (Exception e) {
                         LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(serverId);
                     }
                 });
             });

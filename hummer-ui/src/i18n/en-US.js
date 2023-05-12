@@ -253,6 +253,7 @@ export default {
     low: 'Low',
     expand: 'Expand',
     put_away: 'Put',
+    rescan: 'Rescan',
   },
   workspace: {
     create:'Create a workspace',

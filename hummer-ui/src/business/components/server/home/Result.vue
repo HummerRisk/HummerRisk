@@ -110,6 +110,7 @@
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="handleList">{{ $t('commons.detail') }}</el-dropdown-item>
+                  <el-dropdown-item command="handleScans">{{ $t('commons.rescan') }}</el-dropdown-item>
                   <el-dropdown-item command="serverDelete">{{ $t('commons.delete') }}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -274,6 +275,9 @@
           <el-form>
             <el-form-item>
               <codemirror ref="cmEditor" v-if="serverLynisResult" v-model="serverLynisResult.returnLog" class="code-mirror-lynis" :options="cmOptions" />
+            </el-form-item>
+            <el-form-item>
+              <codemirror ref="cmEditor" v-if="serverLynisResult" v-model="serverLynisResult.lynisLog" class="code-mirror-lynis" :options="cmOptions" />
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -443,7 +447,7 @@ import {
   deleteServerResultByIdUrl,
   deleteServerResultsUrl,
   deleteServerResultUrl,
-  getServerResultUrl,
+  getServerResultUrl, rescanServerUrl,
   resultServerListUrl, resultServerUrl,
   serverLogUrl,
   serverReScanUrl,
@@ -818,6 +822,9 @@ export default {
         case "handleList":
           this.handleList(data);
           break;
+        case "handleScans":
+          this.handleScans(data);
+          break;
         case "serverDelete":
           this.serverDelete(data);
           break;
@@ -863,6 +870,20 @@ export default {
             this.result = this.$get(deleteServerResultByIdUrl + obj.id,  res => {
               this.search();
               this.$success(this.$t('commons.delete_success'));
+            });
+          }
+        }
+      });
+    },
+    handleScans (item) {
+      this.$alert(this.$t('resource.handle_scans'), '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get(rescanServerUrl + item.id, response => {
+              if (response.success) {
+                this.search();
+              }
             });
           }
         }

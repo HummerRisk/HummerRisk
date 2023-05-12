@@ -207,6 +207,12 @@ public class ServerController {
         serverService.rescan(id, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "重新整体主机检测")
+    @GetMapping("rescanServer/{id}")
+    public void rescanServer(@PathVariable String id) throws Exception {
+        serverService.rescanServer(id, tokenService.getLoginUser());
+    }
+
     @Operation(summary = "删除主机规则检测记录")
     @GetMapping("deleteServerResult/{id}")
     public void deleteServerResult(@PathVariable String id) throws Exception {

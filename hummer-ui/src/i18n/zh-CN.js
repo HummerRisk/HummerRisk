@@ -253,6 +253,7 @@ export default {
     low: '低',
     expand: '展开',
     put_away: '收起',
+    rescan: '重测',
   },
   workspace: {
     create: '创建工作空间',
