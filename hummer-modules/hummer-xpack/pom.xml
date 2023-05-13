@@ -3,15 +3,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.hummerrisk</groupId>
-        <artifactId>hummerrisk</artifactId>
+        <artifactId>hummer-modules</artifactId>
         <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hummer-xpack</artifactId>
+    <artifactId>hummer-modules-xpack</artifactId>
 
     <description>
-        hummer-xpack扩展模块
+        hummer-modules-xpack扩展模块
     </description>
 
     <dependencies>

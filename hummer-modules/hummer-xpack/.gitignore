@@ -31,4 +31,4 @@ target/
 controller/
 mapper/
 service/
-resources/
+/src/main/resources/db/migration/
