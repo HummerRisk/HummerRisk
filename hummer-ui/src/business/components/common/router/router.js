@@ -20,6 +20,7 @@ import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/event/router";
 import Config from "@/business/components/config/router";
 import Fs from "@/business/components/fs/router";
+import ReportCenter from "@/business/components/reportcenter/router";
 import {signoutUrl} from "@/api/auth/auth";
 import axios from "axios";
 
@@ -53,6 +54,7 @@ const router = new VueRouter({
     Log,
     Config,
     Fs,
+    ReportCenter,
   ]
 });
 
