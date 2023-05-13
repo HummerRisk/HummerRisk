@@ -148,7 +148,7 @@ import {getLicense} from '@/common/js/auth';
       uploadFile() {
         let formData = new FormData();
         if (this.objectFile) {
-          formData.append("objectFile", this.objectFile);
+          formData.append("licenseFile", this.objectFile);
         }
         formData.append("request", new Blob([JSON.stringify(this.uploadForm)], {type: "application/json"}));
         let axiosRequestConfig = {
