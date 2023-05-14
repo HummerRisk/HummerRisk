@@ -6,6 +6,8 @@ const ExpiresInKey = 'Admin-Expires-In'
 
 const LicenseKey = 'License'
 
+const isLicense = 'isLicense'
+
 export function getToken() {
   return Cookies.get(TokenKey)
 }
@@ -24,6 +26,14 @@ export function getLicense() {
 
 export function setLicense(license) {
   return Cookies.set(LicenseKey, license)
+}
+
+export function getIsLicense() {
+  return Cookies.get(isLicense)
+}
+
+export function setIsLicense(value) {
+  return Cookies.set(isLicense, value)
 }
 
 export function removeLicense() {

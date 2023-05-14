@@ -119,7 +119,7 @@
 </template>
 
 <script>
-  import {getLicense} from "@/common/js/auth";
+import {getIsLicense} from "@/common/js/auth";
 
   export default {
     name: "LeftMenus",
@@ -144,10 +144,7 @@
       if (this.$route.matched.length > 0) {
         this.activeIndex = this.$route.matched[0].path;
       }
-      let license = getLicense();
-      if (license && license != 'null') {
-        this.xpack = true;
-      }
+      this.xpack = getIsLicense();
     },
     methods: {
       handleSelect(index) {
