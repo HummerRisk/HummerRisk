@@ -43,6 +43,14 @@ public class LicenseService {
         return null;
     }
 
+    public boolean license() {
+        List<HummerLicense> list = licenseMapper.selectByExample(null);
+        if (list.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void validateLicense(MultipartFile licenseFile, LoginUser loginUser) throws Exception {
         String licenseFilePath = upload(licenseFile, ServerConstants.DEFAULT_BASE_DIR);
         String license = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + licenseFilePath);
