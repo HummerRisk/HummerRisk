@@ -2,13 +2,13 @@ package com.hummer.system.controller;
 
 import com.hummer.common.core.domain.HummerLicense;
 import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.LicenseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "License")
 @RestController
@@ -18,11 +18,21 @@ public class LicenseController {
     @Autowired
     private LicenseService licenseService;
 
+    @Autowired
+    private TokenService tokenService;
+
     @I18n
     @Operation(summary = "获取license")
     @GetMapping(value = "getLicense")
     public HummerLicense getLicense() {
         return licenseService.getLicense();
+    }
+
+    @I18n
+    @Operation(summary = "上传校验license")
+    @PostMapping(value = "updateLicense", consumes = {"multipart/form-data"})
+    public void validateLicense(@RequestPart(value = "license", required = false) MultipartFile licenseFile) throws Exception {
+        licenseService.validateLicense(licenseFile, tokenService.getLoginUser());
     }
 
 }

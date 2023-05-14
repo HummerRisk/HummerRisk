@@ -1901,4 +1901,8 @@ export default {
     download_type: 'Download type',
     export_excel: 'Export Excel',
   },
+  reportcenter: {
+    reportcenter: 'Report Center',
+    overall_report_download: 'Integrated report download',
+  },
 };

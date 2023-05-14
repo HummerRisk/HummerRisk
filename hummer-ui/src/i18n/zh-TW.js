@@ -1901,4 +1901,8 @@ export default {
     download_type: '下載方式',
     export_excel: '導出Excel',
   },
+  reportcenter: {
+    reportcenter: '報告中心',
+    overall_report_download: '整合報告下載',
+  },
 };

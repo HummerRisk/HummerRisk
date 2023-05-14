@@ -106,6 +106,10 @@
             <span slot="title">{{ $t('resource.resource_result') }}</span>
           </el-menu-item>
         </el-submenu>
+        <el-menu-item v-if="xpack" index="/reportcenter" onselectstart="return false">
+          <i class="iconfont icon-shujujianguan"></i>
+          <span slot="title">{{ $t('reportcenter.reportcenter') }}</span>
+        </el-menu-item>
         <el-menu-item index="/setting" onselectstart="return false">
           <i class="iconfont icon-guanli"></i>
           <span slot="title">{{ $t('commons.system_setting') }}</span>
@@ -115,6 +119,8 @@
 </template>
 
 <script>
+  import {getLicense} from "@/common/js/auth";
+
   export default {
     name: "LeftMenus",
     props: {
@@ -123,6 +129,7 @@
     data() {
       return {
         activeIndex: "/",
+        xpack: false,
       }
     },
     watch: {
@@ -136,6 +143,10 @@
     mounted() {
       if (this.$route.matched.length > 0) {
         this.activeIndex = this.$route.matched[0].path;
+      }
+      let license = getLicense();
+      if (license && license != 'null') {
+        this.xpack = true;
       }
     },
     methods: {
