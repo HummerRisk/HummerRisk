@@ -48,7 +48,7 @@ public class LicenseService {
         String license = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + licenseFilePath);
 
         //校验license命令
-        String command = "/opt/hummerrisk/license/generator_darwin_amd64 " + license;
+        String command = "/usr/local/bin/hummer_validator " + license;
         //returnStr
         String returnStr = CommandUtils.commonExecCmdWithResult(command, "/tmp");
         JSONObject jsonObject = JSON.parseObject(returnStr);
