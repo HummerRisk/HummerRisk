@@ -1904,5 +1904,11 @@ export default {
   reportcenter: {
     reportcenter: '报告中心',
     overall_report_download: '整合报告下载',
+    report_list: '报告列表',
+    report_create: '创建报告',
+    report_update: '编辑报告',
+    report_delete: '删除报告',
+    report_download: '下载报告',
+    report_gen: '生成报告',
   },
 };
