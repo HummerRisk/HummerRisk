@@ -48,6 +48,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.hummer.common.core.proxy.server.SshUtil.encodingFilename;
@@ -680,7 +682,11 @@ public class ServerService {
 
                 ServerLynisResultDetailExample serverLynisResultDetailExample = new ServerLynisResultDetailExample();
                 serverLynisResultDetailExample.createCriteria().andLynisIdEqualTo(serverLynisResultWithBLOBs.getId());
-                serverLynisResultDetailExample.setOrderByClause("create_time desc, order_index");
+                serverLynisResultDetailExample.setOrderByClause("FIELD(`type`, '[+] Boot and services', '[+] Kernel', '[+] Memory and Processes', '[+] Users, Groups and Authentication', '[+] Shells', '[+] File systems', " +
+                        "'[+] USB Devices', '[+] Storage', '[+] NFS', '[+] Name services', '[+] Ports and packages', '[+] Networking', '[+] Printers and Spools', '[+] Software: e-mail and messaging', '[+] Software: firewalls', " +
+                        "'[+] Software: webserver', '[+] SSH Support', '[+] SNMP Support', '[+] Databases', '[+] LDAP Services', '[+] PHP', '[+] Squid Support', '[+] Logging and files', '[+] Insecure services', '[+] Banners and identification', " +
+                        "'[+] Scheduled tasks', '[+] Accounting', '[+] Time and Synchronization', '[+] Cryptography', '[+] Virtualization', '[+] Containers', '[+] Security frameworks', '[+] Software: file integrity', '[+] Software: System tooling', " +
+                        "'[+] Software: Malware', '[+] File Permissions', '[+] Home directories', '[+] Kernel Hardening', '[+] Hardening', '[+] Custom tests', 'Warnings', 'Suggestions'), order_index");
                 List<ServerLynisResultDetail> serverLynisResultDetails = serverLynisResultDetailMapper.selectByExampleWithBLOBs(serverLynisResultDetailExample);
                 serverListDTO.setServerLynisResultDetails(serverLynisResultDetails);
             }
@@ -694,9 +700,7 @@ public class ServerService {
     }
 
     public ServerResultDTO getServerResult(String resultId) {
-        ServerResultRequest request = new ServerResultRequest();
-        request.setId(resultId);
-        return extServerResultMapper.resultList(request) != null ? extServerResultMapper.resultList(request).get(0) : new ServerResultDTO();
+        return extServerResultMapper.result(resultId);
     }
 
     public List<ServerResultLogWithBLOBs> getServerResultLog(String resultId) {
@@ -1099,7 +1103,7 @@ public class ServerService {
         String isExist = SshUtil.executeScp(server, proxy, filePath1, fileName1, remotePath);
 
         if (!StringUtils.equals(isExist, "存在")) {
-            String fileName2 = "lynis.tar.gz";
+            String fileName2 = ServerConstants.LYNIS_TAR;
             String filePath2 = ServerConstants.LYNIS;
             //scp tar 包到主机
             SshUtil.executeScpLynis(server, proxy, filePath2, fileName2, remotePath);
@@ -1115,7 +1119,6 @@ public class ServerService {
         String resultStr = executeLynis(server, proxy, dirPath, remotePath);
 
         //插入新数据
-
         executeLynisResultStr(resultStr, server, loginUser);
     }
 
@@ -1147,17 +1150,15 @@ public class ServerService {
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
                 String lynisLog = resultStr;
-                resultStr = resultStr.replaceAll("", "").replaceAll("\u001B", "");
-                List<String> colors = Arrays.asList("\\[0;30m", "\\[1;30m", "\\[0;34m", "\\[1;34m", "\\[0;32m", "\\[1;32m", "\\[0;36m", "\\[0;31m", "\\[1;31m", "\\[0;35m", "\\[1;35m", "\\[0;33m", "\\[1;33m", "\\[0;37m", "\\[1;37m", "\\[30;43m",
-                "\\[0m", "\\[1m", "\\[4m", "\\[5m", "\\[7m", "\\[8m", "\\[0;44m", "\\[0;94m");
-                for (String color : colors) {
-                    resultStr = resultStr.replaceAll(color, "");//python颜色
-                }
-                String space = " ";
-                for (int i = 0; i < 100; i++) {
-                    space += space;
+                resultStr = resultStr.replaceAll("", "");
+                resultStr = removeColors(resultStr);//先去掉颜色
+                //先将 "[2C" 替换成特殊字符 "￥￥",再替换成相对应数量的空格
+                String space = "";
+                for (int i = 1; i < 50; i++) {
+                    space = space + "￥";
                     resultStr = resultStr.replaceAll("\\[" + i + "C", space);//间隔
                 }
+                resultStr = resultStr.replaceAll("￥", " ");
                 String lynisId = UUIDUtil.newUUID();
                 long hardeningIndex = 0, pluginsEnabled= 0, testsPerformed = 0;
                 String[] twoStr = resultStr.split("================================================================================");
@@ -1257,10 +1258,16 @@ public class ServerService {
                     if (StringUtils.isEmpty(result)) continue;
                     if (result.contains(ServerConstants.WARNINGS)) {
                         if (!result.contains(ServerConstants.NO_WARNING)) {
-                            insertLynisResultDetailSuggest(result, lynisId, ServerConstants.WARNINGS, order, loginUser);
+                            String strwar[] = result.split("----------------------------");
+                            for (String s : strwar) {
+                                insertLynisResultDetailSuggest(s, lynisId, ServerConstants.WARNINGS, order, loginUser);
+                            }
                         }
                     } else if (result.contains(ServerConstants.SUGGESTIONS)) {
-                        insertLynisResultDetailSuggest(result, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
+                        String strwar[] = result.split("----------------------------");
+                        for (String s : strwar) {
+                            insertLynisResultDetailSuggest(s, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
+                        }
                     } else if (result.contains("*")) {
                         insertLynisResultDetailSuggest(result, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
                     } else if (result.contains(ServerConstants.DETAILS)) {
@@ -1332,4 +1339,19 @@ public class ServerService {
         detail.setOrderIndex(order);
         serverLynisResultDetailMapper.insertSelective(detail);
     }
+
+    public String removeColors(String text) {
+        // 带颜色属性的文本
+        // 移除颜色属性
+        Pattern pattern = Pattern.compile("\u001B\\[[;\\d]*m");
+        Matcher matcher = pattern.matcher(text);
+        String resultStr = matcher.replaceAll("");
+        List<String> colors = Arrays.asList("\\[0;30m", "\\[1;30m", "\\[0;34m", "\\[1;34m", "\\[0;32m", "\\[1;32m", "\\[0;36m", "\\[0;31m", "\\[1;31m", "\\[0;35m", "\\[1;35m", "\\[0;33m", "\\[1;33m", "\\[0;37m", "\\[1;37m", "\\[30;43m",
+                "\\[0m", "\\[1m", "\\[4m", "\\[5m", "\\[7m", "\\[8m", "\\[0;44m", "\\[0;94m");
+        for (String color : colors) {
+            resultStr = resultStr.replaceAll(color, "");//python颜色
+        }
+        return resultStr;
+    }
+
 }

@@ -273,12 +273,21 @@
       <el-tabs v-model="detailsName" type="card">
         <el-tab-pane :label="$t('server.server_result')" name="first">
           <el-form>
-            <el-form-item>
-              <codemirror ref="cmEditor" v-if="serverLynisResult" v-model="serverLynisResult.returnLog" class="code-mirror-lynis" :options="cmOptions" />
-            </el-form-item>
-            <el-form-item>
-              <codemirror ref="cmEditor" v-if="serverLynisResult" v-model="serverLynisResult.lynisLog" class="code-mirror-lynis" :options="cmOptions" />
-            </el-form-item>
+            {{'[1;37m[ Lynis 3.0.8 ][0m'}}
+            <div v-for="serverLynisResultDetail in serverLynisResultDetails">
+              <div v-if="serverLynisResultDetail.type !=='Warnings' && serverLynisResultDetail.type !=='Suggestions'">
+                <h5 v-if="serverLynisResultDetail.type===serverLynisResultDetail.output" style="color: #e8a97e;">{{ serverLynisResultDetail.output }}</h5>
+                <span v-else v-html="serverLynisResultDetail.output"></span>
+              </div>
+              <div v-if="serverLynisResultDetail.type ==='Warnings'">
+                <h5 v-if="serverLynisResultDetail.type===serverLynisResultDetail.output" style="color: #ec6e6a;">{{ serverLynisResultDetail.output }}</h5>
+                <span v-else v-html="serverLynisResultDetail.output"></span>
+              </div>
+              <div v-if="serverLynisResultDetail.type ==='Suggestions'">
+                <h5 v-if="serverLynisResultDetail.type===serverLynisResultDetail.output" style="color: #753974;">{{ serverLynisResultDetail.output }}</h5>
+                <span v-else v-html="serverLynisResultDetail.output"></span>
+              </div>
+            </div>
           </el-form>
         </el-tab-pane>
         <el-tab-pane :label="$t('server.result')" name="second">
