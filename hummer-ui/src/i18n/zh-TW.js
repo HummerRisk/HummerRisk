@@ -254,6 +254,7 @@ export default {
     expand: '展開',
     put_away: '收起',
     rescan: '重測',
+    expired: '已過期',
   },
   workspace: {
     create: '創建工作空間',

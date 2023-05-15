@@ -123,7 +123,7 @@ export const deleteProxysUrl = "/system/proxy/deleteProxys";
 
 export const deleteApiKeysUrl = "/system/user/key/deleteApiKeys";
 
-export const updateLicenseUrl = "/system/system/updateLicense";
+export const updateLicenseUrl = "/system/license/updateLicense";
 
 export const getLicenseUrl = "/system/license/getLicense";
 

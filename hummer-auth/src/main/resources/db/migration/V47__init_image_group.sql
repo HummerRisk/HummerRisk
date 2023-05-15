@@ -46,3 +46,7 @@ CREATE TABLE IF NOT EXISTS `server_lynis_result_detail` (
     `order_index`                  bigint              DEFAULT NULL COMMENT '排序',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+ALTER TABLE `hummer_license` ADD `status` varchar(50) DEFAULT NULL COMMENT 'valid、invalid、expired，分别代表：有效、无效、已过期';
+
+ALTER TABLE `hummer_license` ADD `message` text DEFAULT NULL COMMENT 'message 提示告警信息';

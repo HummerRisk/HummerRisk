@@ -12,7 +12,8 @@
             <span>{{ $t('system.authorized_to') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ license?license.company:$t('system.no_license') }}</span>
+            <span v-if="license.company">{{ license.company }}</span>
+            <span v-else>{{ $t('system.no_license') }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -20,7 +21,8 @@
             <span>{{ $t('system.expiration') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ license?license.expiration:'--' }}</span>
+            <span v-if="license.expireTime">{{ license.expireTime  | timestampFormatDayDate }}</span>
+            <span v-else>{{ '--' }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -28,7 +30,18 @@
             <span>{{ $t('system.version') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ expirationTime?$t('system.enterprise'):$t('system.community') }}</span>
+            <span>{{ license.edition === 'Enterprise'?$t('system.enterprise'):$t('system.community') }}</span>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="col-na">
+              <span>{{ $t('commons.status') }}</span>
+          </el-col>
+          <el-col :span="10" class="col-te">
+            <span v-if="license.status === 'valid'" style="color: #8dd998">{{ $t('account.VALID') }}</span>
+            <span v-else-if="license.status === 'invalid'" style="color: red">{{ $t('account.INVALID') }}</span>
+            <span v-else-if="license.status === 'expired'" style="color: red">{{ $t('commons.expired') }}</span>
+            <span v-else>{{ '--' }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -36,9 +49,10 @@
             <span>{{ $t('system.version_number') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ license?license.expiration:'v1.1.0' }}</span>
+            <span>{{ 'v1.1.0' }}</span>
           </el-col>
         </el-row>
+        <span v-if="license.message" style="color: red;font-style:italic;">{{ license.message }}</span>
       </div>
 
       <div style="padding: 14px;">
@@ -84,8 +98,7 @@
 
 import Upload from "@/business/components/settings/head/Upload";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {updateLicenseUrl} from "@/api/system/system";
-import {getLicense} from '@/common/js/auth';
+import {getLicenseUrl, updateLicenseUrl} from "@/api/system/system";
 
 /* eslint-disable */
   export default {
@@ -101,8 +114,8 @@ import {getLicense} from '@/common/js/auth';
         licenseVisible: false,
         direction: 'rtl',
         form: {},
-        objectFile: Object,
-        license: null,
+        licenseFile: Object,
+        license: {},
         expirationTime: false,
         githubUrl: 'https://github.com/HummerRisk/HummerRisk',
         websiteUrl: 'https://hummerrisk.com',
@@ -124,13 +137,9 @@ import {getLicense} from '@/common/js/auth';
         this.search();
       },
       search() {
-        let licenseKey = getLicense();
-        if (licenseKey && licenseKey != 'null') {
-          this.license = licenseKey;
-          let date =new Date();
-          let now = Date.parse(date);
-          if(licenseKey.expiration > now) this.expirationTime = true;
-        }
+        this.$get(getLicenseUrl, response => {
+            this.license = response.data;
+        });
       },
       handleClose() {
         this.dialogVisible = false;
@@ -143,12 +152,12 @@ import {getLicense} from '@/common/js/auth';
         this.dialogVisible = true;
       },
       appendUpload(file) {
-        this.objectFile = file;
+        this.licenseFile = file;
       },
       uploadFile() {
         let formData = new FormData();
-        if (this.objectFile) {
-          formData.append("licenseFile", this.objectFile);
+        if (this.licenseFile) {
+          formData.append("licenseFile", this.licenseFile);
         }
         formData.append("request", new Blob([JSON.stringify(this.uploadForm)], {type: "application/json"}));
         let axiosRequestConfig = {

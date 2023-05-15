@@ -254,6 +254,7 @@ export default {
     expand: 'Expand',
     put_away: 'Put',
     rescan: 'Rescan',
+    expired: 'Expired',
   },
   workspace: {
     create:'Create a workspace',
