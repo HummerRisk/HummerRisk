@@ -7,6 +7,8 @@ ARG HMR_VERSION=dev
 
 COPY ./jar/hummer-modules-k8s.jar /opt/apps/hummer-modules-k8s.jar
 
+COPY ./lynis.tar.gz /opt/hummerrisk/
+
 ENV JAVA_APP_JAR=/opt/apps/hummer-modules-k8s.jar \
     AB_OFF=true \
     HMR_VERSION=${HMR_VERSION} \
@@ -14,7 +16,7 @@ ENV JAVA_APP_JAR=/opt/apps/hummer-modules-k8s.jar \
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=20 --start-period=30s CMD curl -f 127.0.0.1:9500
 
-RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.39.1
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.40.0
 
 CMD ["/deployments/run-java.sh"]
 
