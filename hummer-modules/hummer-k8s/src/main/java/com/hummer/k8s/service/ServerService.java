@@ -48,6 +48,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.hummer.common.core.proxy.server.SshUtil.encodingFilename;
@@ -680,7 +682,11 @@ public class ServerService {
 
                 ServerLynisResultDetailExample serverLynisResultDetailExample = new ServerLynisResultDetailExample();
                 serverLynisResultDetailExample.createCriteria().andLynisIdEqualTo(serverLynisResultWithBLOBs.getId());
-                serverLynisResultDetailExample.setOrderByClause("create_time desc, order_index");
+                serverLynisResultDetailExample.setOrderByClause("FIELD(`type`, '[+] Boot and services', '[+] Kernel', '[+] Memory and Processes', '[+] Users, Groups and Authentication', '[+] Shells', '[+] File systems', " +
+                        "'[+] USB Devices', '[+] Storage', '[+] NFS', '[+] Name services', '[+] Ports and packages', '[+] Networking', '[+] Printers and Spools', '[+] Software: e-mail and messaging', '[+] Software: firewalls', " +
+                        "'[+] Software: webserver', '[+] SSH Support', '[+] SNMP Support', '[+] Databases', '[+] LDAP Services', '[+] PHP', '[+] Squid Support', '[+] Logging and files', '[+] Insecure services', '[+] Banners and identification', " +
+                        "'[+] Scheduled tasks', '[+] Accounting', '[+] Time and Synchronization', '[+] Cryptography', '[+] Virtualization', '[+] Containers', '[+] Security frameworks', '[+] Software: file integrity', '[+] Software: System tooling', " +
+                        "'[+] Software: Malware', '[+] File Permissions', '[+] Home directories', '[+] Kernel Hardening', '[+] Hardening', '[+] Custom tests', 'Warnings', 'Suggestions'), order_index");
                 List<ServerLynisResultDetail> serverLynisResultDetails = serverLynisResultDetailMapper.selectByExampleWithBLOBs(serverLynisResultDetailExample);
                 serverListDTO.setServerLynisResultDetails(serverLynisResultDetails);
             }
@@ -694,9 +700,7 @@ public class ServerService {
     }
 
     public ServerResultDTO getServerResult(String resultId) {
-        ServerResultRequest request = new ServerResultRequest();
-        request.setId(resultId);
-        return extServerResultMapper.resultList(request) != null ? extServerResultMapper.resultList(request).get(0) : new ServerResultDTO();
+        return extServerResultMapper.result(resultId);
     }
 
     public List<ServerResultLogWithBLOBs> getServerResultLog(String resultId) {
@@ -1099,7 +1103,7 @@ public class ServerService {
         String isExist = SshUtil.executeScp(server, proxy, filePath1, fileName1, remotePath);
 
         if (!StringUtils.equals(isExist, "存在")) {
-            String fileName2 = "lynis.tar.gz";
+            String fileName2 = ServerConstants.LYNIS_TAR;
             String filePath2 = ServerConstants.LYNIS;
             //scp tar 包到主机
             SshUtil.executeScpLynis(server, proxy, filePath2, fileName2, remotePath);
@@ -1115,7 +1119,6 @@ public class ServerService {
         String resultStr = executeLynis(server, proxy, dirPath, remotePath);
 
         //插入新数据
-
         executeLynisResultStr(resultStr, server, loginUser);
     }
 
@@ -1147,16 +1150,13 @@ public class ServerService {
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
                 String lynisLog = resultStr;
-                resultStr = resultStr.replaceAll("", "").replaceAll("\u001B", "");
-                List<String> colors = Arrays.asList("\\[0;30m", "\\[1;30m", "\\[0;34m", "\\[1;34m", "\\[0;32m", "\\[1;32m", "\\[0;36m", "\\[0;31m", "\\[1;31m", "\\[0;35m", "\\[1;35m", "\\[0;33m", "\\[1;33m", "\\[0;37m", "\\[1;37m", "\\[30;43m",
-                "\\[0m", "\\[1m", "\\[4m", "\\[5m", "\\[7m", "\\[8m", "\\[0;44m", "\\[0;94m");
-                for (String color : colors) {
-                    resultStr = resultStr.replaceAll(color, "");//python颜色
-                }
-                String space = " ";
-                for (int i = 0; i < 100; i++) {
-                    space += space;
+                resultStr = resultStr.replaceAll("", "");
+                resultStr = removeColors(resultStr);//先去掉颜色
+                //先将 "[2C" 替换成特殊字符 "￥￥",再替换成相对应数量的空格
+                String space = "";
+                for (int i = 0; i < 50; i++) {
                     resultStr = resultStr.replaceAll("\\[" + i + "C", space);//间隔
+                    space = space + "&nbsp;";
                 }
                 String lynisId = UUIDUtil.newUUID();
                 long hardeningIndex = 0, pluginsEnabled= 0, testsPerformed = 0;
@@ -1168,85 +1168,85 @@ public class ServerService {
 
                 for (String result : results) {
                     if (StringUtils.isEmpty(result)) continue;
-                    if (result.contains(ServerConstants.BOOT_AND_SERVICES)) {
+                    if (StringUtils.equals(result, ServerConstants.BOOT_AND_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.BOOT_AND_SERVICES, loginUser);
-                    } else if (result.contains(ServerConstants.KERNEL)) {
+                    } else if (StringUtils.equals(result, ServerConstants.KERNEL)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.KERNEL, loginUser);
-                    } else if (result.contains(ServerConstants.MEMORY_AND_PROCESSES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.MEMORY_AND_PROCESSES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.MEMORY_AND_PROCESSES, loginUser);
-                    } else if (result.contains(ServerConstants.USERS_GROUPS_AND_AUTHENTICATION)) {
+                    } else if (StringUtils.equals(result, ServerConstants.USERS_GROUPS_AND_AUTHENTICATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.USERS_GROUPS_AND_AUTHENTICATION, loginUser);
-                    } else if (result.contains(ServerConstants.SHELLS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SHELLS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SHELLS, loginUser);
-                    } else if (result.contains(ServerConstants.FILE_SYSTEMS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.FILE_SYSTEMS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.FILE_SYSTEMS, loginUser);
-                    } else if (result.contains(ServerConstants.USB_DEVICES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.USB_DEVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.USB_DEVICES, loginUser);
-                    } else if (result.contains(ServerConstants.STORAGE)) {
+                    } else if (StringUtils.equals(result, ServerConstants.STORAGE)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.STORAGE, loginUser);
-                    } else if (result.contains(ServerConstants.NFS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.NFS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.NFS, loginUser);
-                    } else if (result.contains(ServerConstants.NAME_SERVICES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.NAME_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.NAME_SERVICES, loginUser);
-                    } else if (result.contains(ServerConstants.PORTS_AND_PACKAGES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.PORTS_AND_PACKAGES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.PORTS_AND_PACKAGES, loginUser);
-                    } else if (result.contains(ServerConstants.NETWORKING)) {
+                    } else if (StringUtils.equals(result, ServerConstants.NETWORKING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.NETWORKING, loginUser);
-                    } else if (result.contains(ServerConstants.PRINTERS_AND_SPOOLS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.PRINTERS_AND_SPOOLS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.PRINTERS_AND_SPOOLS, loginUser);
-                    } else if (result.contains(ServerConstants.SOFTWARE_EMAIL_AND_MESSAGING)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_EMAIL_AND_MESSAGING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_EMAIL_AND_MESSAGING, loginUser);
-                    } else if (result.contains(ServerConstants.SOFTWARE_FIREWALLS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_FIREWALLS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_FIREWALLS, loginUser);
-                    } else if (result.contains(ServerConstants.SOFTWARE_WEBSERVER)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_WEBSERVER)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_WEBSERVER, loginUser);
-                    } else if (result.contains(ServerConstants.SSH_SUPPORT)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SSH_SUPPORT)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SSH_SUPPORT, loginUser);
-                    } else if (result.contains(ServerConstants.SNMP_SUPPORT)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SNMP_SUPPORT)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SNMP_SUPPORT, loginUser);
-                    } else if (result.contains(ServerConstants.DATABASES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.DATABASES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.DATABASES, loginUser);
-                    } else if (result.contains(ServerConstants.LDAP_SERVICES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.LDAP_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.LDAP_SERVICES, loginUser);
-                    } else if (result.contains(ServerConstants.PHP)) {
+                    } else if (StringUtils.equals(result, ServerConstants.PHP)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.PHP, loginUser);
-                    } else if (result.contains(ServerConstants.SQUID_SUPPORT)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SQUID_SUPPORT)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SQUID_SUPPORT, loginUser);
-                    } else if (result.contains(ServerConstants.LOGGING_AND_FILES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.LOGGING_AND_FILES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.LOGGING_AND_FILES, loginUser);
-                    } else if (result.contains(ServerConstants.INSECURE_SERVICES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.INSECURE_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.INSECURE_SERVICES, loginUser);
-                    } else if (result.contains(ServerConstants.BANNERS_AND_IDENTIFICATION)) {
+                    } else if (StringUtils.equals(result, ServerConstants.BANNERS_AND_IDENTIFICATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.BANNERS_AND_IDENTIFICATION, loginUser);
-                    } else if (result.contains(ServerConstants.SCHEDULED_TASKS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SCHEDULED_TASKS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SCHEDULED_TASKS, loginUser);
-                    } else if (result.contains(ServerConstants.ACCOUNTING)) {
+                    } else if (StringUtils.equals(result, ServerConstants.ACCOUNTING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.ACCOUNTING, loginUser);
-                    } else if (result.contains(ServerConstants.TIME_AND_SYNCHRONIZATION)) {
+                    } else if (StringUtils.equals(result, ServerConstants.TIME_AND_SYNCHRONIZATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.TIME_AND_SYNCHRONIZATION, loginUser);
-                    } else if (result.contains(ServerConstants.CRYPTOGRAPHY)) {
+                    } else if (StringUtils.equals(result, ServerConstants.CRYPTOGRAPHY)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.CRYPTOGRAPHY, loginUser);
-                    } else if (result.contains(ServerConstants.VIRTUALIZATION)) {
+                    } else if (StringUtils.equals(result, ServerConstants.VIRTUALIZATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.VIRTUALIZATION, loginUser);
-                    } else if (result.contains(ServerConstants.CONTAINERS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.CONTAINERS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.CONTAINERS, loginUser);
-                    } else if (result.contains(ServerConstants.SECURITY_FRAMEWORKS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SECURITY_FRAMEWORKS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SECURITY_FRAMEWORKS, loginUser);
-                    } else if (result.contains(ServerConstants.SOFTWARE_FILE_INTEGRITY)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_FILE_INTEGRITY)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_FILE_INTEGRITY, loginUser);
-                    } else if (result.contains(ServerConstants.SOFTWARE_SYSTEM_TOOLING)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_SYSTEM_TOOLING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_SYSTEM_TOOLING, loginUser);
-                    } else if (result.contains(ServerConstants.SOFTWARE_MALWARE)) {
+                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_MALWARE)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_MALWARE, loginUser);
-                    } else if (result.contains(ServerConstants.FILE_PERMISSIONS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.FILE_PERMISSIONS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.FILE_PERMISSIONS, loginUser);
-                    } else if (result.contains(ServerConstants.HOME_DIRECTORIES)) {
+                    } else if (StringUtils.equals(result, ServerConstants.HOME_DIRECTORIES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.HOME_DIRECTORIES, loginUser);
-                    } else if (result.contains(ServerConstants.KERNEL_HARDENING)) {
+                    } else if (StringUtils.equals(result, ServerConstants.KERNEL_HARDENING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.KERNEL_HARDENING, loginUser);
-                    } else if (result.contains(ServerConstants.HARDENING)) {
+                    } else if (StringUtils.equals(result, ServerConstants.HARDENING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.HARDENING, loginUser);
-                    } else if (result.contains(ServerConstants.CUSTOM_TESTS)) {
+                    } else if (StringUtils.equals(result, ServerConstants.CUSTOM_TESTS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.CUSTOM_TESTS, loginUser);
                     }
 
@@ -1257,10 +1257,16 @@ public class ServerService {
                     if (StringUtils.isEmpty(result)) continue;
                     if (result.contains(ServerConstants.WARNINGS)) {
                         if (!result.contains(ServerConstants.NO_WARNING)) {
-                            insertLynisResultDetailSuggest(result, lynisId, ServerConstants.WARNINGS, order, loginUser);
+                            String strwar[] = result.split("----------------------------");
+                            for (String s : strwar) {
+                                insertLynisResultDetailSuggest(s, lynisId, ServerConstants.WARNINGS, order, loginUser);
+                            }
                         }
                     } else if (result.contains(ServerConstants.SUGGESTIONS)) {
-                        insertLynisResultDetailSuggest(result, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
+                        String strwar[] = result.split("----------------------------");
+                        for (String s : strwar) {
+                            insertLynisResultDetailSuggest(s, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
+                        }
                     } else if (result.contains("*")) {
                         insertLynisResultDetailSuggest(result, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
                     } else if (result.contains(ServerConstants.DETAILS)) {
@@ -1332,4 +1338,19 @@ public class ServerService {
         detail.setOrderIndex(order);
         serverLynisResultDetailMapper.insertSelective(detail);
     }
+
+    public String removeColors(String text) {
+        // 带颜色属性的文本
+        // 移除颜色属性
+        Pattern pattern = Pattern.compile("\u001B\\[[;\\d]*m");
+        Matcher matcher = pattern.matcher(text);
+        String resultStr = matcher.replaceAll("");
+        List<String> colors = Arrays.asList("\\[0;30m", "\\[1;30m", "\\[0;34m", "\\[1;34m", "\\[0;32m", "\\[1;32m", "\\[0;36m", "\\[0;31m", "\\[1;31m", "\\[0;35m", "\\[1;35m", "\\[0;33m", "\\[1;33m", "\\[0;37m", "\\[1;37m", "\\[30;43m",
+                "\\[0m", "\\[1m", "\\[4m", "\\[5m", "\\[7m", "\\[8m", "\\[0;44m", "\\[0;94m");
+        for (String color : colors) {
+            resultStr = resultStr.replaceAll(color, "");//python颜色
+        }
+        return resultStr;
+    }
+
 }

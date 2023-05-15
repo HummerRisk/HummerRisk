@@ -188,7 +188,7 @@ public class ServerController {
     }
 
     @I18n
-    @Operation(summary = "主机检测结果详情")
+    @Operation(summary = "主机规则检测结果详情(规则视角)")
     @GetMapping(value = "getServerResult/{resultId}")
     public ServerResultDTO getServerResult(@PathVariable String resultId) {
         return serverService.getServerResult(resultId);

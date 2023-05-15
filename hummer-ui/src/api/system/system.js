@@ -127,4 +127,6 @@ export const updateLicenseUrl = "/system/system/updateLicense";
 
 export const getLicenseUrl = "/system/license/getLicense";
 
+export const isLicenseUrl = "/system/license";
+
 

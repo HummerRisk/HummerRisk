@@ -55,6 +55,13 @@ export default {
           },
           yAxis: {
             type: 'category',
+            axisLine: {
+              show: false,
+              symbol: 'none',
+            },
+            axisTick: {
+              show: false,
+            },
             data: nameData
           },
           series: [

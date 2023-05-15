@@ -11,7 +11,9 @@ import java.util.Map;
 
 public interface ExtServerResultMapper {
 
-    List<ServerResultDTO> resultList(@Param("request")  ServerResultRequest request);
+    List<ServerResultDTO> resultList(@Param("request") ServerResultRequest request);
+
+    ServerResultDTO result(@Param("resultId") String resultId);
 
     List<ServerListDTO> resultServerList(@Param("request") ServerRequest request);
 

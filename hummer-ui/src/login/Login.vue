@@ -70,7 +70,8 @@
 import {saveLocalStorage} from '@/common/js/utils';
 import {DEFAULT_LANGUAGE} from "@/common/js/constants";
 import {isLoginUrl, languageUrl, signinUrl} from "@/api/auth/auth";
-import {setLicense, setToken} from '@/common/js/auth';
+import {setIsLicense, setLicense, setToken} from '@/common/js/auth';
+import {isLicenseUrl} from "@/api/system/system";
 
 /* eslint-disable */
   export default {
@@ -159,6 +160,7 @@ import {setLicense, setToken} from '@/common/js/auth';
             setToken(response.data.token);
             setLicense(response.data.license);
             this.getLanguage(response.data.language, response.data.token);
+            this.isLicense();
           }
         });
       },
@@ -172,6 +174,12 @@ import {setLicense, setToken} from '@/common/js/auth';
         } else {
           if(!!token) window.location.href = "/";
         }
+      },
+      isLicense() {
+          this.$get(isLicenseUrl, response => {
+            let isLicense = response.data;
+            setIsLicense(isLicense);
+          });
       },
     }
   }

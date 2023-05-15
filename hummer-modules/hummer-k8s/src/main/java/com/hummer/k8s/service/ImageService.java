@@ -242,8 +242,75 @@ public class ImageService {
             imageRepoSyncLogMapper.insertSelective(imageRepoSyncLog);
             return false;
         }
-
+        repoImageToImage(imageRepo, loginUser);//同步镜像到镜像管理
         return true;
+    }
+
+    //插入镜像管理
+    public void repoImageToImage(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
+        try {
+            ImageRepoItemExample example = new ImageRepoItemExample();
+            example.createCriteria().andRepoIdEqualTo(imageRepo.getId());
+            List<ImageRepoItem> imageRepoItems = imageRepoItemMapper.selectByExample(example);
+            for (ImageRepoItem item : imageRepoItems) {
+                String groupName = item.getRepository();
+                ImageGroupExample imageGroupExample = new ImageGroupExample();
+                imageGroupExample.createCriteria().andNameEqualTo(groupName);
+                List<ImageGroup> imageGroups = imageGroupMapper.selectByExample(imageGroupExample);
+                String groupId = "";
+                if (imageGroups.size() > 0) {
+                    groupId = imageGroups.get(0).getId();
+                } else {
+                    groupId = UUIDUtil.newUUID();
+                    ImageGroup imageGroup = new ImageGroup();
+                    imageGroup.setId(groupId);
+                    imageGroup.setName(groupName);
+                    imageGroup.setRepository(groupName);
+                    imageGroup.setCreator(loginUser.getUserId());
+                    imageGroup.setCreateTime(System.currentTimeMillis());
+                    imageGroup.setUpdateTime(System.currentTimeMillis());
+                    imageGroupMapper.insertSelective(imageGroup);
+                }
+
+                ImageExample imageExample = new ImageExample();
+                imageExample.createCriteria().andNameEqualTo(item.getPath().replace(":" + item.getTag(), "")).andGroupIdEqualTo(groupId);
+                List<Image> images = imageMapper.selectByExample(imageExample);
+                if (images.size() > 0) {
+                    Image request = images.get(0);
+                    request.setUpdateTime(System.currentTimeMillis());
+                    request.setType("repo");
+                    request.setGroupId(groupId);
+                    request.setImageUrl(item.getPath().replace(":" + item.getTag(), ""));
+                    request.setImageTag(item.getTag());
+                    request.setSize(item.getSize());
+                    imageMapper.updateByPrimaryKeySelective(request);
+                } else {
+                    Image request = new Image();
+                    String id = UUIDUtil.newUUID();
+                    request.setId(id);
+                    request.setGroupId(groupId);
+                    request.setStatus("VALID");
+                    request.setCreateTime(System.currentTimeMillis());
+                    request.setUpdateTime(System.currentTimeMillis());
+                    request.setCreator(loginUser.getUserId());
+                    request.setPluginIcon("docker.png");
+                    request.setType("repo");
+                    request.setImageUrl(item.getPath().replace(":" + item.getTag(), ""));
+                    request.setImageTag(item.getTag());
+                    request.setSize(item.getSize());
+                    Sbom sbom = sbomMapper.selectByExample(null).get(0);
+                    request.setSbomId(sbom.getId());
+                    SbomVersionExample sbomVersionExample = new SbomVersionExample();
+                    sbomVersionExample.createCriteria().andSbomIdEqualTo(sbom.getId());
+                    SbomVersion sbomVersion = sbomVersionMapper.selectByExample(sbomVersionExample).get(0);
+                    request.setSbomVersionId(sbomVersion.getId());
+                    imageMapper.insertSelective(request);
+                }
+
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     public ImageRepo editImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
