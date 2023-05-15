@@ -273,21 +273,36 @@
       <el-tabs v-model="detailsName" type="card">
         <el-tab-pane :label="$t('server.server_result')" name="first">
           <el-form>
-            {{'[1;37m[ Lynis 3.0.8 ][0m'}}
-            <div v-for="serverLynisResultDetail in serverLynisResultDetails">
-              <div v-if="serverLynisResultDetail.type !=='Warnings' && serverLynisResultDetail.type !=='Suggestions'">
-                <h5 v-if="serverLynisResultDetail.type===serverLynisResultDetail.output" style="color: #e8a97e;">{{ serverLynisResultDetail.output }}</h5>
-                <span v-else v-html="serverLynisResultDetail.output"></span>
-              </div>
-              <div v-if="serverLynisResultDetail.type ==='Warnings'">
-                <h5 v-if="serverLynisResultDetail.type===serverLynisResultDetail.output" style="color: #ec6e6a;">{{ serverLynisResultDetail.output }}</h5>
-                <span v-else v-html="serverLynisResultDetail.output"></span>
-              </div>
-              <div v-if="serverLynisResultDetail.type ==='Suggestions'">
-                <h5 v-if="serverLynisResultDetail.type===serverLynisResultDetail.output" style="color: #753974;">{{ serverLynisResultDetail.output }}</h5>
-                <span v-else v-html="serverLynisResultDetail.output"></span>
-              </div>
-            </div>
+            <el-table :data="serverLynisResultDetails" style="width: 100%">
+                <el-table-column min-width="600" fixed="right">
+                  <template v-slot:default="scope">
+                    <div v-if="scope.row.type !=='Warnings' && scope.row.type !=='Suggestions'">
+                      <h1 v-if="scope.row.type===scope.row.output" style="color: #e8a97e;margin: 3px 0;font-size: 24px;">
+                        {{ "================================================================================" }} </br>
+                        {{ scope.row.output }} </br>
+                        {{ "================================================================================" }}
+                      </h1>
+                      <span v-else v-html="scope.row.output" style="font-size: 14px;"></span>
+                    </div>
+                    <div v-if="scope.row.type ==='Warnings'">
+                      <h1 v-if="scope.row.output.indexOf('Warnings') > -1" style="color: #ec6e6a;margin: 3px 0;font-size: 24px;">
+                        {{ "================================================================================" }} </br>
+                        {{ scope.row.output }} </br>
+                        {{ "================================================================================" }}
+                      </h1>
+                      <span v-else v-html="scope.row.output" style="font-size: 14px;"></span>
+                    </div>
+                    <div v-if="scope.row.type ==='Suggestions'">
+                      <h1 v-if="scope.row.output.indexOf('Suggestions') > -1" style="color: #753974;margin: 3px 0;font-size: 24px;">
+                        {{ "================================================================================" }} </br>
+                        {{ scope.row.output }} </br>
+                        {{ "================================================================================" }}
+                      </h1>
+                      <span v-else v-html="scope.row.output" style="font-size: 14px;"></span>
+                    </div>
+                  </template>
+                </el-table-column>
+            </el-table>
           </el-form>
         </el-tab-pane>
         <el-tab-pane :label="$t('server.result')" name="second">
