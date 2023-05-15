@@ -7,6 +7,8 @@ ARG HMR_VERSION=dev
 
 COPY ./jar/hummer-modules-k8s.jar /opt/apps/hummer-modules-k8s.jar
 
+COPY ./lynis.tar.gz /opt/hummerrisk/
+
 ENV JAVA_APP_JAR=/opt/apps/hummer-modules-k8s.jar \
     AB_OFF=true \
     HMR_VERSION=${HMR_VERSION} \
