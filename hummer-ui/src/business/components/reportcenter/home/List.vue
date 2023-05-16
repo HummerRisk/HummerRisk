@@ -34,25 +34,25 @@
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('historyNumber')" :label="$t('reportcenter.history_number')" sortable prop="historyNumber">
         </el-table-column>
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('reportcenter.report_status')" min-width="140" prop="status" sortable show-overflow-tooltip>
-          <el-button plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+          <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+          <el-button plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+          <el-button plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+          <el-button plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
-          <el-button plain size="mini" type="info" v-else-if="scope.row.resultStatus === null">
+          <el-button plain size="mini" type="info" v-else-if="scope.row.status === null">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
           </el-button>
         </el-table-column>
@@ -82,6 +82,11 @@
     <el-drawer class="rtl" :title="$t('reportcenter.report_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-card class="table-card" style="margin: 15px;">
+        <el-form :model="form" label-position="right" label-width="100px" size="medium" :rules="rule" ref="form" style="margin: 15px 0;">
+          <el-form-item :label="$t('reportcenter.report_name')" ref="name" prop="name">
+            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('reportcenter.report_name')"/>
+          </el-form-item>
+        </el-form>
         <div style="color: red;text-align: center;padding: 15px 15px 0 15px;">{{ $t('reportcenter.select_account') }}</div>
         <account @nodeSelectEvent="nodeChange" :selectAccounts="selectAccounts"/>
       </el-card>
@@ -90,6 +95,24 @@
           @confirm="saveAccount()"/>
     </el-drawer>
     <!--Create report-->
+
+    <!--Update report-->
+    <el-drawer class="rtl" :title="$t('reportcenter.report_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" v-loading="viewResult.loading">
+      <el-card class="table-card" style="margin: 15px;">
+        <el-form :model="form" label-position="right" label-width="100px" size="medium" :rules="rule" ref="form" style="margin: 15px 0;">
+          <el-form-item :label="$t('reportcenter.report_name')" ref="name" prop="name">
+            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('reportcenter.report_name')"/>
+          </el-form-item>
+        </el-form>
+        <div style="color: red;text-align: center;padding: 15px 15px 0 15px;">{{ $t('reportcenter.select_account') }}</div>
+        <account @nodeSelectEvent="nodeChange" :selectAccounts="selectAccounts" :checkedKeys="checkedKeys"/>
+      </el-card>
+      <dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="updateAccount()"/>
+    </el-drawer>
+    <!--Update report-->
 
   </main-container>
 </template>
@@ -106,7 +129,7 @@ import {REPORT_RESULT_CONFIGS} from "@/business/components/common/components/sea
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {deleteFssUrl, deleteFsUrl, getFsResultUrl} from "@/api/k8s/fs/fs";
-import {deleteReportsUrl, deleteReportUrl, getReportUrl, reportListUrl} from "@/api/xpack/report";
+import {createReportUrl, deleteReportsUrl, deleteReportUrl, getReportUrl, reportListUrl} from "@/api/xpack/report";
 import Account from "@/business/components/reportcenter/home/Account";
 
 //列表展示与隐藏
@@ -230,6 +253,7 @@ export default {
       detailForm: {},
       selectAccounts: [],
       reportResultId: '',
+      checkedKeys: [],
     }
   },
   watch: {
@@ -268,6 +292,8 @@ export default {
     },
     handleEdit(tmp) {
       this.form = tmp;
+      this.reportResultId = tmp.id;
+      this.checkedKeys = tmp.checkedKeys;
       this.updateVisible = true;
     },
     handleClose() {
@@ -362,7 +388,25 @@ export default {
       }
     },
     saveAccount() {
-      console.log(1112222, this.selectAccounts);
+      let params = {};
+      params.name = this.form.name;
+      params.list = this.selectAccounts;
+      this.$post(createReportUrl, params, response => {
+        this.$success(this.$t('commons.success'));
+        this.createVisible = false;
+        this.search();
+      });
+    },
+    updateAccount() {
+      let params = {};
+      params.id = this.reportResultId;
+      params.name = this.form.name;
+      params.list = this.selectAccounts;
+      this.$post(updateReportUrl, params, response => {
+        this.$success(this.$t('commons.success'));
+        this.createVisible = false;
+        this.search();
+      });
     },
   },
   created() {
@@ -382,6 +426,14 @@ export default {
 
 .el-table {
   cursor: pointer;
+}
+
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.rtl >>> input {
+  width: 80%;
 }
 </style>
 

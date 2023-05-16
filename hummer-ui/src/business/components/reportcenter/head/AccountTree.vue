@@ -12,6 +12,7 @@
       highlight-current
       show-checkbox
       :draggable="!disabled"
+      :default-checked-keys="checkedKeys"
       @check-change="handleCheckChange"
       ref="tree">
 
@@ -101,6 +102,7 @@ export default {
       }
     },
     selectAccounts: [],
+    checkedKeys: [],
   },
   watch: {
     treeNodes() {

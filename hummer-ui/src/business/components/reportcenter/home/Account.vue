@@ -7,6 +7,7 @@
       :type="'view'"
       @nodeSelectEvent="nodeChange"
       :selectAccounts="selectAccounts"
+      :checkedKeys="checkedKeys"
       ref="nodeTree">
     </account-tree>
   </main-container>
@@ -37,6 +38,7 @@ export default {
   },
   props: {
     selectAccounts: [],
+    checkedKeys: [],
   },
   watch: {
     'condition.filterText'(val) {
