@@ -1905,5 +1905,17 @@ export default {
   reportcenter: {
     reportcenter: '報告中心',
     overall_report_download: '整合報告下載',
+    report_list: '報告列表',
+    report_create: '創建報告',
+    report_update: '編輯報告',
+    report_delete: '刪除報告',
+    report_download: '下載報告',
+    report_gen: '生成報告',
+    report_name: '報告名稱',
+    report_status: '報告生成狀態',
+    download_number: '下載報告次數',
+    history_number: '生成報告次數',
+    all_account: '所有賬號信息',
+    select_account: '請選中需要生成報告的賬號信息',
   },
 };

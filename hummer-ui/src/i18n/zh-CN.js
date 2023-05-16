@@ -1911,5 +1911,11 @@ export default {
     report_delete: '删除报告',
     report_download: '下载报告',
     report_gen: '生成报告',
+    report_name: '报告名称',
+    report_status: '报告生成状态',
+    download_number: '下载报告次数',
+    history_number: '生成报告次数',
+    all_account: '所有账号信息',
+    select_account: '请选中需要生成报告的账号信息',
   },
 };

@@ -1905,5 +1905,17 @@ export default {
   reportcenter: {
     reportcenter: 'Report Center',
     overall_report_download: 'Integrated report download',
+    report_list: 'Report list',
+    report_create: 'Create report',
+    report_update: 'Edit report',
+    report_delete: 'Delete report',
+    report_download: 'Download report',
+    report_gen: 'Generate report',
+    report_name: 'Report name',
+    report_status: 'Report generation status',
+    download_number: 'Number of download reports',
+    history_number: 'Number of reports generated',
+    all_account: 'All account information',
+    select_account: 'Please select the account information that needs to generate a report',
   },
 };
