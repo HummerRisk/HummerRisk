@@ -74,6 +74,7 @@ public class LicenseService {
 
             //校验license命令
             String command = LicenseConstants.HUMMER_VALIDATOR + license;
+//            String command = "/tmp/validator_darwin_arm64 " + license;//本地
             //returnStr
             String returnStr = CommandUtils.commonExecCmdWithResult(command, "/tmp");
             JSONObject jsonObject = JSON.parseObject(returnStr);

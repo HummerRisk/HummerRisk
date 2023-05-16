@@ -35,4 +35,10 @@ public class LicenseController {
         licenseService.validateLicense(licenseFile, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "是否存在有效license")
+    @GetMapping(value = "isLicense")
+    public boolean isLicense() {
+        return licenseService.license();
+    }
+
 }

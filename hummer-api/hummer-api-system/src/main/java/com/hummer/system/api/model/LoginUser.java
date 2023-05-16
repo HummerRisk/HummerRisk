@@ -1,6 +1,5 @@
 package com.hummer.system.api.model;
 
-import com.hummer.common.core.domain.HummerLicense;
 import com.hummer.common.core.dto.UserDTO;
 
 import java.io.Serializable;
@@ -60,9 +59,9 @@ public class LoginUser implements Serializable {
     private UserDTO user;
 
     /**
-     * License信息
+     * 是否有效License
      */
-    private HummerLicense license;
+    private boolean license;
 
     public String getToken() {
         return token;
@@ -136,11 +135,11 @@ public class LoginUser implements Serializable {
         this.ipAddr = ipAddr;
     }
 
-    public HummerLicense getLicense() {
+    public boolean isLicense() {
         return license;
     }
 
-    public void setLicense(HummerLicense license) {
+    public void setLicense(boolean license) {
         this.license = license;
     }
 }

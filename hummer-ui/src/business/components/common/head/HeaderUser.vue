@@ -20,7 +20,7 @@
 import {getCurrentUser} from "../../../../common/js/utils";
 import AboutUs from "./AboutUs";
 import axios from "axios";
-import {removeToken} from "@/common/js/auth";
+import {removeToken, setIsLicense} from "@/common/js/auth";
 import {signoutUrl} from "@/api/auth/auth";
 /* eslint-disable */
   export default {
@@ -41,6 +41,7 @@ import {signoutUrl} from "@/api/auth/auth";
             axios.get(signoutUrl).then(response => {
               if (response.data.success) {
                 removeToken();
+                sessionStorage.setItem('license', false);
                 localStorage.clear();
                 window.location.href = "/login";
               }

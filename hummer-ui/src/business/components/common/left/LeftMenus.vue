@@ -106,7 +106,7 @@
             <span slot="title">{{ $t('resource.resource_result') }}</span>
           </el-menu-item>
         </el-submenu>
-        <el-menu-item v-if="xpack" index="/reportcenter" onselectstart="return false">
+        <el-menu-item v-if="xpack === 'true'" index="/reportcenter" onselectstart="return false">
           <i class="iconfont icon-shujujianguan"></i>
           <span slot="title">{{ $t('reportcenter.reportcenter') }}</span>
         </el-menu-item>
@@ -119,7 +119,6 @@
 </template>
 
 <script>
-import {getIsLicense} from "@/common/js/auth";
 
   export default {
     name: "LeftMenus",
@@ -144,7 +143,7 @@ import {getIsLicense} from "@/common/js/auth";
       if (this.$route.matched.length > 0) {
         this.activeIndex = this.$route.matched[0].path;
       }
-      this.xpack = getIsLicense();
+      this.xpack = sessionStorage.getItem('license');
     },
     methods: {
       handleSelect(index) {

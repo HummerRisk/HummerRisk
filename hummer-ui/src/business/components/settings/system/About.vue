@@ -65,7 +65,7 @@
       </div>
 
       <el-drawer class="rtl" :title="$t('system.update_license')" :visible.sync="licenseVisible" size="60%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="form" label-position="right" label-width="150px" size="small" ref="form">
           <el-form-item :label="$t('oss.object_file')" :rules="{required: true, message: $t('oss.object_file') + $t('commons.cannot_be_empty'), trigger: 'change'}">
             <upload v-on:appendUpload="appendUpload" v-model="form.path"/>
@@ -77,7 +77,7 @@
       </el-drawer>
 
       <el-drawer class="rtl" :title="$t('dashboard.i18n_other')" :visible.sync="dialogVisible" size="60%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
+                 :destroy-on-close="true" v-loading="viewResult.loading">
         <el-descriptions class="margin-top" title="" :column="1" size="medium" border>
           <el-descriptions-item v-for="item in items" :key="item.url">
             <template slot="label">
@@ -98,7 +98,7 @@
 
 import Upload from "@/business/components/settings/head/Upload";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
-import {getLicenseUrl, updateLicenseUrl} from "@/api/system/system";
+import {getLicenseUrl, isLicenseUrl, updateLicenseUrl} from "@/api/system/system";
 
 /* eslint-disable */
   export default {
@@ -110,6 +110,7 @@ import {getLicenseUrl, updateLicenseUrl} from "@/api/system/system";
     data() {
       return {
         result: false,
+        viewResult: false,
         dialogVisible: false,
         licenseVisible: false,
         direction: 'rtl',
@@ -122,10 +123,7 @@ import {getLicenseUrl, updateLicenseUrl} from "@/api/system/system";
         items: [
           {img: require(`@/assets/img/about/docs.png`), url: 'https://hummerrisk.com'},
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
-          {img: require(`@/assets/img/about/custodian.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/custodian/'},
-          {img: require(`@/assets/img/about/prowler.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/prowler/'},
-          {img: require(`@/assets/img/about/trivy.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/trivy/'},
-          {img: require(`@/assets/img/about/kubench.png`), url: 'https://docs.hummerrisk.com/related/opensource-tool/kube-bench/'},
+          {img: require(`@/assets/img/about/gitee.png`), url: 'https://gitee.com/hummercloud/HummerRisk'},
         ],
       }
     },
@@ -137,7 +135,7 @@ import {getLicenseUrl, updateLicenseUrl} from "@/api/system/system";
         this.search();
       },
       search() {
-        this.$get(getLicenseUrl, response => {
+        this.result = this.$get(getLicenseUrl, response => {
             this.license = response.data;
         });
       },
@@ -168,11 +166,15 @@ import {getLicenseUrl, updateLicenseUrl} from "@/api/system/system";
             "Content-Type": 'multipart/form-data'
           }
         };
-        this.result = this.$request(axiosRequestConfig, (res) => {
+        this.viewResult = this.$request(axiosRequestConfig, (res) => {
           if (res.success) {
             this.$success(this.$t('commons.save_success'));
-            this.licenseVisible = false;
-            this.search();
+            this.$get(isLicenseUrl, response => {
+              let isLicense = response.data;
+              sessionStorage.setItem('license', isLicense);
+              this.licenseVisible = false;
+              window.location.reload();
+            });
           }
         });
       },

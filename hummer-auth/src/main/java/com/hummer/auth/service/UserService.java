@@ -9,6 +9,7 @@ import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.system.api.domain.User;
 import com.hummer.system.api.model.LoginUser;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,10 +62,26 @@ public class UserService {
 
         loginUser.setUser(userDTO);
 
-        HummerLicense license = getLicense();
-        if(license != null) loginUser.setLicense(license);
+        loginUser.setLicense(isLicense());
+//        HummerLicense license = getLicense();
+//        if(license != null) loginUser.setLicense(license);
 
         return loginUser;
+    }
+
+    public boolean isLicense() {
+        List<HummerLicense> list = licenseMapper.selectByExample(null);
+        if (list.size() > 0) {
+            HummerLicense hummerLicense = list.get(0);
+            if (!StringUtils.equals(hummerLicense.getStatus(), "valid")) return false;
+            //license状态，可能值为：valid、invalid、expired，分别代表：有效、无效、已过期
+            long expireTime = hummerLicense.getExpireTime();
+            long now = System.currentTimeMillis();
+            if (expireTime >= now) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public HummerLicense getLicense() {

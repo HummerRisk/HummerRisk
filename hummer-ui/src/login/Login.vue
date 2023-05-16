@@ -70,7 +70,7 @@
 import {saveLocalStorage} from '@/common/js/utils';
 import {DEFAULT_LANGUAGE} from "@/common/js/constants";
 import {isLoginUrl, languageUrl, signinUrl} from "@/api/auth/auth";
-import {setIsLicense, setLicense, setToken} from '@/common/js/auth';
+import {setToken} from '@/common/js/auth';
 import {isLicenseUrl} from "@/api/system/system";
 
 /* eslint-disable */
@@ -103,7 +103,6 @@ import {isLicenseUrl} from "@/api/system/system";
         if (response.data.success) {
           let user = response.data.data;
           setToken(response.data.token);
-          setLicense(response.data.license);
           let responseUser = {
             data : response.data.data
           };
@@ -158,9 +157,8 @@ import {isLicenseUrl} from "@/api/system/system";
             saveLocalStorage(responseUser);
             sessionStorage.setItem('loginSuccess', 'true');
             setToken(response.data.token);
-            setLicense(response.data.license);
+            sessionStorage.setItem('license', response.data.license);
             this.getLanguage(response.data.language, response.data.token);
-            this.isLicense();
           }
         });
       },
@@ -176,10 +174,9 @@ import {isLicenseUrl} from "@/api/system/system";
         }
       },
       isLicense() {
-          this.$get(isLicenseUrl, response => {
-            let isLicense = response.data;
-            setIsLicense(isLicense);
-          });
+        this.$get(isLicenseUrl, response => {
+          let isLicense = response.data;
+        });
       },
     }
   }
