@@ -1,6 +1,6 @@
 package com.hummer.system.controller;
 
-import com.hummer.common.core.domain.HummerLicense;
+import com.hummer.common.core.domain.HummerLicenseWithBLOBs;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.LicenseService;
@@ -24,14 +24,14 @@ public class LicenseController {
     @I18n
     @Operation(summary = "获取license")
     @GetMapping(value = "getLicense")
-    public HummerLicense getLicense() {
+    public HummerLicenseWithBLOBs getLicense() {
         return licenseService.getLicense();
     }
 
     @I18n
     @Operation(summary = "上传校验license")
     @PostMapping(value = "updateLicense", consumes = {"multipart/form-data"})
-    public void validateLicense(@RequestPart(value = "license", required = false) MultipartFile licenseFile) throws Exception {
+    public void validateLicense(@RequestPart(value = "licenseFile", required = false) MultipartFile licenseFile) throws Exception {
         licenseService.validateLicense(licenseFile, tokenService.getLoginUser());
     }
 

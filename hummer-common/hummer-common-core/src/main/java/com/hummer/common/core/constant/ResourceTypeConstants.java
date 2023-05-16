@@ -24,5 +24,6 @@ public enum ResourceTypeConstants {
     SYNC,
     FILE_SYSTEM,
     OSS,
-    WEBHOOK
+    WEBHOOK,
+    REPORT_CENTER,
 }

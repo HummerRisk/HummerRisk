@@ -2,11 +2,9 @@ package com.hummer.system.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.common.core.constant.ServerConstants;
-import com.hummer.common.core.domain.HummerLicense;
+import com.hummer.common.core.domain.HummerLicenseWithBLOBs;
 import com.hummer.common.core.utils.CommandUtils;
 import com.hummer.common.core.utils.FileUploadUtils;
-import com.hummer.common.core.utils.ReadFileUtils;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.HummerLicenseMapper;
@@ -19,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,73 +30,103 @@ public class LicenseService {
     @Autowired
     private HummerLicenseMapper licenseMapper;
 
-    public HummerLicense getHummerLicense(String id) {
+    public HummerLicenseWithBLOBs getHummerLicense(String id) {
         return licenseMapper.selectByPrimaryKey(id);
     }
 
-    public HummerLicense getLicense() {
-        List<HummerLicense> list = licenseMapper.selectByExample(null);
+    public HummerLicenseWithBLOBs getLicense() {
+        List<HummerLicenseWithBLOBs> list = licenseMapper.selectByExampleWithBLOBs(null);
         if (list.size() > 0) {
             return list.get(0);
         }
-        return null;
+        return new HummerLicenseWithBLOBs();
     }
 
     public boolean license() {
-        List<HummerLicense> list = licenseMapper.selectByExample(null);
+        List<HummerLicenseWithBLOBs> list = licenseMapper.selectByExampleWithBLOBs(null);
         if (list.size() > 0) {
-            return true;
+            HummerLicenseWithBLOBs hummerLicense = list.get(0);
+            if (!StringUtils.equals(hummerLicense.getStatus(), "valid")) return false;
+            //license状态，可能值为：valid、invalid、expired，分别代表：有效、无效、已过期
+            long expireTime = hummerLicense.getExpireTime();
+            long now = System.currentTimeMillis();
+            if (expireTime >= now) {
+                return true;
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String date = sdf.format(new Date(Long.valueOf(expireTime)));
+                String message = "license has expired since " + date;
+                hummerLicense.setUpdateTime(now);
+                hummerLicense.setStatus("expired");
+                hummerLicense.setMessage(message);
+                licenseMapper.updateByPrimaryKeySelective(hummerLicense);
+            }
+
         }
         return false;
     }
 
+
     public void validateLicense(MultipartFile licenseFile, LoginUser loginUser) throws Exception {
-        String licenseFilePath = upload(licenseFile, ServerConstants.DEFAULT_BASE_DIR);
-        String license = ReadFileUtils.readToBuffer(ServerConstants.DEFAULT_BASE_DIR + licenseFilePath);
+        try {
+            String license = new String(licenseFile.getBytes());
 
-        //校验license命令
-        String command = "/usr/local/bin/hummer_validator " + license;
-        //returnStr
-        String returnStr = CommandUtils.commonExecCmdWithResult(command, "/tmp");
-        JSONObject jsonObject = JSON.parseObject(returnStr);
-        String status = jsonObject.getString("status");
-        String message = jsonObject.getString("message");
-        JSONObject licenseObj = (JSONObject) jsonObject.get("license");
-        String corporation = licenseObj.getString("corporation");
-        String edition = licenseObj.getString("edition");
-        String count =licenseObj.getString("count");
-        String product =licenseObj.getString("product");
-        String expired =licenseObj.getString("expired");
-        long expiredTime = (new SimpleDateFormat("yyyy-MM-dd")).parse(expired, new ParsePosition(0)).getTime();
+            //校验license命令
+            String command = "/tmp/validator_darwin_arm64 " + license;
+            //returnStr
+            String returnStr = CommandUtils.commonExecCmdWithResult(command, "/tmp");
+            JSONObject jsonObject = JSON.parseObject(returnStr);
+            String status = jsonObject.getString("status");
+            String message = jsonObject.getString("message");//license has expired since 2023-07-03
+            JSONObject licenseObj = (JSONObject) jsonObject.get("license");
+            String corporation = licenseObj.getString("corporation");
+            String edition = licenseObj.getString("edition");
+            String count =licenseObj.getString("count");
+            String product =licenseObj.getString("product");
+            String expired =licenseObj.getString("expired");
+            long expiredTime = (new SimpleDateFormat("yyyy-MM-dd")).parse(expired, new ParsePosition(0)).getTime();
 
-        List<HummerLicense> list = licenseMapper.selectByExample(null);
-        if (list.size() > 0) {
-            HummerLicense hummerLicense = list.get(0);
-            hummerLicense.setCompany(corporation);
-            hummerLicense.setEdition(edition);
-            hummerLicense.setExpireTime(expiredTime);
-            hummerLicense.setApplyUser(loginUser.getUserName());
-            hummerLicense.setAuthorizeCount(count);
-            hummerLicense.setLicenseKey(license);
-            hummerLicense.setProductType(product);
-            hummerLicense.setUpdateTime(System.currentTimeMillis());
+            if (!StringUtils.equals(product, "HummerRisk")) {
+                status = "invalid";//无效
+                message = "The license product type is incorrect。";
+            }
 
-            licenseMapper.updateByPrimaryKeySelective(hummerLicense);
-        } else {
-            HummerLicense hummerLicense = new HummerLicense();
-            hummerLicense.setId(UUIDUtil.newUUID());
-            hummerLicense.setCompany(corporation);
-            hummerLicense.setEdition(edition);
-            hummerLicense.setExpireTime(expiredTime);
-            hummerLicense.setApplyUser(loginUser.getUserName());
-            hummerLicense.setAuthorizeCount(count);
-            hummerLicense.setLicenseKey(license);
-            hummerLicense.setProductType(product);
-            hummerLicense.setCreateTime(System.currentTimeMillis());
-            hummerLicense.setUpdateTime(System.currentTimeMillis());
+            List<HummerLicenseWithBLOBs> list = licenseMapper.selectByExampleWithBLOBs(null);
+            if (list.size() > 0) {
+                HummerLicenseWithBLOBs hummerLicense = list.get(0);
+                hummerLicense.setCompany(corporation);
+                hummerLicense.setEdition(edition);
+                hummerLicense.setExpireTime(expiredTime);
+                hummerLicense.setApplyUser(loginUser.getUserName());
+                hummerLicense.setAuthorizeCount(count);
+                hummerLicense.setLicenseKey(license);
+                hummerLicense.setProductType(product);
+                hummerLicense.setUpdateTime(System.currentTimeMillis());
+                hummerLicense.setStatus(status);
+                hummerLicense.setMessage(message);
 
-            licenseMapper.insertSelective(hummerLicense);
+                licenseMapper.updateByPrimaryKeySelective(hummerLicense);
+            } else {
+                HummerLicenseWithBLOBs hummerLicense = new HummerLicenseWithBLOBs();
+                hummerLicense.setId(UUIDUtil.newUUID());
+                hummerLicense.setCompany(corporation);
+                hummerLicense.setEdition(edition);
+                hummerLicense.setExpireTime(expiredTime);
+                hummerLicense.setApplyUser(loginUser.getUserName());
+                hummerLicense.setAuthorizeCount(count);
+                hummerLicense.setLicenseKey(license);
+                hummerLicense.setProductType(product);
+                hummerLicense.setCreateTime(System.currentTimeMillis());
+                hummerLicense.setUpdateTime(System.currentTimeMillis());
+                hummerLicense.setStatus(status);
+                hummerLicense.setMessage(message);
+
+                licenseMapper.insertSelective(hummerLicense);
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
+
     }
 
     /**

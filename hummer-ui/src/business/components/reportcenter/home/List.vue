@@ -21,55 +21,40 @@
         <el-table-column type="selection" id="selection" prop="selection" min-width="50">
         </el-table-column>
         <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="name" :label="$t('fs.name')" v-if="checkedColumnNames.includes('name')" min-width="180" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('reportcenter.report_name')" v-if="checkedColumnNames.includes('name')" min-width="180" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
-                <img :src="require(`@/assets/img/fs/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
+                <i class="el-icon-document"/>
                  &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="fileName" v-if="checkedColumnNames.includes('fileName')" :label="$t('fs.file_name')" min-width="180" show-overflow-tooltip/>
-        <el-table-column prop="size" v-if="checkedColumnNames.includes('size')" :label="$t('fs.size')" min-width="100" show-overflow-tooltip/>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="200">
-          <el-tooltip effect="dark" :content="$t('history.result') + ' CRITICAL:' + scope.row.critical + ' HIGH:' +  scope.row.high + ' MEDIUM:' + scope.row.medium + ' LOW:' + scope.row.low + ' UNKNOWN:' + scope.row.unknown" placement="top">
-            <div class="txt-click" @click="goResource(scope.row)">
-              <span style="background-color: #8B0000;color: white;padding: 3px;">{{ 'C:' + scope.row.critical }}</span>
-              <span style="background-color: #FF4D4D;color: white;padding: 3px;">{{ 'H:' +  scope.row.high }}</span>
-              <span style="background-color: #FF8000;color: white;padding: 3px;">{{ 'M:' + scope.row.medium }}</span>
-              <span style="background-color: #eeab80;color: white;padding: 3px;">{{ 'L:' + scope.row.low }}</span>
-              <span style="background-color: #d5d0d0;color: white;padding: 3px;">{{ 'U:' + scope.row.unknown }}</span>
-            </div>
-          </el-tooltip>
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('downloadNumber')" :label="$t('reportcenter.download_number')" sortable prop="downloadNumber">
         </el-table-column>
-        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resultStatus')" :label="$t('image.result_status')" min-width="140" prop="resultStatus" sortable show-overflow-tooltip>
-          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.resultStatus === 'UNCHECKED'">
+        <el-table-column min-width="160" v-if="checkedColumnNames.includes('historyNumber')" :label="$t('reportcenter.history_number')" sortable prop="historyNumber">
+        </el-table-column>
+        <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('reportcenter.report_status')" min-width="140" prop="status" sortable show-overflow-tooltip>
+          <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'APPROVED'">
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="mini" type="primary" v-else-if="scope.row.resultStatus === 'PROCESSING'">
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="mini" type="success" v-else-if="scope.row.resultStatus === 'FINISHED'">
+          <el-button plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="mini" type="danger" v-else-if="scope.row.resultStatus === 'ERROR'">
+          <el-button plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button @click="showResultLog(scope.row)" plain size="mini" type="warning" v-else-if="scope.row.resultStatus === 'WARNING'">
+          <el-button plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
-          <el-button @click="noWarnLog(scope.row)" plain size="mini" type="info" v-else-if="scope.row.resultStatus === null">
+          <el-button plain size="mini" type="info" v-else-if="scope.row.status === null">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
           </el-button>
-        </el-table-column>
-        <el-table-column prop="scanTime" min-width="200" v-if="checkedColumnNames.includes('scanTime')" :label="$t('commons.last_scan_time')" sortable>
-          <template v-slot:default="scope">
-            <span v-if="scope.row.resultStatus !== null"><i class="el-icon-time"/> {{ scope.row.scanTime | timestampFormatDate }}</span>
-            <span v-if="scope.row.resultStatus === null">--</span>
-          </template>
         </el-table-column>
         <el-table-column min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable
                          prop="createTime">
@@ -83,7 +68,7 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" :label="$t('account.creator')" v-if="checkedColumnNames.includes('userName')" min-width="100" show-overflow-tooltip/>
+        <el-table-column prop="operator" :label="$t('account.creator')" v-if="checkedColumnNames.includes('operator')" min-width="100" show-overflow-tooltip/>
         <el-table-column min-width="230" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
@@ -92,6 +77,43 @@
       </hide-table>
       <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="total"/>
     </el-card>
+
+    <!--Create report-->
+    <el-drawer class="rtl" :title="$t('reportcenter.report_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" v-loading="viewResult.loading">
+      <el-card class="table-card" style="margin: 15px;">
+        <el-form :model="form" label-position="right" label-width="100px" size="medium" :rules="rule" ref="form" style="margin: 15px 0;">
+          <el-form-item :label="$t('reportcenter.report_name')" ref="name" prop="name">
+            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('reportcenter.report_name')"/>
+          </el-form-item>
+        </el-form>
+        <div style="color: red;text-align: center;padding: 15px 15px 0 15px;">{{ $t('reportcenter.select_account') }}</div>
+        <account @nodeSelectEvent="nodeChange" :selectAccounts="selectAccounts"/>
+      </el-card>
+      <dialog-footer
+          @cancel="createVisible = false"
+          @confirm="saveAccount()"/>
+    </el-drawer>
+    <!--Create report-->
+
+    <!--Update report-->
+    <el-drawer class="rtl" :title="$t('reportcenter.report_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" v-loading="viewResult.loading">
+      <el-card class="table-card" style="margin: 15px;">
+        <el-form :model="form" label-position="right" label-width="100px" size="medium" :rules="rule" ref="form" style="margin: 15px 0;">
+          <el-form-item :label="$t('reportcenter.report_name')" ref="name" prop="name">
+            <el-input v-model="form.name" autocomplete="off" :placeholder="$t('reportcenter.report_name')"/>
+          </el-form-item>
+        </el-form>
+        <div style="color: red;text-align: center;padding: 15px 15px 0 15px;">{{ $t('reportcenter.select_account') }}</div>
+        <account @nodeSelectEvent="nodeChange" :selectAccounts="selectAccounts" :checkedKeys="checkedKeys"/>
+      </el-card>
+      <dialog-footer
+          @cancel="updateVisible = false"
+          @confirm="updateAccount()"/>
+    </el-drawer>
+    <!--Update report-->
+
   </main-container>
 </template>
 
@@ -106,39 +128,30 @@ import {_filter, _sort} from "@/common/js/utils";
 import {REPORT_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {deleteFssUrl, deleteFsUrl, fsListUrl, getFsResultUrl} from "@/api/k8s/fs/fs";
-import {reportListUrl} from "@/api/xpack/report";
+import {deleteFssUrl, deleteFsUrl, getFsResultUrl} from "@/api/k8s/fs/fs";
+import {createReportUrl, deleteReportsUrl, deleteReportUrl, getReportUrl, reportListUrl} from "@/api/xpack/report";
+import Account from "@/business/components/reportcenter/home/Account";
 
 //列表展示与隐藏
 const columnOptions = [
   {
-    label: 'fs.name',
+    label: 'reportcenter.report_name',
     props: 'name',
     disabled: false
   },
   {
-    label: 'fs.file_name',
-    props: 'fileName',
+    label: 'reportcenter.download_number',
+    props: 'downloadNumber',
     disabled: false
   },
   {
-    label: 'fs.size',
-    props: 'size',
+    label: 'reportcenter.history_number',
+    props: 'historyNumber',
     disabled: false
   },
   {
-    label: 'resource.i18n_not_compliance',
-    props: 'returnSum',
-    disabled: false
-  },
-  {
-    label: 'code.result_status',
-    props: 'resultStatus',
-    disabled: false
-  },
-  {
-    label: 'commons.last_scan_time',
-    props: 'scanTime',
+    label: 'reportcenter.report_status',
+    props: 'status',
     disabled: false
   },
   {
@@ -153,7 +166,7 @@ const columnOptions = [
   },
   {
     label: 'account.creator',
-    props: 'userName',
+    props: 'operator',
     disabled: false
   },
 ];
@@ -169,6 +182,7 @@ export default {
     TableOperator,
     DialogFooter,
     HideTable,
+    Account,
   },
   provide() {
     return {
@@ -206,16 +220,13 @@ export default {
       },
       buttons: [
         {
-          tip: this.$t('k8s.execute_scan'), icon: "el-icon-s-promotion", type: "success",
-          exec: this.handleScan
+          tip: this.$t('reportcenter.report_gen'), icon: "el-icon-document", type: "success",
+          exec: this.handleGen
         }, {
           tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
           exec: this.handleEdit
         }, {
-          tip: this.$t('resource.scan_vuln_search'), icon: "el-icon-share", type: "info",
-          exec: this.handleVuln
-        }, {
-          tip: this.$t('resource.download_report'), icon: "el-icon-bottom", type: "warning",
+          tip: this.$t('reportcenter.report_download'), icon: "el-icon-bottom", type: "warning",
           exec: this.handleDownload
         }, {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
@@ -227,16 +238,12 @@ export default {
       //名称搜索
       items: [
         {
-          name: 'fs.name',
+          name: 'reportcenter.report_name',
           id: 'name'
         },
         {
-          name: 'fs.file_name',
-          id: 'fileName'
-        },
-        {
           name: 'account.creator',
-          id: 'userName'
+          id: 'operator'
         },
       ],
       checkAll: true,
@@ -244,6 +251,9 @@ export default {
       logVisible: false,
       detailVisible: false,
       detailForm: {},
+      selectAccounts: [],
+      reportResultId: '',
+      checkedKeys: [],
     }
   },
   watch: {
@@ -268,7 +278,8 @@ export default {
       });
     },
     create() {
-
+      this.form = {};
+      this.createVisible = true;
     },
     //查询列表
     search() {
@@ -281,13 +292,9 @@ export default {
     },
     handleEdit(tmp) {
       this.form = tmp;
-      this.item.credential = tmp.credential;
-      if (!this.form.proxyId) {
-        this.form.proxyId = "";
-      }
-      this.changeSbom({sbomId: tmp.sbomId});
+      this.reportResultId = tmp.id;
+      this.checkedKeys = tmp.checkedKeys;
       this.updateVisible = true;
-      this.activeProxy();
     },
     handleClose() {
       this.createVisible =  false;
@@ -300,7 +307,7 @@ export default {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
-            this.result = this.$get(deleteFsUrl + obj.id, () => {
+            this.result = this.$get(deleteReportUrl + obj.id, () => {
               this.$success(this.$t('commons.delete_success'));
               this.search();
             });
@@ -328,33 +335,37 @@ export default {
         clearInterval(this.timer);
       } else {
         for (let data of this.tableData) {
-          this.$get(getFsResultUrl + data.resultId, response => {
+          this.$get(getReportUrl + data.id, response => {
             let result = response.data;
-            if (result && data.resultStatus !== result.resultStatus) {
-              data.resultStatus = result.resultStatus;
-              data.returnSum = result.returnSum;
-              data.critical = result.critical?result.critical:0;
-              data.high = result.high?result.high:0;
-              data.medium = result.medium?result.medium:0;
-              data.low = result.low?result.low:0;
-              data.unknown = result.unknown?result.unknown:0;
+            if (data.status !== result.status) {
+              data.status = result.status;
             }
           });
         }
       }
     },
+    //是否是结束状态，返回false代表都在运行中，true代表已结束
+    checkStatus (tableData) {
+      let sum = 0;
+      for (let row of tableData) {
+        if (row.status && row.status != 'ERROR' && row.status != 'FINISHED' && row.status != 'WARNING') {
+          sum++;
+        }
+      }
+      return sum == 0;
+    },
     deleteBatch() {
       if (this.selectIds.size === 0) {
-        this.$warning(this.$t('commons.please_select') + this.$t('fs.file_system'));
+        this.$warning(this.$t('commons.please_select') + this.$t('reportcenter.report_name'));
         return;
       }
-      this.$alert(this.$t('oss.delete_batch') + this.$t('fs.file_system') + " ？", '', {
+      this.$alert(this.$t('oss.delete_batch') + this.$t('reportcenter.report_name') + " ？", '', {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
           if (action === 'confirm') {
             this.result = this.$request({
               method: 'POST',
-              url: deleteFssUrl,
+              url: deleteReportsUrl,
               data: Array.from(this.selectIds),
               headers: {
                 'Content-Type': undefined
@@ -365,6 +376,36 @@ export default {
             });
           }
         }
+      });
+    },
+    handleGen (item) {
+
+    },
+    nodeChange(node, nodeIds, pNodes) {
+      if(node.data.id === "root" || !node.data.id) {
+        this.$warning(this.$t('task.task_tree_child'));
+        return;
+      }
+    },
+    saveAccount() {
+      let params = {};
+      params.name = this.form.name;
+      params.list = this.selectAccounts;
+      this.$post(createReportUrl, params, response => {
+        this.$success(this.$t('commons.success'));
+        this.createVisible = false;
+        this.search();
+      });
+    },
+    updateAccount() {
+      let params = {};
+      params.id = this.reportResultId;
+      params.name = this.form.name;
+      params.list = this.selectAccounts;
+      this.$post(updateReportUrl, params, response => {
+        this.$success(this.$t('commons.success'));
+        this.createVisible = false;
+        this.search();
       });
     },
   },
@@ -385,6 +426,14 @@ export default {
 
 .el-table {
   cursor: pointer;
+}
+
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+.rtl >>> input {
+  width: 80%;
 }
 </style>
 
