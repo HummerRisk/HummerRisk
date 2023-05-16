@@ -8,8 +8,7 @@ RUN set -ex \
 
 WORKDIR /data
 
-RUN apk update && \
-    apk upgrade
+RUN apk update && apk add --no-cache --update
 
 COPY ./package.json /data/package.json
 #COPY ./package-lock.json /data/package-lock.json
