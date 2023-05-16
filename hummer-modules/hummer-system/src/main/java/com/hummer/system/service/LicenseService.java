@@ -2,6 +2,7 @@ package com.hummer.system.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hummer.common.core.constant.LicenseConstants;
 import com.hummer.common.core.domain.HummerLicenseWithBLOBs;
 import com.hummer.common.core.utils.CommandUtils;
 import com.hummer.common.core.utils.FileUploadUtils;
@@ -72,7 +73,7 @@ public class LicenseService {
             String license = new String(licenseFile.getBytes());
 
             //校验license命令
-            String command = "/tmp/validator_darwin_arm64 " + license;
+            String command = LicenseConstants.HUMMER_VALIDATOR + license;
             //returnStr
             String returnStr = CommandUtils.commonExecCmdWithResult(command, "/tmp");
             JSONObject jsonObject = JSON.parseObject(returnStr);
