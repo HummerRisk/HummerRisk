@@ -288,6 +288,7 @@ public class ImageService {
                     Image request = new Image();
                     String id = UUIDUtil.newUUID();
                     request.setId(id);
+                    request.setName(item.getPath().replace(":" + item.getTag(), ""));
                     request.setGroupId(groupId);
                     request.setStatus("VALID");
                     request.setCreateTime(System.currentTimeMillis());
