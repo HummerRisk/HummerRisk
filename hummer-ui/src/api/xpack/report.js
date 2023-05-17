@@ -13,6 +13,6 @@ export const createReportUrl = "/xpack/report/createReport";
 
 export const updateReportUrl = "/xpack/report/updateReport";
 
-export const generatorReportUrl = "/xpack/report/generatorReport";
+export const generatorReportUrl = "/xpack/report/generatorReport/";
 
-export const downloadReportUrl = "/xpack/report/downloadReport";
+export const downloadReportUrl = "/xpack/report/downloadReport/";

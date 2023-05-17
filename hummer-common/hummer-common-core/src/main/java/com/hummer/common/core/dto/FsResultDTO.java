@@ -116,4 +116,6 @@ public class FsResultDTO extends FileSystemResult {
     public void setSize(String size) {
         this.size = size;
     }
+
+
 }

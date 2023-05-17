@@ -128,9 +128,16 @@ import {_filter, _sort} from "@/common/js/utils";
 import {REPORT_RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {deleteFssUrl, deleteFsUrl, getFsResultUrl} from "@/api/k8s/fs/fs";
-import {createReportUrl, deleteReportsUrl, deleteReportUrl, getReportUrl, reportListUrl} from "@/api/xpack/report";
+import {
+  createReportUrl,
+  deleteReportsUrl,
+  deleteReportUrl,
+  downloadReportUrl, generatorReportUrl,
+  getReportUrl,
+  reportListUrl
+} from "@/api/xpack/report";
 import Account from "@/business/components/reportcenter/home/Account";
+import {saveAs} from "@/common/js/FileSaver";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -379,7 +386,18 @@ export default {
       });
     },
     handleGen (item) {
-
+      this.result = this.$get(generatorReportUrl + item.id, response => {
+        this.$success(this.$t('commons.success'));
+        this.search();
+      });
+    },
+    handleDownload(item) {
+      this.$fileDownload(downloadReportUrl + item.id, response => {
+        let blob = new Blob([response.data], {type: "'application/octet-stream'"});
+        saveAs(blob, "report.pdf");
+      }, error => {
+        console.log("导出报错", error);
+      });
     },
     nodeChange(node, nodeIds, pNodes) {
       if(node.data.id === "root" || !node.data.id) {

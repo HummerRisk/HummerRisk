@@ -8,8 +8,6 @@ import com.hummer.common.core.domain.CodeResult;
  */
 public class CodeResultDTO extends CodeResult {
 
-    private String name;
-
     private String tagKey;
 
     private String tagName;
@@ -26,13 +24,7 @@ public class CodeResultDTO extends CodeResult {
 
     private String unknown;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String codeUrl;
 
     public String getTagKey() {
         return tagKey;
@@ -96,5 +88,13 @@ public class CodeResultDTO extends CodeResult {
 
     public void setUnknown(String unknown) {
         this.unknown = unknown;
+    }
+
+    public String getCodeUrl() {
+        return codeUrl;
+    }
+
+    public void setCodeUrl(String codeUrl) {
+        this.codeUrl = codeUrl;
     }
 }
