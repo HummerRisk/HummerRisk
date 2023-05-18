@@ -17,11 +17,11 @@ public class ServerConstants {
 
     public final static String HUMMER_WARN = "HummerWarn";
 
-    public final static String LYNIS = "/tmp/lynis-3.0.8.tar.gz";
+    public final static String LYNIS = "/opt/hummerrisk/lynis.tar.gz";
 
-    public final static String LYNIS_TAR = "lynis-3.0.8.tar.gz";
+    public final static String LYNIS_TAR = "lynis.tar.gz";
 
-    public final static String LYNIS_VERSION = "lynis-3.0.8";
+    public final static String LYNIS_VERSION = "lynis";
 
     public final static String INITIALIZING_PROGRAM = "[+] Initializing program";
 
