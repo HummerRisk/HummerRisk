@@ -69,7 +69,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="operator" :label="$t('account.creator')" v-if="checkedColumnNames.includes('operator')" min-width="100" show-overflow-tooltip/>
-        <el-table-column prop="pdfPath" :label="$t('reportcenter.report_pdf_path')" v-if="checkedColumnNames.includes('pdfPath')" min-width="600" show-overflow-tooltip/>
+        <el-table-column prop="pdfPath" :label="$t('reportcenter.report_pdf_path')" v-if="checkedColumnNames.includes('pdfPath')" min-width="600" show-overflow-tooltip>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.pdfPath">{{ scope.row.pdfPath }}</span>
+            <span v-else>{{ '--' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column min-width="230" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
@@ -120,7 +125,12 @@
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-table border :data="reportResultLogs" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
         <el-table-column type="index" min-width="40"/>
-        <el-table-column prop="pdfPath" :label="$t('reportcenter.report_pdf_path')" min-width="600" show-overflow-tooltip/>
+        <el-table-column prop="pdfPath" :label="$t('reportcenter.report_pdf_path')" v-if="checkedColumnNames.includes('pdfPath')" min-width="600" show-overflow-tooltip>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.pdfPath">{{ scope.row.pdfPath }}</span>
+            <span v-else>{{ '--' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column min-width="130" :label="$t('reportcenter.download_number')" sortable prop="downloadNumber">
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('reportcenter.report_status')" min-width="140" prop="status" sortable show-overflow-tooltip>
