@@ -225,6 +225,8 @@ public class SshUtil {
                 //执行检测
                 result = executeSshd(session, "sudo bash " + remotePath + "/" + fileName);
 
+                LogUtil.info("cmd: " + "sudo bash " + remotePath + "/" + fileName);
+
                 LogUtil.info("sh: bash: not found, use sh");
                 if (result.contains("sh: bash: not found")) {
                     //执行检测
