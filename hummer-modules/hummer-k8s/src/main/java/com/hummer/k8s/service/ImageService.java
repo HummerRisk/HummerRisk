@@ -279,17 +279,29 @@ public class ImageService {
                     Image request = images.get(0);
                     request.setUpdateTime(System.currentTimeMillis());
                     request.setType("repo");
-                    request.setGroupId(groupId);
+                    request.setGroupId(groupId);//镜像分组
                     request.setImageUrl(item.getPath().replace(":" + item.getTag(), ""));
                     request.setImageTag(item.getTag());
                     request.setSize(item.getSize());
+                    request.setRepoId(imageRepo.getId());
+                    request.setIsImageRepo(true);//是否绑定镜像仓库
                     imageMapper.updateByPrimaryKeySelective(request);
                 } else {
                     Image request = new Image();
                     String id = UUIDUtil.newUUID();
                     request.setId(id);
-                    request.setName(item.getPath().replace(":" + item.getTag(), ""));
-                    request.setGroupId(groupId);
+                    request.setIsImageRepo(true);//是否绑定镜像仓库
+                    request.setRepoId(imageRepo.getId());
+                    String imageName = item.getPath().replace(":" + item.getTag(), "");
+                    String name = "";
+                    if (imageName.contains("/")) {
+                        String[] str = imageName.split("/");
+                        name = str[str.length - 1];
+                    } else {
+                        name = imageName;
+                    }
+                    request.setName(name);
+                    request.setGroupId(groupId);//镜像分组
                     request.setStatus("VALID");
                     request.setCreateTime(System.currentTimeMillis());
                     request.setUpdateTime(System.currentTimeMillis());
