@@ -29,27 +29,27 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column min-width="160" v-if="checkedColumnNames.includes('downloadNumber')" :label="$t('reportcenter.download_number')" sortable prop="downloadNumber">
+        <el-table-column min-width="130" v-if="checkedColumnNames.includes('downloadNumber')" :label="$t('reportcenter.download_number')" sortable prop="downloadNumber">
         </el-table-column>
-        <el-table-column min-width="160" v-if="checkedColumnNames.includes('historyNumber')" :label="$t('reportcenter.history_number')" sortable prop="historyNumber">
+        <el-table-column min-width="130" v-if="checkedColumnNames.includes('historyNumber')" :label="$t('reportcenter.history_number')" sortable prop="historyNumber">
         </el-table-column>
         <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('reportcenter.report_status')" min-width="140" prop="status" sortable show-overflow-tooltip>
-          <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+          <el-button plain size="mini" @click="historyList(scope.row)" type="primary" v-if="scope.row.status === 'UNCHECKED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+          <el-button plain size="mini" @click="historyList(scope.row)" type="primary" v-else-if="scope.row.status === 'APPROVED'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+          <el-button plain size="mini" @click="historyList(scope.row)" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
           </el-button>
-          <el-button plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
+          <el-button plain size="mini" @click="historyList(scope.row)" type="success" v-else-if="scope.row.status === 'FINISHED'">
             <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
           </el-button>
-          <el-button plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
+          <el-button plain size="mini" @click="historyList(scope.row)" type="danger" v-else-if="scope.row.status === 'ERROR'">
             <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
           </el-button>
-          <el-button plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
+          <el-button plain size="mini" @click="historyList(scope.row)" type="warning" v-else-if="scope.row.status === 'WARNING'">
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
           <el-button plain size="mini" type="info" v-else-if="scope.row.status === null">
@@ -69,6 +69,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="operator" :label="$t('account.creator')" v-if="checkedColumnNames.includes('operator')" min-width="100" show-overflow-tooltip/>
+        <el-table-column prop="pdfPath" :label="$t('reportcenter.report_pdf_path')" v-if="checkedColumnNames.includes('pdfPath')" min-width="600" show-overflow-tooltip/>
         <el-table-column min-width="230" :label="$t('commons.operating')" fixed="right">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
@@ -115,9 +116,49 @@
     <!--Update report-->
 
     <!--history report-->
-    <el-drawer class="rtl" :title="$t('reportcenter.report_gen_history')" :visible.sync="historyVisible" size="60%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('reportcenter.report_gen_history')" :visible.sync="historyVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
-
+      <el-table border :data="reportResultLogs" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
+        <el-table-column type="index" min-width="40"/>
+        <el-table-column prop="pdfPath" :label="$t('reportcenter.report_pdf_path')" min-width="600" show-overflow-tooltip/>
+        <el-table-column min-width="130" :label="$t('reportcenter.download_number')" sortable prop="downloadNumber">
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('reportcenter.report_status')" min-width="140" prop="status" sortable show-overflow-tooltip>
+          <el-button plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+          </el-button>
+          <el-button plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
+            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+          </el-button>
+          <el-button plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
+            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+          </el-button>
+          <el-button plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+          </el-button>
+          <el-button plain size="mini" type="info" v-else-if="scope.row.status === null">
+            <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+          </el-button>
+        </el-table-column>
+        <el-table-column min-width="160" :label="$t('account.create_time')" sortable
+                         prop="createTime">
+          <template v-slot:default="scope">
+            <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="operator" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
+        <el-table-column min-width="110" :label="$t('commons.operating')" fixed="right">
+          <template v-slot:default="scope">
+            <table-operators :buttons="buttons2" :row="scope.row"/>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-drawer>
     <!--history report-->
 
@@ -138,11 +179,11 @@ import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   createReportUrl,
   deleteReportsUrl,
-  deleteReportUrl,
+  deleteReportUrl, downloadHistoryReportUrl,
   downloadReportUrl,
   generatorReportUrl,
   getReportUrl,
-  reportListUrl,
+  reportListUrl, reportResultLogsUrl,
   updateReportUrl
 } from "@/api/xpack/report";
 import Account from "@/business/components/reportcenter/home/Account";
@@ -183,6 +224,11 @@ const columnOptions = [
   {
     label: 'account.creator',
     props: 'operator',
+    disabled: false
+  },
+  {
+    label: 'reportcenter.report_pdf_path',
+    props: 'pdfPath',
     disabled: false
   },
 ];
@@ -250,6 +296,15 @@ export default {
           exec: this.handleDelete
         }
       ],
+      buttons2: [
+        {
+          tip: this.$t('reportcenter.report_download'), icon: "el-icon-bottom", type: "warning",
+          exec: this.handleHistoryDownload
+        }, {
+          tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
+          exec: this.handleDelete
+        }
+      ],
       checkedColumnNames: columnOptions.map((ele) => ele.props),
       columnNames: columnOptions,
       //名称搜索
@@ -271,6 +326,7 @@ export default {
       selectAccounts: [],
       reportResultId: '',
       checkedKeys: [],
+      reportResultLogs: [],
     }
   },
   watch: {
@@ -420,7 +476,7 @@ export default {
       let params = {};
       params.name = this.form.name;
       params.list = this.selectAccounts;
-      this.$post(createReportUrl, params, response => {
+      this.viewResult = this.$post(createReportUrl, params, response => {
         this.$success(this.$t('commons.success'));
         this.createVisible = false;
         this.search();
@@ -431,10 +487,24 @@ export default {
       params.id = this.reportResultId;
       params.name = this.form.name;
       params.list = this.selectAccounts;
-      this.$post(updateReportUrl, params, response => {
+      this.viewResult = this.$post(updateReportUrl, params, response => {
         this.$success(this.$t('commons.success'));
-        this.createVisible = false;
+        this.updateVisible = false;
         this.search();
+      });
+    },
+    historyList(data) {
+      this.viewResult = this.$get(reportResultLogsUrl + data.id, response => {
+        this.reportResultLogs = response.data;
+        this.historyVisible = true;
+      });
+    },
+    handleHistoryDownload(item) {
+      this.$fileDownload(downloadHistoryReportUrl + item.id, response => {
+        let blob = new Blob([response.data], {type: "'application/octet-stream'"});
+        saveAs(blob, "report.pdf");
+      }, error => {
+        console.log("导出报错", error);
       });
     },
   },

@@ -1918,5 +1918,6 @@ export default {
     history_number: '生成報告次數',
     all_account: '所有賬號信息',
     select_account: '請選中需要生成報告的賬號信息',
+    report_pdf_path: '報告路徑',
   },
 };
