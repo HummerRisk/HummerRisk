@@ -271,32 +271,32 @@
     <el-drawer class="rtl" :title="$t('server.server_result') + $t('commons.detail')" :visible.sync="detailsVisible" size="85%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-tabs v-model="detailsName" type="card">
-        <el-tab-pane :label="$t('server.server_result')" name="first">
+        <el-tab-pane :label="$t('server.server_result')" name="first" v-if="server.type === 'linux'">
           <el-form>
             <el-table :data="serverLynisResultDetails" style="width: 100%">
                 <el-table-column min-width="600" fixed="right">
                   <template v-slot:default="scope">
                     <div v-if="scope.row.type !=='Warnings' && scope.row.type !=='Suggestions'">
                       <h1 v-if="scope.row.type===scope.row.output" style="color: #e8a97e;margin: 3px 0;font-size: 24px;">
-                        {{ "================================================================================" }} </br>
+                        {{ "--------------------------------------------------------------------------------------------------------------" }} </br>
                         {{ scope.row.output }} </br>
-                        {{ "================================================================================" }}
+                        {{ "--------------------------------------------------------------------------------------------------------------" }}
                       </h1>
                       <span v-else v-html="scope.row.output" style="font-size: 14px;"></span>
                     </div>
                     <div v-if="scope.row.type ==='Warnings'">
                       <h1 v-if="scope.row.output.indexOf('Warnings') > -1" style="color: #ec6e6a;margin: 3px 0;font-size: 24px;">
-                        {{ "================================================================================" }} </br>
+                        {{ "--------------------------------------------------------------------------------------------------------------" }} </br>
                         {{ scope.row.output }} </br>
-                        {{ "================================================================================" }}
+                        {{ "--------------------------------------------------------------------------------------------------------------" }}
                       </h1>
                       <span v-else v-html="scope.row.output" style="font-size: 14px;"></span>
                     </div>
                     <div v-if="scope.row.type ==='Suggestions'">
                       <h1 v-if="scope.row.output.indexOf('Suggestions') > -1" style="color: #753974;margin: 3px 0;font-size: 24px;">
-                        {{ "================================================================================" }} </br>
+                        {{ "--------------------------------------------------------------------------------------------------------------" }} </br>
                         {{ scope.row.output }} </br>
-                        {{ "================================================================================" }}
+                        {{ "--------------------------------------------------------------------------------------------------------------" }}
                       </h1>
                       <span v-else v-html="scope.row.output" style="font-size: 14px;"></span>
                     </div>
@@ -403,7 +403,7 @@
                   <span v-if="logForm.isSeverity === 'false'" style="color: #f84846">{{ $t('resource.risky') }}</span>
                   <span v-if="logForm.isSeverity === 'warn'" style="color: #e8a97e">{{ $t('resource.i18n_has_warn') }}</span>
                 </span>
-                    <span class="grid-content-status-span">
+                <span class="grid-content-status-span">
                   <rule-type :row="logForm"/>
                 </span>
                   </div>
@@ -428,11 +428,11 @@
             <el-form style="margin: 15px 0 0 0">
               <h5 style="margin: 10px;">{{ $t('server.server_rule') }}</h5>
               <el-form-item>
-                <codemirror ref="cmEditor" v-model="logForm.rule" class="code-mirror" :options="cmOptions" />
+                <codemirror ref="cmEditor1" v-model="logForm.rule" class="code-mirror" :options="cmOptions" />
               </el-form-item>
               <h5 style="margin: 10px;">{{ $t('server.server_result') }}</h5>
               <el-form-item>
-                <codemirror ref="cmEditor" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
+                <codemirror ref="cmEditor2" v-model="logForm.returnLog" class="code-mirror" :options="cmOptions" />
               </el-form-item>
             </el-form>
           </el-row>
@@ -679,6 +679,7 @@ export default {
       detailsName: 'first',
       serverLynisResult: {},
       serverLynisResultDetails: [],
+      server: {},
     }
   },
 
@@ -791,6 +792,11 @@ export default {
       });
       this.viewResult = this.$get(getServerResultUrl + result.id, response => {
         this.logForm = response.data;
+        //解决codemirror鼠标点击才刷新值的问题
+        setTimeout(() => {
+          this.$refs.cmEditor1.codemirror.refresh();
+          this.$refs.cmEditor2.codemirror.refresh();
+        }, 50);
       });
     },
     handleClose() {
@@ -860,6 +866,10 @@ export default {
       this.serverResultDetails = data.serverResultDTOS;
       this.serverLynisResult = data.serverLynisResult;
       this.serverLynisResultDetails = data.serverLynisResultDetails;
+      this.server = data;
+      if (this.server.type !== 'linux') {
+        this.detailsName = 'second';
+      }
       this.detailsVisible = true;
     },
     deleteBatch() {
