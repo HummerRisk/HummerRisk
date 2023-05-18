@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -49,6 +47,8 @@ public class ResourceCreateService {
     private FileSystemResultMapper fileSystemResultMapper;
     @Autowired
     private FileSystemService fileSystemService;
+    @Autowired
+    private ServerLynisResultMapper serverLynisResultMapper;
 
     //主机检测
     @XxlJob("serverTasksJobHandler")
@@ -63,12 +63,10 @@ public class ResourceCreateService {
         serverResultExample.setOrderByClause("create_time limit 1");
         List<ServerResult> serverResultList = serverResultMapper.selectByExample(serverResultExample);
         if (CollectionUtils.isNotEmpty(serverResultList)) {
-            Set<String> serverIds = new HashSet<>();
             serverResultList.forEach(serverResult -> {
                 final ServerResult serverToBeProceed;
                 try {
                     serverToBeProceed = BeanUtils.copyBean(new ServerResult(), serverResult);
-                    serverIds.add(serverResult.getServerId());
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
                 }
@@ -86,21 +84,39 @@ public class ResourceCreateService {
                     }
                 });
             });
-            serverIds.forEach(serverId -> {
-                if (processingGroupIdMap.get(serverId) != null) {
-                    return;
-                }
-                processingGroupIdMap.put(serverId, serverId);
-                commonThreadPool.addTask(() -> {
+
+            final ServerLynisResultExample serverLynisResultExample = new ServerLynisResultExample();
+            ServerLynisResultExample.Criteria serverLynisResultCriteria = serverLynisResultExample.createCriteria();
+            serverLynisResultCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+                serverLynisResultCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+            }
+            serverLynisResultExample.setOrderByClause("create_time limit 1");
+            List<ServerLynisResultWithBLOBs> serverLynisResultWithBLOBs = serverLynisResultMapper.selectByExampleWithBLOBs(serverLynisResultExample);
+            if (CollectionUtils.isNotEmpty(serverLynisResultWithBLOBs)) {
+                serverLynisResultWithBLOBs.forEach(serverLynisResult -> {
+                    final ServerLynisResultWithBLOBs serverLynisToBeProceed;
                     try {
-                        serverService.scanLynis(serverId, null);
+                        serverLynisToBeProceed = BeanUtils.copyBean(new ServerLynisResultWithBLOBs(), serverLynisResult);
                     } catch (Exception e) {
-                        LogUtil.error(e.getMessage());
-                    } finally {
-                        processingGroupIdMap.remove(serverId);
+                        throw new RuntimeException(e.getMessage());
                     }
+                    if (processingGroupIdMap.get(serverLynisToBeProceed.getId()) != null) {
+                        return;
+                    }
+                    processingGroupIdMap.put(serverLynisToBeProceed.getId(), serverLynisToBeProceed.getId());
+                    commonThreadPool.addTask(() -> {
+                        try {
+                            serverService.scanLynis(serverLynisResult, null);
+                        } catch (Exception e) {
+                            LogUtil.error(e.getMessage());
+                        } finally {
+                            processingGroupIdMap.remove(serverLynisResult.getId());
+                        }
+                    });
                 });
-            });
+            }
+
         }
     }
 

@@ -130,6 +130,7 @@ public class ServerService {
         for (Integer groupId : request.getGroups()) {
             this.scanGroups(server, scanId, groupId.toString(), loginUser);
         }
+        insertOrUpdateLynis(server);
     }
 
     public Boolean scan(String id, LoginUser loginUser) throws Exception {
@@ -245,6 +246,9 @@ public class ServerService {
     }
 
     public void rescanServer(String id, LoginUser loginUser) throws Exception {
+        Server server = serverMapper.selectByPrimaryKey(id);
+        insertOrUpdateLynis(server);
+
         ServerResultExample example = new ServerResultExample();
         example.createCriteria().andServerIdEqualTo(id);
         List<ServerResult> results = serverResultMapper.selectByExample(example);
@@ -1082,10 +1086,35 @@ public class ServerService {
         });
     }
 
-    public void scanLynis(String serverId, LoginUser loginUser) throws Exception {
-        Server server = serverMapper.selectByPrimaryKey(serverId);
+    public void insertOrUpdateLynis(Server server) {
+        ServerLynisResultExample example = new ServerLynisResultExample();
+        example.createCriteria().andServerIdEqualTo(server.getId());
+        List<ServerLynisResultWithBLOBs> list = serverLynisResultMapper.selectByExampleWithBLOBs(example);
+
+        if (list.size() > 0) {
+            ServerLynisResultWithBLOBs serverLynisResult = list.get(0);
+            serverLynisResult.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            serverLynisResultMapper.updateByPrimaryKey(serverLynisResult);
+        } else {
+            ServerLynisResultWithBLOBs serverLynisResultWithBLOBs = new ServerLynisResultWithBLOBs();
+            serverLynisResultWithBLOBs.setId(UUIDUtil.newUUID());
+            serverLynisResultWithBLOBs.setServerId(server.getId());
+            serverLynisResultWithBLOBs.setServerName(server.getName());
+            serverLynisResultWithBLOBs.setPluginIcon(server.getPluginIcon());
+            serverLynisResultWithBLOBs.setCreateTime(System.currentTimeMillis());
+            serverLynisResultWithBLOBs.setUpdateTime(System.currentTimeMillis());
+            serverLynisResultWithBLOBs.setApplyUser("admin");
+            serverLynisResultWithBLOBs.setResultStatus(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+            serverLynisResultMapper.insertSelective(serverLynisResultWithBLOBs);
+        }
+
+    }
+
+    public void scanLynis(ServerLynisResultWithBLOBs serverLynisResultWithBLOBs, LoginUser loginUser) throws Exception {
+        LogUtil.info("start server lynis scan");
+        Server server = serverMapper.selectByPrimaryKey(serverLynisResultWithBLOBs.getServerId());
         //删除旧数据
-        deleteLynisResult(server);
+        deleteLynisResultDetail(serverLynisResultWithBLOBs);
 
         Proxy proxy = new Proxy();
         if (server.getIsProxy() != null && server.getIsProxy()) {
@@ -1119,7 +1148,7 @@ public class ServerService {
         String resultStr = executeLynis(server, proxy, dirPath, remotePath);
 
         //插入新数据
-        executeLynisResultStr(resultStr, server, loginUser);
+        executeLynisResultStr(resultStr, serverLynisResultWithBLOBs, loginUser);
     }
 
     public String executeLynis(Server server, Proxy proxy, String dirPath, String remotePath) throws Exception {
@@ -1145,7 +1174,13 @@ public class ServerService {
         }
     }
 
-    public void executeLynisResultStr(String resultStr, Server server, LoginUser loginUser) throws Exception {
+    public void deleteLynisResultDetail(ServerLynisResultWithBLOBs serverLynisResultWithBLOBs) throws Exception {
+        ServerLynisResultDetailExample detailExample = new ServerLynisResultDetailExample();
+        detailExample.createCriteria().andLynisIdEqualTo(serverLynisResultWithBLOBs.getId());
+        serverLynisResultDetailMapper.deleteByExample(detailExample);
+    }
+
+    public void executeLynisResultStr(String resultStr, ServerLynisResultWithBLOBs serverLynisResultWithBLOBs, LoginUser loginUser) throws Exception {
 
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
@@ -1158,7 +1193,7 @@ public class ServerService {
                     resultStr = resultStr.replaceAll("\\[" + i + "C", space);//间隔
                     space = space + "&nbsp;";
                 }
-                String lynisId = UUIDUtil.newUUID();
+                String lynisId = serverLynisResultWithBLOBs.getId();
                 long hardeningIndex = 0, pluginsEnabled= 0, testsPerformed = 0;
                 String[] twoStr = resultStr.split("================================================================================");
                 String str1 = twoStr[0];
@@ -1284,21 +1319,14 @@ public class ServerService {
                     order++;
                 }
 
-                ServerLynisResultWithBLOBs serverLynisResultWithBLOBs = new ServerLynisResultWithBLOBs();
-                serverLynisResultWithBLOBs.setId(lynisId);
                 serverLynisResultWithBLOBs.setReturnLog(resultStr);
                 serverLynisResultWithBLOBs.setLynisLog(lynisLog);
-                serverLynisResultWithBLOBs.setServerId(server.getId());
-                serverLynisResultWithBLOBs.setServerName(server.getName());
-                serverLynisResultWithBLOBs.setPluginIcon(server.getPluginIcon());
                 serverLynisResultWithBLOBs.setHardeningIndex(hardeningIndex);
                 serverLynisResultWithBLOBs.setPluginsEnabled(pluginsEnabled);
                 serverLynisResultWithBLOBs.setTestsPerformed(testsPerformed);
-                serverLynisResultWithBLOBs.setCreateTime(System.currentTimeMillis());
                 serverLynisResultWithBLOBs.setUpdateTime(System.currentTimeMillis());
-                serverLynisResultWithBLOBs.setApplyUser("admin");
                 serverLynisResultWithBLOBs.setResultStatus(CloudTaskConstants.TASK_STATUS.FINISHED.toString());
-                serverLynisResultMapper.insertSelective(serverLynisResultWithBLOBs);
+                serverLynisResultMapper.updateByPrimaryKey(serverLynisResultWithBLOBs);
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
