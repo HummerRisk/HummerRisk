@@ -473,6 +473,10 @@ export default {
       }
     },
     saveAccount() {
+      if (!this.form.name) {
+        this.$warning(this.$t('vuln.no_plugin_param') + this.$t('reportcenter.report_name'));
+        return;
+      }
       let params = {};
       params.name = this.form.name;
       params.list = this.selectAccounts;
@@ -483,6 +487,10 @@ export default {
       });
     },
     updateAccount() {
+      if (!this.form.name) {
+        this.$warning(this.$t('vuln.no_plugin_param') + this.$t('reportcenter.report_name'));
+        return;
+      }
       let params = {};
       params.id = this.reportResultId;
       params.name = this.form.name;
