@@ -1911,6 +1911,7 @@ export default {
     report_delete: '刪除報告',
     report_download: '下載報告',
     report_gen: '生成報告',
+    report_gen_history: '歷史生成報告',
     report_name: '報告名稱',
     report_status: '報告生成狀態',
     download_number: '下載報告次數',

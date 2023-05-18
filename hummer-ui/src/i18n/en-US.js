@@ -1911,6 +1911,7 @@ export default {
     report_delete: 'Delete report',
     report_download: 'Download report',
     report_gen: 'Generate report',
+    report_gen_history: 'History Generation Report',
     report_name: 'Report name',
     report_status: 'Report generation status',
     download_number: 'Number of download reports',

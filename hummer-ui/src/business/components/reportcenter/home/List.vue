@@ -114,6 +114,13 @@
     </el-drawer>
     <!--Update report-->
 
+    <!--history report-->
+    <el-drawer class="rtl" :title="$t('reportcenter.report_gen_history')" :visible.sync="historyVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" v-loading="viewResult.loading">
+
+    </el-drawer>
+    <!--history report-->
+
   </main-container>
 </template>
 
@@ -132,9 +139,11 @@ import {
   createReportUrl,
   deleteReportsUrl,
   deleteReportUrl,
-  downloadReportUrl, generatorReportUrl,
+  downloadReportUrl,
+  generatorReportUrl,
   getReportUrl,
-  reportListUrl
+  reportListUrl,
+  updateReportUrl
 } from "@/api/xpack/report";
 import Account from "@/business/components/reportcenter/home/Account";
 import {saveAs} from "@/common/js/FileSaver";
@@ -211,6 +220,7 @@ export default {
       loading: false,
       createVisible: false,
       updateVisible: false,
+      historyVisible: false,
       item: {},
       form: {},
       direction: 'rtl',
@@ -308,6 +318,7 @@ export default {
       this.updateVisible =  false;
       this.logVisible=false;
       this.detailVisible=false;
+      this.historyVisible = false;
     },
     handleDelete(obj) {
       this.$alert(this.$t('commons.delete_confirm') + obj.name + " ？", '', {
