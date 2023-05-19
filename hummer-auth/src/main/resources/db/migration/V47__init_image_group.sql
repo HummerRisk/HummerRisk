@@ -15,6 +15,8 @@ ALTER TABLE `image` ADD `group_id` varchar(50) DEFAULT NULL COMMENT '分组Id';
 
 UPDATE `image` SET group_id = 'd661se75-1r8c-2s54-cbe6-351sd29e91ff';
 
+ALTER TABLE `image` ADD `repo_item_id` varchar(50) DEFAULT NULL COMMENT '镜像仓库中同步的镜像Id';
+
 ALTER TABLE `server_result` modify COLUMN `command` mediumtext DEFAULT NULL COMMENT 'command';
 
 CREATE TABLE IF NOT EXISTS `server_lynis_result`
@@ -50,3 +52,4 @@ CREATE TABLE IF NOT EXISTS `server_lynis_result_detail` (
 ALTER TABLE `hummer_license` ADD `status` varchar(50) DEFAULT NULL COMMENT 'valid、invalid、expired，分别代表：有效、无效、已过期';
 
 ALTER TABLE `hummer_license` ADD `message` text DEFAULT NULL COMMENT 'message 提示告警信息';
+

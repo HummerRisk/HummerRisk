@@ -284,6 +284,7 @@ public class ImageService {
                     request.setImageTag(item.getTag());
                     request.setSize(item.getSize());
                     request.setRepoId(imageRepo.getId());
+                    request.setRepoItemId(item.getId());
                     request.setIsImageRepo(true);//是否绑定镜像仓库
                     imageMapper.updateByPrimaryKeySelective(request);
                 } else {
@@ -311,6 +312,7 @@ public class ImageService {
                     request.setImageUrl(item.getPath().replace(":" + item.getTag(), ""));
                     request.setImageTag(item.getTag());
                     request.setSize(item.getSize());
+                    request.setRepoItemId(item.getId());
                     Sbom sbom = sbomMapper.selectByExample(null).get(0);
                     request.setSbomId(sbom.getId());
                     SbomVersionExample sbomVersionExample = new SbomVersionExample();
@@ -374,6 +376,7 @@ public class ImageService {
             request.setPluginIcon("docker.png");
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
                 ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
+                request.setRepoItemId(imageRepoItem.getId());
                 request.setImageUrl(imageRepoItem.getPath().replace(":" + imageRepoItem.getTag(), ""));
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
@@ -381,7 +384,13 @@ public class ImageService {
             if (tarFile != null) {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
                 request.setPath(tarFilePath);
+                request.setRepoItemId("");
                 request.setSize(changeFlowFormat(tarFile.getSize()));
+            }
+
+            if (!request.getIsImageRepo()) {
+                request.setRepoId("");
+                request.setRepoItemId("");
             }
 
             imageMapper.insertSelective(request);
@@ -403,16 +412,19 @@ public class ImageService {
             request.setPluginIcon("docker.png");
             if (StringUtils.equalsIgnoreCase(request.getType(), "repo")) {
                 ImageRepoItem imageRepoItem = imageRepoItemMapper.selectByPrimaryKey(request.getRepoItemId());
+                request.setRepoItemId(imageRepoItem.getId());
                 request.setImageUrl(imageRepoItem.getPath().replace(":" + imageRepoItem.getTag(), ""));
                 request.setImageTag(imageRepoItem.getTag());
                 request.setSize(imageRepoItem.getSize());
             }
             if (tarFile != null) {
                 String tarFilePath = upload(tarFile, ImageConstants.DEFAULT_BASE_DIR);
+                request.setRepoItemId("");
                 request.setPath(tarFilePath);
             }
             if (!request.getIsImageRepo()) {
                 request.setRepoId("");
+                request.setRepoItemId("");
             }
 
             imageMapper.updateByPrimaryKeySelective(request);

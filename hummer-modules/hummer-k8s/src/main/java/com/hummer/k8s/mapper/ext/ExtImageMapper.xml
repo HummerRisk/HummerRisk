@@ -106,6 +106,7 @@
         <result column="unfixed" jdbcType="TINYINT" property="unfixed" />
         <result column="serverty" jdbcType="VARCHAR" property="serverty" />
         <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+        <result column="repo_item_id" jdbcType="VARCHAR" property="repoItemId" />
         <!-- image result -->
         <result column="result_id" jdbcType="VARCHAR" property="resultId" />
         <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
