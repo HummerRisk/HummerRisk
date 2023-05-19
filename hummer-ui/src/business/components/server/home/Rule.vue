@@ -79,6 +79,12 @@
             <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
           </template>
         </el-table-column>
+        <el-table-column :label="$t('commons.is_xpack')" v-if="checkedColumnNames.includes('isXpack')" min-width="120" show-overflow-tooltip>
+          <template v-slot:default="scope">
+            <span v-if="scope.row.xpackTag">{{ $t('commons.yes') }}</span>
+            <span v-if="!scope.row.xpackTag">{{ $t('commons.no') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column min-width="100" :label="$t('commons.operating')">
           <template v-slot:default="scope">
             <table-operators :buttons="buttons" :row="scope.row"/>
@@ -317,6 +323,11 @@ const columnOptions = [
   {
     label: 'package.last_modified',
     props: 'lastModified',
+    disabled: false
+  },
+  {
+    label: 'commons.is_xpack',
+    props: 'isXpack',
     disabled: false
   },
 ];

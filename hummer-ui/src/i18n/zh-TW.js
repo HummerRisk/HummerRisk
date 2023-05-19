@@ -255,6 +255,9 @@ export default {
     put_away: '收起',
     rescan: '重測',
     expired: '已過期',
+    is_xpack: '是否為 XPACK',
+    yes: '是',
+    no: '否',
   },
   workspace: {
     create: '創建工作空間',

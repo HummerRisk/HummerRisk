@@ -255,6 +255,9 @@ export default {
     put_away: 'Put',
     rescan: 'Rescan',
     expired: 'Expired',
+    is_xpack: 'Whether it is XPACK',
+    yes: 'Yes',
+    no: 'No',
   },
   workspace: {
     create:'Create a workspace',

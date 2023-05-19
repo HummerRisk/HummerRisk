@@ -23,6 +23,9 @@
                         <i class="el-icon-picture-outline"></i>
                       </div>
                     </el-image>
+                    <div v-if="data.xpackTag" style="writing-mode: tb-rl;margin-top: 5px;font-size: 12px;color: green;">
+                      {{ 'XPACK' }}
+                    </div>
                   </el-col>
                   <el-col :span="21">
                     <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">
@@ -108,6 +111,12 @@
               <el-tag size="mini" type="success" v-else-if="scope.row.flag === false">
                 {{ $t('rule.tag_flag_false') }}
               </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('commons.is_xpack')" v-if="checkedColumnNames.includes('isXpack')" min-width="120" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-if="scope.row.xpackTag">{{ $t('commons.yes') }}</span>
+              <span v-if="!scope.row.xpackTag">{{ $t('commons.no') }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="level" v-if="checkedColumnNames.includes('level')" :label="$t('resource.equal_guarantee_level')" min-width="140" show-overflow-tooltip></el-table-column>
@@ -361,6 +370,12 @@
               <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
             </template>
           </el-table-column>
+          <el-table-column :label="$t('commons.is_xpack')" v-if="checkedColumnNames2.includes('isXpack')" min-width="120" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-if="scope.row.xpackTag">{{ $t('commons.yes') }}</span>
+              <span v-if="!scope.row.xpackTag">{{ $t('commons.no') }}</span>
+            </template>
+          </el-table-column>
         </hide-table>
         <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
       </el-drawer>
@@ -407,6 +422,12 @@
           <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
             <template v-slot:default="scope">
               <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('commons.is_xpack')" v-if="checkedColumnNames2.includes('isXpack')" min-width="120" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              <span v-if="scope.row.xpackTag">{{ $t('commons.yes') }}</span>
+              <span v-if="!scope.row.xpackTag">{{ $t('commons.no') }}</span>
             </template>
           </el-table-column>
         </hide-table>
@@ -533,6 +554,11 @@ const columnOptions = [
     props: 'level',
     disabled: false
   },
+  {
+    label: 'commons.is_xpack',
+    props: 'isXpack',
+    disabled: false
+  },
 ];
 
 const columnOptions2 = [
@@ -564,6 +590,11 @@ const columnOptions2 = [
   {
     label: 'rule.last_modified',
     props: 'lastModified',
+    disabled: false
+  },
+  {
+    label: 'commons.is_xpack',
+    props: 'isXpack',
     disabled: false
   },
 ];
