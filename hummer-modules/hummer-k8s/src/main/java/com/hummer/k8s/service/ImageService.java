@@ -19,12 +19,18 @@ import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.aliyun.AliyunCredential;
+import com.hummer.common.core.proxy.tencent.QCloudCredential;
 import com.hummer.common.core.utils.*;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.*;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
+import com.tencentcloudapi.common.Credential;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
+import com.tencentcloudapi.tcr.v20190924.TcrClient;
+import com.tencentcloudapi.tcr.v20190924.models.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,7 +247,13 @@ public class ImageService {
                     if(m.find()){
                         region =  m.group();
                     }else{
-                        throw new RuntimeException("wrong repository address");
+                        p=Pattern.compile("(?<=registry.).*?(?=.cr.aliyuncs)");
+                        m=p.matcher( url);
+                        if(m.find()){
+                            region =  m.group();
+                        }else{
+                            throw new RuntimeException("wrong repository address");
+                        }
                     }
                     String accountId = imageRepo.getAccountId();
                     AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
@@ -287,7 +299,65 @@ public class ImageService {
                     System.out.println("code: " + e.getErrCode());
                     System.out.println("message: " + e.getErrMsg());
                 }
-            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
+            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "qcloud.png")){
+                //腾讯云同步
+                String url = imageRepo.getRepo();
+                if (url.endsWith("/")) {
+                    url = url.substring(0, url.length() - 1);
+                }
+                String accountId = imageRepo.getAccountId();
+                AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+                QCloudCredential qCloudCredential = JSON.parseObject(accountWithBLOBs.getCredential(),QCloudCredential.class);
+
+                Credential cred = new Credential(qCloudCredential.getSecretId(), qCloudCredential.getSecretKey());
+                // 实例化一个http选项，可选的，没有特殊需求可以跳过
+                HttpProfile httpProfile = new HttpProfile();
+                httpProfile.setEndpoint("tcr.tencentcloudapi.com");
+                // 实例化一个client选项，可选的，没有特殊需求可以跳过
+                ClientProfile clientProfile = new ClientProfile();
+                clientProfile.setHttpProfile(httpProfile);
+                String[] supportRegions = {"ap-bangkok", "ap-beijing", "ap-chengdu", "ap-chongqing", "ap-guangzhou", "ap-hongkong", "ap-jakarta", "ap-mumbai"
+                        , "ap-nanjing", "ap-seoul", "ap-shanghai", "ap-shanghai-fsi", "ap-shenzhen-fsi", "ap-singapore", "ap-tokyo", "eu-frankfurt"
+                        , "na-ashburn", "na-siliconvalley", "sa-saopaulo"};
+                for (String supportRegion : supportRegions) {
+                    // 实例化要请求产品的client对象,clientProfile是可选的
+                    TcrClient client = new TcrClient(cred, supportRegion , clientProfile);
+                    // 实例化一个请求对象,每个接口都会对应一个request对象
+                    DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest();
+                    describeInstancesRequest.setLimit(1000L);
+                    DescribeInstancesResponse describeInstancesResponse = client.DescribeInstances(describeInstancesRequest);
+                    Registry[] registries = describeInstancesResponse.getRegistries();
+                    for(Registry registry:registries){
+                        DescribeRepositoriesRequest req = new DescribeRepositoriesRequest();
+                        // 返回的resp是一个DescribeEventsResponse的实例，与请求对象对应
+                        req.setLimit(1000L);
+                        req.setRegistryId(registry.getRegistryId());
+                        DescribeRepositoriesResponse describeRepositoriesResponse = client.DescribeRepositories(req);
+                        TcrRepositoryInfo[] repositoryList = describeRepositoriesResponse.getRepositoryList();
+                        for(TcrRepositoryInfo tcrRepositoryInfo:repositoryList){
+                            DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest();
+                            describeImagesRequest.setLimit(1000L);
+                            describeImagesRequest.setRegistryId(registry.getRegistryId());
+                            describeImagesRequest.setNamespaceName(tcrRepositoryInfo.getNamespace());
+                            describeImagesRequest.setRepositoryName(tcrRepositoryInfo.getName());
+                            DescribeImagesResponse describeImagesResponse = client.DescribeImages(describeImagesRequest);
+                            TcrImageInfo[] imageInfoList = describeImagesResponse.getImageInfoList();
+                            for(TcrImageInfo tcrImageInfo:imageInfoList){
+                                String path = url.replaceAll("https://", "").replaceAll("http://", "") + "/" + tcrRepositoryInfo.getName() + ":" + tcrImageInfo.getImageVersion();
+                                ImageRepoItem imageRepoItem = new ImageRepoItem();
+                                imageRepoItem.setId(UUIDUtil.newUUID());
+                                imageRepoItem.setRepository(tcrRepositoryInfo.getName());
+                                imageRepoItem.setTag(tcrImageInfo.getImageVersion());
+                                imageRepoItem.setDigest(tcrImageInfo.getDigest());
+                                imageRepoItem.setProject(tcrRepositoryInfo.getNamespace());
+                                imageRepoItem.setSize(changeFlowFormat(tcrImageInfo.getSize()));
+                                imageRepoItem.setPath(path);
+                                imageRepoItemMapper.insertSelective(imageRepoItem);
+                            }
+                        }
+                    }
+                }
+            }else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
                 return true;
             }
             imageRepoSyncLog.setRepoId(imageRepo.getId());
