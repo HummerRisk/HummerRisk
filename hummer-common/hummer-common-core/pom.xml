@@ -525,6 +525,11 @@
             <version>3.1.558</version>
         </dependency>
         <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java-tcr</artifactId>
+            <version>3.1.558</version>
+        </dependency>
+        <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
             <version>5.6.115</version>
