@@ -92,6 +92,7 @@
         <result column="user_name" jdbcType="VARCHAR" property="userName" />
         <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
         <result column="password" jdbcType="LONGVARCHAR" property="password" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
     </resultMap>
 
     <select id="imageRepoList" resultMap="imageRepoListBaseResultMap">

@@ -64,7 +64,7 @@
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('image.image_repo_name')"/>
           </el-form-item>
           <el-form-item :label="$t('image.image_repo_type')" :rules="{required: true, message: $t('image.image_repo_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginIcon" :placeholder="$t('image.image_repo_type')" @change="this.selectAccount">
               <el-option
                 v-for="item in plugins"
                 :key="item.value"
@@ -72,6 +72,18 @@
                 :value="item.value">
                 <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
                 &nbsp;&nbsp; {{ item.id }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-show = "form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png'" :label="$t('account.cloud_account')" ref="accountId" prop="accountId">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.accountId" :placeholder="$t('account.cloud_account')" >
+              <el-option
+                v-for="item in accounts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                <img :src="require(`@/assets/img/repo/${item.pluginIcon}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -112,6 +124,18 @@
                 :value="item.value">
                 <img :src="require(`@/assets/img/repo/${item.value}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
                 &nbsp;&nbsp; {{ item.id }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-show = "form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png'" :label="$t('account.cloud_account')" ref="accountId" prop="accountId">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.accountId" :placeholder="$t('account.cloud_account')" >
+              <el-option
+                v-for="item in accounts"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                <img :src="require(`@/assets/img/repo/${item.pluginIcon}`)" style="width: 20px; height: 16px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
               </el-option>
             </el-select>
           </el-form-item>
@@ -373,6 +397,7 @@ import {
 } from "@/api/k8s/image/image";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 import {proxyListAllUrl} from "@/api/system/system";
+import {accountListUrl, allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -479,6 +504,8 @@ export default {
       tableData: [],
       form: {},
       direction: 'rtl',
+      accounts:[],
+      allAccounts:[],
       rule: {
         name: [
           {required: true, message: this.$t('commons.input_name'), trigger: 'blur'},
@@ -527,6 +554,8 @@ export default {
         {value: 'harbor.png', id: "Harbor"},
         {value: 'dockerhub.png', id: "DockerHub"},
         {value: 'nexus.png', id: "Nexus"},
+        {value: 'aliyun.png', id: "Aliyun"},
+        {value: 'qcloud.png', id: "Tencent"},
         {value: 'other.png', id: "Other"},
       ],
       imageData: [],
@@ -649,12 +678,21 @@ export default {
         this.selectIds.add(s.id)
       });
     },
+    selectAllAccount(){
+      this.$get(allListUrl, response => {
+        this.allAccounts = response.data;
+      });
+    },
+    selectAccount(){
+      this.accounts = this.allAccounts.filter(item => { return item.pluginIcon === this.form.pluginIcon});
+    },
     filterStatus(value, row) {
       return row.status === value;
     },
     handleEdit(row) {
       this.updateVisible = true;
       this.form = row;
+      this.selectAccount()
     },
     search() {
       this.result = this.$post(this.buildPagePath(imageRepoListUrl), this.condition, response => {
@@ -884,6 +922,7 @@ export default {
     this.selectIds.clear();
     this.search();
     this.initSboms();
+    this.selectAllAccount()
   }
 }
 </script>

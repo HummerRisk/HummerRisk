@@ -19,6 +19,8 @@ public class ImageRepo implements Serializable {
      *
      * @mbg.generated Tue Mar 14 11:30:39 CST 2023
      */
+
+    private String accountId;
     private String name;
 
     /**
@@ -111,6 +113,14 @@ public class ImageRepo implements Serializable {
      */
     public String getId() {
         return id;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     /**

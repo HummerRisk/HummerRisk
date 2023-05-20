@@ -3,6 +3,14 @@ package com.hummer.k8s.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.cr.model.v20160607.GetImageLayerRequest;
+import com.aliyuncs.cr.model.v20160607.GetRepoListRequest;
+import com.aliyuncs.cr.model.v20160607.GetRepoTagsRequest;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.http.HttpResponse;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
@@ -10,6 +18,7 @@ import com.hummer.common.core.domain.request.image.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
+import com.hummer.common.core.proxy.aliyun.AliyunCredential;
 import com.hummer.common.core.utils.*;
 import com.hummer.k8s.mapper.*;
 import com.hummer.k8s.mapper.ext.*;
@@ -28,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author harris
@@ -217,6 +228,64 @@ public class ImageService {
                         imageRepoItemMapper.insertSelective(imageRepoItem);
                         i++;
                     }
+                }
+            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "aliyun.png")) {
+                try {
+                    String url = imageRepo.getRepo();
+                    if (url.endsWith("/")) {
+                        url = url.substring(0, url.length() - 1);
+                    }
+                    Pattern p=Pattern.compile("(?<=registry.).*?(?=.aliyuncs)");
+                    Matcher m=p.matcher( url);
+                    String region = "";
+                    if(m.find()){
+                        region =  m.group();
+                    }else{
+                        throw new RuntimeException("wrong repository address");
+                    }
+                    String accountId = imageRepo.getAccountId();
+                    AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+                    AliyunCredential aliyunCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AliyunCredential.class);
+                    // 设置Client
+                    DefaultProfile.addEndpoint(region, region, "cr", "cr."+region+".aliyuncs.com");
+                    IClientProfile profile = DefaultProfile.getProfile(region, aliyunCredential.getAccessKey(), aliyunCredential.getSecretKey());
+                    DefaultAcsClient client = new DefaultAcsClient(profile);
+                    // 构造请求
+                    GetRepoListRequest request = new GetRepoListRequest();
+                    // 设置参数
+                    // 发起请求
+                    HttpResponse repoResponse = client.doAction(request);
+                    String repoStr = new String(repoResponse.getHttpContent());
+                    JSONObject repoObj = JSONObject.parseObject(repoStr);
+                    JSONArray repoArr = repoObj.getJSONObject("data").getJSONArray("repos");
+                    for(int j = 0;j<repoArr.size();j++){
+                        JSONObject repo = repoArr.getJSONObject(j);
+                        String repoNameSpace = repo.getString("repoNamespace");
+                        String repoName = repo.getString("repoName");
+                        GetRepoTagsRequest tagRequest = new GetRepoTagsRequest();
+                        tagRequest.setRepoNamespace(repoNameSpace);
+                        tagRequest.setRepoName(repoName);
+                        HttpResponse tagResponse = client.doAction(tagRequest);
+                        JSONObject tagResultObj = JSONObject.parseObject(new String(tagResponse.getHttpContent()));
+                        JSONArray tagArr = tagResultObj.getJSONObject("data").getJSONArray("tags");
+                        for(int k = 0;k < tagArr.size();k++){
+                            JSONObject tag = tagArr.getJSONObject(k);
+                            String path = url.replaceAll("https://", "").replaceAll("http://", "")
+                                    +"/"+repoNameSpace+"/"+repoName+":"+tag.getString("tag");
+                            ImageRepoItem imageRepoItem = new ImageRepoItem();
+                            imageRepoItem.setId(UUIDUtil.newUUID());
+                            imageRepoItem.setRepository(repoName);
+                            imageRepoItem.setTag(tag.getString("tag"));
+                            imageRepoItem.setRepoId(imageRepo.getId());
+                            imageRepoItem.setDigest(tag.getString("digest"));
+                            imageRepoItem.setProject(repoNameSpace);
+                            imageRepoItem.setPath(path);
+                            imageRepoItemMapper.insertSelective(imageRepoItem);
+                        }
+                    }
+                } catch (ClientException e) {
+                    System.out.println("code: " + e.getErrCode());
+                    System.out.println("message: " + e.getErrMsg());
                 }
             } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
                 return true;

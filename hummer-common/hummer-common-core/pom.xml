@@ -428,6 +428,11 @@
             <version>4.24.22</version>
         </dependency>
         <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-cr</artifactId>
+            <version>4.1.5</version>
+        </dependency>
+        <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>3.15.2</version>
