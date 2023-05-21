@@ -84,39 +84,38 @@ public class ResourceCreateService {
                     }
                 });
             });
+        }
 
-            final ServerLynisResultExample serverLynisResultExample = new ServerLynisResultExample();
-            ServerLynisResultExample.Criteria serverLynisResultCriteria = serverLynisResultExample.createCriteria();
-            serverLynisResultCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
-            if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-                serverLynisResultCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
-            }
-            serverLynisResultExample.setOrderByClause("create_time limit 1");
-            List<ServerLynisResultWithBLOBs> serverLynisResultWithBLOBs = serverLynisResultMapper.selectByExampleWithBLOBs(serverLynisResultExample);
-            if (CollectionUtils.isNotEmpty(serverLynisResultWithBLOBs)) {
-                serverLynisResultWithBLOBs.forEach(serverLynisResult -> {
-                    final ServerLynisResultWithBLOBs serverLynisToBeProceed;
+        final ServerLynisResultExample serverLynisResultExample = new ServerLynisResultExample();
+        ServerLynisResultExample.Criteria serverLynisResultCriteria = serverLynisResultExample.createCriteria();
+        serverLynisResultCriteria.andResultStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
+        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
+            serverLynisResultCriteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+        }
+        serverLynisResultExample.setOrderByClause("create_time limit 1");
+        List<ServerLynisResultWithBLOBs> serverLynisResultWithBLOBs = serverLynisResultMapper.selectByExampleWithBLOBs(serverLynisResultExample);
+        if (CollectionUtils.isNotEmpty(serverLynisResultWithBLOBs)) {
+            serverLynisResultWithBLOBs.forEach(serverLynisResult -> {
+                final ServerLynisResultWithBLOBs serverLynisToBeProceed;
+                try {
+                    serverLynisToBeProceed = BeanUtils.copyBean(new ServerLynisResultWithBLOBs(), serverLynisResult);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                if (processingGroupIdMap.get(serverLynisToBeProceed.getId()) != null) {
+                    return;
+                }
+                processingGroupIdMap.put(serverLynisToBeProceed.getId(), serverLynisToBeProceed.getId());
+                commonThreadPool.addTask(() -> {
                     try {
-                        serverLynisToBeProceed = BeanUtils.copyBean(new ServerLynisResultWithBLOBs(), serverLynisResult);
+                        serverService.scanLynis(serverLynisResult, null);
                     } catch (Exception e) {
-                        throw new RuntimeException(e.getMessage());
+                        LogUtil.error(e.getMessage());
+                    } finally {
+                        processingGroupIdMap.remove(serverLynisResult.getId());
                     }
-                    if (processingGroupIdMap.get(serverLynisToBeProceed.getId()) != null) {
-                        return;
-                    }
-                    processingGroupIdMap.put(serverLynisToBeProceed.getId(), serverLynisToBeProceed.getId());
-                    commonThreadPool.addTask(() -> {
-                        try {
-                            serverService.scanLynis(serverLynisResult, null);
-                        } catch (Exception e) {
-                            LogUtil.error(e.getMessage());
-                        } finally {
-                            processingGroupIdMap.remove(serverLynisResult.getId());
-                        }
-                    });
                 });
-            }
-
+            });
         }
     }
 
