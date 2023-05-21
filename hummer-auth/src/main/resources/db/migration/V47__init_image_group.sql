@@ -53,3 +53,4 @@ ALTER TABLE `hummer_license` ADD `status` varchar(50) DEFAULT NULL COMMENT 'vali
 
 ALTER TABLE `hummer_license` ADD `message` text DEFAULT NULL COMMENT 'message 提示告警信息';
 
+ALTER TABLE `image_repo` ADD `account_id` varchar(64) DEFAULT NULL COMMENT '云账号ID';
