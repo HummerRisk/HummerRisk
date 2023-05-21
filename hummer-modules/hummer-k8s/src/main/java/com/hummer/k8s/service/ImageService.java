@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.cr.model.v20160607.GetImageLayerRequest;
 import com.aliyuncs.cr.model.v20160607.GetRepoListRequest;
 import com.aliyuncs.cr.model.v20160607.GetRepoTagsRequest;
 import com.aliyuncs.exceptions.ClientException;
@@ -392,7 +391,7 @@ public class ImageService {
             example.createCriteria().andRepoIdEqualTo(imageRepo.getId());
             List<ImageRepoItem> imageRepoItems = imageRepoItemMapper.selectByExample(example);
             for (ImageRepoItem item : imageRepoItems) {
-                String groupName = item.getRepository();
+                String groupName = item.getProject();
                 ImageGroupExample imageGroupExample = new ImageGroupExample();
                 imageGroupExample.createCriteria().andNameEqualTo(groupName);
                 List<ImageGroup> imageGroups = imageGroupMapper.selectByExample(imageGroupExample);
@@ -411,8 +410,17 @@ public class ImageService {
                     imageGroupMapper.insertSelective(imageGroup);
                 }
 
+                String imageName = item.getPath().replace(":" + item.getTag(), "");
+                String name = "";
+                if (imageName.contains("/")) {
+                    String[] str = imageName.split("/");
+                    name = str[str.length - 1];
+                } else {
+                    name = imageName;
+                }
+
                 ImageExample imageExample = new ImageExample();
-                imageExample.createCriteria().andNameEqualTo(item.getPath().replace(":" + item.getTag(), "")).andGroupIdEqualTo(groupId);
+                imageExample.createCriteria().andNameEqualTo(name).andGroupIdEqualTo(groupId);
                 List<Image> images = imageMapper.selectByExample(imageExample);
                 if (images.size() > 0) {
                     Image request = images.get(0);
@@ -432,14 +440,6 @@ public class ImageService {
                     request.setId(id);
                     request.setIsImageRepo(true);//是否绑定镜像仓库
                     request.setRepoId(imageRepo.getId());
-                    String imageName = item.getPath().replace(":" + item.getTag(), "");
-                    String name = "";
-                    if (imageName.contains("/")) {
-                        String[] str = imageName.split("/");
-                        name = str[str.length - 1];
-                    } else {
-                        name = imageName;
-                    }
                     request.setName(name);
                     request.setGroupId(groupId);//镜像分组
                     request.setStatus("VALID");
