@@ -125,7 +125,7 @@ public class ImageService {
         if(imageRepo.getIsBindAccount()){
             String accountId = imageRepo.getAccountId();
             AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-            imageRepo.setCredencial(accountWithBLOBs.getCredential());
+            imageRepo.setCredential(accountWithBLOBs.getCredential());
         }
         boolean result = syncImages(imageRepo, loginUser);
         if (result) {
@@ -263,13 +263,13 @@ public class ImageService {
                     if(imageRepo.getIsBindAccount()){
                         String accountId = imageRepo.getAccountId();
                         AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                        if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredencial())){
-                            aliyunCredential = JSON.parseObject(imageRepo.getCredencial(),AliyunCredential.class);
+                        if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())){
+                            aliyunCredential = JSON.parseObject(imageRepo.getCredential(),AliyunCredential.class);
                         }else {
                             aliyunCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AliyunCredential.class);
                         }
                     }else{
-                        aliyunCredential = JSON.parseObject(imageRepo.getCredencial(),AliyunCredential.class);
+                        aliyunCredential = JSON.parseObject(imageRepo.getCredential(),AliyunCredential.class);
                     }
                        // 设置Client
                     DefaultProfile.addEndpoint(region, region, "cr", "cr."+region+".aliyuncs.com");
@@ -322,13 +322,13 @@ public class ImageService {
                 if(imageRepo.getIsBindAccount()){
                     String accountId = imageRepo.getAccountId();
                     AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                    if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredencial())) {
-                        qCloudCredential = JSON.parseObject(imageRepo.getCredencial(),QCloudCredential.class);
+                    if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())) {
+                        qCloudCredential = JSON.parseObject(imageRepo.getCredential(),QCloudCredential.class);
                     }else{
                         qCloudCredential = JSON.parseObject(accountWithBLOBs.getCredential(),QCloudCredential.class);
                     }
                 }else{
-                    qCloudCredential = JSON.parseObject(imageRepo.getCredencial(),QCloudCredential.class);
+                    qCloudCredential = JSON.parseObject(imageRepo.getCredential(),QCloudCredential.class);
                 }
                 Credential cred = new Credential(qCloudCredential.getSecretId(), qCloudCredential.getSecretKey());
                 // 实例化一个http选项，可选的，没有特殊需求可以跳过
@@ -494,7 +494,7 @@ public class ImageService {
         if(imageRepo.getIsBindAccount()){
             String accountId = imageRepo.getAccountId();
             AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-            imageRepo.setCredencial(accountWithBLOBs.getCredential());
+            imageRepo.setCredential(accountWithBLOBs.getCredential());
         }
         boolean result = syncImages(imageRepo, loginUser);
 

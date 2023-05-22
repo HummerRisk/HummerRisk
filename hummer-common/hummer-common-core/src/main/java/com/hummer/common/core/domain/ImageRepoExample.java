@@ -1005,73 +1005,73 @@ public class ImageRepoExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andCredencialIsNull() {
-            addCriterion("credencial is null");
+        public Criteria andCredentialIsNull() {
+            addCriterion("credential is null");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialIsNotNull() {
-            addCriterion("credencial is not null");
+        public Criteria andCredentialIsNotNull() {
+            addCriterion("credential is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialEqualTo(String value) {
-            addCriterion("credencial =", value, "credencial");
+        public Criteria andCredentialEqualTo(String value) {
+            addCriterion("credential =", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialNotEqualTo(String value) {
-            addCriterion("credencial <>", value, "credencial");
+        public Criteria andCredentialNotEqualTo(String value) {
+            addCriterion("credential <>", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialGreaterThan(String value) {
-            addCriterion("credencial >", value, "credencial");
+        public Criteria andCredentialGreaterThan(String value) {
+            addCriterion("credential >", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialGreaterThanOrEqualTo(String value) {
-            addCriterion("credencial >=", value, "credencial");
+        public Criteria andCredentialGreaterThanOrEqualTo(String value) {
+            addCriterion("credential >=", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialLessThan(String value) {
-            addCriterion("credencial <", value, "credencial");
+        public Criteria andCredentialLessThan(String value) {
+            addCriterion("credential <", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialLessThanOrEqualTo(String value) {
-            addCriterion("credencial <=", value, "credencial");
+        public Criteria andCredentialLessThanOrEqualTo(String value) {
+            addCriterion("credential <=", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialLike(String value) {
-            addCriterion("credencial like", value, "credencial");
+        public Criteria andCredentialLike(String value) {
+            addCriterion("credential like", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialNotLike(String value) {
-            addCriterion("credencial not like", value, "credencial");
+        public Criteria andCredentialNotLike(String value) {
+            addCriterion("credential not like", value, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialIn(List<String> values) {
-            addCriterion("credencial in", values, "credencial");
+        public Criteria andCredentialIn(List<String> values) {
+            addCriterion("credential in", values, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialNotIn(List<String> values) {
-            addCriterion("credencial not in", values, "credencial");
+        public Criteria andCredentialNotIn(List<String> values) {
+            addCriterion("credential not in", values, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialBetween(String value1, String value2) {
-            addCriterion("credencial between", value1, value2, "credencial");
+        public Criteria andCredentialBetween(String value1, String value2) {
+            addCriterion("credential between", value1, value2, "credential");
             return (Criteria) this;
         }
 
-        public Criteria andCredencialNotBetween(String value1, String value2) {
-            addCriterion("credencial not between", value1, value2, "credencial");
+        public Criteria andCredentialNotBetween(String value1, String value2) {
+            addCriterion("credential not between", value1, value2, "credential");
             return (Criteria) this;
         }
     }

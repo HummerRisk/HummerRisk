@@ -721,10 +721,10 @@ export default {
       console.log(row)
       this.updateVisible = true;
       this.form = row;
-      if(!!row.credencial&&row.pluginIcon === 'aliyun.png'){
-        this.form.ak = JSON.parse(row.credencial).accessKey
-      }else if(!!row.credencial&&row.pluginIcon === 'qcloud.png'){
-        this.form.ak = JSON.parse(row.credencial).secretId
+      if(!!row.credential&&row.pluginIcon === 'aliyun.png'){
+        this.form.ak = JSON.parse(row.credential).accessKey
+      }else if(!!row.credential&&row.pluginIcon === 'qcloud.png'){
+        this.form.ak = JSON.parse(row.credential).secretId
       }
       this.selectAccount()
     },
@@ -749,10 +749,10 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           if(this.form.pluginIcon === "aliyun.png"&&!this.form.isBindAccount){
-            this.form.credencial = '{"accessKey":"'+this.form.ak+'","secretKey":"'+this.form.sk+'"}'
+            this.form.credential = '{"accessKey":"'+this.form.ak+'","secretKey":"'+this.form.sk+'"}'
           }
           if(this.form.pluginIcon === "qcloud.png"&&!this.form.isBindAccount){
-            this.form.credencial = '{"secretId":"'+this.form.ak+'","secretKey":"'+this.form.sk+'","APPID":""}'
+            this.form.credential = '{"secretId":"'+this.form.ak+'","secretKey":"'+this.form.sk+'","APPID":""}'
           }
           this.viewResult = this.$post(editImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
@@ -768,10 +768,10 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           if(this.form.pluginIcon === "aliyun.png"&&!this.form.isBindAccount){
-            this.form.credencial = '{"accessKey":"'+this.form.ak+'","secretKey":"'+this.form.sk+'"}'
+            this.form.credential = '{"accessKey":"'+this.form.ak+'","secretKey":"'+this.form.sk+'"}'
           }
           if(this.form.pluginIcon === "qcloud.png"&&!this.form.isBindAccount){
-            this.form.credencial = '{"secretId":"'+this.form.ak+'","secretKey":"'+this.form.sk+'","APPID":""}'
+            this.form.credential = '{"secretId":"'+this.form.ak+'","secretKey":"'+this.form.sk+'","APPID":""}'
           }
           this.viewResult = this.$post(addImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));

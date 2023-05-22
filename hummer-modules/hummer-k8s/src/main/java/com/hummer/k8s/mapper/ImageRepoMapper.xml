@@ -19,7 +19,7 @@
     <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
     <result column="account_id" jdbcType="VARCHAR" property="accountId" />
     <result column="is_bind_account" jdbcType="BIT" property="isBindAccount" />
-    <result column="credencial" jdbcType="VARCHAR" property="credencial" />
+    <result column="credential" jdbcType="VARCHAR" property="credential" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -96,7 +96,7 @@
       This element was generated on Mon May 22 22:36:48 CST 2023.
     -->
     id, `name`, `status`, create_time, update_time, creator, repo, user_name, `password`, 
-    plugin_icon, account_id, is_bind_account, credencial
+    plugin_icon, account_id, is_bind_account, credential
   </sql>
   <select id="selectByExample" parameterType="com.hummer.common.core.domain.ImageRepoExample" resultMap="BaseResultMap">
     <!--
@@ -158,12 +158,12 @@
       create_time, update_time, creator, 
       repo, user_name, `password`, 
       plugin_icon, account_id, is_bind_account, 
-      credencial)
+      credential)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{creator,jdbcType=VARCHAR}, 
       #{repo,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{pluginIcon,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, #{isBindAccount,jdbcType=BIT}, 
-      #{credencial,jdbcType=VARCHAR})
+      #{credential,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.hummer.common.core.domain.ImageRepo">
     <!--
@@ -209,8 +209,8 @@
       <if test="isBindAccount != null">
         is_bind_account,
       </if>
-      <if test="credencial != null">
-        credencial,
+      <if test="credential != null">
+        credential,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -250,8 +250,8 @@
       <if test="isBindAccount != null">
         #{isBindAccount,jdbcType=BIT},
       </if>
-      <if test="credencial != null">
-        #{credencial,jdbcType=VARCHAR},
+      <if test="credential != null">
+        #{credential,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -310,8 +310,8 @@
       <if test="record.isBindAccount != null">
         is_bind_account = #{record.isBindAccount,jdbcType=BIT},
       </if>
-      <if test="record.credencial != null">
-        credencial = #{record.credencial,jdbcType=VARCHAR},
+      <if test="record.credential != null">
+        credential = #{record.credential,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -337,7 +337,7 @@
       plugin_icon = #{record.pluginIcon,jdbcType=VARCHAR},
       account_id = #{record.accountId,jdbcType=VARCHAR},
       is_bind_account = #{record.isBindAccount,jdbcType=BIT},
-      credencial = #{record.credencial,jdbcType=VARCHAR}
+      credential = #{record.credential,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -383,8 +383,8 @@
       <if test="isBindAccount != null">
         is_bind_account = #{isBindAccount,jdbcType=BIT},
       </if>
-      <if test="credencial != null">
-        credencial = #{credencial,jdbcType=VARCHAR},
+      <if test="credential != null">
+        credential = #{credential,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -407,7 +407,7 @@
       plugin_icon = #{pluginIcon,jdbcType=VARCHAR},
       account_id = #{accountId,jdbcType=VARCHAR},
       is_bind_account = #{isBindAccount,jdbcType=BIT},
-      credencial = #{credencial,jdbcType=VARCHAR}
+      credential = #{credential,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
