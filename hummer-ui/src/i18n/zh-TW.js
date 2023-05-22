@@ -1099,6 +1099,7 @@ export default {
     no_image_repo: '沒有綁定鏡像倉庫',
     is_image_icon : '是否上傳鏡像圖片',
     is_select_repo: '非綁定鏡像',
+    is_bind_account: '是否綁定雲賬號',
     plugin_icon : '鏡像圖標',
     image_repository_tag : 'REPOSITORY:TAG',
     image_support:
