@@ -1138,7 +1138,7 @@ public class ServerService {
             SshUtil.executeScpLynis(server, proxy, filePath2, fileName2, remotePath);
 
             //解压
-            String cmd3 = "tar zxvf " + ServerConstants.LYNIS;
+            String cmd3 = "tar -zxvf " + ServerConstants.SSH_LYNIS_DIR;
             String fileName3 = DateUtils.datePath() + "-" + encodingFilename("server") + ".sh";
             String filePath3 = dirPath + "/" + fileName3;
             CommandUtils.saveAsFile(cmd3, dirPath, fileName3, false);
@@ -1329,7 +1329,8 @@ public class ServerService {
                 serverLynisResultMapper.updateByPrimaryKey(serverLynisResultWithBLOBs);
             }
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            serverLynisResultWithBLOBs.setResultStatus(CloudTaskConstants.TASK_STATUS.ERROR.toString());
+            serverLynisResultMapper.updateByPrimaryKey(serverLynisResultWithBLOBs);
         }
 
     }

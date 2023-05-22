@@ -23,6 +23,8 @@ public class ServerConstants {
 
     public final static String LYNIS_VERSION = "lynis";
 
+    public final static String SSH_LYNIS_DIR = "/tmp/lynis.tar.gz";
+
     public final static String INITIALIZING_PROGRAM = "[+] Initializing program";
 
     public final static String SYSTEM_TOOLS = "[+] System tools";
