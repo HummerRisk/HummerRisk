@@ -1099,6 +1099,7 @@ export default {
     no_image_repo: '没有绑定镜像仓库',
     is_image_icon : '是否上传镜像图片',
     is_select_repo: '是否绑定镜像仓库',
+    is_bind_account: '是否绑定云账号',
     plugin_icon : '镜像图标',
     image_repository_tag : 'REPOSITORY:TAG',
     image_support:

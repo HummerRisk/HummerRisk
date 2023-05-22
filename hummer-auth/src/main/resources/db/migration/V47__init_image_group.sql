@@ -54,3 +54,7 @@ ALTER TABLE `hummer_license` ADD `status` varchar(50) DEFAULT NULL COMMENT 'vali
 ALTER TABLE `hummer_license` ADD `message` text DEFAULT NULL COMMENT 'message 提示告警信息';
 
 ALTER TABLE `image_repo` ADD `account_id` varchar(64) DEFAULT NULL COMMENT '云账号ID';
+
+ALTER TABLE `image_repo` ADD `is_bind_account` tinyint(1)  DEFAULT NULL COMMENT '是否绑定云账号';
+
+ALTER TABLE `image_repo` ADD `credential` varchar(255) DEFAULT NULL COMMENT '云账号凭据';
