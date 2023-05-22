@@ -226,6 +226,7 @@ public class ImageService {
                         String path = url.replaceAll("https://", "").replaceAll("http://", "") + "/" + name + ":" + tag;
                         ImageRepoItem imageRepoItem = new ImageRepoItem();
                         imageRepoItem.setId(UUIDUtil.newUUID());
+                        imageRepoItem.setProject(name);
                         imageRepoItem.setRepository(name);
                         imageRepoItem.setTag(tag);
                         imageRepoItem.setRepoId(imageRepo.getId());
