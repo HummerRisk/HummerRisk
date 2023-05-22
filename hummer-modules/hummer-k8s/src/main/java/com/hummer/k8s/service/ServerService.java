@@ -1203,85 +1203,85 @@ public class ServerService {
 
                 for (String result : results) {
                     if (StringUtils.isEmpty(result)) continue;
-                    if (StringUtils.equals(result, ServerConstants.BOOT_AND_SERVICES)) {
+                    if (StringUtils.contains(result, ServerConstants.BOOT_AND_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.BOOT_AND_SERVICES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.KERNEL)) {
+                    } else if (StringUtils.contains(result, ServerConstants.KERNEL)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.KERNEL, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.MEMORY_AND_PROCESSES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.MEMORY_AND_PROCESSES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.MEMORY_AND_PROCESSES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.USERS_GROUPS_AND_AUTHENTICATION)) {
+                    } else if (StringUtils.contains(result, ServerConstants.USERS_GROUPS_AND_AUTHENTICATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.USERS_GROUPS_AND_AUTHENTICATION, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SHELLS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SHELLS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SHELLS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.FILE_SYSTEMS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.FILE_SYSTEMS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.FILE_SYSTEMS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.USB_DEVICES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.USB_DEVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.USB_DEVICES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.STORAGE)) {
+                    } else if (StringUtils.contains(result, ServerConstants.STORAGE)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.STORAGE, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.NFS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.NFS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.NFS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.NAME_SERVICES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.NAME_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.NAME_SERVICES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.PORTS_AND_PACKAGES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.PORTS_AND_PACKAGES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.PORTS_AND_PACKAGES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.NETWORKING)) {
+                    } else if (StringUtils.contains(result, ServerConstants.NETWORKING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.NETWORKING, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.PRINTERS_AND_SPOOLS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.PRINTERS_AND_SPOOLS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.PRINTERS_AND_SPOOLS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_EMAIL_AND_MESSAGING)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SOFTWARE_EMAIL_AND_MESSAGING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_EMAIL_AND_MESSAGING, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_FIREWALLS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SOFTWARE_FIREWALLS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_FIREWALLS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_WEBSERVER)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SOFTWARE_WEBSERVER)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_WEBSERVER, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SSH_SUPPORT)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SSH_SUPPORT)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SSH_SUPPORT, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SNMP_SUPPORT)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SNMP_SUPPORT)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SNMP_SUPPORT, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.DATABASES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.DATABASES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.DATABASES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.LDAP_SERVICES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.LDAP_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.LDAP_SERVICES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.PHP)) {
+                    } else if (StringUtils.contains(result, ServerConstants.PHP)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.PHP, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SQUID_SUPPORT)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SQUID_SUPPORT)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SQUID_SUPPORT, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.LOGGING_AND_FILES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.LOGGING_AND_FILES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.LOGGING_AND_FILES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.INSECURE_SERVICES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.INSECURE_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.INSECURE_SERVICES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.BANNERS_AND_IDENTIFICATION)) {
+                    } else if (StringUtils.contains(result, ServerConstants.BANNERS_AND_IDENTIFICATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.BANNERS_AND_IDENTIFICATION, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SCHEDULED_TASKS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SCHEDULED_TASKS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SCHEDULED_TASKS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.ACCOUNTING)) {
+                    } else if (StringUtils.contains(result, ServerConstants.ACCOUNTING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.ACCOUNTING, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.TIME_AND_SYNCHRONIZATION)) {
+                    } else if (StringUtils.contains(result, ServerConstants.TIME_AND_SYNCHRONIZATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.TIME_AND_SYNCHRONIZATION, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.CRYPTOGRAPHY)) {
+                    } else if (StringUtils.contains(result, ServerConstants.CRYPTOGRAPHY)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.CRYPTOGRAPHY, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.VIRTUALIZATION)) {
+                    } else if (StringUtils.contains(result, ServerConstants.VIRTUALIZATION)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.VIRTUALIZATION, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.CONTAINERS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.CONTAINERS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.CONTAINERS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SECURITY_FRAMEWORKS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SECURITY_FRAMEWORKS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SECURITY_FRAMEWORKS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_FILE_INTEGRITY)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SOFTWARE_FILE_INTEGRITY)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_FILE_INTEGRITY, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_SYSTEM_TOOLING)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SOFTWARE_SYSTEM_TOOLING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_SYSTEM_TOOLING, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.SOFTWARE_MALWARE)) {
+                    } else if (StringUtils.contains(result, ServerConstants.SOFTWARE_MALWARE)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.SOFTWARE_MALWARE, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.FILE_PERMISSIONS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.FILE_PERMISSIONS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.FILE_PERMISSIONS, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.HOME_DIRECTORIES)) {
+                    } else if (StringUtils.contains(result, ServerConstants.HOME_DIRECTORIES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.HOME_DIRECTORIES, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.KERNEL_HARDENING)) {
+                    } else if (StringUtils.contains(result, ServerConstants.KERNEL_HARDENING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.KERNEL_HARDENING, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.HARDENING)) {
+                    } else if (StringUtils.contains(result, ServerConstants.HARDENING)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.HARDENING, loginUser);
-                    } else if (StringUtils.equals(result, ServerConstants.CUSTOM_TESTS)) {
+                    } else if (StringUtils.contains(result, ServerConstants.CUSTOM_TESTS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.CUSTOM_TESTS, loginUser);
                     }
 
