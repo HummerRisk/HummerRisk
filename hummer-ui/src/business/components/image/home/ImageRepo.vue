@@ -75,7 +75,16 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-show = "form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png'" :label="$t('account.cloud_account')" ref="accountId" prop="accountId">
+          <el-form-item v-show = "form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png'" :label="$t('image.is_bind_account')" >
+            <el-switch v-model="form.isBindAccount"></el-switch>
+          </el-form-item >
+          <el-form-item v-show = "!form.isBindAccount && (form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png')" :label="!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].akTitle:''">
+            <el-input v-model="form.ak" :placeholder="'Please fill in '+(!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].akTitle:'')"></el-input>
+          </el-form-item>
+          <el-form-item  v-show="!form.isBindAccount && (form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png')" :label="!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].skTitle:''">
+            <el-input type="password" v-model="form.sk" :placeholder="'Please fill in '+(!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].skTitle:'')"></el-input>
+          </el-form-item>
+          <el-form-item v-show = "!!form.isBindAccount && (form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png')" :label="$t('account.cloud_account')" ref="accountId" prop="accountId">
             <el-select style="width: 100%;" filterable :clearable="true" v-model="form.accountId" :placeholder="$t('account.cloud_account')" >
               <el-option
                 v-for="item in accounts"
@@ -127,7 +136,16 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-show = "form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png'" :label="$t('account.cloud_account')" ref="accountId" prop="accountId">
+          <el-form-item v-show = "form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png'" :label="$t('image.is_bind_account')" >
+            <el-switch v-model="form.isBindAccount"></el-switch>
+          </el-form-item >
+          <el-form-item v-show = "!form.isBindAccount && (form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png')" :label="!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].akTitle:''">
+            <el-input v-model="form.ak" :placeholder="'Please fill in '+(!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].akTitle:'')"></el-input>
+          </el-form-item>
+          <el-form-item  v-show="!form.isBindAccount && (form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png')" :label="!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].skTitle:''">
+            <el-input type="password" v-model="form.sk" :placeholder="'Please fill in '+(!!cloudPluginDic[form.pluginIcon]?cloudPluginDic[form.pluginIcon].skTitle:'')"></el-input>
+          </el-form-item>
+          <el-form-item v-show = "!!form.isBindAccount && (form.pluginIcon === 'aliyun.png' || form.pluginIcon === 'qcloud.png')" :label="$t('account.cloud_account')" ref="accountId" prop="accountId">
             <el-select style="width: 100%;" filterable :clearable="true" v-model="form.accountId" :placeholder="$t('account.cloud_account')" >
               <el-option
                 v-for="item in accounts"
@@ -396,8 +414,8 @@ import {
   syncImageUrl
 } from "@/api/k8s/image/image";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
-import {proxyListAllUrl} from "@/api/system/system";
-import {accountListUrl, allListUrl} from "@/api/cloud/account/account";
+import {pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
+import {accountListUrl, allListUrl, iamStrategyUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -558,6 +576,16 @@ export default {
         {value: 'qcloud.png', id: "Tencent"},
         {value: 'other.png', id: "Other"},
       ],
+      cloudPluginDic:{
+        "aliyun.png":{
+          akTitle:"Access Key ID",
+          skTitle:"Access Key Secret"
+        },
+        "qcloud.png":{
+          akTitle:"Secret Id",
+          skTitle:"Secret Key"
+        }
+      },
       imageData: [],
       syncData: [],
       syncVisible: false,
@@ -648,7 +676,7 @@ export default {
       this.checkAll2 = val;
     },
     create() {
-      this.form = {};
+      this.form = {isBindAccount:false};
       this.createVisible = true;
     },
     change(e) {
@@ -690,8 +718,14 @@ export default {
       return row.status === value;
     },
     handleEdit(row) {
+      console.log(row)
       this.updateVisible = true;
       this.form = row;
+      if(!!row.credencial&&row.pluginIcon === 'aliyun.png'){
+        this.form.ak = JSON.parse(row.credencial).accessKey
+      }else if(!!row.credencial&&row.pluginIcon === 'qcloud.png'){
+        this.form.ak = JSON.parse(row.credencial).secretId
+      }
       this.selectAccount()
     },
     search() {
@@ -714,6 +748,12 @@ export default {
     editRepo(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
+          if(this.form.pluginIcon === "aliyun.png"&&!this.form.isBindAccount){
+            this.form.credencial = '{"accessKey":"'+this.form.ak+'","secretKey":"'+this.form.sk+'"}'
+          }
+          if(this.form.pluginIcon === "qcloud.png"&&!this.form.isBindAccount){
+            this.form.credencial = '{"secretId":"'+this.form.ak+'","secretKey":"'+this.form.sk+'","APPID":""}'
+          }
           this.viewResult = this.$post(editImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
@@ -727,6 +767,12 @@ export default {
     saveRepo(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
+          if(this.form.pluginIcon === "aliyun.png"&&!this.form.isBindAccount){
+            this.form.credencial = '{"accessKey":"'+this.form.ak+'","secretKey":"'+this.form.sk+'"}'
+          }
+          if(this.form.pluginIcon === "qcloud.png"&&!this.form.isBindAccount){
+            this.form.credencial = '{"secretId":"'+this.form.ak+'","secretKey":"'+this.form.sk+'","APPID":""}'
+          }
           this.viewResult = this.$post(addImageRepoUrl, this.form, () => {
             this.$success(this.$t('commons.save_success'));
             this.search();
@@ -797,6 +843,7 @@ export default {
         this.versions = response.data;
       });
     },
+
     //查询代理
     activeProxy() {
       this.viewResult = this.$get(proxyListAllUrl, response => {

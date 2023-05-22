@@ -93,6 +93,8 @@
         <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
         <result column="password" jdbcType="LONGVARCHAR" property="password" />
         <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="is_bind_account" jdbcType="BIT" property="isBindAccount" />
+        <result column="credencial" jdbcType="VARCHAR" property="credencial" />
     </resultMap>
 
     <select id="imageRepoList" resultMap="imageRepoListBaseResultMap">

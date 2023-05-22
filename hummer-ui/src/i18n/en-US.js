@@ -1099,6 +1099,7 @@ export default {
     no_image_repo: 'No image repository bound',
     is_image_icon : 'Whether to upload an image icon',
     is_select_repo: 'Unbound image',
+    is_bind_account: 'Whether to bind cloud account',
     plugin_icon : 'Mirror icon',
     image_repository_tag : 'REPOSITORY:TAG',
     image_support:

@@ -122,7 +122,11 @@ public class ImageService {
         imageRepo.setCreator(loginUser.getUserId());
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
-
+        if(imageRepo.getIsBindAccount()){
+            String accountId = imageRepo.getAccountId();
+            AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+            imageRepo.setCredencial(accountWithBLOBs.getCredential());
+        }
         boolean result = syncImages(imageRepo, loginUser);
         if (result) {
             imageRepo.setStatus("VALID");
@@ -255,10 +259,19 @@ public class ImageService {
                             throw new RuntimeException("wrong repository address");
                         }
                     }
-                    String accountId = imageRepo.getAccountId();
-                    AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                    AliyunCredential aliyunCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AliyunCredential.class);
-                    // 设置Client
+                    AliyunCredential aliyunCredential ;
+                    if(imageRepo.getIsBindAccount()){
+                        String accountId = imageRepo.getAccountId();
+                        AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+                        if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredencial())){
+                            aliyunCredential = JSON.parseObject(imageRepo.getCredencial(),AliyunCredential.class);
+                        }else {
+                            aliyunCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AliyunCredential.class);
+                        }
+                    }else{
+                        aliyunCredential = JSON.parseObject(imageRepo.getCredencial(),AliyunCredential.class);
+                    }
+                       // 设置Client
                     DefaultProfile.addEndpoint(region, region, "cr", "cr."+region+".aliyuncs.com");
                     IClientProfile profile = DefaultProfile.getProfile(region, aliyunCredential.getAccessKey(), aliyunCredential.getSecretKey());
                     DefaultAcsClient client = new DefaultAcsClient(profile);
@@ -305,10 +318,18 @@ public class ImageService {
                 if (url.endsWith("/")) {
                     url = url.substring(0, url.length() - 1);
                 }
-                String accountId = imageRepo.getAccountId();
-                AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                QCloudCredential qCloudCredential = JSON.parseObject(accountWithBLOBs.getCredential(),QCloudCredential.class);
-
+                QCloudCredential qCloudCredential;
+                if(imageRepo.getIsBindAccount()){
+                    String accountId = imageRepo.getAccountId();
+                    AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+                    if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredencial())) {
+                        qCloudCredential = JSON.parseObject(imageRepo.getCredencial(),QCloudCredential.class);
+                    }else{
+                        qCloudCredential = JSON.parseObject(accountWithBLOBs.getCredential(),QCloudCredential.class);
+                    }
+                }else{
+                    qCloudCredential = JSON.parseObject(imageRepo.getCredencial(),QCloudCredential.class);
+                }
                 Credential cred = new Credential(qCloudCredential.getSecretId(), qCloudCredential.getSecretKey());
                 // 实例化一个http选项，可选的，没有特殊需求可以跳过
                 HttpProfile httpProfile = new HttpProfile();
@@ -470,7 +491,11 @@ public class ImageService {
 
     public ImageRepo editImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
         imageRepo.setUpdateTime(System.currentTimeMillis());
-
+        if(imageRepo.getIsBindAccount()){
+            String accountId = imageRepo.getAccountId();
+            AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+            imageRepo.setCredencial(accountWithBLOBs.getCredential());
+        }
         boolean result = syncImages(imageRepo, loginUser);
 
         if (result) {
