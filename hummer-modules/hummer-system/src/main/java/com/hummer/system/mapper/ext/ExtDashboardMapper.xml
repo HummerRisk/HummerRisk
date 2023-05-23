@@ -574,10 +574,9 @@
     <select id="serverRiskChart" resultType="java.util.Map">
         SELECT
             t.name AS `name`,
-            (select count(t2.id) from server_result t2 where t2.is_severity is true and t2.server_id = t.id) AS `compliance`,
-            (select count(t2.id) from server_result t2 where t2.is_severity is false and t2.server_id = t.id) AS `noCompliance`
+            (select count(t2.id) from server_result t2 where t2.is_severity = 'true' and t2.server_id = t.id) AS `compliance`,
+            (select count(t2.id) from server_result t2 where t2.is_severity = 'false' and t2.server_id = t.id) AS `noCompliance`
         FROM server t
-        JOIN server_result t1 on t1.server_id = t.id
         GROUP BY t.id, t.name
         <if test="limit != null">
             LIMIT #{limit}
