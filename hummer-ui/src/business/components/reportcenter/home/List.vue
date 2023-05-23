@@ -187,7 +187,7 @@ import {REPORT_RESULT_CONFIGS} from "@/business/components/common/components/sea
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  createReportUrl,
+  createReportUrl, deleteHistoryReportUrl,
   deleteReportsUrl,
   deleteReportUrl, downloadHistoryReportUrl,
   downloadReportUrl,
@@ -312,7 +312,7 @@ export default {
           exec: this.handleHistoryDownload
         }, {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
-          exec: this.handleDelete
+          exec: this.handleHistoryDelete
         }
       ],
       checkedColumnNames: columnOptions.map((ele) => ele.props),
@@ -399,6 +399,19 @@ export default {
         }
       });
     },
+    handleHistoryDelete(obj) {
+      this.$alert(this.$t('commons.delete_confirm') + obj.name + " ？", '', {
+        confirmButtonText: this.$t('commons.confirm'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            this.result = this.$get(deleteHistoryReportUrl + obj.id, () => {
+              this.$success(this.$t('commons.delete_success'));
+              this.historyList();
+            });
+          }
+        }
+      });
+    },
     change(e) {
       this.$forceUpdate();
     },
@@ -472,6 +485,7 @@ export default {
       this.$fileDownload(downloadReportUrl + item.id, response => {
         let blob = new Blob([response.data], {type: "'application/octet-stream'"});
         saveAs(blob, "report.pdf");
+        this.search();
       }, error => {
         console.log("导出报错", error);
       });
@@ -521,6 +535,7 @@ export default {
       this.$fileDownload(downloadHistoryReportUrl + item.id, response => {
         let blob = new Blob([response.data], {type: "'application/octet-stream'"});
         saveAs(blob, "report.pdf");
+        this.historyList();
       }, error => {
         console.log("导出报错", error);
       });

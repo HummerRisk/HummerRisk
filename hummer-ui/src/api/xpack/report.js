@@ -20,3 +20,5 @@ export const downloadReportUrl = "/xpack/report/downloadReport/";
 export const reportResultLogsUrl = "/xpack/report/reportResultLogs/";
 
 export const downloadHistoryReportUrl = "/xpack/report/downloadHistoryReport/";
+
+export const deleteHistoryReportUrl = "/xpack/report/deleteHistoryReport/";
