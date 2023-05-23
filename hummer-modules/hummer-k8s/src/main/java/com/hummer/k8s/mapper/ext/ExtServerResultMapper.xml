@@ -243,7 +243,7 @@
         WHEN 'ERROR' in (select s.result_status from server_result s where s.server_id = t.id UNION ALL select l.result_status from server_lynis_result l where l.server_id = t.id) THEN 'ERROR'
         ELSE 'FINISHED'
         END AS resultStatus,
-        (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity is false) as riskSum
+        (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity = 'false') as riskSum
         FROM server t
         join server_group sg on sg.id = t.server_group_id
         join user u on u.id = t.creator
@@ -288,7 +288,7 @@
         WHEN 'ERROR' in (select s.result_status from server_result s where s.server_id = t.id UNION ALL select l.result_status from server_lynis_result l where l.server_id = t.id) THEN 'ERROR'
         ELSE 'FINISHED'
         END AS resultStatus,
-        (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity is false) as riskSum
+        (SELECT count(r.id) FROM server_result r where r.server_id = t.id and r.is_severity = 'false') as riskSum
         FROM server t
         join server_group sg on sg.id = t.server_group_id
         join user u on u.id = t.creator
@@ -350,7 +350,7 @@
             concat(t.server_name, ' (', count(t.id), ')') as `name`,
             count(t.id) as `value`
         FROM server_result as t
-        WHERE t.is_severity = 0
+        WHERE t.is_severity = 'false'
         GROUP BY t.server_name
         Limit 10;
     </select>
@@ -358,9 +358,9 @@
     <select id="severityChart" resultType="java.util.Map">
         SELECT
             t.server_name as `product`,
-            (SELECT IFNULL(count(t1.id), 0) as High from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'highrisk' and t1.is_severity = false) as High,
-            (SELECT IFNULL(count(t1.id), 0) as Medium from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'mediumrisk' and t1.is_severity = false) as Medium,
-            (SELECT IFNULL(count(t1.id), 0) as Low from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'lowrisk' and t1.is_severity = false) as Low
+            (SELECT IFNULL(count(t1.id), 0) as High from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'highrisk' and t1.is_severity = 'false') as High,
+            (SELECT IFNULL(count(t1.id), 0) as Medium from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'mediumrisk' and t1.is_severity = 'false') as Medium,
+            (SELECT IFNULL(count(t1.id), 0) as Low from server_result t1 where t1.server_name = t.server_name and LOWER(t1.severity) = 'lowrisk' and t1.is_severity = 'false') as Low
         FROM server_result as t
         GROUP BY t.server_name
         Limit 10;
@@ -378,7 +378,7 @@
         select
         count(t.id) as returnSum
         FROM server_result t
-        WHERE t.is_severity = false
+        WHERE t.is_severity = 'false'
         GROUP BY t.server_name
         LIMIT 10;
     </select>

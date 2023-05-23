@@ -4,7 +4,7 @@
 
 
     <select id="serverSum" resultType="java.lang.Integer">
-        SELECT count(IFNULL(IF(t.is_severity = 1, 0, 1), 0))
+        SELECT count(IFNULL(IF(t.is_severity = 'true', 0, 1), 0))
         FROM server_result t
         JOIN message_order_item t1 ON t.id = t1.task_id
         JOIN message_order t2 ON t1.message_order_id = t2.id
@@ -185,7 +185,7 @@
         <result column="port" jdbcType="VARCHAR" property="port" />
         <result column="user_name" jdbcType="VARCHAR" property="userName" />
         <result column="password" jdbcType="VARCHAR" property="password" />
-        <result column="is_severity" jdbcType="BIT" property="isSeverity" />
+        <result column="is_severity" jdbcType="VARCHAR" property="isSeverity" />
         <result column="command" jdbcType="VARCHAR" property="command" />
         <result column="type" jdbcType="VARCHAR" property="type" />
     </resultMap>
@@ -243,25 +243,25 @@
         SELECT * from
         (select IFNULL(count(t.id), 0) as critical
         FROM server_result t
-        where t.severity = 'CriticalRisk' and t.is_severity is false and t.id in
+        where t.severity = 'CriticalRisk' and t.is_severity = 'false' and t.id in
         (select t1.task_id from message_order_item t1
         JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id})) as critical,
         (select IFNULL(count(t.id), 0) as high
         FROM server_result t
-        where t.severity = 'HighRisk' and t.is_severity is false and t.id in
+        where t.severity = 'HighRisk' and t.is_severity = 'false' and t.id in
         (select t1.task_id from message_order_item t1
         JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id})) as high,
         (select IFNULL(count(t.id), 0) as medium
         FROM server_result t
-        where t.severity = 'MediumRisk' and t.is_severity is false and t.id in
+        where t.severity = 'MediumRisk' and t.is_severity = 'false' and t.id in
         (select t1.task_id from message_order_item t1
         JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id})) as medium,
         (select IFNULL(count(t.id), 0) as low
         FROM server_result t
-        where t.severity = 'LowRisk' and t.is_severity is false and t.id in
+        where t.severity = 'LowRisk' and t.is_severity = 'false' and t.id in
         (select t1.task_id from message_order_item t1
         JOIN message_order t2 ON t1.message_order_id = t2.id
         WHERE t2.id = #{request.id})) as low
