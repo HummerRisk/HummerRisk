@@ -39,8 +39,8 @@ public class K8sRequest extends Request {
     private  final String name = "trivy-operator";
     private  final String namespace = "trivy-system";
     private  final String chart = "hummer/trivy-operator";
-    private  final String version = "0.13.0";
-    private  final String url = "http://registry.hummercloud.com/repository/charts";
+    private  final String version = "0.13.2";
+    private  final String url = "https://registry.hummercloud.com/repository/charts";
 
     public K8sRequest() {
         super("", "");
