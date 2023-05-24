@@ -10,7 +10,7 @@
         </el-row>
         <el-divider></el-divider>
         <h2 style="font-size: 18px;">{{ 'Kubernetes' }}</h2>
-        <el-row>
+        <el-row v-if="source">
           <el-col :span="8">
             <div class="grid-content">
               <el-row>
@@ -18,7 +18,7 @@
                   <span style="color: #909090;">{{ $t('account.scan_score_') }}</span>
                 </el-col>
                 <el-col :span="4">
-                    <span v-if="source.resultStatus != 'APPROVED' && source.resultStatus != 'PROCESSING'">
+                    <span v-if="source.resultStatus !== 'APPROVED' && source.resultStatus !== 'PROCESSING'">
                       <el-tooltip class="item" effect="dark" :content="$t('resource.scan_score')" placement="top">
                         <center-chart v-if="!!source.scanScore" :row="source.scanScore"></center-chart>
                       </el-tooltip>
@@ -73,19 +73,19 @@
                         <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                       </span>
                       <span style="color: #7ebf59;" v-else-if="source.resultStatus === 'FINISHED'">
-                        <i class="el-icon-success"></i> {{ $t('resource.no_risk') }}
+                        <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                       </span>
                       <span style="color: red;" v-else-if="source.resultStatus === 'ERROR'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_exception') }}
                       </span>
                       <span style="color: #dda450;" v-else-if="source.resultStatus === 'WARNING'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                       </span>
                       <span style="color: #dda450;" v-else-if="source.resultStatus === 'UNDEFINED'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
                       </span>
                       <span style="color: #dda450;" v-else>
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
                       </span>
                     </span>
               </el-col>
@@ -113,7 +113,7 @@
           </el-col>
         </el-row>
         <!-- 进度条 -->
-        <el-progress v-if="source.overRules!==source.allRules" :text-inside="true"
+        <el-progress v-if="source && source.overRules !== source.allRules" :text-inside="true"
                      :stroke-width="26" :percentage="progressResult"></el-progress>
       </el-card>
 
@@ -856,6 +856,7 @@ export default {
       groups: 1,
     }
   },
+  props: ["id"],
   watch: {
     '$route': 'init'
   },
@@ -919,7 +920,10 @@ export default {
       });
     },
     async search() {
-      await this.$get(resourceK8sSourceUrl + this.accountId, response => {
+      if (!this.accountId) {
+        return;
+      }
+      this.result = await this.$get(resourceK8sSourceUrl + this.accountId, response => {
         this.source = response.data;
       });
 
@@ -983,6 +987,7 @@ export default {
       this.resourceSearch();
     },
     init() {
+      this.accountId = this.$route.params.id;
       this.initSelect();
       this.search();
       this.initGroup();
@@ -1258,8 +1263,7 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
-  mounted() {
-    this.accountId = this.$route.params.id;
+  created() {
     this.init();
     this.timer = setInterval(this.getStatus, 10000);
   },

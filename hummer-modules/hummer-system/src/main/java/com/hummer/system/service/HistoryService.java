@@ -306,12 +306,15 @@ public class HistoryService {
         if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.cloudAccount.getType())) {
 
             CloudTask cloudTask = (CloudTask) task;
+            Double criticalResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "CriticalRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "CriticalRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
 
             HistoryCloudTaskExample example = new HistoryCloudTaskExample();
             HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("CriticalRisk");
+            long critical = historyCloudTaskMapper.countByExample(example);
             criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
             long high = historyCloudTaskMapper.countByExample(example);
             criteria.andSeverityEqualTo("MediumRisk");
@@ -319,18 +322,21 @@ public class HistoryService {
             criteria.andSeverityEqualTo("LowRisk");
             long low = historyCloudTaskMapper.countByExample(example);
 
-            long sum = 5 * high + 3 * mediuml + 2 * low;
-            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum)) * 100);
+            long sum = 4 * critical + 3 * high + 2 * mediuml + 1 * low;
+            score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
 
         } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sRuleAccount.getType())) {
 
             CloudTask cloudTask = (CloudTask) task;
+            Double criticalResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "CriticalRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "CriticalRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "HighRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
 
             HistoryCloudTaskExample example = new HistoryCloudTaskExample();
             HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("CriticalRisk");
+            long critical = historyCloudTaskMapper.countByExample(example);
             criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
             long high = historyCloudTaskMapper.countByExample(example);
             criteria.andSeverityEqualTo("MediumRisk");
@@ -338,12 +344,14 @@ public class HistoryService {
             criteria.andSeverityEqualTo("LowRisk");
             long low = historyCloudTaskMapper.countByExample(example);
 
-            long sum = 5 * high + 3 * mediuml + 2 * low;
-            score = 100 - (int) Math.ceil(highResultPercent * (5 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (3 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (2 * low / (sum == 0 ? 1 : sum)) * 100);
+            long sum = 4 * critical + 3 * high + 2 * mediuml + 1 * low;
+            score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
 
         } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.serverAccount.getType())) {
             ServerResult serverResult = (ServerResult) task;
-            if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.HighRisk.name())) {
+            if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.CriticalRisk.name())) {
+                score = 100 - 25;
+            } else if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.HighRisk.name())) {
                 score = 100 - 20;
             } else if (StringUtils.equalsIgnoreCase(serverResult.getSeverity(), TaskConstants.Severity.MediumRisk.name())) {
                 score = 100 - 10;

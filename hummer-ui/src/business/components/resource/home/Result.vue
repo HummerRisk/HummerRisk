@@ -61,7 +61,7 @@
                 <span style="color: #909090;font-size: 16px;">{{ $t('resource.status') }}</span>
               </el-col>
               <el-col :span="8">
-                    <span style="font-size: 16px;">
+                     <span style="font-size: 16px;">
                       <span style="color: #579df8;" v-if="source.resultStatus === 'APPROVED'">
                         <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                       </span>
@@ -69,19 +69,19 @@
                         <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                       </span>
                       <span style="color: #7ebf59;" v-else-if="source.resultStatus === 'FINISHED'">
-                        <i class="el-icon-success"></i> {{ $t('resource.no_risk') }}
+                        <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                       </span>
                       <span style="color: red;" v-else-if="source.resultStatus === 'ERROR'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_exception') }}
                       </span>
                       <span style="color: #dda450;" v-else-if="source.resultStatus === 'WARNING'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.discover_risk') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                       </span>
                       <span style="color: #dda450;" v-else-if="source.resultStatus === 'UNDEFINED'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
                       </span>
                       <span style="color: #dda450;" v-else>
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_no_warn') }}
+                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
                       </span>
                     </span>
               </el-col>
