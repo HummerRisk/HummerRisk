@@ -1226,7 +1226,7 @@ public class K8sService {
     public List<CloudNativeResultLogWithBLOBs> getCloudNativeResultLog(String resultId) {
         CloudNativeResultLogExample example = new CloudNativeResultLogExample();
         example.createCriteria().andResultIdEqualTo(resultId);
-        example.setOrderByClause("create_time desc limit 4");
+        example.setOrderByClause("create_time desc");
         return cloudNativeResultLogMapper.selectByExampleWithBLOBs(example);
     }
 
