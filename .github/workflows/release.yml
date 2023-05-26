@@ -80,7 +80,7 @@ jobs:
             
             # 离线安装包
             百度网盘下载链接: https://pan.baidu.com/s/1LeDx5hF_RkkpO8HcsYUDAQ 提取码: 4ljt
-            网站资源下载链接: https://docs.hummerrisk.com/about/download/
+            网站资源下载链接: https://docs.hummerrisk.com/v1.1/about/download/
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
