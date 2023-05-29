@@ -1185,21 +1185,21 @@ public class ServerService {
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
                 String lynisLog = resultStr;
-                resultStr = resultStr.replaceAll("", "");
+                resultStr = resultStr.replaceAll("", "").replaceAll("[+] ", "");
                 resultStr = removeColors(resultStr);//先去掉颜色
-                //先将 "[2C" 替换成特殊字符 "￥￥",再替换成相对应数量的空格
-                String space = "";
+                //将 "[2C" 替换成空格
                 for (int i = 0; i < 50; i++) {
-                    resultStr = resultStr.replaceAll("\\[" + i + "C", space);//间隔
-                    space = space + "&nbsp;";
+                    resultStr = resultStr.replaceAll("\\[" + i + "C", "");//间隔
                 }
                 String lynisId = serverLynisResultWithBLOBs.getId();
                 long hardeningIndex = 0, pluginsEnabled= 0, testsPerformed = 0;
                 String[] twoStr = resultStr.split("================================================================================");
                 String str1 = twoStr[0];
                 String str2 = twoStr[1];
+                String str3 = twoStr[2];
                 String[] results = str1.split("\n\n");
                 String[] results2 = str2.split("\n\n");
+                String[] results3 = str3.split("\n\n");
 
                 for (String result : results) {
                     if (StringUtils.isEmpty(result)) continue;
@@ -1284,7 +1284,6 @@ public class ServerService {
                     } else if (StringUtils.contains(result, ServerConstants.CUSTOM_TESTS)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.CUSTOM_TESTS, loginUser);
                     }
-
                 }
 
                 long order = 1;
@@ -1304,11 +1303,21 @@ public class ServerService {
                         }
                     } else if (result.contains("*")) {
                         insertLynisResultDetailSuggest(result, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
-                    } else if (result.contains(ServerConstants.DETAILS)) {
+                    }
+                    order++;
+                }
+
+                for (String result : results3) {
+                    if (StringUtils.isEmpty(result)) continue;
+                    if (result.contains(ServerConstants.DETAILS)) {
                         String[] strs = result.split("\\R");
                         for (String line : strs) {
                             if (line.contains("Hardening index")) {
-                                hardeningIndex = Long.valueOf(line.split(" : ")[1]);
+                                String right = line.split(" : ")[1];
+                                if (right.contains("[")) {
+                                    right = right.split("\\[")[0].replaceAll(" ", "");
+                                }
+                                hardeningIndex = Long.valueOf(right);
                             } else if (line.contains("Tests performed")) {
                                 testsPerformed = Long.valueOf(line.split(" : ")[1]);
                             } else if (line.contains("Plugins enabled")) {
@@ -1316,7 +1325,6 @@ public class ServerService {
                             }
                         }
                     }
-                    order++;
                 }
 
                 serverLynisResultWithBLOBs.setReturnLog(resultStr);
@@ -1344,24 +1352,198 @@ public class ServerService {
             ServerLynisResultDetail detail = new ServerLynisResultDetail();
             detail.setLynisId(lynisId);
             detail.setCreateTime(System.currentTimeMillis());
-            detail.setOutput(line);
             detail.setType(type);
             detail.setOperator("admin");
             detail.setOrderIndex(order);
             if (line.contains("[ ")) {
-                String status = line.split("\\[")[1];
-                detail.setStatus("[" + status);
+                line = line.split("\\[")[0];
+                String status = line.split("\\[")[1].replaceAll("\\]", "");
+                detail.setStatus(statusTrans(status));
             }
+            detail.setOutput(line);
             serverLynisResultDetailMapper.insertSelective(detail);
             order++;
         }
+    }
+
+    public String titleTrans (String title) {
+        switch (title) {
+            case "ACTIVE":
+                return "STATUS_ACTIVE";
+            case "CHECK NEEDED":
+                return "STATUS_CHECK_NEEDED";
+            case "DEBUG":
+                return "STATUS_DEBUG";
+            case "DEFAULT":
+                return "STATUS_DEFAULT";
+            case "DIFFERENT":
+                return "STATUS_DIFFERENT";
+            case "DISABLED":
+                return "STATUS_DISABLED";
+            case "DONE":
+                return "STATUS_DONE";
+            case "ENABLED":
+                return "STATUS_ENABLED";
+            case "ERROR":
+                return "STATUS_ERROR";
+            case "EXPOSED":
+                return "STATUS_EXPOSED";
+            case "FAILED":
+                return "STATUS_FAILED";
+            case "FILES FOUND":
+                return "STATUS_FILES_FOUND";
+            case "FOUND":
+                return "STATUS_FOUND";
+            case "HARDENED":
+                return "STATUS_HARDENED";
+            case "INSTALLED":
+                return "STATUS_INSTALLED";
+            case "LOCAL ONLY":
+                return "STATUS_LOCAL_ONLY";
+            case "MEDIUM":
+                return "STATUS_MEDIUM";
+            case "NO":
+                return "STATUS_NO";
+            case "NO UPDATE":
+                return "STATUS_NO_UPDATE";
+            case "NON DEFAULT":
+                return "STATUS_NON_DEFAULT";
+            case "NONE":
+                return "STATUS_NONE";
+            case "NOT CONFIGURED":
+                return "STATUS_NOT_CONFIGURED";
+            case "NOT DISABLED":
+                return "STATUS_NOT_DISABLED";
+            case "NOT ENABLED":
+                return "STATUS_NOT_ENABLED";
+            case "NOT FOUND":
+                return "STATUS_NOT_FOUND";
+            case "NOT RUNNING":
+                return "STATUS_NOT_RUNNING";
+            case "OFF":
+                return "STATUS_OFF";
+            case "OK":
+                return "STATUS_OK";
+            case "ON":
+                return "STATUS_ON";
+            case "PARTIALLY HARDENED":
+                return "STATUS_PARTIALLY_HARDENED";
+            case "PROTECTED":
+                return "STATUS_PROTECTED";
+            case "RUNNING":
+                return "STATUS_RUNNING";
+            case "SKIPPED":
+                return "STATUS_SKIPPED";
+            case "SUGGESTION":
+                return "STATUS_SUGGESTION";
+            case "UNKNOWN":
+                return "STATUS_UNKNOWN";
+            case "UNSAFE":
+                return "STATUS_UNSAFE";
+            case "UPDATE AVAILABLE":
+                return "STATUS_UPDATE_AVAILABLE";
+            case "WARNING":
+                return "STATUS_WARNING";
+            case "WEAK":
+                return "STATUS_WEAK";
+            case "YES":
+                return "STATUS_YES";
+        }
+        return title;
+    }
+
+    public String statusTrans (String status) {
+        status = status.replaceAll(" ", "");
+        switch (status) {
+            case "ACTIVE":
+                return "STATUS_ACTIVE";
+            case "CHECK NEEDED":
+                return "STATUS_CHECK_NEEDED";
+            case "DEBUG":
+                return "STATUS_DEBUG";
+            case "DEFAULT":
+                return "STATUS_DEFAULT";
+            case "DIFFERENT":
+                return "STATUS_DIFFERENT";
+            case "DISABLED":
+                return "STATUS_DISABLED";
+            case "DONE":
+                return "STATUS_DONE";
+            case "ENABLED":
+                return "STATUS_ENABLED";
+            case "ERROR":
+                return "STATUS_ERROR";
+            case "EXPOSED":
+                return "STATUS_EXPOSED";
+            case "FAILED":
+                return "STATUS_FAILED";
+            case "FILES FOUND":
+                return "STATUS_FILES_FOUND";
+            case "FOUND":
+                return "STATUS_FOUND";
+            case "HARDENED":
+                return "STATUS_HARDENED";
+            case "INSTALLED":
+                return "STATUS_INSTALLED";
+            case "LOCAL ONLY":
+                return "STATUS_LOCAL_ONLY";
+            case "MEDIUM":
+                return "STATUS_MEDIUM";
+            case "NO":
+                return "STATUS_NO";
+            case "NO UPDATE":
+                return "STATUS_NO_UPDATE";
+            case "NON DEFAULT":
+                return "STATUS_NON_DEFAULT";
+            case "NONE":
+                return "STATUS_NONE";
+            case "NOT CONFIGURED":
+                return "STATUS_NOT_CONFIGURED";
+            case "NOT DISABLED":
+                return "STATUS_NOT_DISABLED";
+            case "NOT ENABLED":
+                return "STATUS_NOT_ENABLED";
+            case "NOT FOUND":
+                return "STATUS_NOT_FOUND";
+            case "NOT RUNNING":
+                return "STATUS_NOT_RUNNING";
+            case "OFF":
+                return "STATUS_OFF";
+            case "OK":
+                return "STATUS_OK";
+            case "ON":
+                return "STATUS_ON";
+            case "PARTIALLY HARDENED":
+                return "STATUS_PARTIALLY_HARDENED";
+            case "PROTECTED":
+                return "STATUS_PROTECTED";
+            case "RUNNING":
+                return "STATUS_RUNNING";
+            case "SKIPPED":
+                return "STATUS_SKIPPED";
+            case "SUGGESTION":
+                return "STATUS_SUGGESTION";
+            case "UNKNOWN":
+                return "STATUS_UNKNOWN";
+            case "UNSAFE":
+                return "STATUS_UNSAFE";
+            case "UPDATE AVAILABLE":
+                return "STATUS_UPDATE_AVAILABLE";
+            case "WARNING":
+                return "STATUS_WARNING";
+            case "WEAK":
+                return "STATUS_WEAK";
+            case "YES":
+                return "STATUS_YES";
+        }
+        return status;
     }
 
     public void insertLynisResultDetailSuggest(String result, String lynisId, String type, long order, LoginUser loginUser) throws Exception {
         ServerLynisResultDetail detail = new ServerLynisResultDetail();
         detail.setLynisId(lynisId);
         detail.setCreateTime(System.currentTimeMillis());
-        detail.setOutput(result);
+        detail.setOutput(result.replaceAll("https://cisofy.com/lynis/", "https://hummerrisk.com/"));
         detail.setType(type);
         detail.setOperator("admin");
         detail.setOrderIndex(order);
