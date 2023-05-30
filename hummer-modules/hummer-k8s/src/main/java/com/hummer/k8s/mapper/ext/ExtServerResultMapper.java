@@ -1,5 +1,6 @@
 package com.hummer.k8s.mapper.ext;
 
+import com.hummer.common.core.domain.ServerLynisResultDetail;
 import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.ServerListDTO;
@@ -26,5 +27,9 @@ public interface ExtServerResultMapper {
     List<String> serverChartX(Map<String, Object> params);
 
     List<Integer> serverChartY(Map<String, Object> params);
+
+    List<ServerLynisResultDetail> serverLynisResultDetailTitle (@Param("id") String id);
+
+    List<ServerLynisResultDetail> serverLynisResultDetails (@Param("id") String id, @Param("type") String type);
 
 }

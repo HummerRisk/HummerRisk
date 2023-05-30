@@ -383,5 +383,40 @@
         LIMIT 10;
     </select>
 
+    <resultMap id="serverLynisResultDetailsResultMap" type="com.hummer.common.core.domain.ServerLynisResultDetail">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="lynis_id" jdbcType="VARCHAR" property="lynisId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="order_index" jdbcType="BIGINT" property="orderIndex" />
+        <result column="output" jdbcType="LONGVARCHAR" property="output" />
+    </resultMap>
+
+    <select id="serverLynisResultDetailTitle" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultMap">
+        SELECT
+        t.*
+        FROM server_lynis_result_detail t
+        where t.lynis_id = #{id} and t.type = t.output
+        ORDER BY FIELD(t.type, 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
+        'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls',
+        'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification',
+        'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling',
+        'Software: Malware', 'File Permissions', 'Home directories', 'Kernel Hardening', 'Hardening', 'Custom tests', 'Warnings', 'Suggestions'), t.order_index
+    </select>
+
+    <select id="serverLynisResultDetails" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultMap">
+        SELECT
+            t.*
+        FROM server_lynis_result_detail t
+        where t.lynis_id = #{id} and t.type = #{type} and t.type != t.output
+        ORDER BY FIELD(t.type, 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
+                       'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls',
+                       'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification',
+                       'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling',
+                       'Software: Malware', 'File Permissions', 'Home directories', 'Kernel Hardening', 'Hardening', 'Custom tests', 'Warnings', 'Suggestions'), t.order_index
+    </select>
+
 
 </mapper>

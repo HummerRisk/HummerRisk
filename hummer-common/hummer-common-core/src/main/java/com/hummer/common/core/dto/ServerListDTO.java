@@ -2,7 +2,6 @@ package com.hummer.common.core.dto;
 
 
 import com.hummer.common.core.domain.Server;
-import com.hummer.common.core.domain.ServerLynisResultDetail;
 import com.hummer.common.core.domain.ServerLynisResultWithBLOBs;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class ServerListDTO extends Server {
 
     private ServerLynisResultWithBLOBs serverLynisResult;
 
-    private List<ServerLynisResultDetail> serverLynisResultDetails;
+    private List<ServerLynisResultDetailDTO> serverLynisResultDetails;
 
     private List<ServerResultDTO> serverResultDTOS;
 
@@ -74,11 +73,11 @@ public class ServerListDTO extends Server {
         this.serverLynisResult = serverLynisResult;
     }
 
-    public List<ServerLynisResultDetail> getServerLynisResultDetails() {
+    public List<ServerLynisResultDetailDTO> getServerLynisResultDetails() {
         return serverLynisResultDetails;
     }
 
-    public void setServerLynisResultDetails(List<ServerLynisResultDetail> serverLynisResultDetails) {
+    public void setServerLynisResultDetails(List<ServerLynisResultDetailDTO> serverLynisResultDetails) {
         this.serverLynisResultDetails = serverLynisResultDetails;
     }
 }

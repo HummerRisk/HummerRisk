@@ -43,10 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -674,7 +671,7 @@ public class ServerService {
         return extServerResultMapper.resultList(request);
     }
 
-    public List<ServerListDTO> resultServerList(ServerRequest request) {
+    public List<ServerListDTO> resultServerList(ServerRequest request) throws Exception {
         List<ServerListDTO> list = extServerResultMapper.resultServerList(request);
         for (ServerListDTO serverListDTO : list) {
             ServerLynisResultExample serverLynisResultExample = new ServerLynisResultExample();
@@ -686,13 +683,20 @@ public class ServerService {
 
                 ServerLynisResultDetailExample serverLynisResultDetailExample = new ServerLynisResultDetailExample();
                 serverLynisResultDetailExample.createCriteria().andLynisIdEqualTo(serverLynisResultWithBLOBs.getId());
-                serverLynisResultDetailExample.setOrderByClause("FIELD(`type`, '[+] Boot and services', '[+] Kernel', '[+] Memory and Processes', '[+] Users, Groups and Authentication', '[+] Shells', '[+] File systems', " +
-                        "'[+] USB Devices', '[+] Storage', '[+] NFS', '[+] Name services', '[+] Ports and packages', '[+] Networking', '[+] Printers and Spools', '[+] Software: e-mail and messaging', '[+] Software: firewalls', " +
-                        "'[+] Software: webserver', '[+] SSH Support', '[+] SNMP Support', '[+] Databases', '[+] LDAP Services', '[+] PHP', '[+] Squid Support', '[+] Logging and files', '[+] Insecure services', '[+] Banners and identification', " +
-                        "'[+] Scheduled tasks', '[+] Accounting', '[+] Time and Synchronization', '[+] Cryptography', '[+] Virtualization', '[+] Containers', '[+] Security frameworks', '[+] Software: file integrity', '[+] Software: System tooling', " +
-                        "'[+] Software: Malware', '[+] File Permissions', '[+] Home directories', '[+] Kernel Hardening', '[+] Hardening', '[+] Custom tests', 'Warnings', 'Suggestions'), order_index");
-                List<ServerLynisResultDetail> serverLynisResultDetails = serverLynisResultDetailMapper.selectByExampleWithBLOBs(serverLynisResultDetailExample);
-                serverListDTO.setServerLynisResultDetails(serverLynisResultDetails);
+                serverLynisResultDetailExample.setOrderByClause("FIELD(`type`, 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems', " +
+                        "'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls', " +
+                        "'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification', " +
+                        "'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling', " +
+                        "'Software: Malware', 'File Permissions', 'Home directories', 'Kernel Hardening', 'Hardening', 'Custom tests', 'Warnings', 'Suggestions'), order_index");
+                List<ServerLynisResultDetail> serverLynisResultDetailTitle = extServerResultMapper.serverLynisResultDetailTitle(serverLynisResultWithBLOBs.getId());
+                List<ServerLynisResultDetailDTO> dtos = new LinkedList<>();
+                for (ServerLynisResultDetail detail : serverLynisResultDetailTitle) {
+                    ServerLynisResultDetailDTO dto = BeanUtils.copyBean(new ServerLynisResultDetailDTO(), detail);
+                    List<ServerLynisResultDetail> serverLynisResultDetails = extServerResultMapper.serverLynisResultDetails(serverLynisResultWithBLOBs.getId(), detail.getType());
+                    dto.setDetails(serverLynisResultDetails);
+                    dtos.add(dto);
+                }
+                serverListDTO.setServerLynisResultDetails(dtos);
             }
 
         }
@@ -1185,7 +1189,7 @@ public class ServerService {
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
                 String lynisLog = resultStr;
-                resultStr = resultStr.replaceAll("", "").replaceAll("[+] ", "");
+                resultStr = resultStr.replaceAll("", "").replaceAll("", "");
                 resultStr = removeColors(resultStr);//先去掉颜色
                 //将 "[2C" 替换成空格
                 for (int i = 0; i < 50; i++) {

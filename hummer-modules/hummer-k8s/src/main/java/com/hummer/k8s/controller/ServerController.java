@@ -175,7 +175,7 @@ public class ServerController {
     @I18n
     @Operation(summary = "主机检测结果列表(主机视角)")
     @PostMapping(value = "resultServerList/{goPage}/{pageSize}")
-    public Pager<List<ServerListDTO>> resultServerList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest request) {
+    public Pager<List<ServerListDTO>> resultServerList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.resultServerList(request));
     }

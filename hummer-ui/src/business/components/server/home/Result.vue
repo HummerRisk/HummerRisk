@@ -272,42 +272,70 @@
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-tabs v-model="detailsName" type="card">
         <el-tab-pane :label="$t('server.server_result')" name="first" v-if="server.type === 'linux'">
-          <el-form>
-            <el-table :data="serverLynisResultDetails" style="width: 100%">
-                <el-table-column min-width="600" fixed="right" v-slot:default="scope">
-                    <div v-if="scope.row.type !=='Warnings' && scope.row.type !=='Suggestions'">
-                      <h1 v-if="scope.row.type===scope.row.output" style="color: #e8a97e;margin: 3px 0;font-size: 24px;">
-                        {{ "--------------------------------------------------------------------------------------------------------------" }}
-                        <br>
-                        {{ scope.row.output }}
-                        <br>
-                        {{ "--------------------------------------------------------------------------------------------------------------" }}
-                      </h1>
-                      <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
-                    </div>
-                    <div v-if="scope.row.type ==='Warnings'">
-                      <h1 v-if="scope.row.output.indexOf('Warnings') > -1" style="color: #ec6e6a;margin: 3px 0;font-size: 24px;">
-                        {{ "--------------------------------------------------------------------------------------------------------------" }}
-                        <br>
-                        {{ scope.row.output }}
-                        <br>
-                        {{ "--------------------------------------------------------------------------------------------------------------" }}
-                      </h1>
-                      <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
-                    </div>
-                    <div v-if="scope.row.type ==='Suggestions'">
-                      <h1 v-if="scope.row.output.indexOf('Suggestions') > -1" style="color: #753974;margin: 3px 0;font-size: 24px;">
-                        {{ "--------------------------------------------------------------------------------------------------------------" }}
-                        <br>
-                        {{ scope.row.output }}
-                        <br>
-                        {{ "--------------------------------------------------------------------------------------------------------------" }}
-                      </h1>
-                      <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
-                    </div>
+          <el-table :data="serverLynisResultDetails" class="adjust-table table-content" :row-class-name="tableRowClassName">
+            <!-- 展开 start -->
+            <el-table-column type="expand" min-width="40" v-slot:default="scope">
+
+              <el-table :data="scope.row.details" class="adjust-table table-content">
+                <el-table-column type="index" min-width="40"/>
+                <el-table-column prop="output" v-slot:default="scope" label="检测项" min-width="140" show-overflow-tooltip>
+                  {{ scope.row.output }}
                 </el-table-column>
-            </el-table>
-          </el-form>
+                <el-table-column prop="status" v-slot:default="scope" label="检测结果" min-width="140" show-overflow-tooltip>
+                  {{ scope.row.status }}
+                </el-table-column>
+              </el-table>
+
+            </el-table-column >
+            <!-- 展开 end -->
+            <el-table-column type="index" min-width="40"/>
+            <el-table-column prop="type" v-slot:default="scope" label="检测项目" min-width="140" show-overflow-tooltip>
+              {{ scope.row.type }}
+            </el-table-column>
+            <el-table-column prop="type" v-slot:default="scope" label="检测数量" min-width="140" show-overflow-tooltip>
+              {{ '8' }}
+            </el-table-column>
+            <el-table-column prop="type" v-slot:default="scope" label="风险数量" min-width="140" show-overflow-tooltip>
+              {{ '3' }}
+            </el-table-column>
+            <el-table-column prop="createTime" v-slot:default="scope" label="检测时间" min-width="140" show-overflow-tooltip>
+              <span>{{ scope.row.createTime | timestampFormatDate }}</span>
+            </el-table-column>
+          </el-table>
+          <el-table :data="serverLynisResultDetails" style="width: 100%">
+            <el-table-column min-width="600" fixed="right" v-slot:default="scope">
+              <div v-if="scope.row.type !=='Warnings' && scope.row.type !=='Suggestions'">
+                <h1 v-if="scope.row.type===scope.row.output" style="color: #e8a97e;margin: 3px 0;font-size: 24px;">
+                  {{ "--------------------------------------------------------------------------------------------------------------" }}
+                  <br>
+                  {{ scope.row.output }}
+                  <br>
+                  {{ "--------------------------------------------------------------------------------------------------------------" }}
+                </h1>
+                <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
+              </div>
+              <div v-if="scope.row.type ==='Warnings'">
+                <h1 v-if="scope.row.output.indexOf('Warnings') > -1" style="color: #ec6e6a;margin: 3px 0;font-size: 24px;">
+                  {{ "--------------------------------------------------------------------------------------------------------------" }}
+                  <br>
+                  {{ scope.row.output }}
+                  <br>
+                  {{ "--------------------------------------------------------------------------------------------------------------" }}
+                </h1>
+                <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
+              </div>
+              <div v-if="scope.row.type ==='Suggestions'">
+                <h1 v-if="scope.row.output.indexOf('Suggestions') > -1" style="color: #753974;margin: 3px 0;font-size: 24px;">
+                  {{ "--------------------------------------------------------------------------------------------------------------" }}
+                  <br>
+                  {{ scope.row.output }}
+                  <br>
+                  {{ "--------------------------------------------------------------------------------------------------------------" }}
+                </h1>
+                <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
+              </div>
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
         <el-tab-pane :label="$t('server.result')" name="second">
           <el-table border :data="serverResultDetails" class="adjust-table table-content" @sort-change="sort" @filter-change="filter" @select-all="select" @select="select">
@@ -926,6 +954,17 @@ export default {
           }
         }
       });
+    },
+    tableRowClassName({row, rowIndex}) {
+      if (this.tableRow) {
+        if (rowIndex % 4 === 0) {
+          return 'success-row';
+        } else if (rowIndex % 2 === 0) {
+          return 'warning-row';
+        } else {
+          return '';
+        }
+      }
     },
   },
   computed: {
