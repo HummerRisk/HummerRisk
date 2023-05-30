@@ -73,6 +73,35 @@ public class APITest {
 
     }
 
+    /**
+     * AES 解密
+     *
+     * @param src       待解密字符串
+     * @param secretKey 密钥
+     * @param iv        向量
+     * @return 解密后字符串
+     */
+    public static String aesDecrypt(String src, String secretKey, String iv) {
+        if (StringUtils.isBlank(secretKey)) {
+            throw new RuntimeException("secretKey is empty");
+        }
+        try {
+            byte[] raw = secretKey.getBytes(UTF_8);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(raw, "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            IvParameterSpec iv1 = new IvParameterSpec(iv.getBytes());
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv1);
+            byte[] encrypted1 = Base64.decodeBase64(src);
+            byte[] original = cipher.doFinal(encrypted1);
+            return new String(original, UTF_8);
+        } catch (BadPaddingException | IllegalBlockSizeException e) {
+            // 解密的原字符串为非加密字符串，则直接返回原字符串
+            return src;
+        } catch (Exception e) {
+            throw new RuntimeException("decrypt error，please check parameters", e);
+        }
+    }
+
     @org.junit.Test
     public void test3 () throws Exception {
         try {
