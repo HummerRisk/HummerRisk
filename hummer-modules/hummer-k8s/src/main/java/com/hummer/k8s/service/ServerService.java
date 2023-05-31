@@ -683,12 +683,12 @@ public class ServerService {
 
                 ServerLynisResultDetailExample serverLynisResultDetailExample = new ServerLynisResultDetailExample();
                 serverLynisResultDetailExample.createCriteria().andLynisIdEqualTo(serverLynisResultWithBLOBs.getId());
-                serverLynisResultDetailExample.setOrderByClause("FIELD(`type`, 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems', " +
+                serverLynisResultDetailExample.setOrderByClause("FIELD(`type`, 'System tools', 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems', " +
                         "'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls', " +
                         "'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification', " +
                         "'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling', " +
                         "'Software: Malware', 'File Permissions', 'Home directories', 'Kernel Hardening', 'Hardening', 'Custom tests', 'Warnings', 'Suggestions'), order_index");
-                List<ServerLynisResultDetail> serverLynisResultDetailTitle = extServerResultMapper.serverLynisResultDetailTitle(serverLynisResultWithBLOBs.getId());
+                List<ServerLynisResultDetailDTO> serverLynisResultDetailTitle = extServerResultMapper.serverLynisResultDetailTitle(serverLynisResultWithBLOBs.getId());
                 List<ServerLynisResultDetailDTO> dtos = new LinkedList<>();
                 for (ServerLynisResultDetail detail : serverLynisResultDetailTitle) {
                     ServerLynisResultDetailDTO dto = BeanUtils.copyBean(new ServerLynisResultDetailDTO(), detail);
@@ -1207,7 +1207,9 @@ public class ServerService {
 
                 for (String result : results) {
                     if (StringUtils.isEmpty(result)) continue;
-                    if (StringUtils.contains(result, ServerConstants.BOOT_AND_SERVICES)) {
+                    if (StringUtils.contains(result, ServerConstants.SYSTEM_TOOLS)) {
+                        insertLynisResultDetail(result, lynisId, ServerConstants.SYSTEM_TOOLS, loginUser);
+                    } else if (StringUtils.contains(result, ServerConstants.BOOT_AND_SERVICES)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.BOOT_AND_SERVICES, loginUser);
                     } else if (StringUtils.contains(result, ServerConstants.KERNEL)) {
                         insertLynisResultDetail(result, lynisId, ServerConstants.KERNEL, loginUser);
@@ -1356,7 +1358,7 @@ public class ServerService {
             ServerLynisResultDetail detail = new ServerLynisResultDetail();
             detail.setLynisId(lynisId);
             detail.setCreateTime(System.currentTimeMillis());
-            detail.setType(type);
+            detail.setType(titleTrans(type));
             detail.setOperator("admin");
             detail.setOrderIndex(order);
             if (line.contains("[ ")) {
@@ -1364,7 +1366,7 @@ public class ServerService {
                 String status = line.split("\\[")[1].replaceAll("\\]", "");
                 detail.setStatus(statusTrans(status));
             }
-            detail.setOutput(line);
+            detail.setOutput(titleTrans(line));
             serverLynisResultDetailMapper.insertSelective(detail);
             order++;
         }
@@ -1372,86 +1374,88 @@ public class ServerService {
 
     public String titleTrans (String title) {
         switch (title) {
-            case "ACTIVE":
-                return "STATUS_ACTIVE";
-            case "CHECK NEEDED":
-                return "STATUS_CHECK_NEEDED";
-            case "DEBUG":
-                return "STATUS_DEBUG";
-            case "DEFAULT":
-                return "STATUS_DEFAULT";
-            case "DIFFERENT":
-                return "STATUS_DIFFERENT";
-            case "DISABLED":
-                return "STATUS_DISABLED";
-            case "DONE":
-                return "STATUS_DONE";
-            case "ENABLED":
-                return "STATUS_ENABLED";
-            case "ERROR":
-                return "STATUS_ERROR";
-            case "EXPOSED":
-                return "STATUS_EXPOSED";
-            case "FAILED":
-                return "STATUS_FAILED";
-            case "FILES FOUND":
-                return "STATUS_FILES_FOUND";
-            case "FOUND":
-                return "STATUS_FOUND";
-            case "HARDENED":
-                return "STATUS_HARDENED";
-            case "INSTALLED":
-                return "STATUS_INSTALLED";
-            case "LOCAL ONLY":
-                return "STATUS_LOCAL_ONLY";
-            case "MEDIUM":
-                return "STATUS_MEDIUM";
-            case "NO":
-                return "STATUS_NO";
-            case "NO UPDATE":
-                return "STATUS_NO_UPDATE";
-            case "NON DEFAULT":
-                return "STATUS_NON_DEFAULT";
-            case "NONE":
-                return "STATUS_NONE";
-            case "NOT CONFIGURED":
-                return "STATUS_NOT_CONFIGURED";
-            case "NOT DISABLED":
-                return "STATUS_NOT_DISABLED";
-            case "NOT ENABLED":
-                return "STATUS_NOT_ENABLED";
-            case "NOT FOUND":
-                return "STATUS_NOT_FOUND";
-            case "NOT RUNNING":
-                return "STATUS_NOT_RUNNING";
-            case "OFF":
-                return "STATUS_OFF";
-            case "OK":
-                return "STATUS_OK";
-            case "ON":
-                return "STATUS_ON";
-            case "PARTIALLY HARDENED":
-                return "STATUS_PARTIALLY_HARDENED";
-            case "PROTECTED":
-                return "STATUS_PROTECTED";
-            case "RUNNING":
-                return "STATUS_RUNNING";
-            case "SKIPPED":
-                return "STATUS_SKIPPED";
-            case "SUGGESTION":
-                return "STATUS_SUGGESTION";
-            case "UNKNOWN":
-                return "STATUS_UNKNOWN";
-            case "UNSAFE":
-                return "STATUS_UNSAFE";
-            case "UPDATE AVAILABLE":
-                return "STATUS_UPDATE_AVAILABLE";
-            case "WARNING":
-                return "STATUS_WARNING";
-            case "WEAK":
-                return "STATUS_WEAK";
-            case "YES":
-                return "STATUS_YES";
+            case "System tools":
+                return "SECTION_SYSTEM_TOOLS";
+            case "Boot and services":
+                return "SECTION_BOOT_AND_SERVICES";
+            case "Kernel":
+                return "SECTION_KERNEL";
+            case "Memory and Processes":
+                return "SECTION_MEMORY_AND_PROCESSES";
+            case "Users, Groups and Authentication":
+                return "SECTION_USERS_GROUPS_AND_AUTHENTICATION";
+            case "Shells":
+                return "SECTION_SHELLS";
+            case "File systems":
+                return "SECTION_FILE_SYSTEMS";
+            case "USB Devices":
+                return "SECTION_USB_DEVICES";
+            case "Storage":
+                return "SECTION_STORAGE";
+            case "NFS":
+                return "SECTION_NFS";
+            case "Name services":
+                return "SECTION_NAME_SERVICES";
+            case "Ports and packages":
+                return "SECTION_PORTS_AND_PACKAGES";
+            case "Networking":
+                return "SECTION_NETWORKING";
+            case "Printers and Spools":
+                return "SECTION_PRINTERS_AND_SPOOLS";
+            case "Software: e-mail and messaging":
+                return "SECTION_EMAIL_AND_MESSAGING";
+            case "Software: firewalls":
+                return "SECTION_FIREWALLS";
+            case "Software: webserver":
+                return "SECTION_WEBSERVER";
+            case "SSH Support":
+                return "SECTION_SSH_SUPPORT";
+            case "SNMP Support":
+                return "SECTION_SNMP_SUPPORT";
+            case "Databases":
+                return "SECTION_DATABASES";
+            case "LDAP Services":
+                return "SECTION_LDAP_SERVICES";
+            case "PHP":
+                return "SECTION_PHP";
+            case "Squid Support":
+                return "SECTION_SQUID_SUPPORT";
+            case "Logging and files":
+                return "SECTION_LOGGING_AND_FILES";
+            case "Insecure services":
+                return "SECTION_INSECURE_SERVICES";
+            case "Banners and identification":
+                return "SECTION_BANNERS_AND_IDENTIFICATION";
+            case "Scheduled tasks":
+                return "SECTION_SCHEDULED_TASKS";
+            case "Accounting":
+                return "SECTION_ACCOUNTING";
+            case "Time and Synchronization":
+                return "SECTION_TIME_AND_SYNCHRONIZATION";
+            case "Cryptography":
+                return "SECTION_CRYPTOGRAPHY";
+            case "Virtualization":
+                return "SECTION_VIRTUALIZATION";
+            case "Containers":
+                return "SECTION_CONTAINERS";
+            case "Security frameworks":
+                return "SECTION_SECURITY_FRAMEWORKS";
+            case "Software: file integrity":
+                return "SECTION_FILE_INTEGRITY";
+            case "Software: System tooling":
+                return "SECTION_SYSTEM_TOOLING";
+            case "Software: Malware":
+                return "SECTION_MALWARE";
+            case "File Permissions":
+                return "SECTION_FILE_PERMISSIONS";
+            case "Home directories":
+                return "SECTION_HOME_DIRECTORIES";
+            case "Kernel Hardening":
+                return "SECTION_KERNEL_HARDENING";
+            case "Hardening":
+                return "SECTION_HARDENING";
+            case "Custom tests":
+                return "SECTION_CUSTOM_TESTS";
         }
         return title;
     }

@@ -276,44 +276,36 @@
             <!-- 展开 start -->
             <el-table-column type="expand" min-width="40" v-slot:default="scope">
 
-              <el-table :data="scope.row.details" class="adjust-table table-content">
+              <el-table :data="scope.row.details" class="adjust-table table-content" style="margin: 20px;">
                 <el-table-column type="index" min-width="40"/>
-                <el-table-column prop="output" v-slot:default="scope" label="检测项" min-width="140" show-overflow-tooltip>
+                <el-table-column prop="output" v-slot:default="scope" :label="$t('server.lynis_project')" min-width="240" show-overflow-tooltip>
                   {{ scope.row.output }}
                 </el-table-column>
-                <el-table-column prop="status" v-slot:default="scope" label="检测结果" min-width="140" show-overflow-tooltip>
-                  {{ scope.row.status }}
+                <el-table-column prop="status" v-slot:default="scope" :label="$t('server.lynis_result')" min-width="140" show-overflow-tooltip fixed="right">
+                  <span v-if="checkStatusColor(scope.row.status) === 'true'" style="color: green;">{{ $t(scope.row.status) }}</span>
+                  <span v-else-if="checkStatusColor(scope.row.status) === 'false'" style="color: red;">{{ $t(scope.row.status) }}</span>
+                  <span v-else-if="checkStatusColor(scope.row.status) === 'warning'" style="color: #FF8000;">{{ $t(scope.row.status) }}</span>
                 </el-table-column>
               </el-table>
 
             </el-table-column >
             <!-- 展开 end -->
             <el-table-column type="index" min-width="40"/>
-            <el-table-column prop="type" v-slot:default="scope" label="检测项目" min-width="140" show-overflow-tooltip>
+            <el-table-column prop="type" v-slot:default="scope" :label="$t('server.lynis_project_name')" min-width="240" show-overflow-tooltip>
               {{ scope.row.type }}
             </el-table-column>
-            <el-table-column prop="type" v-slot:default="scope" label="检测数量" min-width="140" show-overflow-tooltip>
-              {{ '8' }}
+            <el-table-column prop="resultSum" v-slot:default="scope" :label="$t('server.lynis_result_sum')" min-width="140" show-overflow-tooltip>
+              {{ scope.row.resultSum }}
             </el-table-column>
-            <el-table-column prop="type" v-slot:default="scope" label="风险数量" min-width="140" show-overflow-tooltip>
-              {{ '3' }}
+            <el-table-column prop="riskSum" v-slot:default="scope" :label="$t('server.lynis_risk_sum')" min-width="140" show-overflow-tooltip>
+              {{ scope.row.riskSum }}
             </el-table-column>
-            <el-table-column prop="createTime" v-slot:default="scope" label="检测时间" min-width="140" show-overflow-tooltip>
+            <el-table-column prop="createTime" v-slot:default="scope" :label="$t('server.lynis_result_time')" min-width="160" show-overflow-tooltip>
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </el-table-column>
           </el-table>
           <el-table :data="serverLynisResultDetails" style="width: 100%">
             <el-table-column min-width="600" fixed="right" v-slot:default="scope">
-              <div v-if="scope.row.type !=='Warnings' && scope.row.type !=='Suggestions'">
-                <h1 v-if="scope.row.type===scope.row.output" style="color: #e8a97e;margin: 3px 0;font-size: 24px;">
-                  {{ "--------------------------------------------------------------------------------------------------------------" }}
-                  <br>
-                  {{ scope.row.output }}
-                  <br>
-                  {{ "--------------------------------------------------------------------------------------------------------------" }}
-                </h1>
-                <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
-              </div>
               <div v-if="scope.row.type ==='Warnings'">
                 <h1 v-if="scope.row.output.indexOf('Warnings') > -1" style="color: #ec6e6a;margin: 3px 0;font-size: 24px;">
                   {{ "--------------------------------------------------------------------------------------------------------------" }}
@@ -965,6 +957,21 @@ export default {
           return '';
         }
       }
+    },
+    //定义状态对应的类型
+    checkStatusColor(status) {
+      let trueArr = ["STATUS_ACTIVE", "STATUS_CHECK_NEEDED", "STATUS_DEFAULT", "STATUS_DEFAULT", "STATUS_DISABLED", "STATUS_DONE", "STATUS_ENABLED", "STATUS_EXPOSED", "STATUS_HARDENED", "STATUS_INSTALLED",
+      "STATUS_LOCAL_ONLY", "STATUS_NO_UPDATE", "STATUS_OFF", "STATUS_OK", "STATUS_ON", "STATUS_PARTIALLY_HARDENED", "STATUS_PROTECTED", "STATUS_RUNNING", "STATUS_SKIPPED", "STATUS_UPDATE_AVAILABLE", "STATUS_YES"];
+      let falseArr = ["STATUS_ERROR", "STATUS_FAILED", "STATUS_SUGGESTION", "STATUS_UNSAFE", "STATUS_WEAK"];
+      let warningArr = ["STATUS_DEBUG", "STATUS_FILES_FOUND", "STATUS_FOUND", "STATUS_MEDIUM", "STATUS_NO", "STATUS_NON_DEFAULT", "STATUS_NONE", "STATUS_NOT_CONFIGURED", "STATUS_NOT_DISABLED", "STATUS_NOT_ENABLED", "STATUS_NOT_FOUND", "STATUS_NOT_RUNNING", "STATUS_UNKNOWN", "STATUS_WARNING"];
+      if (trueArr.indexOf(status) > -1) {
+        return "true";
+      } else if (falseArr.indexOf(status) > -1) {
+        return "false";
+      } else if (warningArr.indexOf(status) > -1) {
+        return "warning";
+      }
+      return "true";
     },
   },
   computed: {

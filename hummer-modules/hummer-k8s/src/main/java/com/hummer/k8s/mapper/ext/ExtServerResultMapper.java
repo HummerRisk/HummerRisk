@@ -4,6 +4,7 @@ import com.hummer.common.core.domain.ServerLynisResultDetail;
 import com.hummer.common.core.domain.request.server.ServerRequest;
 import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.ServerListDTO;
+import com.hummer.common.core.dto.ServerLynisResultDetailDTO;
 import com.hummer.common.core.dto.ServerResultDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,7 +29,7 @@ public interface ExtServerResultMapper {
 
     List<Integer> serverChartY(Map<String, Object> params);
 
-    List<ServerLynisResultDetail> serverLynisResultDetailTitle (@Param("id") String id);
+    List<ServerLynisResultDetailDTO> serverLynisResultDetailTitle (@Param("id") String id);
 
     List<ServerLynisResultDetail> serverLynisResultDetails (@Param("id") String id, @Param("type") String type);
 

@@ -383,6 +383,19 @@
         LIMIT 10;
     </select>
 
+    <resultMap id="serverLynisResultDetailsResultDtoMap" type="com.hummer.common.core.dto.ServerLynisResultDetailDTO">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="lynis_id" jdbcType="VARCHAR" property="lynisId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="order_index" jdbcType="BIGINT" property="orderIndex" />
+        <result column="output" jdbcType="LONGVARCHAR" property="output" />
+        <result column="resultSum" jdbcType="INTEGER" property="resultSum" />
+        <result column="riskSum" jdbcType="INTEGER" property="riskSum" />
+    </resultMap>
+
     <resultMap id="serverLynisResultDetailsResultMap" type="com.hummer.common.core.domain.ServerLynisResultDetail">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="lynis_id" jdbcType="VARCHAR" property="lynisId" />
@@ -394,12 +407,14 @@
         <result column="output" jdbcType="LONGVARCHAR" property="output" />
     </resultMap>
 
-    <select id="serverLynisResultDetailTitle" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultMap">
+    <select id="serverLynisResultDetailTitle" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultDtoMap">
         SELECT
-        t.*
+        t.*,
+        (select count(*) from server_lynis_result_detail t1 where t1.lynis_id = #{id} and t1.type = t.type and t1.type != t1.output) as resultSum,
+        (select count(*) from server_lynis_result_detail t1 where t1.lynis_id = #{id} and t1.type = t.type and t1.type != t1.output and t1.status in ("STATUS_ERROR", "STATUS_FAILED", "STATUS_SUGGESTION", "STATUS_UNSAFE", "STATUS_WEAK")) as riskSum
         FROM server_lynis_result_detail t
         where t.lynis_id = #{id} and t.type = t.output
-        ORDER BY FIELD(t.type, 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
+        ORDER BY FIELD(t.type, 'System tools', 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
         'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls',
         'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification',
         'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling',
@@ -411,7 +426,7 @@
             t.*
         FROM server_lynis_result_detail t
         where t.lynis_id = #{id} and t.type = #{type} and t.type != t.output
-        ORDER BY FIELD(t.type, 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
+        ORDER BY FIELD(t.type, 'System tools', 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
                        'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls',
                        'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification',
                        'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling',
