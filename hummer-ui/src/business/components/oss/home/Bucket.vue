@@ -5,7 +5,7 @@
         <table-header :condition.sync="condition" @search="search"
                       :title="$t('oss.oss_bucket')"
                       @create="create" :createTip="$t('oss.create_bucket')"
-                      @delete="deleteSelect" :show-delete="false" :show-create="true"
+                      @delete="deleteSelect" :show-delete="true" :show-create="true"
                       :items="items" :columnNames="columnNames"
                       :checkedColumnNames="checkedColumnNames" :checkAll="checkAll" :isIndeterminate="isIndeterminate"
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
@@ -544,6 +544,8 @@ export default {
       this.$forceUpdate();
     },
     handleDelete(item) {
+      this.$warning(this.$t('oss.delete_warning'));
+      return;
       this.$alert(this.$t('commons.delete') + this.$t('oss.bucket') + item.bucketName + " ？", this.$t('commons.delete') + this.$t('oss.bucket'), {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
@@ -560,6 +562,8 @@ export default {
       });
     },
     deleteSelect() {
+      this.$warning(this.$t('oss.delete_warning'));
+      return;
       if (this.selectIds.size === 0) {
         this.$warning(this.$t('oss.please_choose_bucket'));
         return;
@@ -598,6 +602,8 @@ export default {
       });
     },
     dirDelete(item) {
+      this.$success(this.$t('commons.delete_success'));
+      return;
       this.$alert(this.$t('commons.delete') + this.$t('oss.object_dir') + item.objectName + " ？", this.$t('commons.delete') + this.$t('oss.object_dir'), {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
@@ -615,6 +621,8 @@ export default {
       });
     },
     objectDelete(item) {
+      this.$warning(this.$t('oss.delete_warning'));
+      return;
       this.$alert(this.$t('commons.delete') + this.$t('oss.object_file') + item.objectName + " ？", this.$t('commons.delete') + this.$t('oss.object_file'), {
         confirmButtonText: this.$t('commons.confirm'),
         callback: (action) => {
@@ -632,6 +640,8 @@ export default {
       });
     },
     deleteSelects() {
+      this.$warning(this.$t('oss.delete_warning'));
+      return;
       if (this.selectObjectIds.size === 0) {
         this.$warning(this.$t('oss.please_choose_object'));
         return;

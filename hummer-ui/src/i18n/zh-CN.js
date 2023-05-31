@@ -1305,6 +1305,7 @@ export default {
     oss_bucket_chart: '对象存储桶文件统计',
     oss_bucket_chart_vuln: '存储桶文件统计',
     cloud_note: '目前支持的云类型为: 阿里云、腾讯云、华为云、百度云、青云、京东云、七牛云、Amazon Web Services。',
+    delete_warning: '对象存储删除操作属于高危操作，会导致云上资源的清除，HummerRisk 暂时不允许此操作，如果想开放此功能，请联系管理员',
   },
   task: {
     task_setting: '任务编排',

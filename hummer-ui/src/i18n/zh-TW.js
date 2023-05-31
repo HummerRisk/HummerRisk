@@ -1305,6 +1305,7 @@ export default {
     oss_bucket_chart: '對象存儲桶文件統計',
     oss_bucket_chart_vuln: '存儲桶文件統計',
     cloud_note: '目前支持的雲類型為: 阿里雲、騰訊雲、華為雲、百度雲、青雲、七牛雲、京東雲、Amazon Web Services。 ',
+    delete_warning: '對象存儲刪除操作屬於高危操作，會導致雲上資源的清除，HummerRisk 暫時不允許此操作，如果想開放此功能，請聯繫管理員',
   },
   task: {
     task_setting: '任務編排',

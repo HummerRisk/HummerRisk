@@ -1305,6 +1305,7 @@ export default {
     oss_bucket_chart: 'Object storage bucket file statistics',
     oss_bucket_chart_vuln: 'Storage bucket file statistics',
     cloud_note: 'Currently supported cloud types are: Aliyun Cloud, Tencent Cloud, Huawei Cloud, Baidu Cloud, QingCloud, Qiniu Cloud, JDCloud, Amazon Web Services. ',
+    delete_warning: 'The object storage deletion operation is a high-risk operation, which will lead to the clearing of resources on the cloud. HummerRisk temporarily does not allow this operation. If you want to open this function, please contact the administrator',
   },
   task: {
     task_setting: 'Task arrangement',
