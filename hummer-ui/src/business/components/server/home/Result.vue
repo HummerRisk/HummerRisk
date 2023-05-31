@@ -272,11 +272,11 @@
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-tabs v-model="detailsName" type="card">
         <el-tab-pane :label="$t('server.server_result')" name="first" v-if="server.type === 'linux'">
-          <el-table :data="serverLynisResultDetails" class="adjust-table table-content" :row-class-name="tableRowClassName">
+          <el-table stripe :data="serverLynisResultDetails" class="adjust-table table-content" >
             <!-- 展开 start -->
             <el-table-column type="expand" min-width="40" v-slot:default="scope">
 
-              <el-table :data="scope.row.details" class="adjust-table table-content" style="margin: 20px;">
+              <el-table border :data="scope.row.details" class="adjust-table table-content" style="margin: 20px;" :row-class-name="tableRowClassName">
                 <el-table-column type="index" min-width="40"/>
                 <el-table-column prop="output" v-slot:default="scope" :label="$t('server.lynis_project')" min-width="240" show-overflow-tooltip>
                   {{ scope.row.output }}
