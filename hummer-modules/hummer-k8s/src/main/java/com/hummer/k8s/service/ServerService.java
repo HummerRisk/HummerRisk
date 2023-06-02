@@ -681,13 +681,6 @@ public class ServerService {
                 ServerLynisResultWithBLOBs serverLynisResultWithBLOBs = serverLynisResults.get(0);
                 serverListDTO.setServerLynisResult(serverLynisResultWithBLOBs);
 
-                ServerLynisResultDetailExample serverLynisResultDetailExample = new ServerLynisResultDetailExample();
-                serverLynisResultDetailExample.createCriteria().andLynisIdEqualTo(serverLynisResultWithBLOBs.getId());
-                serverLynisResultDetailExample.setOrderByClause("FIELD(`type`, 'System tools', 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems', " +
-                        "'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls', " +
-                        "'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification', " +
-                        "'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling', " +
-                        "'Software: Malware', 'File Permissions', 'Home directories', 'Kernel Hardening', 'Hardening', 'Custom tests', 'Warnings', 'Suggestions'), order_index");
                 List<ServerLynisResultDetailDTO> serverLynisResultDetailTitle = extServerResultMapper.serverLynisResultDetailTitle(serverLynisResultWithBLOBs.getId());
                 List<ServerLynisResultDetailDTO> dtos = new LinkedList<>();
                 for (ServerLynisResultDetail detail : serverLynisResultDetailTitle) {
@@ -1189,7 +1182,7 @@ public class ServerService {
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
                 String lynisLog = resultStr;
-                resultStr = resultStr.replaceAll("", "").replaceAll("", "");
+                resultStr = resultStr.replaceAll("", "").replaceAll("[+]", "");
                 resultStr = removeColors(resultStr);//先去掉颜色
                 //将 "[2C" 替换成空格
                 for (int i = 0; i < 50; i++) {
@@ -1351,24 +1344,29 @@ public class ServerService {
 
 
     public void insertLynisResultDetail(String result, String lynisId, String type, LoginUser loginUser) throws Exception {
-        String[] strs = result.split("\\R");
-        long order = 1;
-        for (String line : strs) {
-            if (line.contains("------")) continue;
-            ServerLynisResultDetail detail = new ServerLynisResultDetail();
-            detail.setLynisId(lynisId);
-            detail.setCreateTime(System.currentTimeMillis());
-            detail.setType(titleTrans(type));
-            detail.setOperator("admin");
-            detail.setOrderIndex(order);
-            if (line.contains("[ ")) {
-                line = line.split("\\[")[0];
-                String status = line.split("\\[")[1].replaceAll("\\]", "");
-                detail.setStatus(statusTrans(status));
+        try {
+            String[] strs = result.split("\\R");
+            long order = 1;
+            for (String line : strs) {
+                if (line.contains("------")) continue;
+                ServerLynisResultDetail detail = new ServerLynisResultDetail();
+                detail.setLynisId(lynisId);
+                detail.setCreateTime(System.currentTimeMillis());
+                detail.setType(titleTrans(type));
+                detail.setOperator("admin");
+                detail.setOrderIndex(order);
+                line = line.replaceAll(" ", "");
+                if (line.contains("[")) {
+                    String status = line.split("\\[")[1].replaceAll("\\]", "");
+                    detail.setStatus(statusTrans(status));
+                    line = line.split("\\[")[0];
+                }
+                detail.setOutput(titleTrans(line));
+                serverLynisResultDetailMapper.insertSelective(detail);
+                order++;
             }
-            detail.setOutput(titleTrans(line));
-            serverLynisResultDetailMapper.insertSelective(detail);
-            order++;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
     }
 
