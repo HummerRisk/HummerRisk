@@ -690,6 +690,26 @@ public class ServerService {
                     dtos.add(dto);
                 }
                 serverListDTO.setServerLynisResultDetails(dtos);
+
+                List<ServerLynisResultDetailDTO> serverLynisWarnings = extServerResultMapper.serverLynisWarnings(serverLynisResultWithBLOBs.getId());
+                List<ServerLynisResultDetailDTO> dtos2 = new LinkedList<>();
+                for (ServerLynisResultDetail detail : serverLynisWarnings) {
+                    ServerLynisResultDetailDTO dto = BeanUtils.copyBean(new ServerLynisResultDetailDTO(), detail);
+                    List<ServerLynisResultDetail> serverLynisResultDetails = extServerResultMapper.serverLynisResultDetails(serverLynisResultWithBLOBs.getId(), detail.getType());
+                    dto.setDetails(serverLynisResultDetails);
+                    dtos2.add(dto);
+                }
+                serverListDTO.setServerLynisWarnings(dtos2);
+
+                List<ServerLynisResultDetailDTO> serverLynisSuggestions = extServerResultMapper.serverLynisSuggestions(serverLynisResultWithBLOBs.getId());
+                List<ServerLynisResultDetailDTO> dtos3 = new LinkedList<>();
+                for (ServerLynisResultDetail detail : serverLynisSuggestions) {
+                    ServerLynisResultDetailDTO dto = BeanUtils.copyBean(new ServerLynisResultDetailDTO(), detail);
+                    List<ServerLynisResultDetail> serverLynisResultDetails = extServerResultMapper.serverLynisResultDetails(serverLynisResultWithBLOBs.getId(), detail.getType());
+                    dto.setDetails(serverLynisResultDetails);
+                    dtos3.add(dto);
+                }
+                serverListDTO.setServerLynisSuggestions(dtos3);
             }
 
         }
@@ -1293,17 +1313,19 @@ public class ServerService {
                             String strwar[] = result.split("----------------------------");
                             for (String s : strwar) {
                                 insertLynisResultDetailSuggest(s, lynisId, ServerConstants.WARNINGS, order, loginUser);
+                                order++;
                             }
                         }
                     } else if (result.contains(ServerConstants.SUGGESTIONS)) {
                         String strwar[] = result.split("----------------------------");
                         for (String s : strwar) {
                             insertLynisResultDetailSuggest(s, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
+                            order++;
                         }
                     } else if (result.contains("*")) {
                         insertLynisResultDetailSuggest(result, lynisId, ServerConstants.SUGGESTIONS, order, loginUser);
+                        order++;
                     }
-                    order++;
                 }
 
                 for (String result : results3) {

@@ -23,6 +23,10 @@ public class ServerListDTO extends Server {
 
     private List<ServerLynisResultDetailDTO> serverLynisResultDetails;
 
+    private List<ServerLynisResultDetailDTO> serverLynisWarnings;
+
+    private List<ServerLynisResultDetailDTO> serverLynisSuggestions;
+
     private List<ServerResultDTO> serverResultDTOS;
 
     public String getUser() {
@@ -79,5 +83,21 @@ public class ServerListDTO extends Server {
 
     public void setServerLynisResultDetails(List<ServerLynisResultDetailDTO> serverLynisResultDetails) {
         this.serverLynisResultDetails = serverLynisResultDetails;
+    }
+
+    public List<ServerLynisResultDetailDTO> getServerLynisWarnings() {
+        return serverLynisWarnings;
+    }
+
+    public void setServerLynisWarnings(List<ServerLynisResultDetailDTO> serverLynisWarnings) {
+        this.serverLynisWarnings = serverLynisWarnings;
+    }
+
+    public List<ServerLynisResultDetailDTO> getServerLynisSuggestions() {
+        return serverLynisSuggestions;
+    }
+
+    public void setServerLynisSuggestions(List<ServerLynisResultDetailDTO> serverLynisSuggestions) {
+        this.serverLynisSuggestions = serverLynisSuggestions;
     }
 }

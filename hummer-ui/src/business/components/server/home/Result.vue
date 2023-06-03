@@ -272,26 +272,34 @@
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-tabs v-model="detailsName" type="card">
         <el-tab-pane :label="$t('server.server_result')" name="first" v-if="server.type === 'linux'">
-          <el-table stripe :data="serverLynisResultDetails" class="adjust-table table-content" >
+
+          <el-descriptions title="" direction="vertical" :column="3" border>
+            <el-descriptions-item label="Hardening index">{{ serverLynisResult.hardeningIndex }}</el-descriptions-item>
+            <el-descriptions-item label="Tests performed">{{ serverLynisResult.pluginsEnabled }}</el-descriptions-item>
+            <el-descriptions-item label="Plugins enabled">{{ serverLynisResult.testsPerformed }}</el-descriptions-item>
+          </el-descriptions>
+
+          <el-table :data="serverLynisResultDetails" class="adjust-table table-content" :row-class-name="tableRowClassName">
             <!-- 展开 start -->
             <el-table-column type="expand" min-width="40" v-slot:default="scope">
 
-              <el-table border :data="scope.row.details" class="adjust-table table-content" style="margin: 20px;" :row-class-name="tableRowClassName">
+              <el-table border :data="scope.row.details" class="adjust-table table-content" style="margin: 10px 50px;width: 100%;" stripe>
                 <el-table-column type="index" min-width="40"/>
-                <el-table-column prop="output" v-slot:default="scope" :label="$t('server.lynis_project')" min-width="240" show-overflow-tooltip>
+                <el-table-column prop="output" v-slot:default="scope" :label="$t('server.lynis_project')" min-width="200" show-overflow-tooltip>
                   {{ scope.row.output }}
                 </el-table-column>
-                <el-table-column prop="status" v-slot:default="scope" :label="$t('server.lynis_result')" min-width="140" show-overflow-tooltip fixed="right">
+                <el-table-column prop="status" v-slot:default="scope" :label="$t('server.lynis_result')" min-width="100" show-overflow-tooltip fixed="right">
                   <span v-if="checkStatusColor(scope.row.status) === 'true'" style="color: green;">{{ $t(scope.row.status) }}</span>
                   <span v-else-if="checkStatusColor(scope.row.status) === 'false'" style="color: red;">{{ $t(scope.row.status) }}</span>
                   <span v-else-if="checkStatusColor(scope.row.status) === 'warning'" style="color: #FF8000;">{{ $t(scope.row.status) }}</span>
+                  <span v-else>{{ '--' }}</span>
                 </el-table-column>
               </el-table>
 
             </el-table-column >
             <!-- 展开 end -->
             <el-table-column type="index" min-width="40"/>
-            <el-table-column prop="type" v-slot:default="scope" :label="$t('server.lynis_project_name')" min-width="240" show-overflow-tooltip>
+            <el-table-column prop="type" v-slot:default="scope" :label="$t('server.lynis_project_name')" min-width="200" show-overflow-tooltip>
               {{ scope.row.type }}
             </el-table-column>
             <el-table-column prop="resultSum" v-slot:default="scope" :label="$t('server.lynis_result_sum')" min-width="140" show-overflow-tooltip>
@@ -304,28 +312,28 @@
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </el-table-column>
           </el-table>
-          <el-table :data="serverLynisResultDetails" style="width: 100%">
+          <el-table :data="serverLynisWarnings" style="width: 100%">
             <el-table-column min-width="600" fixed="right" v-slot:default="scope">
-              <div v-if="scope.row.type ==='Warnings'">
-                <h1 v-if="scope.row.output.indexOf('Warnings') > -1" style="color: #ec6e6a;margin: 3px 0;font-size: 24px;">
-                  {{ "--------------------------------------------------------------------------------------------------------------" }}
-                  <br>
-                  {{ scope.row.output }}
-                  <br>
-                  {{ "--------------------------------------------------------------------------------------------------------------" }}
-                </h1>
-                <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
-              </div>
-              <div v-if="scope.row.type ==='Suggestions'">
-                <h1 v-if="scope.row.output.indexOf('Suggestions') > -1" style="color: #753974;margin: 3px 0;font-size: 24px;">
-                  {{ "--------------------------------------------------------------------------------------------------------------" }}
-                  <br>
-                  {{ scope.row.output }}
-                  <br>
-                  {{ "--------------------------------------------------------------------------------------------------------------" }}
-                </h1>
-                <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
-              </div>
+              <h1 v-if="scope.row.output.indexOf('Warnings') > -1" style="color: #ec6e6a;margin: 3px 0;font-size: 24px;">
+                {{ "--------------------------------------------------------------------------------------------------------------" }}
+                <br>
+                {{ scope.row.output }}
+                <br>
+                {{ "--------------------------------------------------------------------------------------------------------------" }}
+              </h1>
+              <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
+            </el-table-column>
+          </el-table>
+          <el-table :data="serverLynisSuggestions" style="width: 100%">
+            <el-table-column min-width="600" fixed="right" v-slot:default="scope">
+              <h1 v-if="scope.row.output.indexOf('Suggestions') > -1" style="color: #753974;margin: 3px 0;font-size: 24px;">
+                {{ "--------------------------------------------------------------------------------------------------------------" }}
+                <br>
+                {{ scope.row.output }}
+                <br>
+                {{ "--------------------------------------------------------------------------------------------------------------" }}
+              </h1>
+              <div v-else v-html="scope.row.output.replace(/\n/g, '<br>')" style="font-size: 14px;"></div>
             </el-table-column>
           </el-table>
         </el-tab-pane>
@@ -703,6 +711,8 @@ export default {
       detailsName: 'first',
       serverLynisResult: {},
       serverLynisResultDetails: [],
+      serverLynisWarnings: [],
+      serverLynisSuggestions: [],
       server: {},
     }
   },
@@ -890,6 +900,8 @@ export default {
       this.serverResultDetails = data.serverResultDTOS;
       this.serverLynisResult = data.serverLynisResult;
       this.serverLynisResultDetails = data.serverLynisResultDetails;
+      this.serverLynisWarnings = data.serverLynisWarnings;
+      this.serverLynisSuggestions = data.serverLynisSuggestions;
       this.server = data;
       if (this.server.type !== 'linux') {
         this.detailsName = 'second';
@@ -948,30 +960,30 @@ export default {
       });
     },
     tableRowClassName({row, rowIndex}) {
-      if (this.tableRow) {
-        if (rowIndex % 4 === 0) {
-          return 'success-row';
-        } else if (rowIndex % 2 === 0) {
-          return 'warning-row';
-        } else {
-          return '';
-        }
+      if (rowIndex % 4 === 0) {
+        return 'success-row';
+      } else if (rowIndex % 2 === 0) {
+        return 'warning-row';
+      } else {
+        return '';
       }
     },
     //定义状态对应的类型
     checkStatusColor(status) {
-      let trueArr = ["STATUS_ACTIVE", "STATUS_CHECK_NEEDED", "STATUS_DEFAULT", "STATUS_DEFAULT", "STATUS_DISABLED", "STATUS_DONE", "STATUS_ENABLED", "STATUS_EXPOSED", "STATUS_HARDENED", "STATUS_INSTALLED",
-      "STATUS_LOCAL_ONLY", "STATUS_NO_UPDATE", "STATUS_OFF", "STATUS_OK", "STATUS_ON", "STATUS_PARTIALLY_HARDENED", "STATUS_PROTECTED", "STATUS_RUNNING", "STATUS_SKIPPED", "STATUS_UPDATE_AVAILABLE", "STATUS_YES"];
-      let falseArr = ["STATUS_ERROR", "STATUS_FAILED", "STATUS_SUGGESTION", "STATUS_UNSAFE", "STATUS_WEAK"];
-      let warningArr = ["STATUS_DEBUG", "STATUS_FILES_FOUND", "STATUS_FOUND", "STATUS_MEDIUM", "STATUS_NO", "STATUS_NON_DEFAULT", "STATUS_NONE", "STATUS_NOT_CONFIGURED", "STATUS_NOT_DISABLED", "STATUS_NOT_ENABLED", "STATUS_NOT_FOUND", "STATUS_NOT_RUNNING", "STATUS_UNKNOWN", "STATUS_WARNING"];
+      let trueArr = ["激活", "检查需要", "默认", "禁用", "完成", "可用", "已公开", "强化", "已安装",
+      "仅限本地", "没有更新", "关闭", "正常", "开启", "部分强化", "受保护", "运行", "跳过", "更新可用", "是"];
+      let falseArr = ["错误", "失败", "建议", "不安全", "弱"];
+      let warningArr = ["调试", "找到文件", "找到", "中", "不是", "非默认", "没有", "未配置", "未禁用", "未启用", "没有找到", "没有运行", "未知", "警告"];
       if (trueArr.indexOf(status) > -1) {
         return "true";
       } else if (falseArr.indexOf(status) > -1) {
         return "false";
       } else if (warningArr.indexOf(status) > -1) {
         return "warning";
+      } else if (status) {
+        return "warning";
       }
-      return "true";
+      return "error";
     },
   },
   computed: {
@@ -1156,4 +1168,8 @@ export default {
   height: 600px !important;
 }
 /deep/ :focus{outline:0;}
+
+thead th:not(.is-hidden):last-child {
+  border-left: 1px solid #EBEEF5;
+}
 </style>

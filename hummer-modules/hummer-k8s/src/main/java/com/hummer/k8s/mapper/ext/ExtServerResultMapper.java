@@ -31,6 +31,10 @@ public interface ExtServerResultMapper {
 
     List<ServerLynisResultDetailDTO> serverLynisResultDetailTitle (@Param("id") String id);
 
+    List<ServerLynisResultDetailDTO> serverLynisWarnings (@Param("id") String id);
+
+    List<ServerLynisResultDetailDTO> serverLynisSuggestions (@Param("id") String id);
+
     List<ServerLynisResultDetail> serverLynisResultDetails (@Param("id") String id, @Param("type") String type);
 
 }

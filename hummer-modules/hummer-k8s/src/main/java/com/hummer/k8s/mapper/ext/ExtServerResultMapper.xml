@@ -421,6 +421,22 @@
         'SECTION_MALWARE', 'SECTION_FILE_PERMISSIONS', 'SECTION_HOME_DIRECTORIES', 'SECTION_KERNEL_HARDENING', 'SECTION_HARDENING', 'SECTION_CUSTOM_TESTS', 'Warnings', 'Suggestions'), t.order_index
     </select>
 
+    <select id="serverLynisWarnings" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultDtoMap">
+        SELECT
+            t.*
+        FROM server_lynis_result_detail t
+        where t.lynis_id = #{id} and t.type = 'Warnings'
+        ORDER BY t.order_index
+    </select>
+
+    <select id="serverLynisSuggestions" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultDtoMap">
+        SELECT
+            t.*
+        FROM server_lynis_result_detail t
+        where t.lynis_id = #{id} and t.type = 'Suggestions'
+        ORDER BY t.order_index
+    </select>
+
     <select id="serverLynisResultDetails" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultMap">
         SELECT
             t.*
