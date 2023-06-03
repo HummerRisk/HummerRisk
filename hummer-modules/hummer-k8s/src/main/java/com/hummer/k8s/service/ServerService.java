@@ -1182,7 +1182,7 @@ public class ServerService {
         try {
             if (StringUtils.isNotEmpty(resultStr)) {
                 String lynisLog = resultStr;
-                resultStr = resultStr.replaceAll("", "").replaceAll("[+]", "");
+                resultStr = resultStr.replaceAll("", "");
                 resultStr = removeColors(resultStr);//先去掉颜色
                 //将 "[2C" 替换成空格
                 for (int i = 0; i < 50; i++) {
@@ -1352,16 +1352,16 @@ public class ServerService {
                 ServerLynisResultDetail detail = new ServerLynisResultDetail();
                 detail.setLynisId(lynisId);
                 detail.setCreateTime(System.currentTimeMillis());
-                detail.setType(titleTrans(type));
+                detail.setType(titleTrans(type.replace("[+] ", "")));
                 detail.setOperator("admin");
                 detail.setOrderIndex(order);
-                line = line.replaceAll(" ", "");
+                line = line.replace("[+] ", "");
                 if (line.contains("[")) {
-                    String status = line.split("\\[")[1].replaceAll("\\]", "");
-                    detail.setStatus(statusTrans(status));
+                    String status = line.split("\\[")[1].replace("]", "");
+                    detail.setStatus(statusTrans(status.trim()));
                     line = line.split("\\[")[0];
                 }
-                detail.setOutput(titleTrans(line));
+                detail.setOutput(titleTrans(line.trim()));
                 serverLynisResultDetailMapper.insertSelective(detail);
                 order++;
             }

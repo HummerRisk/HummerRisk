@@ -414,11 +414,11 @@
         (select count(*) from server_lynis_result_detail t1 where t1.lynis_id = #{id} and t1.type = t.type and t1.type != t1.output and t1.status in ("STATUS_ERROR", "STATUS_FAILED", "STATUS_SUGGESTION", "STATUS_UNSAFE", "STATUS_WEAK")) as riskSum
         FROM server_lynis_result_detail t
         where t.lynis_id = #{id} and t.type = t.output
-        ORDER BY FIELD(t.type, 'System tools', 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
-        'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls',
-        'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification',
-        'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling',
-        'Software: Malware', 'File Permissions', 'Home directories', 'Kernel Hardening', 'Hardening', 'Custom tests', 'Warnings', 'Suggestions'), t.order_index
+        ORDER BY FIELD(t.type, 'SECTION_SYSTEM_TOOLS', 'SECTION_BOOT_AND_SERVICES', 'SECTION_KERNEL', 'SECTION_MEMORY_AND_PROCESSES', 'SECTION_USERS_GROUPS_AND_AUTHENTICATION', 'SECTION_SHELLS', 'SECTION_FILE_SYSTEMS',
+        'SECTION_USB_DEVICES', 'SECTION_STORAGE', 'SECTION_NFS', 'SECTION_NAME_SERVICES', 'SECTION_PORTS_AND_PACKAGES', 'SECTION_NETWORKING', 'SECTION_PRINTERS_AND_SPOOLS', 'SECTION_EMAIL_AND_MESSAGING', 'SECTION_FIREWALLS',
+        'SECTION_WEBSERVER', 'SECTION_SSH_SUPPORT', 'SECTION_SNMP_SUPPORT', 'SECTION_DATABASES', 'SECTION_LDAP_SERVICES', 'SECTION_PHP', 'SECTION_SQUID_SUPPORT', 'SECTION_LOGGING_AND_FILES', 'SECTION_INSECURE_SERVICES', 'SECTION_BANNERS_AND_IDENTIFICATION',
+        'SECTION_SCHEDULED_TASKS', 'SECTION_ACCOUNTING', 'SECTION_TIME_AND_SYNCHRONIZATION', 'SECTION_CRYPTOGRAPHY', 'SECTION_VIRTUALIZATION', 'SECTION_CONTAINERS', 'SECTION_SECURITY_FRAMEWORKS', 'SECTION_FILE_INTEGRITY', 'SECTION_SYSTEM_TOOLING',
+        'SECTION_MALWARE', 'SECTION_FILE_PERMISSIONS', 'SECTION_HOME_DIRECTORIES', 'SECTION_KERNEL_HARDENING', 'SECTION_HARDENING', 'SECTION_CUSTOM_TESTS', 'Warnings', 'Suggestions'), t.order_index
     </select>
 
     <select id="serverLynisResultDetails" parameterType="java.lang.String" resultMap="serverLynisResultDetailsResultMap">
@@ -426,11 +426,11 @@
             t.*
         FROM server_lynis_result_detail t
         where t.lynis_id = #{id} and t.type = #{type} and t.type != t.output
-        ORDER BY FIELD(t.type, 'System tools', 'Boot and services', 'Kernel', 'Memory and Processes', 'Users, Groups and Authentication', 'Shells', 'File systems',
-                       'USB Devices', 'Storage', 'NFS', 'Name services', 'Ports and packages', 'Networking', 'Printers and Spools', 'Software: e-mail and messaging', 'Software: firewalls',
-                       'Software: webserver', 'SSH Support', 'SNMP Support', 'Databases', 'LDAP Services', 'PHP', 'Squid Support', 'Logging and files', 'Insecure services', 'Banners and identification',
-                       'Scheduled tasks', 'Accounting', 'Time and Synchronization', 'Cryptography', 'Virtualization', 'Containers', 'Security frameworks', 'Software: file integrity', 'Software: System tooling',
-                       'Software: Malware', 'File Permissions', 'Home directories', 'Kernel Hardening', 'Hardening', 'Custom tests', 'Warnings', 'Suggestions'), t.order_index
+        ORDER BY FIELD(t.type, 'SECTION_SYSTEM_TOOLS', 'SECTION_BOOT_AND_SERVICES', 'SECTION_KERNEL', 'SECTION_MEMORY_AND_PROCESSES', 'SECTION_USERS_GROUPS_AND_AUTHENTICATION', 'SECTION_SHELLS', 'SECTION_FILE_SYSTEMS',
+            'SECTION_USB_DEVICES', 'SECTION_STORAGE', 'SECTION_NFS', 'SECTION_NAME_SERVICES', 'SECTION_PORTS_AND_PACKAGES', 'SECTION_NETWORKING', 'SECTION_PRINTERS_AND_SPOOLS', 'SECTION_EMAIL_AND_MESSAGING', 'SECTION_FIREWALLS',
+            'SECTION_WEBSERVER', 'SECTION_SSH_SUPPORT', 'SECTION_SNMP_SUPPORT', 'SECTION_DATABASES', 'SECTION_LDAP_SERVICES', 'SECTION_PHP', 'SECTION_SQUID_SUPPORT', 'SECTION_LOGGING_AND_FILES', 'SECTION_INSECURE_SERVICES', 'SECTION_BANNERS_AND_IDENTIFICATION',
+            'SECTION_SCHEDULED_TASKS', 'SECTION_ACCOUNTING', 'SECTION_TIME_AND_SYNCHRONIZATION', 'SECTION_CRYPTOGRAPHY', 'SECTION_VIRTUALIZATION', 'SECTION_CONTAINERS', 'SECTION_SECURITY_FRAMEWORKS', 'SECTION_FILE_INTEGRITY', 'SECTION_SYSTEM_TOOLING',
+            'SECTION_MALWARE', 'SECTION_FILE_PERMISSIONS', 'SECTION_HOME_DIRECTORIES', 'SECTION_KERNEL_HARDENING', 'SECTION_HARDENING', 'SECTION_CUSTOM_TESTS', 'Warnings', 'Suggestions'), t.order_index
     </select>
 
 
