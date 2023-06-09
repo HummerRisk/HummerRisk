@@ -423,9 +423,6 @@ public class PlatformUtils {
     /**
      * scanner
      *
-     * @param custodian
-     * @param behavior
-     * @param fileName
      * @param params
      * @return
      */
