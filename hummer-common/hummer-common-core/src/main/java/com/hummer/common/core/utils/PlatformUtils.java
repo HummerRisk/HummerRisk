@@ -107,8 +107,6 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.amazonaws.services.ec2.model.PrincipalType.Account;
-
 /**
  * @author harris
  * @desc 与云平台相关的公共方法统一在此文件
@@ -421,6 +419,196 @@ public class PlatformUtils {
                 throw new IllegalStateException("Unexpected value: " + behavior);
         }
     }
+
+    /**
+     * scanner
+     *
+     * @param custodian
+     * @param behavior
+     * @param fileName
+     * @param params
+     * @return
+     */
+    public final static String fixedScanner(String policy, Map<String, String> params, String plugin) throws Exception {
+        String type = params.get("type");
+        String region = params.get("region");
+        String proxyType = params.get("proxyType");
+        String proxyIp = params.get("proxyIp");
+        String proxyPort = params.get("proxyPort");
+        String proxyName = params.get("proxyName");
+        String proxyPassword = params.get("proxyPassword");
+        String pre = "";
+        String _pok = " ";
+        String proxy = "";
+        if (StringUtils.isNotEmpty(proxyType)) {
+            if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
+                if (StringUtils.isNotEmpty(proxyName)) {
+                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
+                } else {
+                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
+                }
+            } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
+                if (StringUtils.isNotEmpty(proxyName)) {
+                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
+                } else {
+                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
+                }
+            }
+        } else {
+            proxy = "unset http_proxy;" + "\n" +
+                    "unset https_proxy;" + "\n";
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("policies", policy);
+        jsonObject.put("plugin", region);
+
+        switch (type) {
+            case aws:
+                String awsAccessKey = params.get("accessKey");
+                String awsSecretKey = params.get("secretKey");
+                String sessionToken = params.get("sessionToken");
+                jsonObject.put("AWS_ACCESS_KEY_ID", awsAccessKey);
+                jsonObject.put("AWS_SECRET_ACCESS_KEY", awsSecretKey);
+                if(StringUtils.isEmpty(sessionToken)) jsonObject.put("AWS_SESSION_TOKEN", sessionToken);
+                jsonObject.put("region", region);
+                break;
+            case azure:
+                String tenant = params.get("tenant");
+                String subscriptionId = params.get("subscription");
+                String client = params.get("client");
+                String key = params.get("key");
+                jsonObject.put("AZURE_TENANT_ID", tenant);
+                jsonObject.put("AZURE_SUBSCRIPTION_ID", subscriptionId);
+                jsonObject.put("AZURE_CLIENT_ID", client);
+                jsonObject.put("AZURE_CLIENT_SECRET", key);
+                jsonObject.put("region", region);
+                break;
+            case aliyun:
+                String aliAccessKey = params.get("accessKey");
+                String aliSecretKey = params.get("secretKey");
+                jsonObject.put("ALIYUN_ACCESSKEYID", aliAccessKey);
+                jsonObject.put("ALIYUN_ACCESSSECRET", aliSecretKey);
+                jsonObject.put("region", region);
+                break;
+            case huawei:
+                String huaweiAccessKey = params.get("ak");
+                String huaweiSecretKey = params.get("sk");
+                String projectId = params.get("projectId");
+                jsonObject.put("HUAWEI_AK", huaweiAccessKey);
+                jsonObject.put("HUAWEI_SK", huaweiSecretKey);
+                jsonObject.put("HUAWEI_PROJECT", projectId);
+                jsonObject.put("region", region);
+                break;
+            case tencent:
+                String qSecretId = params.get("secretId");
+                String qSecretKey = params.get("secretKey");
+                jsonObject.put("TENCENT_SECRETID", qSecretId);
+                jsonObject.put("TENCENT_SECRETKEY", qSecretKey);
+                jsonObject.put("region", region);
+                break;
+            case openstack:
+                String oEndpoint = params.get("endpoint");
+                String oUserName = params.get("userName");
+                String oPassword = params.get("password");
+                String oProjectId = params.get("projectId");
+                String oDomainId = params.get("domainId");
+                jsonObject.put("username", oUserName);
+                jsonObject.put("password", oPassword);
+                jsonObject.put("project_id", oProjectId);
+                jsonObject.put("domain_name", oDomainId);
+                jsonObject.put("auth_url", oEndpoint);
+                jsonObject.put("region", region);
+                break;
+            case vsphere:
+                String vUserName = params.get("vUserName");
+                String vPassword = params.get("vPassword");
+                String vEndPoint = params.get("vEndPoint");
+                jsonObject.put("VSPHERE_USERNAME", vUserName);
+                jsonObject.put("VSPHERE_PASSWORD", vPassword);
+                jsonObject.put("VSPHERE_ENDPOINT", vEndPoint);
+                jsonObject.put("region", region);
+                break;
+            case gcp:
+                String credential = params.get("credential");
+                jsonObject.put("GOOGLE_APPLICATION_CREDENTIALS", credential);
+                jsonObject.put("region", region);
+                break;
+            case k8s:
+                String url = params.get("url");
+                String token = params.get("token");
+                jsonObject.put("K8S_HOST", url);
+                jsonObject.put("K8S_TOKEN", token);
+                break;
+            case rancher:
+                String url2 = params.get("url");
+                String token2 = params.get("token");
+                jsonObject.put("RANCHER_HOST", url2);
+                jsonObject.put("RANCHER_TOKEN", token2);
+                break;
+            case kubesphere:
+                String url3 = params.get("url");
+                String token3 = params.get("token");
+                jsonObject.put("KUBESPHERE_HOST", url3);
+                jsonObject.put("KUBESPHERE_TOKEN", token3);
+                break;
+            case huoshan:
+                String AccessKeyId = params.get("AccessKeyId");
+                String SecretAccessKey = params.get("SecretAccessKey");
+                jsonObject.put("VOLC_ACCESSKEYID", AccessKeyId);
+                jsonObject.put("VOLC_SECRETACCESSKEY", SecretAccessKey);
+                jsonObject.put("region", region);
+                break;
+            case baidu:
+                String baiduAk = params.get("AccessKeyId");
+                String baiduSK = params.get("SecretAccessKey");
+                String baiduEp = params.get("Endpoint");
+                jsonObject.put("BAIDU_ACCESSKEYID", baiduAk);
+                jsonObject.put("BAIDU_SECRETACCESSKEY", baiduSK);
+                jsonObject.put("BAIDU_ENDPOINT", baiduEp);
+                jsonObject.put("region", region);
+                break;
+            case qiniu:
+                String qiniuAk = params.get("accessKey");
+                String qiniuSK = params.get("secretKey");
+                String qiniuBucket = params.get("bucket");
+                jsonObject.put("QINIU_ACCESSKEY", qiniuAk);
+                jsonObject.put("QINIU_SECRETKEY", qiniuSK);
+                jsonObject.put("QINIU_BUCKET", qiniuBucket);
+                break;
+            case qingcloud:
+                String qingcloudAk = params.get("AccessKeyId");
+                String qingcloudSK = params.get("SecretAccessKey");
+                jsonObject.put("QINGCLOUD_ACCESSKEY", qingcloudAk);
+                jsonObject.put("QINGCLOUD_SECRETKEY", qingcloudSK);
+                jsonObject.put("region", region);
+                break;
+            case ucloud:
+                String ucloudPublicKey = params.get("UcloudPublicKey");
+                String ucloudPrivateKey = params.get("UcloudPrivateKey");
+                jsonObject.put("UCLOUD_PUBLICKEY", ucloudPublicKey);
+                jsonObject.put("UCLOUD_PRIVATEKEY", ucloudPrivateKey);
+                jsonObject.put("region", region);
+                break;
+            case jdcloud:
+                String accessKey = params.get("AccessKey");
+                String secretAccessKey = params.get("SecretAccessKey");
+                jsonObject.put("JDCLOUD_ACCESSKEY", accessKey);
+                jsonObject.put("JDCLOUD_SECRETKEY", secretAccessKey);
+                jsonObject.put("region", region);
+                break;
+            case ksyun:
+                String ksyunAccessKey = params.get("AccessKey");
+                String ksyunSecretAccessKey = params.get("SecretAccessKey");
+                jsonObject.put("KSYUN_ACCESSKEY", ksyunAccessKey);
+                jsonObject.put("KSYUN_SECRETKEY", ksyunSecretAccessKey);
+                jsonObject.put("region", region);
+                break;
+        }
+
+        return jsonObject.toJSONString();
+
+    }
+
 
     /**
      * 获取云平台相关参数

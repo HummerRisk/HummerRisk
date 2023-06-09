@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -285,6 +286,44 @@ public class HttpClientUtil {
                 return false;
             }
         }
+    }
+
+    public static String cloudScanner(String url, String body) throws Exception {
+        // 创建Httpclient对象
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
+        String resultString = null;
+        try {
+            httpClient = createClient();
+
+            // 创建Http Post请求
+            HttpPost httpPost = new HttpPost(url);
+            // 创建参数列表
+            httpPost.setEntity(new StringEntity(body));
+            // 执行http请求
+            response = httpClient.execute(httpPost);
+            // 判断返回状态是否为200
+            if (response.getStatusLine().getStatusCode() == 200) {
+                resultString = EntityUtils.toString(response.getEntity(), "utf-8");
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                if (response != null)
+                    response.close();
+            } catch (IOException e) {
+                throw e;
+            }
+            try {
+                if (httpClient != null)
+                    httpClient.close();
+            } catch (IOException e) {
+                throw e;
+            }
+        }
+
+        return resultString;
     }
 
 }
