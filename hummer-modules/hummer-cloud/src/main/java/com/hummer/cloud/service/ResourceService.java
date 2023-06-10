@@ -181,7 +181,8 @@ public class ResourceService {
     private void saveResourceItem(ResourceWithBLOBs resourceWithBLOBs, JSONObject jsonObject) throws Exception {
         ResourceItem resourceItem = new ResourceItem();
         try{
-            String fid = jsonObject.getString("hummerId") != null ? jsonObject.getString("hummerId") : jsonObject.getString("id");
+            String hummerId = jsonObject.getString("hummerId") != null ? jsonObject.getString("hummerId") : jsonObject.getString("id");
+            String hummerName = jsonObject.getString("hummerName") != null ? jsonObject.getString("hummerName") : jsonObject.getString("id");
             resourceItem.setAccountId(resourceWithBLOBs.getAccountId());
             resourceItem.setUpdateTime(System.currentTimeMillis());
             resourceItem.setPluginIcon(resourceWithBLOBs.getPluginIcon());
@@ -192,11 +193,12 @@ public class ResourceService {
             resourceItem.setResourceId(resourceWithBLOBs.getId());
             resourceItem.setSeverity(resourceWithBLOBs.getSeverity());
             resourceItem.setResourceType(resourceWithBLOBs.getResourceType());
-            resourceItem.setHummerId(fid);
+            resourceItem.setHummerId(hummerId);
+            resourceItem.setHummerName(hummerName);
             resourceItem.setResource(jsonObject.toJSONString());
 
             ResourceItemExample example = new ResourceItemExample();
-            example.createCriteria().andHummerIdEqualTo(fid).andResourceIdEqualTo(resourceWithBLOBs.getId());
+            example.createCriteria().andHummerIdEqualTo(hummerId).andResourceIdEqualTo(resourceWithBLOBs.getId());
             List<ResourceItem> resourceItems = resourceItemMapper.selectByExampleWithBLOBs(example);
             if (!resourceItems.isEmpty()) {
                 resourceItem.setId(resourceItems.get(0).getId());

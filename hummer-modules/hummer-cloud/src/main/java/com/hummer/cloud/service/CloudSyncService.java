@@ -207,7 +207,8 @@ public class CloudSyncService {
                         for (Object obj : resourcesArr) {
                             //资源详情
                             JSONObject jsonObject = parseObject(obj.toString());
-                            String fid = jsonObject.getString("hummerId") != null ? jsonObject.getString("hummerId") : jsonObject.getString("id");
+                            String hummerId = jsonObject.getString("hummerId") != null ? jsonObject.getString("hummerId") : jsonObject.getString("id");
+                            String hummerName = jsonObject.getString("hummerName") != null ? jsonObject.getString("hummerName") : jsonObject.getString("id");
                             CloudResourceItem cloudResourceItem = new CloudResourceItem();
                             cloudResourceItem.setId(UUIDUtil.newUUID());
                             cloudResourceItem.setAccountId(accountId);
@@ -219,7 +220,8 @@ public class CloudSyncService {
                             cloudResourceItem.setRegionName(cloudResourceSyncItem.getRegionName());
                             cloudResourceItem.setResourceId(cloudResourceWithBLOBs.getId());
                             cloudResourceItem.setResourceType(resourceType);
-                            cloudResourceItem.setHummerId(fid);
+                            cloudResourceItem.setHummerId(hummerId);
+                            cloudResourceItem.setHummerName(hummerName);
                             cloudResourceItem.setCreateTime(nowDate);
                             cloudResourceItem.setResource(jsonObject.toJSONString());
 
