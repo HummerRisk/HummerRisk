@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummer.common.core.domain.UserKey;
 import com.hummer.common.core.domain.request.user.UserKeyRequest;
 import com.hummer.common.core.handler.annotation.I18n;
+import com.hummer.common.core.utils.CodingUtil;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Hidden;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,5 +77,12 @@ public class UserKeysController {
     @PostMapping("deleteApiKeys")
     public void deleteApiKeys(@RequestBody List<String> selectIds) throws Exception {
         userKeyService.deleteApiKeys(selectIds);
+    }
+
+    @PostMapping("createToken")
+    public String createApiToken(@RequestBody UserKey userKey) throws Exception {
+        String str = userKey.getAccessKey() + "|" + System.currentTimeMillis();
+        String signature = CodingUtil.aesEncrypt(str, userKey.getSecretKey(), userKey.getAccessKey());
+        return "Bearer "+ Base64.getEncoder().encodeToString(("apiKey:"+ userKey.getAccessKey()+":"+signature).getBytes());
     }
 }

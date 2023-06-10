@@ -1,6 +1,7 @@
 /* eslint-disable */
 export default {
   commons: {
+    generate: 'generate',
     sync: 'sync',
     help_documentation:'Help Documentation',
     support: "Support",
