@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 120.4 123.7" style="enable-background:new 0 0 120.4 123.7;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#SVGID_1_);}
+	.st1{fill:url(#SVGID_00000173127946940723990750000008094272704228252072_);}
+	.st2{fill:#FFFFFF;}
+	.st3{fill:url(#SVGID_00000088101635463994036250000015137068010423678374_);}
+</style>
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="11.425" y1="95.26" x2="109.025" y2="95.26" gradientTransform="matrix(1 0 0 -1 0 124.82)">
+	<stop  offset="0" style="stop-color:#4B4B71"/>
+	<stop  offset="1" style="stop-color:#5C629E"/>
+</linearGradient>
+<polygon class="st0" points="11.4,29.6 60.2,1.4 109,29.6 60.2,57.7 "/>
+<linearGradient id="SVGID_00000098904132952938908140000000084286825909556625_" gradientUnits="userSpaceOnUse" x1="11.425" y1="52.86" x2="60.225" y2="52.86" gradientTransform="matrix(1 0 0 -1 0 124.82)">
+	<stop  offset="0" style="stop-color:#4B4B71"/>
+	<stop  offset="1" style="stop-color:#5C629E"/>
+</linearGradient>
+<polygon style="fill:url(#SVGID_00000098904132952938908140000000084286825909556625_);" points="11.4,29.6 11.4,86.1 60.2,114.3 
+	60.2,57.7 "/>
+<polygon class="st2" points="13.7,34.6 13.7,39.9 26,47 26,41.7 "/>
+<linearGradient id="SVGID_00000132791310485256336030000002836517110512752004_" gradientUnits="userSpaceOnUse" x1="60.225" y1="52.86" x2="109.025" y2="52.86" gradientTransform="matrix(1 0 0 -1 0 124.82)">
+	<stop  offset="0" style="stop-color:#4B4B71"/>
+	<stop  offset="1" style="stop-color:#5C629E"/>
+</linearGradient>
+<polygon style="fill:url(#SVGID_00000132791310485256336030000002836517110512752004_);" points="60.2,114.3 109,86.1 109,29.6 
+	60.2,57.7 "/>
+<polygon class="st2" points="30.9,97.4 30.9,40.8 40.7,46.5 40.7,103 "/>
+<polygon class="st2" points="30.9,40.8 79.7,12.8 89.8,18.3 40.7,46.5 "/>
+</svg>
