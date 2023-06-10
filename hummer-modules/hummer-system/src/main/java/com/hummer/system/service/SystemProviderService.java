@@ -58,6 +58,8 @@ public class SystemProviderService implements ISystemProviderService {
     private UserService userService;
     @Autowired
     private ExtHistoryScanMapper extHistoryScanMapper;
+    @Autowired
+    private LicenseService licenseService;
 
 
     @Override
@@ -399,6 +401,11 @@ public class SystemProviderService implements ISystemProviderService {
             HRException.throwException(Translator.get("i18n_ex_plugin_get"));
         }
         return Translator.get("i18n_ex_plugin_get");
+    }
+
+    @Override
+    public boolean license() {
+        return licenseService.license();
     }
 
 

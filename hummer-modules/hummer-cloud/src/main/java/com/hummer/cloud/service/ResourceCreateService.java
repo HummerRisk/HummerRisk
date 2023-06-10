@@ -308,6 +308,10 @@ public class ResourceCreateService {
     private void createResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
         switch (cloudTask.getScanType()) {
             case "custodian":
+                if (systemProviderService.license()) {
+                    createScannerResource(taskItem, cloudTask);//云账号检测
+                    break;
+                }
                 createCustodianResource(taskItem, cloudTask);//云账号检测
                 break;
             case "prowler":
@@ -318,6 +322,7 @@ public class ResourceCreateService {
         }
     }
 
+    //社区版调用
     private void createCustodianResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
         LogUtil.info("createResource for taskItem: {}", toJSONString(taskItem));
         String operation = "i18n_create_resource";
@@ -397,13 +402,96 @@ public class ResourceCreateService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
         }
     }
 
+
+    //企业版调用
+    private void createScannerResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
+        LogUtil.info("createResource for taskItem: {}", toJSONString(taskItem));
+        String operation = "i18n_create_resource";
+        String resultStr = "";
+        boolean readResource = true;
+        try {
+            CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
+            example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
+            List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
+            if (list.isEmpty()) return;
+
+            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
+            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
+
+            String json = PlatformUtils.fixedScanner(taskItem.getDetails(), map, cloudTask.getPluginId());
+            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + json);
+
+            resultStr = HttpClientUtil.cloudScanner("http://127.0.0.1:8011/run", json);
+
+            taskItem.setCommand("api scanner");
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
+            if (LogUtil.getLogger().isDebugEnabled()) {
+                LogUtil.getLogger().debug("resource created: {}", resultStr);
+            }
+            if(PlatformUtils.isUserForbidden(resultStr)){
+                resultStr = Translator.get("i18n_create_resource_region_failed");
+                readResource = false;
+            }
+            if (resultStr.contains("ERROR"))
+                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+
+
+            for (CloudTaskItemResourceWithBLOBs taskItemResource : list) {
+
+                String resourceType = taskItemResource.getResourceType();
+                String resourceName = taskItemResource.getResourceName();
+                String taskItemId = taskItem.getId();
+                if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
+                            true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
+                Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
+                if (rule == null) {
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
+                            false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
+                    HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
+                }
+                String custodianRun = json;
+                String metadata = json;
+                String resources = "[]";
+                if(readResource){
+                    resources = resultStr;
+                }
+                ResourceWithBLOBs resourceWithBLOBs = new ResourceWithBLOBs();
+                if (taskItemResource.getResourceId() != null) {
+                    resourceWithBLOBs = resourceMapper.selectByPrimaryKey(taskItemResource.getResourceId());
+                }
+                resourceWithBLOBs.setCustodianRunLog(custodianRun);
+                resourceWithBLOBs.setMetadata(metadata);
+                resourceWithBLOBs.setResources(resources);
+                resourceWithBLOBs.setResourceName(resourceName);
+                resourceWithBLOBs.setDirName(taskItemResource.getDirName());
+                resourceWithBLOBs.setResourceType(resourceType);
+                resourceWithBLOBs.setAccountId(taskItem.getAccountId());
+                resourceWithBLOBs.setSeverity(taskItem.getSeverity());
+                resourceWithBLOBs.setRegionId(taskItem.getRegionId());
+                resourceWithBLOBs.setRegionName(taskItem.getRegionName());
+                resourceWithBLOBs.setResourceCommand(taskItemResource.getResourceCommand());
+                resourceWithBLOBs.setResourceCommandAction(taskItemResource.getResourceCommandAction());
+                ResourceWithBLOBs resource = resourceService.saveResource(resourceWithBLOBs, taskItem, cloudTask, taskItemResource);
+                LogUtil.info("The returned data is{}: " + new Gson().toJson(resource));
+                orderService.saveTaskItemLog(taskItemId, resource.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resource.getPluginName() + "，"
+                                + "i18n_region" + ": " + resource.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceType + "，" + "i18n_resource_manage" + ": " + resource.getReturnSum() + "/" + resource.getResourcesSum(),
+                        true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
+
+            }
+
+        } catch (Exception e) {
+            orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
+            LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
+            throw e;
+        }
+    }
 
     public Map<String, Object> getParameters(String taskId) {
         Map<String, Object> map = new HashMap<>();

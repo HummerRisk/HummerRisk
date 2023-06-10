@@ -93,6 +93,7 @@ export const changeStatusWebhookUrl = "/system/system/changeStatus";
 
 export const userKeyListUrl = "/system/user/key/list/";
 
+export const userKeyCreateTokenUrl = "/system/user/key/createToken";
 export const userKeyDeleteUrl = "/system/user/key/delete/";
 
 export const userKeyGenerateUrl = "/system/user/key/generate";

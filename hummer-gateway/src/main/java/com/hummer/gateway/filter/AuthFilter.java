@@ -7,8 +7,10 @@ import com.hummer.common.core.constant.TokenConstants;
 import com.hummer.common.core.utils.JwtUtils;
 import com.hummer.common.core.utils.ServletUtils;
 import com.hummer.common.core.utils.StringUtils;
+import com.hummer.common.core.utils.sign.Base64;
 import com.hummer.common.redis.service.RedisService;
 import com.hummer.gateway.config.properties.IgnoreWhiteProperties;
+import com.hummer.gateway.service.ApiKeyService;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,8 @@ public class AuthFilter implements GlobalFilter, Ordered
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private ApiKeyService apiKeyService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
@@ -55,6 +59,26 @@ public class AuthFilter implements GlobalFilter, Ordered
         if (StringUtils.isEmpty(token))
         {
             return unauthorizedResponse(exchange, "令牌不能为空");
+        }
+        if(!token.contains(".")){
+            String tokenStr = new String(Base64.decode(token));
+            if(tokenStr.contains("apiKey:")){
+                String[] authArr = tokenStr.split(":");
+                String ak = authArr[1];
+                String sign = authArr[2];
+                try {
+                    String userId = apiKeyService.getUser(ak,sign);
+                    // 设置用户信息到请求
+                    addHeader(mutate, SecurityConstants.USER_KEY, ak);
+                    addHeader(mutate, SecurityConstants.DETAILS_USER_ID, userId);
+                    addHeader(mutate, SecurityConstants.DETAILS_USERNAME, ak);
+                    // 内部请求来源参数清除
+                    removeHeader(mutate, SecurityConstants.FROM_SOURCE);
+                    return chain.filter(exchange.mutate().request(mutate.build()).build());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         Claims claims = JwtUtils.parseToken(token);
         if (claims == null)

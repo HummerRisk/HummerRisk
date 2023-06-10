@@ -14,6 +14,11 @@ spring:
   profiles:
     # 环境配置
     active: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${HMR_MYSQL_HOST}:${HMR_MYSQL_PORT}/${HMR_MYSQL_DB}?autoReconnect=false&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: ${HMR_MYSQL_USER}
+    password: ${HMR_MYSQL_PASSWORD}
   cloud:
     bootstrap:
       enabled: true
@@ -63,6 +68,9 @@ management:
       exposure:
         include: '*'
 
+mybatis:
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath:com/hummer/gateway/mapper/*.xml
 
 knife4j:
   # 聚合swagger文档

@@ -56,6 +56,8 @@
         </el-table-column>
         <el-table-column :label="$t('commons.operating')" fixed="right" min-width="80">
           <template v-slot:default="scope">
+            <table-operator-button :tip="$t('commons.generate')+' token'" icon="el-icon-download"
+                                   type="primary" @exec="generateToken(scope.row)"/>
             <table-operator-button :tip="$t('commons.delete')" icon="el-icon-delete"
                                       type="danger" @exec="deleteApiKey(scope.row)"/>
           </template>
@@ -86,7 +88,7 @@ import {USER_KEY_CONFIGS} from "../../common/components/search/search-components
 import TableHeader from "@/business/components/common/components/TableHeader";
 import {
   deleteApiKeysUrl,
-  userKeyActiveUrl,
+  userKeyActiveUrl, userKeyCreateTokenUrl,
   userKeyDeleteUrl,
   userKeyDisableUrl,
   userKeyGenerateUrl,
@@ -142,6 +144,7 @@ export default {
       condition: {
         components: USER_KEY_CONFIGS
       },
+      token:"",
       tableData: [],
       currentRow: {},
       currentPage: 1,
@@ -207,6 +210,33 @@ export default {
         this.total = data.itemCount;
         this.tableData = data.listObject;
         this.tableData.forEach(d => d.show = false);
+      });
+    },
+    generateToken(row){
+      this.$post(userKeyCreateTokenUrl, {"accessKey":row.accessKey,"secretKey":row.secretKey}, response => {
+        let data = response.data;
+        this.$prompt('', 'token', {
+          confirmButtonText: this.$t('commons.copy'),
+          cancelButtonText: this.$t('commons.cancel'),
+          inputValue: data,
+          inputType: "textarea"
+        }).then(({ value }) => {
+          let input = document.createElement("input");
+          document.body.appendChild(input);
+          input.value = value;
+          input.select();
+          if (input.setSelectionRange) {
+            input.setSelectionRange(0, input.value.length);
+          }
+          document.execCommand("copy");
+          document.body.removeChild(input);
+          this.$message({
+            type: 'success',
+            message: this.$t('commons.copy')+this.$t('commons.success')
+          });
+        }).catch(() => {
+
+        });
       });
     },
     deleteApiKey(row) {
@@ -299,7 +329,9 @@ export default {
   display: flex;
   align-items: center;
 }
-
+.token-confirm{
+  width: 500px;
+}
 .variable {
   display: inline-block;
   margin-right: 10px;

@@ -145,4 +145,6 @@ public interface ISystemProviderService {
 
     String getCodeCredential();
 
+    boolean license();
+
 }
