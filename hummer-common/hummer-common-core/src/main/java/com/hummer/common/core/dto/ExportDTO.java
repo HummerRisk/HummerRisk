@@ -6,6 +6,7 @@ package com.hummer.common.core.dto;
 public class ExportDTO {
 
     private String hummerId;
+    private String hummerName;
     private String regionId;
     private String regionName;
     private String resourceName;
@@ -112,5 +113,13 @@ public class ExportDTO {
 
     public void setRuleDescription(String ruleDescription) {
         this.ruleDescription = ruleDescription;
+    }
+
+    public String getHummerName() {
+        return hummerName;
+    }
+
+    public void setHummerName(String hummerName) {
+        this.hummerName = hummerName;
     }
 }

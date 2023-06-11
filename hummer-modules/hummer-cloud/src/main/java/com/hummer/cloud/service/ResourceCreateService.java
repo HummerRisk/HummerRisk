@@ -309,10 +309,10 @@ public class ResourceCreateService {
         switch (cloudTask.getScanType()) {
             case "custodian":
                 if (systemProviderService.license()) {
-                    createScannerResource(taskItem, cloudTask);//云账号检测
+                    createScannerResource(taskItem, cloudTask);
                     break;
                 }
-                createCustodianResource(taskItem, cloudTask);//云账号检测
+                createCustodianResource(taskItem, cloudTask);
                 break;
             case "prowler":
                 prowlerService.createProwlerResource(taskItem, cloudTask, null);//云账号检测

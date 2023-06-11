@@ -2,6 +2,7 @@ package com.hummer.common.core.dto;
 
 public class ResourceRuleDTO {
     private String hummerId;
+    private String hummerName;
     private String resourceType;
     private String severity;
     private String ruleId;
@@ -45,5 +46,13 @@ public class ResourceRuleDTO {
 
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
+    }
+
+    public String getHummerName() {
+        return hummerName;
+    }
+
+    public void setHummerName(String hummerName) {
+        this.hummerName = hummerName;
     }
 }

@@ -1,5 +1,6 @@
 package com.hummer.common.core.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hummer.common.core.constant.CloudNativeConstants;
 import com.hummer.common.core.utils.imp.SSLSocketFactoryImp;
 import okhttp3.*;
@@ -148,7 +149,7 @@ public class HttpClientUtil {
             e.printStackTrace();
         }
 
-//创建httpClient
+        //创建httpClient
         CloseableHttpClient client = HttpClients.custom().setSslcontext(sslContext).
                 setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
         return client;
@@ -298,13 +299,17 @@ public class HttpClientUtil {
 
             // 创建Http Post请求
             HttpPost httpPost = new HttpPost(url);
+            StringEntity s = new StringEntity(body, "utf-8");
+            s.setContentType("application/json");
             // 创建参数列表
-            httpPost.setEntity(new StringEntity(body));
+            httpPost.setEntity(s);
             // 执行http请求
             response = httpClient.execute(httpPost);
             // 判断返回状态是否为200
             if (response.getStatusLine().getStatusCode() == 200) {
-                resultString = EntityUtils.toString(response.getEntity(), "utf-8");
+                String str = EntityUtils.toString(response.getEntity(), "utf-8");
+                JSONObject j = JSONObject.parseObject(str);
+                resultString = j.getString("data");
             }
         } catch (Exception e) {
             throw e;
