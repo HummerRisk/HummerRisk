@@ -811,6 +811,7 @@ export default {
     desc:'Note: Please select the cloud accounts that need to be merged and export the report together. If you do not merge, please download the report directly. ',
     scan_vuln_search: 'Log in to the national information security vulnerability database and query the detected vulnerabilities',
     cloud_resource_detail_result: 'Resource details list',
+    cloud_resource_detail: 'Resource Details',
   },
   account: {
     cloud_account_setting:'Cloud account settings',
