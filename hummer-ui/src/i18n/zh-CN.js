@@ -1351,6 +1351,7 @@ export default {
     task_account_name: '资源名称',
     task_rule_type: '规则类型',
     task_tree_child: '该节点不是叶子节点，请点击最叶子节点获取资源信息',
+    task_tree_cloud: '请选择需要生成报告内容的账号信息',
     task_list: '任务列表',
     task_manage: '任务管理',
     task_report: '任务报告',

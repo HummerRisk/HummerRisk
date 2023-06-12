@@ -1351,6 +1351,7 @@ export default {
     task_account_name: 'Resource name',
     task_rule_type: 'Rule type',
     task_tree_child: 'This node is not a leaf node, please click the most leaf node to get resource information',
+    task_tree_cloud: 'Please select the account information that needs to generate report content',
     task_list: 'Task list',
     task_manage: 'Task management',
     task_report: 'Task report',
