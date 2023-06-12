@@ -1,18 +1,72 @@
 <template>
   <main-container>
+    <el-card class="table-card el-row-card">
+      <topo-switch @topoSwitch="topoSwitch" @selectAccount="selectAccount" :accountName="accountName"/>
+    </el-card>
+
     <el-card class="table-card" v-loading="result.loading">
       <svg id="cloud-topo"></svg>
     </el-card>
     <el-drawer class="rtl" :title="$t('resource.cloud_resource_detail')" :visible.sync="dialogVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
-      <span>这是一段信息</span>
+      <el-descriptions class="margin-top" title="" :column="2" border>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-paperclip"></i>
+            {{ $t('resource.Hummer_ID') }}
+          </template>
+          {{ 'hummerrisk-0001' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-tickets"></i>
+            {{ $t('dashboard.resource_name') }}
+          </template>
+          {{ 'hummerrisk-dev' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-cloudy"></i>
+            {{ $t('account.cloud_platform') }}
+          </template>
+          {{ '阿里云' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-house"></i>
+            {{ $t('account.cloud_account') }}
+          </template>
+          {{ 'aliyun' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-location-information"></i>
+            {{ $t('account.regions') }}
+          </template>
+          {{ '北京1' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-collection-tag"></i>
+            {{ $t('resource.risk') }}
+          </template>
+          <span style="color: red;">{{ '有风险' }}</span>
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+      <result-read-only :row="typeof(resource) === 'string'?JSON.parse(resource):resource"></result-read-only>
+      <el-divider><i class="el-icon-document-checked"></i></el-divider>
+      <cloud-detail-chart/>
     </el-drawer>
   </main-container>
 </template>
 <script>
 import MainContainer from "../../common/components/MainContainer";
+import CloudDetailChart from "@/business/components/cloudSituation/head/CloudDetailChart";
+import ResultReadOnly from "@/business/components/cloudSituation/head/ResultReadOnly";
+import TopoSwitch from "@/business/components/cloudSituation/head/TopoSwitch";
 import * as d3 from 'd3';
-import * as math from 'mathjs'
+import * as math from 'mathjs';
 import {cloudTopologyUrl} from "@/api/cloud/sync/sync";
 /* eslint-disable */
 const width = 1600;
@@ -34,6 +88,9 @@ export default {
   components: {
     MainContainer,
     d3,
+    CloudDetailChart,
+    ResultReadOnly,
+    TopoSwitch,
   },
   data() {
     return {
@@ -42,6 +99,9 @@ export default {
       cloudTopology: {},
       dialogVisible: false,
       direction: 'rtl',
+      accountId: '',
+      accountName: '',
+      resource: {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
     };
   },
   methods: {
@@ -1565,6 +1625,16 @@ export default {
     //关闭弹框
     handleClose() {
       this.dialogVisible = false;
+    },
+    //选择云账号
+    topoSwitch(accountId) {
+      this.accountId = accountId;
+      this.init();
+    },
+    //选择云账号名称
+    selectAccount(accountId, accountName) {
+      this.accountId = accountId;
+      this.accountName = accountName;
     },
   },
 
