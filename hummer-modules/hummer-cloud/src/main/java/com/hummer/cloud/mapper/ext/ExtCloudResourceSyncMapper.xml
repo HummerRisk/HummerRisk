@@ -158,7 +158,7 @@
          (
            select count(t1.id) from cloud_resource_item t1
            where t1.account_id = t.account_id
-         ), ' 个资源)'
+         ), '个资源)'
         ) as name,
         t1.plugin_id as type,
         t1.id as accountId
@@ -173,7 +173,7 @@
          (
            select count(t1.id) from cloud_resource_item t1
            where t1.account_id = t.account_id and t1.region_id = t.region_id
-         ), ' 个资源)'
+         ), '个资源)'
         ) as name,
         t.account_id as accountId,
         t.region_id as regionId
@@ -184,7 +184,7 @@
 
     <select id="selectResourceType" resultMap="ResourceBaseResultMap">
         select
-        CONCAT('资源类型: ', t.resource_type) as name,
+        CONCAT('资源类型:', t.resource_type) as name,
         CASE
             WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
                                     'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
@@ -205,9 +205,9 @@
     <select id="selectResource" resultType="com.hummer.common.core.domain.request.sync.Resource">
         select
         CASE
-            WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
-            THEN CONCAT('(有安全合规风险)资源标识:', t.hummer_id)
-            ELSE CONCAT('资源标识:', t.hummer_id)
+            WHEN t.hummer_name is not null
+            THEN CONCAT('名称:', t.hummer_name)
+            ELSE CONCAT('标识:', t.hummer_id)
         END AS name,
         CASE
             WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
