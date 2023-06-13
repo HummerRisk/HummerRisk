@@ -63,6 +63,7 @@ public class CloudTaskConstants {
         EMAIL, SMS, ANNOUNCEMENT
     }
 
+    //此处添加类型，需要在 ExtCloudResourceSyncMapper.xml 添加资源态势类型 sql，183行
     public final static String[] ALIYUN_RESOURCE_TYPE = {"aliyun.cdn", "aliyun.disk", "aliyun.ecs", "aliyun.eip", "aliyun.mongodb", "aliyun.oss", "aliyun.polardb", "aliyun.ram", "aliyun.rds", "aliyun.redis", "aliyun.security-group", "aliyun.slb", "aliyun.nas", "aliyun.mse", "aliyun.ack"};
     public final static String[] HUAWEI_RESOURCE_TYPE = {"huawei.dds","huawei.disk","huawei.ecs","huawei.eip","huawei.elb","huawei.gaussdb","huawei.gaussdbfornosql","huawei.gaussdbforopengauss","huawei.iam","huawei.obs","huawei.rds","huawei.redis","huawei.security-group"};
     public final static String[] TENCENT_RESOURCE_TYPE = {"tencent.vpc","tencent.es","tencent.cdb","tencent.clb","tencent.cos","tencent.cvm","tencent.disk","tencent.eip","tencent.mongodb","tencent.redis","tencent.security-group"};
@@ -71,7 +72,6 @@ public class CloudTaskConstants {
     public final static String[] GCP_RESOURCE_TYPE = {"gcp.app-engine-certificate","gcp.app-engine-domain","gcp.app-engine-firewall-ingress-rule","gcp.dm-deployment","gcp.dns-managed-zone","gcp.dns-policy","gcp.instance-template","gcp.loadbalancer-ssl-policy","gcp.sql-backup-run"};
     public final static String[] QINGCLOUD_RESOURCE_TYPE = {"qingcloud.ecs","qingcloud.eip","qingcloud.mongodb","qingcloud.mysql"};
     public final static String[] UCLOUD_RESOURCE_TYPE = {"ucloud.eip","ucloud.securitygroup","ucloud.uhost","ucloud.ulb"};
-
     public final static String[] K8S_RESOURCE_TYPE = {"k8s.namespace","k8s.config-map","k8s.daemon-set","k8s.deployment","k8s.node","k8s.pod","k8s.replica-set","k8s.replication-controller","k8s.secret","k8s.service","k8s.service-account","k8s.stateful-set","k8s.volume","k8s.volume-claim","k8s.controller-revision","k8s.endpoint"};
     public final static String[] QINIU_RESOURCE_TYPE = {"qiniu.kodo"};
     public final static String[] JDCLOUD_RESOURCE_TYPE = {"jdcloud.vm", "jdcloud.eip", "jdcloud.cdn","jdcloud.disk","jdcloud.lb","jdcloud.securitygroup","jdcloud.oss"};

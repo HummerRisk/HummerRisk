@@ -17,6 +17,8 @@ public class ResourceType {
 
     private String resourceType;
 
+    private String type;
+
     public List<Resource> getChildren() {
         return children;
     }
@@ -55,5 +57,13 @@ public class ResourceType {
 
     public void setRegionId(String regionId) {
         this.regionId = regionId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

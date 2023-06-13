@@ -13,6 +13,8 @@ public class Cloud {
 
     private String accountId;
 
+    private String type;
+
     public List<Region> getChildren() {
         return children;
     }
@@ -35,5 +37,13 @@ public class Cloud {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

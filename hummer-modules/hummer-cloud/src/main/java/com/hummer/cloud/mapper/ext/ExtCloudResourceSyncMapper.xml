@@ -117,6 +117,7 @@
 
     <resultMap id="CloudBaseResultMap" type="com.hummer.common.core.domain.request.sync.Cloud">
         <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
         <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Region" javaType="list"
                     select="selectRegion" column="accountId">
@@ -138,10 +139,12 @@
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
         <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
         <result column="value" jdbcType="INTEGER" property="value" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
         <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Resource" javaType="list"
                     select="selectResource" column="{regionId=regionId, accountId=accountId, resourceType=resourceType}">
             <result column="name" jdbcType="VARCHAR" property="name" />
             <result column="value" jdbcType="INTEGER" property="value" />
+            <result column="type" jdbcType="VARCHAR" property="type" />
         </collection>
     </resultMap>
 
@@ -157,6 +160,7 @@
            where t1.account_id = t.account_id
          ), ' 个资源)'
         ) as name,
+        t1.plugin_id as type,
         t1.id as accountId
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id
@@ -180,12 +184,16 @@
 
     <select id="selectResourceType" resultMap="ResourceBaseResultMap">
         select
-        CONCAT('资源类型: ', t.resource_type, '(共',
-           (
-               select count(t1.id) from cloud_resource_item t1
-               where t1.account_id = t.account_id and t1.region_id = t.region_id and t1.resource_type = t.resource_type
-           ), ' 个资源)'
-        ) as name,
+        CONCAT('资源类型: ', t.resource_type) as name,
+        CASE
+            WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
+                                    'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
+            WHEN t.resource_type IN ('aliyun.mongodb', 'aliyun.polardb', 'aliyun.rds', 'aliyun.redis', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
+                                    'huawei.gaussdbforopengauss', 'huawei.rds', 'huawei.redis', 'tencent.cdb', 'tencent.mongodb', 'tencent.redis', 'aws.rds', 'azure.cosmosdb',
+                                    'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mongodb', 'qingcloud.mysql', 'volc.mongodb') THEN 'rds'
+            WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
+            ELSE 'other'
+        END AS 'type',
         t.account_id as accountId,
         t.region_id as regionId,
         t.resource_type as resourceType
@@ -205,7 +213,16 @@
             WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
             THEN (SELECT count(t1.hummer_id) FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type) * 2
             ELSE 1
-        END AS value
+        END AS value,
+        CASE
+            WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
+                                    'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
+            WHEN t.resource_type IN ('aliyun.mongodb', 'aliyun.polardb', 'aliyun.rds', 'aliyun.redis', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
+                                    'huawei.gaussdbforopengauss', 'huawei.rds', 'huawei.redis', 'tencent.cdb', 'tencent.mongodb', 'tencent.redis', 'aws.rds', 'azure.cosmosdb',
+                                    'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mongodb', 'qingcloud.mysql', 'volc.mongodb') THEN 'rds'
+            WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
+            ELSE 'other'
+        END AS 'type',
         from cloud_resource_item t
         where t.resource_type = #{resourceType} and t.region_id = #{regionId} and t.account_id = #{accountId}
     </select>

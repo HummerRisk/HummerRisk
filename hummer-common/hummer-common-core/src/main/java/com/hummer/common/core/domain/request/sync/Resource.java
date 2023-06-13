@@ -11,6 +11,8 @@ public class Resource {
 
     private String namespace;
 
+    private String type;
+
     public Integer getValue() {
         return value;
     }
@@ -33,5 +35,13 @@ public class Resource {
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
