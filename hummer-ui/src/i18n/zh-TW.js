@@ -811,6 +811,7 @@ export default {
     desc: '注：請選擇需要合併的雲賬號一起導出報告，若不合併請直接下載報告即可。 ',
     scan_vuln_search: '登錄國家信息安全漏洞庫，查詢檢測出的漏洞',
     cloud_resource_detail_result: '資源詳情列表',
+    cloud_resource_detail: '資源詳情',
   },
   account: {
     cloud_account_setting: '雲賬號設置',
@@ -1350,6 +1351,7 @@ export default {
     task_account_name: '資源名稱',
     task_rule_type: '規則類型',
     task_tree_child: '該節點不是葉子節點，請點擊最葉子節點獲取資源信息',
+    task_tree_cloud: '請選擇需要生成報告內容的賬號信息',
     task_list: '任務列表',
     task_manage: '任務管理',
     task_report: '任務報告',

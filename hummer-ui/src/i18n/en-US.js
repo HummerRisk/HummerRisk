@@ -811,6 +811,7 @@ export default {
     desc:'Note: Please select the cloud accounts that need to be merged and export the report together. If you do not merge, please download the report directly. ',
     scan_vuln_search: 'Log in to the national information security vulnerability database and query the detected vulnerabilities',
     cloud_resource_detail_result: 'Resource details list',
+    cloud_resource_detail: 'Resource Details',
   },
   account: {
     cloud_account_setting:'Cloud account settings',
@@ -1350,6 +1351,7 @@ export default {
     task_account_name: 'Resource name',
     task_rule_type: 'Rule type',
     task_tree_child: 'This node is not a leaf node, please click the most leaf node to get resource information',
+    task_tree_cloud: 'Please select the account information that needs to generate report content',
     task_list: 'Task list',
     task_manage: 'Task management',
     task_report: 'Task report',

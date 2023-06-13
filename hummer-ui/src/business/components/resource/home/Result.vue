@@ -416,7 +416,6 @@
             <!-- 展开 start -->
             <el-table-column type="expand" min-width="40">
               <template v-slot:default="props">
-
                 <el-divider><i class="el-icon-folder-opened"></i></el-divider>
                 <el-form v-if="props.row.resource !== '[]'">
                   <result-read-only :row="typeof(props.row.resource) === 'string'?JSON.parse(props.row.resource):props.row.resource"></result-read-only>
