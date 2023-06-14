@@ -427,7 +427,7 @@ public class ResourceCreateService {
             String json = PlatformUtils.fixedScanner(taskItem.getDetails(), map, cloudTask.getPluginId());
             LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + json);
 
-            resultStr = HttpClientUtil.cloudScanner("http://127.0.0.1:8011/run", json);
+            resultStr = HttpClientUtil.cloudScanner("http://hummer-scaner/run", json);
 
             taskItem.setCommand("api scanner");
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);

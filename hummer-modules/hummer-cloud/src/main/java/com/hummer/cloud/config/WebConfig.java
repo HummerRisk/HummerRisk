@@ -36,9 +36,6 @@ public class WebConfig extends WebMvcConfigurationSupport  {
         return new RestTemplate(simpleClientHttpRequestFactory);
     }
 
-
-
-
     @Bean
     public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
