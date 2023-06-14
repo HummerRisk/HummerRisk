@@ -790,7 +790,7 @@ export default {
 
 
     },
-    //
+    // 更新画布元素
     _replot() {
       return (floorData, regionData, resourceTypeData, boxImageData, textData, isoGrid, isoTransform) => {
         // boxes
@@ -822,14 +822,14 @@ export default {
         isoTexts = plotTexts(textData, isoGrid, isoTransform, 'matrix(0.707 0.409 -0.707 0.409 0 0)');
       }
     },
-    //
+    //处理主svg的viewbox
     createStage(d3, svg, cellSize, cellCountX, cellCountY) {
       return svg.attr('viewBox', [
         -cellSize * cellCountX, 0,
         cellSize * cellCountY * 2, cellSize * cellCountX
       ].join(' '));
     },
-    //
+    // 坐标取整处理，处理坐标移动时候的数值计算
     _makeCoordRoundTransform() {
       return (
         (roundBy) => {
@@ -840,7 +840,7 @@ export default {
         }
       )
     },
-    //
+    // 从isometric转平面时的坐标转换
     _fromIsoTransform(toRadians, math) {
       return (
         (degrees) => {
@@ -859,7 +859,7 @@ export default {
         }
       )
     },
-    //
+    //在获取到的云账号数据上，计算出每个元素的相对坐标位置，并更新到对象中。
     calculatePlatform(cloudaccounts) {
       var totalNumber = 0;
       var position0 = [1, 1]
@@ -874,18 +874,20 @@ export default {
           var availableSquareList = []
           var basePlat = {}
           var regionNode = Object.assign({}, d);
+          //更新resourceTypeList
           this.rebuildSublist(resourceTypeList);
+          //初始化可用面积列表
           this.initSubAvailabList(availableSquareList, [0, 0], resourceTypeList[0], basePlat)
 
           resourceTypeList.forEach((item, idx) => {
+            //把当前节点对比可用面积列表，确认节点如何处理，得到节点的最终相对位置
             var rnode = this.getAiliableSquareList(availableSquareList, resourceTypeList[0], item, basePlat, 1)
             rnode.regionId = item.regionId
             item.posNode = rnode;
             resourceTypeListN.push(rnode)
           })
 
-          var regionname = d.name;
-          var regionId = d.regionId;
+          //根据处理好的结果，更新上级列表中对应节点面积和X,Y信息
           regionList[rindex].area = basePlat.xasis * basePlat.yasis
           regionList[rindex].sizeX = basePlat.xasis
           regionList[rindex].sizeY = basePlat.yasis
@@ -936,7 +938,7 @@ export default {
 
       return cloudaccounts;
     },
-    //
+    //多边形，背景的方格
     _drawPolygon() {
       return (
         (points, selection, pointTransform) => {
@@ -949,7 +951,7 @@ export default {
         }
       )
     },
-    //
+    //背景的方格
     _drawSquare(drawPolygon) {
       return (
         (origin, cellSize, selection, pointTransform) => {
@@ -962,7 +964,7 @@ export default {
         }
       )
     },
-    //
+    //整个方格背景
     _drawGrid(drawSquare) {
       return (
         (selection, cellSize, cellCountX, cellCountY, pointTransform) => {
@@ -976,7 +978,7 @@ export default {
         }
       )
     },
-    //
+    //画图中的所有图形元素，ecs,rds等的图形
     _plotImageBoxes(d3, cellSize) {
       return (
         (data, selection, pointTransform) => {
@@ -1021,10 +1023,12 @@ export default {
             })
             .merge(boxes)
             .each(function (d) {
+              //更具平面转isometric的左边转换，给图形确定x，y变换量
               let pos = pointTransform([(d.position[0] - 1) * cellSize - cellSize, (d.position[1]) * cellSize - cellSize])
               d3.select(this).select('image')
                 .attr('x', pos[0]).attr('y', pos[1])
             }).on('click', function (event, d) {
+              //在图形上增加点击事件
               let pos = pointTransform([(d.position[0] - 1) * cellSize - cellSize, (d.position[1]) * cellSize - cellSize]);
               if (clicked) {
                 d3.selectAll('image.clicked-box').each(function (d) {
@@ -1067,7 +1071,7 @@ export default {
         }
       )
     },
-    //
+    //留用方法，根据不同类型图形，对图形位置进行微调
     modifyImageByType(iconType, pos) {
       if (iconType == 'type1') {
         return [pos[0], pos[1]]
@@ -1079,7 +1083,7 @@ export default {
         return [pos[0] - 15, pos[1] + 15]
       }
     },
-    //
+    //画云账号一级的地板效果
     _plotFloor(d3, cellSize) {
       return (
         (data, selection, pointTransform, plotIcons) => {
@@ -1197,7 +1201,7 @@ export default {
         }
       )
     },
-    //
+    //画region级的边框
     _plotDashedBox(d3, cellSize) {
       return (
         (data, selection, pointTransform) => {
@@ -1235,7 +1239,7 @@ export default {
         }
       )
     },
-    //
+    //画resourcestype级的地面
     _plotRcBox(d3, cellSize) {
       return (
         (data, selection, pointTransform) => {
@@ -1274,7 +1278,7 @@ export default {
         }
       )
     },
-    //加备注
+    //画图标，目前用来给云账号一级的地板增加logo
     _plotIcon(cellSize, d3) {
       return (
         (data, selection, pointTransform, svgTransform = '', iconSize, iconData) => {
@@ -1316,7 +1320,7 @@ export default {
         }
       )
     },
-    //
+    //处理图上所有的文字
     _plotTexts(cellSize, d3) {
       return (
         (data, selection, pointTransform, svgTransform = '') => {
@@ -1365,13 +1369,13 @@ export default {
         }
       )
     },
-    //
+    //计算弧度
     _toRadians() {
       return (
         (degrees) => degrees * (Math.PI / 180)
       )
     },
-    //
+    //转换成isometric时的坐标变换计算
     _toIsoTransform(toRadians, math) {
       return (
         (degrees) => {
@@ -1404,7 +1408,7 @@ export default {
         }
       )
     },
-    //
+    //初始化 云账号，region，资源类型，资源的数据
     initData(allData, floorData, regionData, resourceTypeData, boxImageData, textData) {
       allData.forEach((item1, i1) => {
         let item = {thickness: 0.4}
@@ -1486,7 +1490,7 @@ export default {
       })
 
     },
-    //
+    //初始化可选面积列表，在每次进入新循环，开始构建一个列表的位置前，需要构建初始列表
     initSubAvailabList(availableSquareList, starPosition, firstSquare, basePlat) {
       var squareNode = {}
       squareNode.starPosition = starPosition
@@ -1500,7 +1504,7 @@ export default {
 
       availableSquareList.push(squareNode)
     },
-    //
+    //根据列表中元素包含的子元素数量，来确定一个正方形，用来放置所有的子元素
     rebuildSublist(sList) {
       sList.forEach((item, index) => {
         var totalItem = item.total;
@@ -1510,11 +1514,12 @@ export default {
         sList[index].sizeX = rSizeX
         sList[index].sizeY = rSizeY
       })
+      //对列表进行排序，确保面积最大的排在最前面
       sList.sort((a, b) => {
         return b.area - a.area
       })
     },
-    //
+    //计算每个元素在画布上的实际位置，前面计算的记过存储的都是相对坐标，这里最后统一转化为绝对坐标
     calActualPosition(xList) {
       xList.forEach((item) => {
         item.posX = item.basePosition[0] + item.posNode.starPosition[0]
@@ -1532,8 +1537,10 @@ export default {
         })
       })
     },
-    //
+    //根据现有的可用面积列表，来确定传入方块元素的位置
     getAiliableSquareList(availableSquareList, baseSquare, square, basePlat, padding) {
+      //如果当前可用列表能放得下新元素，那么就用列表中元素，放置新元素后，重构可用列表。
+      //如果当前可用列表放不下新元素，那么扩充可用列表，向短边扩充一个基础单元单元长度，扩充后重新计算
       var enough = undefined;
       var resultNode = {}
       for (var i = 0; i < availableSquareList.length; i++) {
