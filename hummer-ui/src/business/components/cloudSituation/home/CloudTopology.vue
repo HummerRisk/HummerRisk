@@ -1,123 +1,1659 @@
 <template>
   <main-container>
-    <el-card class="table-card" v-loading="result.loading">
-
-      <svg id="cloud-topo"></svg>
-
+    <el-card class="table-card el-row-card">
+      <topo-switch @topoSwitch="topoSwitch" @selectAccount="selectAccount" :accountName="accountName"/>
     </el-card>
+
+    <el-card class="table-card" v-loading="result.loading">
+      <svg id="cloud-topo"></svg>
+    </el-card>
+    <el-drawer class="rtl" :title="$t('resource.cloud_resource_detail')" :visible.sync="dialogVisible" size="60%" :before-close="handleClose" :direction="direction"
+               :destroy-on-close="true" v-loading="viewResult.loading">
+      <el-descriptions class="margin-top" title="" :column="2" border>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-paperclip"></i>
+            {{ $t('resource.Hummer_ID') }}
+          </template>
+          {{ 'hummerrisk-0001' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-tickets"></i>
+            {{ $t('dashboard.resource_name') }}
+          </template>
+          {{ 'hummerrisk-dev' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-cloudy"></i>
+            {{ $t('account.cloud_platform') }}
+          </template>
+          {{ '阿里云' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-house"></i>
+            {{ $t('account.cloud_account') }}
+          </template>
+          {{ 'aliyun' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-location-information"></i>
+            {{ $t('account.regions') }}
+          </template>
+          {{ '北京1' }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-collection-tag"></i>
+            {{ $t('resource.risk') }}
+          </template>
+          <span style="color: red;">{{ '有风险' }}</span>
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+      <result-read-only :row="typeof(resource) === 'string'?JSON.parse(resource):resource"></result-read-only>
+      <el-divider><i class="el-icon-document-checked"></i></el-divider>
+      <cloud-detail-chart/>
+    </el-drawer>
   </main-container>
 </template>
 <script>
 import MainContainer from "../../common/components/MainContainer";
+import CloudDetailChart from "@/business/components/cloudSituation/head/CloudDetailChart";
+import ResultReadOnly from "@/business/components/cloudSituation/head/ResultReadOnly";
+import TopoSwitch from "@/business/components/cloudSituation/head/TopoSwitch";
 import * as d3 from 'd3';
+import * as math from 'mathjs';
 import {cloudTopologyUrl} from "@/api/cloud/sync/sync";
 /* eslint-disable */
+const width = 1600;
+const height = 1100;
+const cellSize = 30;
+const iconSize = 12;
+let cellCountX = 30;
+let cellCountY = 30;
+let clicked = false;
+const iconData = [
+  {"name": "aws", "file": "aws.svg"},
+  {"name": "aliyun", "file": "aliyun.svg"},
+  {"name": "huawei", "file": "huawei.svg"},
+  {"name": "gcp", "file": "gcp.svg"},
+  {"name": "tengxun", "file": "tengxun.svg"},
+  {"name": "azure", "file": "azure.svg"},
+]
 export default {
   components: {
     MainContainer,
     d3,
+    CloudDetailChart,
+    ResultReadOnly,
+    TopoSwitch,
   },
   data() {
     return {
       result: {},
+      viewResult: {},
       cloudTopology: {},
+      dialogVisible: false,
+      direction: 'rtl',
+      accountId: '',
+      accountName: '',
+      resource: {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
     };
   },
   methods: {
+    //初始化
     init() {
-      // let data = {"name":"cloud","children":[{"name":"analytics","children":[{"name":"cluster","children":[{"name":"AgglomerativeCluster","value":3938},{"name":"CommunityStructure","value":3812},{"name":"HierarchicalCluster","value":6714},{"name":"MergeEdge","value":743}]},{"name":"graph","children":[{"name":"BetweennessCentrality","value":3534},{"name":"LinkDistance","value":5731},{"name":"MaxFlowMinCut","value":7840},{"name":"ShortestPaths","value":5914},{"name":"SpanningTree","value":3416}]},{"name":"optimization","children":[{"name":"AspectRatioBanker","value":7074}]}]},{"name":"animate","children":[{"name":"Easing","value":17010},{"name":"FunctionSequence","value":5842},{"name":"interpolate","children":[{"name":"ArrayInterpolator","value":1983},{"name":"ColorInterpolator","value":2047},{"name":"DateInterpolator","value":1375},{"name":"Interpolator","value":8746},{"name":"MatrixInterpolator","value":2202},{"name":"NumberInterpolator","value":1382},{"name":"ObjectInterpolator","value":1629},{"name":"PointInterpolator","value":1675},{"name":"RectangleInterpolator","value":2042}]},{"name":"ISchedulable","value":1041},{"name":"Parallel","value":5176},{"name":"Pause","value":449},{"name":"Scheduler","value":5593},{"name":"Sequence","value":5534},{"name":"Transition","value":9201},{"name":"Transitioner","value":19975},{"name":"TransitionEvent","value":1116},{"name":"Tween","value":6006}]},{"name":"data","children":[{"name":"converters","children":[{"name":"Converters","value":721},{"name":"DelimitedTextConverter","value":4294},{"name":"GraphMLConverter","value":9800},{"name":"IDataConverter","value":1314},{"name":"JSONConverter","value":2220}]},{"name":"DataField","value":1759},{"name":"DataSchema","value":2165},{"name":"DataSet","value":586},{"name":"DataSource","value":3331},{"name":"DataTable","value":772},{"name":"DataUtil","value":3322}]},{"name":"display","children":[{"name":"DirtySprite","value":8833},{"name":"LineSprite","value":1732},{"name":"RectSprite","value":3623},{"name":"TextSprite","value":10066}]},{"name":"flex","children":[{"name":"FlareVis","value":4116}]},{"name":"physics","children":[{"name":"DragForce","value":1082},{"name":"GravityForce","value":1336},{"name":"IForce","value":319},{"name":"NBodyForce","value":10498},{"name":"Particle","value":2822},{"name":"Simulation","value":9983},{"name":"Spring","value":2213},{"name":"SpringForce","value":1681}]},{"name":"query","children":[{"name":"AggregateExpression","value":1616},{"name":"And","value":1027},{"name":"Arithmetic","value":3891},{"name":"Average","value":891},{"name":"BinaryExpression","value":2893},{"name":"Comparison","value":5103},{"name":"CompositeExpression","value":3677},{"name":"Count","value":781},{"name":"DateUtil","value":4141},{"name":"Distinct","value":933},{"name":"Expression","value":5130},{"name":"ExpressionIterator","value":3617},{"name":"Fn","value":3240},{"name":"If","value":2732},{"name":"IsA","value":2039},{"name":"Literal","value":1214},{"name":"Match","value":3748},{"name":"Maximum","value":843},{"name":"methods","children":[{"name":"add","value":593},{"name":"and","value":330},{"name":"average","value":287},{"name":"count","value":277},{"name":"distinct","value":292},{"name":"div","value":595},{"name":"eq","value":594},{"name":"fn","value":460},{"name":"gt","value":603},{"name":"gte","value":625},{"name":"iff","value":748},{"name":"isa","value":461},{"name":"lt","value":597},{"name":"lte","value":619},{"name":"max","value":283},{"name":"min","value":283},{"name":"mod","value":591},{"name":"mul","value":603},{"name":"neq","value":599},{"name":"not","value":386},{"name":"or","value":323},{"name":"orderby","value":307},{"name":"range","value":772},{"name":"select","value":296},{"name":"stddev","value":363},{"name":"sub","value":600},{"name":"sum","value":280},{"name":"update","value":307},{"name":"variance","value":335},{"name":"where","value":299},{"name":"xor","value":354},{"name":"_","value":264}]},{"name":"Minimum","value":843},{"name":"Not","value":1554},{"name":"Or","value":970},{"name":"Query","value":13896},{"name":"Range","value":1594},{"name":"StringUtil","value":4130},{"name":"Sum","value":791},{"name":"Variable","value":1124},{"name":"Variance","value":1876},{"name":"Xor","value":1101}]},{"name":"scale","children":[{"name":"IScaleMap","value":2105},{"name":"LinearScale","value":1316},{"name":"LogScale","value":3151},{"name":"OrdinalScale","value":3770},{"name":"QuantileScale","value":2435},{"name":"QuantitativeScale","value":4839},{"name":"RootScale","value":1756},{"name":"Scale","value":4268},{"name":"ScaleType","value":1821},{"name":"TimeScale","value":5833}]},{"name":"util","children":[{"name":"Arrays","value":8258},{"name":"Colors","value":10001},{"name":"Dates","value":8217},{"name":"Displays","value":12555},{"name":"Filter","value":2324},{"name":"Geometry","value":10993},{"name":"heap","children":[{"name":"FibonacciHeap","value":9354},{"name":"HeapNode","value":1233}]},{"name":"IEvaluable","value":335},{"name":"IPredicate","value":383},{"name":"IValueProxy","value":874},{"name":"math","children":[{"name":"DenseMatrix","value":3165},{"name":"IMatrix","value":2815},{"name":"SparseMatrix","value":3366}]},{"name":"Maths","value":17705},{"name":"Orientation","value":1486},{"name":"palette","children":[{"name":"ColorPalette","value":6367},{"name":"Palette","value":1229},{"name":"ShapePalette","value":2059},{"name":"SizePalette","value":2291}]},{"name":"Property","value":5559},{"name":"Shapes","value":19118},{"name":"Sort","value":6887},{"name":"Stats","value":6557},{"name":"Strings","value":22026}]},{"name":"vis","children":[{"name":"axis","children":[{"name":"Axes","value":1302},{"name":"Axis","value":24593},{"name":"AxisGridLine","value":652},{"name":"AxisLabel","value":636},{"name":"CartesianAxes","value":6703}]},{"name":"controls","children":[{"name":"AnchorControl","value":2138},{"name":"ClickControl","value":3824},{"name":"Control","value":1353},{"name":"ControlList","value":4665},{"name":"DragControl","value":2649},{"name":"ExpandControl","value":2832},{"name":"HoverControl","value":4896},{"name":"IControl","value":763},{"name":"PanZoomControl","value":5222},{"name":"SelectionControl","value":7862},{"name":"TooltipControl","value":8435}]},{"name":"data","children":[{"name":"Data","value":20544},{"name":"DataList","value":19788},{"name":"DataSprite","value":10349},{"name":"EdgeSprite","value":3301},{"name":"NodeSprite","value":19382},{"name":"render","children":[{"name":"ArrowType","value":698},{"name":"EdgeRenderer","value":5569},{"name":"IRenderer","value":353},{"name":"ShapeRenderer","value":2247}]},{"name":"ScaleBinding","value":11275},{"name":"Tree","value":7147},{"name":"TreeBuilder","value":9930}]},{"name":"events","children":[{"name":"DataEvent","value":2313},{"name":"SelectionEvent","value":1880},{"name":"TooltipEvent","value":1701},{"name":"VisualizationEvent","value":1117}]},{"name":"legend","children":[{"name":"Legend","value":20859},{"name":"LegendItem","value":4614},{"name":"LegendRange","value":10530}]},{"name":"operator","children":[{"name":"distortion","children":[{"name":"BifocalDistortion","value":4461},{"name":"Distortion","value":6314},{"name":"FisheyeDistortion","value":3444}]},{"name":"encoder","children":[{"name":"ColorEncoder","value":3179},{"name":"Encoder","value":4060},{"name":"PropertyEncoder","value":4138},{"name":"ShapeEncoder","value":1690},{"name":"SizeEncoder","value":1830}]},{"name":"filter","children":[{"name":"FisheyeTreeFilter","value":5219},{"name":"GraphDistanceFilter","value":3165},{"name":"VisibilityFilter","value":3509}]},{"name":"IOperator","value":1286},{"name":"label","children":[{"name":"Labeler","value":9956},{"name":"RadialLabeler","value":3899},{"name":"StackedAreaLabeler","value":3202}]},{"name":"layout","children":[{"name":"AxisLayout","value":6725},{"name":"BundledEdgeRouter","value":3727},{"name":"CircleLayout","value":9317},{"name":"CirclePackingLayout","value":12003},{"name":"DendrogramLayout","value":4853},{"name":"ForceDirectedLayout","value":8411},{"name":"IcicleTreeLayout","value":4864},{"name":"IndentedTreeLayout","value":3174},{"name":"Layout","value":7881},{"name":"NodeLinkTreeLayout","value":12870},{"name":"PieLayout","value":2728},{"name":"RadialTreeLayout","value":12348},{"name":"RandomLayout","value":870},{"name":"StackedAreaLayout","value":9121},{"name":"TreeMapLayout","value":9191}]},{"name":"Operator","value":2490},{"name":"OperatorList","value":5248},{"name":"OperatorSequence","value":4190},{"name":"OperatorSwitch","value":2581},{"name":"SortOperator","value":2023}]},{"name":"Visualization","value":16540}]}]};
-      this.result = this.$get(cloudTopologyUrl, response => {
 
-        let data = response.data;
-        if(data.children.length == 0) return;
+      let testData = {
+        "children": [{
+          "children": [{
+            "children": [{
+              "children": [{
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-0ffb37ab7ada5c256",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-07c37c89c1e5feea4",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-019900da7df6437f2",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-0b90f930fab86227e",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-001fb0e8ad2976649",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.security-group(共5 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.security-group",
+              "total": 5
+            }, {
+              "children": [{
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-0871c4a9e3662875e",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-0cd75443ca20a70fb",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-0df905d1ba33c4420",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-00a383641043a764c",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-04a2dcb840b6e1ca4",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.ebs(共5 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.ebs",
+              "total": 5
+            }, {
+              "children": [{
+                "value": 8,
+                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
+                "namespace": null,
+                "type": "ecs"
+              }, {"value": 1, "name": "资源标识:i-0ad808a8c1e077ce7", "namespace": null, "type": "ecs"}, {
+                "value": 1,
+                "name": "资源标识:i-04d32e6dd7adf2868",
+                "namespace": null,
+                "type": "ecs"
+              }, {"value": 1, "name": "资源标识:i-0119c27e6b27d86f1", "namespace": null, "type": "ecs"}],
+              "name": "资源类型: aws.ec2(共4 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.ec2",
+              "total": 4
+            }, {
+              "children": [{
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:eipalloc-0c3f6b39801154ce8",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:eipalloc-0d4aa85f89a41acad",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:eipalloc-0ca933c006f2c7400",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.network-addr(共3 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.network-addr",
+              "total": 3
+            }],
+            "name": "区域: 中国（北京）(共17 个资源)",
+            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+            "regionId": "cn-north-1",
+            "total": 17
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:sg-017c527b52bf0c658",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.security-group(共1 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aws.security-group",
+              "total": 1
+            }],
+            "name": "区域: 中国（宁夏）(共1 个资源)",
+            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+            "regionId": "cn-northwest-1",
+            "total": 1
+          }],
+          "name": "云账号: aws(共18 个资源)",
+          "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+          "type": "tengxun",
+          "total": 18
+        }, {
+          "children": [{
+            "children": [{
+              "children": [{
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-0ffb37ab7ada5c256",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-07c37c89c1e5feea4",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-019900da7df6437f2",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-0b90f930fab86227e",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:sg-001fb0e8ad2976649",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.security-group(共5 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.security-group",
+              "total": 5
+            }, {
+              "children": [{
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-0871c4a9e3662875e",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-0cd75443ca20a70fb",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-0df905d1ba33c4420",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-00a383641043a764c",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:vol-04a2dcb840b6e1ca4",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.ebs(共5 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.ebs",
+              "total": 5
+            }, {
+              "children": [{
+                "value": 8,
+                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
+                "namespace": null,
+                "type": "ecs"
+              }, {"value": 1, "name": "资源标识:i-0ad808a8c1e077ce7", "namespace": null, "type": "ecs"}, {
+                "value": 1,
+                "name": "资源标识:i-04d32e6dd7adf2868",
+                "namespace": null,
+                "type": "ecs"
+              }, {"value": 1, "name": "资源标识:i-0119c27e6b27d86f1", "namespace": null, "type": "ecs"}],
+              "name": "资源类型: aws.ec2(共4 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.ec2",
+              "total": 4
+            }, {
+              "children": [{
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:eipalloc-0c3f6b39801154ce8",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:eipalloc-0d4aa85f89a41acad",
+                "namespace": null,
+                "type": "other"
+              }, {
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:eipalloc-0ca933c006f2c7400",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.network-addr(共3 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-north-1",
+              "resourceType": "aws.network-addr",
+              "total": 3
+            }],
+            "name": "区域: 中国（北京）(共17 个资源)",
+            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+            "regionId": "cn-north-1",
+            "total": 17
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:sg-017c527b52bf0c658",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aws.security-group(共1 个资源)",
+              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aws.security-group",
+              "total": 1
+            }],
+            "name": "区域: 中国（宁夏）(共1 个资源)",
+            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+            "regionId": "cn-northwest-1",
+            "total": 1
+          }],
+          "name": "云账号: aws(共18 个资源)",
+          "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+          "type": "aws",
+          "total": 18
+        }, {
+          "children": [{
+            "children": [{
+              "children": [{
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:oss-123",
+                "namespace": null,
+                "type": "oss"
+              }],
+              "name": "资源类型: aliyun.oss(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.oss",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aliyun.disk(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.disk",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 8,
+                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
+                "namespace": null,
+                "type": "rds"
+              }],
+              "name": "资源类型: aliyun.mongodb(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.mongodb",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
+                "namespace": null,
+                "type": "rds"
+              }],
+              "name": "资源类型: aliyun.rds(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.rds",
+              "total": 1
+            }],
+            "name": "区域: 华东 2（上海）(共4 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-shanghai",
+            "total": 4
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:ecs-017c527b52bf0c656",
+                "namespace": null,
+                "type": "ecs"
+              }],
+              "name": "资源类型: aliyun.ecs(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aliyun.ecs",
+              "total": 1
+            }],
+            "name": "区域: 华北 2（北京）(共1 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-beijing",
+            "total": 1
+          }],
+          "name": "云账号: aliyun(共5 个资源)",
+          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+          "type": "aws",
+          "total": 5
+        }, {
+          "children": [{
+            "children": [{
+              "children": [{
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:oss-123",
+                "namespace": null,
+                "type": "oss"
+              }],
+              "name": "资源类型: aliyun.oss(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.oss",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aliyun.disk(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.disk",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 8,
+                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
+                "namespace": null,
+                "type": "rds"
+              }],
+              "name": "资源类型: aliyun.mongodb(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.mongodb",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
+                "namespace": null,
+                "type": "rds"
+              }],
+              "name": "资源类型: aliyun.rds(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.rds",
+              "total": 1
+            }],
+            "name": "区域: 华东 2（上海）(共4 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-shanghai",
+            "total": 4
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:ecs-017c527b52bf0c656",
+                "namespace": null,
+                "type": "ecs"
+              }],
+              "name": "资源类型: aliyun.ecs(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aliyun.ecs",
+              "total": 1
+            }],
+            "name": "区域: 华北 2（北京）(共1 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-beijing",
+            "total": 1
+          }],
+          "name": "云账号: aliyun(共5 个资源)",
+          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+          "type": "huawei",
+          "total": 5
+        }, {
+          "children": [{
+            "children": [{
+              "children": [{"value": 10, "name": "(有安全合规风险)资源标识:oss-123", "namespace": null}],
+              "name": "资源类型: aliyun.oss(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.oss",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aliyun.disk(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.disk",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 8,
+                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
+                "namespace": null,
+                "type": "ecs"
+              }],
+              "name": "资源类型: aliyun.mongodb(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.mongodb",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
+                "namespace": null,
+                "type": "rds"
+              }],
+              "name": "资源类型: aliyun.rds(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.rds",
+              "total": 1
+            }],
+            "name": "区域: 华东 2（上海）(共4 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-shanghai",
+            "total": 4
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:ecs-017c527b52bf0c656",
+                "namespace": null,
+                "type": "ecs"
+              }],
+              "name": "资源类型: aliyun.ecs(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aliyun.ecs",
+              "total": 1
+            }],
+            "name": "区域: 华北 2（北京）(共1 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-beijing",
+            "total": 1
+          }],
+          "name": "云账号: aliyun(共5 个资源)",
+          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+          "type": "aliyun",
+          "total": 5
+        }, {
+          "children": [{
+            "children": [{
+              "children": [{
+                "value": 10,
+                "name": "(有安全合规风险)资源标识:oss-123",
+                "namespace": null,
+                "type": "oss"
+              }],
+              "name": "资源类型: aliyun.oss(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.oss",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 12,
+                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
+                "namespace": null,
+                "type": "other"
+              }],
+              "name": "资源类型: aliyun.disk(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.disk",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 8,
+                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
+                "namespace": null,
+                "type": "rds"
+              }],
+              "name": "资源类型: aliyun.mongodb(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.mongodb",
+              "total": 1
+            }, {
+              "children": [{
+                "value": 6,
+                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
+                "namespace": null,
+                "type": "rds"
+              }],
+              "name": "资源类型: aliyun.rds(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-shanghai",
+              "resourceType": "aliyun.rds",
+              "total": 1
+            }],
+            "name": "区域: 华东 2（上海）(共4 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-shanghai",
+            "total": 4
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:ecs-017c527b52bf0c656",
+                "namespace": null,
+                "type": "ecs"
+              }],
+              "name": "资源类型: aliyun.ecs(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aliyun.ecs",
+              "total": 1
+            }],
+            "name": "区域: 华北 2（北京）(共1 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-beijing",
+            "total": 1
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:ecs-017c527b52bf0c656",
+                "namespace": null,
+                "type": "ecs"
+              }],
+              "name": "资源类型: aliyun.ecs(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aliyun.ecs",
+              "total": 1
+            }],
+            "name": "区域: 华北 2（北京）(共1 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-beijing",
+            "total": 1
+          }, {
+            "children": [{
+              "children": [{
+                "value": 1,
+                "name": "资源标识:ecs-017c527b52bf0c656",
+                "namespace": null,
+                "type": "ecs"
+              }],
+              "name": "资源类型: aliyun.ecs(共1 个资源)",
+              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+              "regionId": "cn-northwest-1",
+              "resourceType": "aliyun.ecs",
+              "total": 1
+            }],
+            "name": "区域: 华北 2（北京）(共1 个资源)",
+            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+            "regionId": "cn-beijing",
+            "total": 1
+          }],
+          "name": "云账号: aliyun(共5 个资源)",
+          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+          "type": "aliyun",
+          "total": 7
+        }], "name": "Cloud"
+      }
+      // this.result = this.$get(cloudTopologyUrl, response => {
+        //let data = response.data;
+        if (testData.children.length == 0) return;
 
-        let width = 932, height = width;
+        this.calculatePlatform(testData.children);
 
-        let color = d3.scaleLinear()
-          .domain([0, 5])
-          .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
-          .interpolate(d3.interpolateHcl);
+        this.initSVG(testData.children);
 
-        let pack = data => d3.pack()
-          .size([width, height])
-          .padding(3)
-          (d3.hierarchy(data)
-            .sum(d => d.value)
-            .sort((a, b) => b.value - a.value));
+      // });
 
-        const root = pack(data);
-        let focus = root;
-        let view;
+    },
+    //初始化svg
+    initSVG(cloudData) {
+      const svg = d3.select("#cloud-topo").style("width", this.width + 'px')
+        .style("height", this.height + 'px');
+      const stage = this.createStage(d3, svg, cellSize, cellCountX, cellCountY);
+      const eventCapture = stage.append('rect')
+        .attr('width', width * 2)
+        .attr('height', height * 2)
+        .attr('x', -width)
+        .attr('y', -height)
+        .style('fill', 'none')
+        .style('pointer-events', 'all');
+      const container = stage.append('g').attr('class', 'container');
 
-        const svg = d3.select("#cloud-topo")
-          .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
-          .style("display", "block")
-          .style("margin", "0 -14px")
-          .style("background", color(0))
-          .style("cursor", "pointer")
-          .on("click", (event) => zoom(event, root));
+      // zooming
+      const zoom = d3.zoom()
+        .scaleExtent([1, 10])
+        .on('zoom', (event, d) => {
+          container.attr('transform', event.transform);
+        });
+      svg.call(zoom);
 
-        const node = svg.append("g")
-          .selectAll("circle")
-          .data(root.descendants().slice(1))
-          .join("circle")
-          .attr("fill", d => d.children ? color(d.depth) : (d.data.value!=1?"#e69147":"#FFFFFF"))
-          .attr("pointer-events", d => !d.children ? "none" : null)
-          .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
-          .on("mouseout", function() { d3.select(this).attr("stroke", null); })
-          .on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
 
-        const label = svg.append("g")
-          .style("font", "10px sans-serif")
-          .attr("pointer-events", "none")
-          .attr("text-anchor", "middle")
-          .selectAll("text")
-          .data(root.descendants())
-          .join("text")
-          .style("fill-opacity", d => d.parent === root ? 1 : 0)
-          .style("display", d => d.parent === root ? "inline" : "none")
-          .text(d => d.data.name);
+      const drawPolygon = this._drawPolygon();
+      const drawSquare = this._drawSquare(drawPolygon);
+      const drawGrid = this._drawGrid(drawSquare);
+      const toRadians = this._toRadians();
+      const toIsoTransform = this._toIsoTransform(toRadians, math)
+      const fromIsoTransform = this._fromIsoTransform(toRadians, math)
+      const isoTransform = toIsoTransform(30);
+      const isoInverseTransform = fromIsoTransform(30);
+      const makeCoordRoundTransform = this._makeCoordRoundTransform()
+      const snapToHalf = makeCoordRoundTransform(cellSize / 2);
+      const snapToQuarter = makeCoordRoundTransform(cellSize / 5);
+      const isoGrid = drawGrid(container, cellSize, cellCountX, cellCountY, isoTransform);
 
-        zoomTo([root.x, root.y, root.r * 2]);
+      const floorData = []
+      const boxImageData = []
+      const regionData = []
+      const resourceTypeData = []
+      const textData = []
+      this.initData(cloudData, floorData, regionData, resourceTypeData, boxImageData, textData)
 
-        function zoomTo(v) {
-          const k = width / v[2];
+      const getShapeOrigin = (d) => [d.position[0] * cellSize, d.position[1] * cellSize];
+      const getIsoShapeOrigin = (d) => isoTransform([d.position[0] * cellSize, d.position[1] * cellSize]);
 
-          view = v;
 
-          label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
-          node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
-          node.attr("r", d => d.r * k);
+      //plot moveables
+
+      let replot = this._replot();
+      replot(floorData, regionData, resourceTypeData, boxImageData, textData, isoGrid, isoTransform)
+
+      const getIsoBoxOrigin = (d) => this.isoTransform([d.position[0] * cellSize, d.position[1] * cellSize]);
+
+      // const getTextOrigin = (d) => [d.position[0] * cellSize, d.position[1] * cellSize];
+      const getIsoTextOrigin = (d) => this.isoTransform([d.position[0] * cellSize, d.position[1] * cellSize]);
+
+
+    },
+    // 更新画布元素
+    _replot() {
+      return (floorData, regionData, resourceTypeData, boxImageData, textData, isoGrid, isoTransform) => {
+        // boxes
+        let isoBoxes;
+
+        //floor
+        let isoFloors;
+        let isoDashedBox;
+
+        // texts
+        let texts;
+        let isoTexts;
+
+        let plotFloor = this._plotFloor(d3, cellSize)
+        let plotImageBoxes = this._plotImageBoxes(d3, cellSize)
+        let plotTexts = this._plotTexts(cellSize, d3)
+        let plotDashedBox = this._plotDashedBox(d3, cellSize)
+        let plotRcBox = this._plotRcBox(d3, cellSize)
+        let plotIcons = this._plotIcon(cellSize, d3)
+
+        isoFloors = plotFloor(floorData, isoGrid, isoTransform, plotIcons)
+
+        isoDashedBox = plotDashedBox(regionData, isoGrid, isoTransform)
+        isoDashedBox = plotRcBox(resourceTypeData, isoGrid, isoTransform)
+
+        isoBoxes = plotImageBoxes(boxImageData, isoGrid, isoTransform);
+
+        // text
+        isoTexts = plotTexts(textData, isoGrid, isoTransform, 'matrix(0.707 0.409 -0.707 0.409 0 0)');
+      }
+    },
+    //处理主svg的viewbox
+    createStage(d3, svg, cellSize, cellCountX, cellCountY) {
+      return svg.attr('viewBox', [
+        -cellSize * cellCountX, 0,
+        cellSize * cellCountY * 2, cellSize * cellCountX
+      ].join(' '));
+    },
+    // 坐标取整处理，处理坐标移动时候的数值计算
+    _makeCoordRoundTransform() {
+      return (
+        (roundBy) => {
+          return (coords) => [
+            Math.round(coords[0] / roundBy) * roundBy,
+            Math.round(coords[1] / roundBy) * roundBy
+          ];
         }
+      )
+    },
+    // 从isometric转平面时的坐标转换
+    _fromIsoTransform(toRadians, math) {
+      return (
+        (degrees) => {
+          const rads = toRadians(degrees);
+          const matrices = {
+            inverse: [
+              [math.tan(rads), 1, 0],
+              [-math.tan(rads), 1, 0],
+              [0, 0, 1]
+            ]
+          };
+          return (coords) => {
+            const product = math.multiply(matrices.inverse, [[coords[0]], [coords[1]], [1]]);
+            return [product[0][0], product[1][0]];
+          };
+        }
+      )
+    },
+    //在获取到的云账号数据上，计算出每个元素的相对坐标位置，并更新到对象中。
+    calculatePlatform(cloudaccounts) {
+      var totalNumber = 0;
+      var position0 = [1, 1]
 
-        function zoom(event, d) {
-          const focus0 = focus;
+      for (var i = 0; i < cloudaccounts.length; i++) {
+        totalNumber = cloudaccounts[i].total + totalNumber;
+        let regionList = cloudaccounts[i].children;
+        let regionListN = []
+        regionList.forEach((d, rindex) => {
+          var resourceTypeList = d.children
+          var resourceTypeListN = []
+          var availableSquareList = []
+          var basePlat = {}
+          var regionNode = Object.assign({}, d);
+          //更新resourceTypeList
+          this.rebuildSublist(resourceTypeList);
+          //初始化可用面积列表
+          this.initSubAvailabList(availableSquareList, [0, 0], resourceTypeList[0], basePlat)
 
-          focus = d;
+          resourceTypeList.forEach((item, idx) => {
+            //把当前节点对比可用面积列表，确认节点如何处理，得到节点的最终相对位置
+            var rnode = this.getAiliableSquareList(availableSquareList, resourceTypeList[0], item, basePlat, 1)
+            rnode.regionId = item.regionId
+            item.posNode = rnode;
+            resourceTypeListN.push(rnode)
+          })
 
-          const transition = svg.transition()
-            .duration(event.altKey ? 7500 : 750)
-            .tween("zoom", d => {
-              const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
-              return t => zoomTo(i(t));
+          //根据处理好的结果，更新上级列表中对应节点面积和X,Y信息
+          regionList[rindex].area = basePlat.xasis * basePlat.yasis
+          regionList[rindex].sizeX = basePlat.xasis
+          regionList[rindex].sizeY = basePlat.yasis
+          regionList[rindex].resourceTypeList = resourceTypeListN
+        })
+        regionList.sort((a, b) => {
+          return b.area - a.area
+        })
+        var availableRegionList = []
+        // rebuildSublist(regionList);
+        var baseRegionPlat = {}
+        this.initSubAvailabList(availableRegionList, [0, 0], regionList[0], baseRegionPlat)
+
+        regionList.forEach((item) => {
+          var rnode = this.getAiliableSquareList(availableRegionList, regionList[0], item, baseRegionPlat)
+          rnode.accountId = item.accountId
+          item.posNode = rnode;
+          regionListN.push(rnode)
+        })
+        cloudaccounts[i].area = baseRegionPlat.xasis * baseRegionPlat.yasis
+        cloudaccounts[i].sizeX = baseRegionPlat.xasis
+        cloudaccounts[i].sizeY = baseRegionPlat.yasis
+        cloudaccounts[i].regionList = regionListN;
+      }
+      cloudaccounts.sort((a, b) => {
+        return b.area - a.area
+      })
+      var availableRegionList = []
+      var baseCloudPlat = {}
+      this.initSubAvailabList(availableRegionList, position0, cloudaccounts[0], baseCloudPlat)
+
+      cloudaccounts.forEach((item, i) => {
+        var rnode = this.getAiliableSquareList(availableRegionList, cloudaccounts[0], item, baseCloudPlat)
+        item.basePosition = position0;
+        rnode.sizeY = rnode.sizeY + 2
+        item.sizeY = rnode.sizeY
+        if (i != 0) {
+          if (rnode.starPosition[1] != position0[1])
+            rnode.starPosition[1] = rnode.starPosition[1] + 2
+
+        }
+        item.posNode = rnode;
+
+      })
+      cellCountX = math.max(baseCloudPlat.xasis, baseCloudPlat.yasis) + 5
+      cellCountY = cellCountX
+      this.calActualPosition(cloudaccounts)
+
+      return cloudaccounts;
+    },
+    //多边形，背景的方格
+    _drawPolygon() {
+      return (
+        (points, selection, pointTransform) => {
+          pointTransform = pointTransform || (c => c);
+          return selection.append('polygon')
+            .attr('points', (d) => points.map(p => pointTransform(p).join()).join(' '))
+            .attr('fill', 'none')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 0.25);
+        }
+      )
+    },
+    //背景的方格
+    _drawSquare(drawPolygon) {
+      return (
+        (origin, cellSize, selection, pointTransform) => {
+          return drawPolygon([
+            [origin[0], origin[1]],
+            [origin[0] + cellSize, origin[1]],
+            [origin[0] + cellSize, origin[1] + cellSize],
+            [origin[0], origin[1] + cellSize]
+          ], selection, pointTransform);
+        }
+      )
+    },
+    //整个方格背景
+    _drawGrid(drawSquare) {
+      return (
+        (selection, cellSize, cellCountX, cellCountY, pointTransform) => {
+          const grid = selection.append('g').attr('class', 'grid');
+          for (let x = 0; x < cellCountX; x++) {
+            for (let y = 0; y < cellCountY; y++) {
+              drawSquare([x * cellSize, y * cellSize], cellSize, grid, pointTransform);
+            }
+          }
+          return grid;
+        }
+      )
+    },
+    //画图中的所有图形元素，ecs,rds等的图形
+    _plotImageBoxes(d3, cellSize) {
+      return (
+        (data, selection, pointTransform) => {
+          let size = cellSize;
+          let boxes = selection.selectAll('g.imagebox').data(data);
+          let imageType = ""
+          boxes.exit().remove();
+          boxes = boxes.enter()
+            .append('g')
+            .classed('imagebox', true)
+            .each(function (d) {
+              d3.select(this).append('image')
+                .attr("xlink:href", () => {
+                  var filePath = "`@/assets/img/cloudtopo/"
+                  var filePrefix = ""
+                  var filePosfix = ""
+                  if (d.riskType == 'risk') {
+                    filePrefix = "e-"
+                  }
+                  if (d.riskType == 'normal') {
+                    filePrefix = "n-"
+                  }
+                  if (d.riskType == 'uncheck') {
+                    filePrefix = "u-"
+                  }
+                  filePosfix = 'other.svg'
+                  if (d.type == 'ecs')
+                    filePosfix = 'server.svg'
+                  if (d.type == 'rds')
+                    filePosfix = 'db.svg'
+                  if (d.type == 'oss')
+                    filePosfix = 'oss.svg'
+                  let imageFIle = require("@/assets/img/cloudtopo/" + filePrefix + filePosfix)
+                  imageType = filePrefix + filePosfix
+                  return imageFIle
+                })
+                .attr('height', size * 1.5 + 'px')
+                .attr('weight', size * 1.2 + 'px')
+                .attr('id', d.id)
+                .attr('imageType', imageType)
+              // .attr('transform', ' scale(0.5)')
+            })
+            .merge(boxes)
+            .each(function (d) {
+              //更具平面转isometric的左边转换，给图形确定x，y变换量
+              let pos = pointTransform([(d.position[0] - 1) * cellSize - cellSize, (d.position[1]) * cellSize - cellSize])
+              d3.select(this).select('image')
+                .attr('x', pos[0]).attr('y', pos[1])
+            }).on('click', function (event, d) {
+              //在图形上增加点击事件
+              let pos = pointTransform([(d.position[0] - 1) * cellSize - cellSize, (d.position[1]) * cellSize - cellSize]);
+              if (clicked) {
+                d3.selectAll('image.clicked-box').each(function (d) {
+                  let imageType = d3.select(this).attr('imageType');
+                  let itemid = d3.select(this).attr("id")
+
+                  let p = pointTransform([(d.position[0] - 1) * cellSize - cellSize, (d.position[1]) * cellSize - cellSize])
+                  d3.select(this).attr('x', p[0]).attr('y', p[1])
+                    .attr("xlink:href", () => {
+
+                      let imageFIle = require("@/assets/img/cloudtopo/" + imageType)
+                      return imageFIle
+                    })
+                    .classed('clicked-box', false)
+                  d3.select('#' + itemid + 'text')
+                    .classed('clicked-text', false)
+                    .style('transform', '')
+                })
+                clicked = false;
+              } else {
+                let imageType = d3.select(this).select('image').attr('imageType');
+                let itemid = d3.select(this).select('image').attr("id")
+                d3.select(this).select('image')
+                  .classed('clicked-box', true)
+                  .attr('x', pos[0]).attr('y', pos[1] - 10)
+                  .attr("xlink:href", () => {
+                    let filestr = imageType.split(".svg")
+                    let imageFIle = require("@/assets/img/cloudtopo/" + filestr[0] + "-click.svg")
+                    return imageFIle
+                  })
+
+                d3.select('#' + itemid + 'text')
+                  .classed('clicked-text', true)
+                  .style('transform', 'scale(3)')
+
+                clicked = true;
+              }
+            });
+          return selection.selectAll('g.imagebox');
+        }
+      )
+    },
+    //留用方法，根据不同类型图形，对图形位置进行微调
+    modifyImageByType(iconType, pos) {
+      if (iconType == 'type1') {
+        return [pos[0], pos[1]]
+      }
+      if (iconType == 'type2') {
+        return [pos[0] - 30, pos[1] - 3]
+      }
+      if (iconType == 'type3') {
+        return [pos[0] - 15, pos[1] + 15]
+      }
+    },
+    //画云账号一级的地板效果
+    _plotFloor(d3, cellSize) {
+      return (
+        (data, selection, pointTransform, plotIcons) => {
+
+          let floors = selection.selectAll('g.floor').data(data);
+          floors.exit().remove();
+          floors = floors.enter()
+            .append('g')
+            .classed('floor', true)
+            .each(function (d) {
+              d3.select(this).append('path')
+                .classed('floor-profile', true)
+                .attr('fill', 'none')
+                .attr('stroke', 'gray')
+                .attr('stroke-width', '3');
+              d3.select(this).append('path')
+                .classed('floor-top-face', true)
+                .attr('fill', '#EEE')
+                .attr('fill-opacity', '0.8')
+                .attr('stroke', 'gray')
+                .attr('stroke-width', '0.5');
+
+              // point transform means iso, so we also need side faces
+              if (pointTransform) {
+                d3.select(this).append('path')
+                  .classed('floor-left-face', true)
+                  .attr('fill', '#725E37')
+                  .attr('stroke', 'gray')
+                  .attr('stroke-width', '0.5');
+                d3.select(this).append('path')
+                  .classed('floor-right-face', true)
+                  .attr('fill', '#725E37')
+                  .attr('stroke', 'gray')
+                  .attr('stroke-width', '0.5');
+              }
+            })
+            .merge(floors)
+            .each(function (d) {
+              d3.select(this).select('.floor-profile')
+                .attr('d', () => {
+                  if (!pointTransform) {
+                    // no transform means this is standard 2d, so we only render
+                    // a single side (the top)
+                    let t = (c => c);
+                    let path;
+                    const origin = [d.position[0] * cellSize, d.position[1] * cellSize];
+                    path = [
+                      'M', t(origin).join(' '),
+                      'l', t([cellSize * d.sizex, 0]).join(' '),
+                      'l', t([0, cellSize * d.sizey]).join(' '),
+                      'l', t([-cellSize * d.sizex, 0]).join(' '),
+                      'Z'
+                    ].join(' ');
+                    return path;
+                  } else {
+                    // transform means this is iso, so we render three faces
+                    let path;
+                    const origin = [d.position[0] * cellSize - cellSize, d.position[1] * cellSize - cellSize];
+
+                    path = [
+                      'M', pointTransform(origin).join(' '),
+                      'l', pointTransform([cellSize * d.sizex, 0]).join(' '),
+                      'l', pointTransform([cellSize * d.thickness, (0 + cellSize) * d.thickness]).join(' '),
+                      'l', pointTransform([0, cellSize * d.sizey]).join(' '),
+                      'l', pointTransform([-cellSize * d.sizex, 0]).join(' '),
+                      'l', pointTransform([-cellSize * d.thickness, (0 - cellSize) * d.thickness]).join(' '),
+                      'Z'
+                    ].join(' ');
+                    return path;
+                  }
+                });
+              d3.select(this).select('.floor-top-face')
+                .attr('d', () => {
+                  let origin = pointTransform ?
+                    [d.position[0] * cellSize - cellSize, d.position[1] * cellSize - cellSize] :
+                    [d.position[0] * cellSize, d.position[1] * cellSize];
+                  let t = pointTransform || (c => c);
+                  return [
+                    'M', t(origin).join(' '),
+                    'l', t([cellSize * d.sizex, 0]).join(' '),
+                    'l', t([0, cellSize * d.sizey]).join(' '),
+                    'l', t([-cellSize * d.sizex, 0]).join(' '),
+                    'Z'
+                  ].join(' ');
+                });
+              d3.select(this).select('.floor-left-face')
+                .attr('d', () => {
+                  let origin = [d.position[0] * cellSize - cellSize, (d.position[1] + d.sizey - 1) * cellSize];
+                  let t = pointTransform || (c => c);
+                  return [
+                    'M', t(origin).join(' '),
+                    'l', t([cellSize * d.sizex, 0]).join(' '),
+                    'l', t([cellSize * d.thickness, cellSize * d.thickness]).join(' '),
+                    'l', t([-cellSize * d.sizex, 0]).join(' '),
+                    'Z'
+                  ].join(' ');
+                });
+              d3.select(this).select('.floor-right-face')
+                .attr('d', () => {
+                  let origin = [(d.position[0] + d.sizex - 1) * cellSize, (d.position[1] + d.sizey - 1) * cellSize];
+                  let t = pointTransform || (c => c);
+                  return [
+                    'M', t(origin).join(' '),
+                    'l', t([0, -cellSize * d.sizey]).join(' '),
+                    'l', t([cellSize * d.thickness, cellSize * d.thickness]).join(' '),
+                    'l', t([0, cellSize * d.sizey]).join(' '),
+                    'Z'
+                  ].join(' ');
+                });
+
             });
 
-          label
-            .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
-            .transition(transition)
-            .style("fill-opacity", d => d.parent === focus ? 1 : 0)
-            .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
-            .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+          plotIcons(data, selection, pointTransform, 'matrix(0.707 0.409 -0.707 0.409 0 0)', 12, iconData);
+          return selection.selectAll('g.floor');
+        }
+      )
+    },
+    //画region级的边框
+    _plotDashedBox(d3, cellSize) {
+      return (
+        (data, selection, pointTransform) => {
+          let dashedBox = selection.selectAll('g.dashedBox').data(data);
+          dashedBox.exit().remove();
+          dashedBox = dashedBox.enter()
+            .append('g')
+            .classed('dashedBox', true)
+            .each(function (d) {
+              d3.select(this).append('path')
+                .classed('dash-top-face', true)
+                .attr('fill', 'none')
+                .attr('stroke', '#4B4B71')
+                .attr('stroke-width', '3')
+              // .attr('stroke-dasharray', '5,5');
+            })
+            .merge(dashedBox)
+            .each(function (d) {
+              d3.select(this).select('.dash-top-face')
+                .attr('d', () => {
+                  let origin = pointTransform ?
+                    [d.position[0] * cellSize - cellSize, d.position[1] * cellSize - cellSize] :
+                    [d.position[0] * cellSize, d.position[1] * cellSize];
+                  let t = pointTransform || (c => c);
+                  return [
+                    'M', t(origin).join(' '),
+                    'l', t([cellSize * d.sizex, 0]).join(' '),
+                    'l', t([0, cellSize * d.sizey]).join(' '),
+                    'l', t([-cellSize * d.sizex, 0]).join(' '),
+                    'Z'
+                  ].join(' ');
+                });
+            });
+          return selection.selectAll('g.dashedBox');
+        }
+      )
+    },
+    //画resourcestype级的地面
+    _plotRcBox(d3, cellSize) {
+      return (
+        (data, selection, pointTransform) => {
+          let dashedBox = selection.selectAll('g.resourcetype').data(data);
+          dashedBox.exit().remove();
+          dashedBox = dashedBox.enter()
+            .append('g')
+            .classed('resourcetype', true)
+            .each(function (d) {
+              d3.select(this).append('path')
+                .classed('dash-top-face', true)
+                .attr('fill', '#5CCCFF')
+                .attr('fill-opacity', '0.3')
+                .attr('stroke', '#5CCCFF')
+                .attr('stroke-width', '0')
+                .attr('stroke-dasharray', '3,3');
+            })
+            .merge(dashedBox)
+            .each(function (d) {
+              d3.select(this).select('.dash-top-face')
+                .attr('d', () => {
+                  let origin = pointTransform ?
+                    [d.position[0] * cellSize - cellSize + 1, d.position[1] * cellSize - cellSize + 1] :
+                    [d.position[0] * cellSize, d.position[1] * cellSize];
+                  let t = pointTransform || (c => c);
+                  return [
+                    'M', t(origin).join(' '),
+                    'l', t([cellSize * d.sizex - 1, 1]).join(' '),
+                    'l', t([-1, cellSize * d.sizey - 1]).join(' '),
+                    'l', t([-cellSize * d.sizex + 1, -1]).join(' '),
+                    'Z'
+                  ].join(' ');
+                });
+            });
+          return selection.selectAll('g.resourcetype');
+        }
+      )
+    },
+    //画图标，目前用来给云账号一级的地板增加logo
+    _plotIcon(cellSize, d3) {
+      return (
+        (data, selection, pointTransform, svgTransform = '', iconSize, iconData) => {
+          pointTransform = pointTransform || (c => c);
+          let viewboxsize = iconSize * 2;
+          let icons = selection.selectAll('g.icon').data(data);
+          icons.exit().remove();
+          icons = icons.enter()
+            .append('g')
+            .classed('icon', true)
+            .each(function (d) {
+              d3.select(this).append('image')
+                .attr("xlink:href", () => {
+                  let filepath = './image/aliyun.svg'
+                  for (var i = 0; i < iconData.length; i++) {
+                    if (d.type == iconData[i].name) {
+                      filepath = require("@/assets/img/cloudtopo/" + iconData[i].file)
+                    }
+                  }
+                  return filepath;
+                })
+                .attr('height', cellSize)
+                .attr('weight', cellSize)
+            })
+            .merge(icons)
+            .each(function (d) {
+
+              let pos = pointTransform([d.position[0] * cellSize - cellSize, (d.position[1] + d.sizey - 2) * cellSize])
+              // let pos = pointTransform([d.position[0] * cellSize - cellSize, d.position[1] * cellSize - cellSize])
+              d3.select(this).select('image')
+                .attr('x', pos[0]).attr('y', pos[1])
+                .attr('transform', svgTransform)
+                .style('transform-origin', (d) => {
+                  return `${pos[0]}px ${pos[1]}px`;
+                })
+            })
+          return selection.selectAll('g.icon');
+
+        }
+      )
+    },
+    //处理图上所有的文字
+    _plotTexts(cellSize, d3) {
+      return (
+        (data, selection, pointTransform, svgTransform = '') => {
+          pointTransform = pointTransform || (c => c);
+          let texts = selection.selectAll('text').data(data);
+          const padding = cellSize / 10;
+          texts.exit().remove();
+          texts = texts
+            .enter()
+            .append('text')
+            .attr('transform', svgTransform)
+            .style('cursor', 'hand')
+            .style('user-select', 'none')
+            .each(function (d) {
+              if (d.border) {
+                d3.select(this)
+                  .append('tspan')
+                  .attr('dominant-baseline', 'hanging')
+                  .style('font-family', 'helvetica')
+                  .style('font-weight', 'bold')
+                  .style('font-size', (d) => d.size ? `${d.size}rem` : '1.5rem')
+                  .attr('stroke', "white")
+                  .attr('stroke-width', '2');
+              }
+              d3.select(this)
+                .attr('id', d.id)
+                .append('tspan')
+                .attr('dominant-baseline', 'hanging')
+                .style('font-family', 'helvetica')
+                .style('font-weight', 'bold')
+                .style('font-size', (d) => d.size ? `${d.size}rem` : '1.5rem');
+            })
+            .merge(texts)
+            .style('transform-origin', (d) => {
+              const xy = pointTransform([d.position[0] * cellSize + padding, d.position[1] * cellSize + padding]);
+              return `${xy[0]}px ${xy[1]}px`;
+            })
+            .each(function (d) {
+              d3.select(this).selectAll('tspan')
+                .text(d.text)
+                .attr('fill', d.color)
+                .attr('x', pointTransform([d.position[0] * cellSize + padding, d.position[1] * cellSize])[0])
+                .attr('y', pointTransform([d.position[0] * cellSize, d.position[1] * cellSize + padding])[1]);
+            });
+          return selection.selectAll('text');
+        }
+      )
+    },
+    //计算弧度
+    _toRadians() {
+      return (
+        (degrees) => degrees * (Math.PI / 180)
+      )
+    },
+    //转换成isometric时的坐标变换计算
+    _toIsoTransform(toRadians, math) {
+      return (
+        (degrees) => {
+          const rads = toRadians(degrees);
+          const matrices = {
+            shear: [
+              [1, math.tan(-rads), 0],
+              [0, 1, 0],
+              [0, 0, 1],
+            ],
+            scale: [
+              [1, 0, 0],
+              [0, math.cos(-rads), 0],
+              [0, 0, 1]
+            ],
+            rotate: [
+              [math.cos(rads), -math.sin(rads), 0],
+              [math.sin(rads), math.cos(rads), 0],
+              [0, 0, 1]
+            ]
+          };
+          const matrix = math.multiply(
+            matrices.rotate,
+            math.multiply(matrices.shear, matrices.scale)
+          );
+          return (coords) => {
+            const product = math.multiply(matrix, [[coords[0]], [coords[1]], [1]]);
+            return [product[0][0], product[1][0]];
+          };
+        }
+      )
+    },
+    //初始化 云账号，region，资源类型，资源的数据
+    initData(allData, floorData, regionData, resourceTypeData, boxImageData, textData) {
+      allData.forEach((item1, i1) => {
+        let item = {thickness: 0.4}
+        item.position = [item1.posX, item1.posY]
+        item.sizex = item1.sizeX
+        item.sizey = item1.sizeY
+        item.type = item1.type
+        floorData.push(item)
+        let ftext = {}
+        ftext.position = [item1.posX + 1, item1.posY + item1.sizeY - 2]
+        ftext.text = item1.name
+        ftext.color = "black"
+        ftext.size = 0.8
+        ftext.border = true
+        textData.push(ftext)
+        item1.children.forEach((item2, i2) => {
+          let regionbox = {}
+          regionbox.position = [item2.posX, item2.posY]
+          regionbox.sizex = item2.sizeX
+          regionbox.sizey = item2.sizeY
+          regionData.push(regionbox)
+          let rgtext = {}
+          rgtext.position = [item2.posX - 1, item2.posY + item2.sizeY - 1]
+          rgtext.text = item2.name
+          rgtext.color = "black"
+          rgtext.size = 0.6
+          rgtext.border = true
+          textData.push(rgtext)
+
+          item2.children.forEach((item3, i3) => {
+            let rcbox = {}
+            rcbox.position = [item3.posX, item3.posY]
+            rcbox.sizex = item3.sizeX
+            rcbox.sizey = item3.sizeY
+            resourceTypeData.push(rcbox)
+
+            let rctext = {}
+            rctext.position = [item3.posX - 1, item3.posY + item3.sizeY - 1.7]
+            rctext.text = item3.name
+            rctext.color = "black"
+            rctext.size = 0.4
+            rctext.border = true
+            textData.push(rctext)
+
+            item3.children.forEach((item4, i4) => {
+              let box = {}
+              box.position = [item3.posX + i4 % (item3.sizeX - 1), item3.posY + Math.floor(i4 / (item3.sizeY - 1))]
+              // box.type = item3.resourceType
+              box.iconType = 'type1'
+              box.id = item4.name.split(':')[1]
+              let typeStr = item3.resourceType.toLowerCase()
+              box.type = item4.type
+              if (typeStr.includes("ec2") || typeStr.includes("ecs") || typeStr.includes("servericon")) {
+                box.type = 'server'
+              }
+              box.riskType = 'normal'
+              if (item4.value > 1) {
+                box.riskType = 'risk'
+              }
+              if (item4.value == 1) {
+                box.riskType = 'normal'
+              }
+              if (item4.value < 1) {
+                box.riskType = 'uncheck'
+              }
+              boxImageData.push(box)
+              let nodetext = {}
+              nodetext.position = [box.position[0] - 1.5, box.position[1] + 1 - 1.7]
+              nodetext.text = item4.name
+              nodetext.color = "black"
+              nodetext.size = 0.2
+              nodetext.border = false
+              nodetext.id = box.id + 'text'
+              textData.push(nodetext)
+            })
+          })
+
+        })
+      })
+
+    },
+    //初始化可选面积列表，在每次进入新循环，开始构建一个列表的位置前，需要构建初始列表
+    initSubAvailabList(availableSquareList, starPosition, firstSquare, basePlat) {
+      var squareNode = {}
+      squareNode.starPosition = starPosition
+      squareNode.sizeX = firstSquare.sizeX;
+      squareNode.sizeY = firstSquare.sizeY;
+      squareNode.area = squareNode.sizeX * squareNode.sizeY
+
+      basePlat.starPosition = starPosition;
+      basePlat.xasis = firstSquare.sizeX;
+      basePlat.yasis = firstSquare.sizeY;
+
+      availableSquareList.push(squareNode)
+    },
+    //根据列表中元素包含的子元素数量，来确定一个正方形，用来放置所有的子元素
+    rebuildSublist(sList) {
+      sList.forEach((item, index) => {
+        var totalItem = item.total;
+        var rSizeX = Math.ceil(Math.sqrt(totalItem)) + 1
+        var rSizeY = rSizeX
+        sList[index].area = rSizeX * rSizeY
+        sList[index].sizeX = rSizeX
+        sList[index].sizeY = rSizeY
+      })
+      //对列表进行排序，确保面积最大的排在最前面
+      sList.sort((a, b) => {
+        return b.area - a.area
+      })
+    },
+    //计算每个元素在画布上的实际位置，前面计算的记过存储的都是相对坐标，这里最后统一转化为绝对坐标
+    calActualPosition(xList) {
+      xList.forEach((item) => {
+        item.posX = item.basePosition[0] + item.posNode.starPosition[0]
+        item.posY = item.basePosition[1] + item.posNode.starPosition[1]
+        var nextBasePos = [item.posX, item.posY]
+        item.children.forEach((item1) => {
+          item1.posX = nextBasePos[0] + item1.posNode.starPosition[0]
+          item1.posY = nextBasePos[1] + item1.posNode.starPosition[1]
+          var nextBasePos1 = [item1.posX, item1.posY]
+          item1.children.forEach((item2) => {
+            item2.posX = nextBasePos1[0] + item2.posNode.starPosition[0]
+            item2.posY = nextBasePos1[1] + item2.posNode.starPosition[1]
+          })
+
+        })
+      })
+    },
+    //根据现有的可用面积列表，来确定传入方块元素的位置
+    getAiliableSquareList(availableSquareList, baseSquare, square, basePlat, padding) {
+      //如果当前可用列表能放得下新元素，那么就用列表中元素，放置新元素后，重构可用列表。
+      //如果当前可用列表放不下新元素，那么扩充可用列表，向短边扩充一个基础单元单元长度，扩充后重新计算
+      var enough = undefined;
+      var resultNode = {}
+      for (var i = 0; i < availableSquareList.length; i++) {
+        var d = availableSquareList[i]
+        if ((d.area >= square.area) && (d.sizeX >= square.sizeX && d.sizeY >= square.sizeY)) {
+          resultNode = Object.assign({}, d);
+          resultNode.sizeX = square.sizeX.valueOf()
+          resultNode.sizeY = square.sizeY.valueOf()
+          resultNode.area = (square.sizeX * square.sizeY).valueOf();
+          enough = true;
+          let reSizex = d.sizeX - square.sizeX
+          let reSizey = d.sizeY - square.sizeY
+          availableSquareList.splice(i, 1)
+          if (reSizex > 0) {
+            var squareNode = {}
+            squareNode.starPosition = [d.starPosition[0] + square.sizeX, d.starPosition[1].valueOf()]
+            squareNode.sizeX = reSizex;
+            squareNode.sizeY = square.sizeY.valueOf();
+            squareNode.area = (squareNode.sizeX * squareNode.sizeY).valueOf();
+            availableSquareList.push(squareNode)
+          }
+          if (reSizey > 0) {
+            var squareNode = {}
+            squareNode.starPosition = [d.starPosition[0], d.starPosition[1] + square.sizeY]
+            squareNode.sizeX = d.sizeX.valueOf();
+            squareNode.sizeY = reSizey;
+            squareNode.area = (squareNode.sizeX * squareNode.sizeY).valueOf();
+            availableSquareList.push(squareNode)
+          }
+          break;
+        } else {
+          enough = false;
         }
 
-        return svg.node();
-      });
+      }
 
+      if (enough == undefined || enough == false) {
+        let padding = 1;
+        var squareNode = {}
+        squareNode.sizeX = basePlat.xasis.valueOf()
+        squareNode.sizeY = basePlat.yasis.valueOf()
+        squareNode.area = basePlat.xasis * basePlat.yasis
+        if (basePlat.xasis <= basePlat.yasis) {
+          Object.assign(squareNode, {starPosition: [basePlat.xasis + basePlat.starPosition[0], basePlat.starPosition[1]]});
+          basePlat.xasis = basePlat.xasis + baseSquare.sizeX;
+        } else {
+          Object.assign(squareNode, {starPosition: [basePlat.starPosition[0], basePlat.yasis + basePlat.starPosition[1]]});
+          basePlat.yasis = basePlat.yasis + baseSquare.sizeY
+        }
+
+        availableSquareList.push(squareNode)
+        availableSquareList.forEach((d, i) => {
+          if ((d.area >= square.area) && (d.sizeX >= square.sizeX && d.sizeY >= square.sizeY)) {
+            resultNode = Object.assign({}, d);
+            resultNode.sizeX = square.sizeX.valueOf()
+            resultNode.sizeY = square.sizeY.valueOf()
+            resultNode.area = square.sizeX * square.sizeY;
+            let reSizex = d.sizeX - square.sizeX
+            let reSizey = d.sizeY - square.sizeY
+
+            availableSquareList.splice(i, 1)
+            if (reSizex != 0) {
+              var squareNode = {}
+              squareNode.starPosition = [d.starPosition[0] + square.sizeX, d.starPosition[1]]
+              squareNode.sizeX = reSizex;
+              squareNode.sizeY = square.sizeY.valueOf();
+              squareNode.area = (squareNode.sizeX * squareNode.sizeY).valueOf();
+              availableSquareList.push(squareNode)
+            }
+            if (reSizey != 0) {
+              var squareNode = {}
+              squareNode.starPosition = [d.starPosition[0], d.starPosition[1] + square.sizeY]
+              squareNode.sizeX = d.sizeX.valueOf();
+              squareNode.sizeY = reSizey;
+              squareNode.area = (squareNode.sizeX * squareNode.sizeY).valueOf();
+
+              availableSquareList.push(squareNode)
+            }
+            return;
+          }
+
+        })
+      }
+      availableSquareList.sort((a, b) => {
+        return a.area - b.area
+      })
+      return resultNode;
+    },
+    //关闭弹框
+    handleClose() {
+      this.dialogVisible = false;
+    },
+    //选择云账号
+    topoSwitch(accountId) {
+      this.accountId = accountId;
+      this.init();
+    },
+    //选择云账号名称
+    selectAccount(accountId, accountName) {
+      this.accountId = accountId;
+      this.accountName = accountName;
     },
   },
 
   mounted() {
     this.init();
+    //弹框：全局点击事件监听，因为On click方法里获取的this是当前点击元素，获取不到this.dialogVisible，没办法做弹框
+    document.addEventListener('click', (e) => {
+      let thisClassName = e.target.className;
+      if (thisClassName.baseVal === 'clicked-box') {
+        this.dialogVisible = true;
+      }
+    })
   }
 
 }
@@ -127,6 +1663,7 @@ export default {
 svg {
   margin: 25px;
 }
+
 .table-card >>> .el-card__body {
   padding: 0;
 }

@@ -8,8 +8,9 @@ public class CloudResourceItemRequest {
 
     private String resourceId;
 
-
     private String hummerId;
+
+    private String hummerName;
 
 
     private String resourceType;
@@ -24,7 +25,7 @@ public class CloudResourceItemRequest {
 
     private String accountId;
 
-    private String acountName;
+    private String accountName;
 
     private String regionId;
 
@@ -150,11 +151,19 @@ public class CloudResourceItemRequest {
         this.combine = combine;
     }
 
-    public String getAcountName() {
-        return acountName;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setAcountName(String acountName) {
-        this.acountName = acountName;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public String getHummerName() {
+        return hummerName;
+    }
+
+    public void setHummerName(String hummerName) {
+        this.hummerName = hummerName;
     }
 }

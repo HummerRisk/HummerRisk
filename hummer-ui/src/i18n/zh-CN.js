@@ -811,6 +811,7 @@ export default {
     desc: '注：请选择需要合并的云账号一起导出报告，若不合并请直接下载报告即可。',
     scan_vuln_search: '登录国家信息安全漏洞库，查询检测出的漏洞',
     cloud_resource_detail_result: '资源详情列表',
+    cloud_resource_detail: '资源详情',
   },
   account: {
     cloud_account_setting: '云账号设置',
@@ -1350,6 +1351,7 @@ export default {
     task_account_name: '资源名称',
     task_rule_type: '规则类型',
     task_tree_child: '该节点不是叶子节点，请点击最叶子节点获取资源信息',
+    task_tree_cloud: '请选择需要生成报告内容的账号信息',
     task_list: '任务列表',
     task_manage: '任务管理',
     task_report: '任务报告',

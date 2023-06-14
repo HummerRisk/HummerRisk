@@ -434,30 +434,38 @@ public class PlatformUtils {
         String proxyPort = params.get("proxyPort");
         String proxyName = params.get("proxyName");
         String proxyPassword = params.get("proxyPassword");
-        String pre = "";
-        String _pok = " ";
-        String proxy = "";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("policies", policy);
+        jsonObject.put("plugin", plugin);
         if (StringUtils.isNotEmpty(proxyType)) {
             if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
+                    jsonObject.put("http_proxy", true);
+                    jsonObject.put("proxyIp", proxyIp);
+                    jsonObject.put("proxyPassword", proxyPassword);
+                    jsonObject.put("proxyPort", proxyPort);
                 } else {
-                    proxy = "export http_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
+                    jsonObject.put("http_proxy", true);
+                    jsonObject.put("proxyIp", proxyIp);
+                    jsonObject.put("http_proxy", "http://" + proxyIp + ":" + proxyPort);
                 }
             } else if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Https.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
-                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPassword + "@" + proxyIp + ":" + proxyPort + "';" + "\n";
+                    jsonObject.put("https_proxy", true);
+                    jsonObject.put("proxyIp", proxyIp);
+                    jsonObject.put("proxyPassword", proxyPassword);
+                    jsonObject.put("proxyPort", proxyPort);
                 } else {
-                    proxy = "export https_proxy='http://" + proxyIp + ":" + proxyPort + "';" + "\n";
+                    jsonObject.put("https_proxy", true);
+                    jsonObject.put("proxyIp", proxyIp);
+                    jsonObject.put("proxyPort", proxyPort);
                 }
             }
         } else {
-            proxy = "unset http_proxy;" + "\n" +
-                    "unset https_proxy;" + "\n";
+            jsonObject.put("http_proxy", false);
+            jsonObject.put("https_proxy", false);
         }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("policies", policy);
-        jsonObject.put("plugin", region);
+
 
         switch (type) {
             case aws:

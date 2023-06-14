@@ -492,7 +492,7 @@ export default {
     },
     nodeChange(node, nodeIds, pNodes) {
       if(node.data.id === "root" || !node.data.id) {
-        this.$warning(this.$t('task.task_tree_child'));
+        this.$warning(this.$t('task.task_tree_cloud'));
         return;
       }
     },
