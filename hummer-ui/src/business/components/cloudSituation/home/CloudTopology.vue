@@ -77,12 +77,21 @@ let cellCountX = 30;
 let cellCountY = 30;
 let clicked = false;
 const iconData = [
-  {"name": "aws", "file": "aws.svg"},
-  {"name": "aliyun", "file": "aliyun.svg"},
-  {"name": "huawei", "file": "huawei.svg"},
-  {"name": "gcp", "file": "gcp.svg"},
-  {"name": "tengxun", "file": "tengxun.svg"},
-  {"name": "azure", "file": "azure.svg"},
+  {"name": "hummer-aws-plugin", "file": "aws.svg"},
+  {"name": "hummer-aliyun-plugin", "file": "aliyun.svg"},
+  {"name": "hummer-huawei-plugin", "file": "huawei.svg"},
+  {"name": "hummer-gcp-plugin", "file": "gcp.svg"},
+  {"name": "hummer-qcloud-plugin", "file": "tengxun.svg"},
+  {"name": "hummer-azure-plugin", "file": "azure.svg"},
+  {"name": "hummer-baidu-plugin", "file": ""},
+  {"name": "hummer-huoshan-plugin", "file": ""},
+  {"name": "hummer-jdcloud-plugin", "file": ""},
+  {"name": "hummer-ksyun-plugin", "file": ""},
+  {"name": "hummer-openstack-plugin", "file": ""},
+  {"name": "hummer-qingcloud-plugin", "file": ""},
+  {"name": "hummer-qiniu-plugin", "file": ""},
+  {"name": "hummer-ucloud-plugin", "file": ""},
+  {"name": "hummer-vsphere-plugin", "file": ""},
 ]
 export default {
   components: {
@@ -101,6 +110,10 @@ export default {
       direction: 'rtl',
       accountId: '',
       accountName: '',
+      details: {
+        hummerId: '',
+        resourceName: '',
+      },
       resource: {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
     };
   },
@@ -108,627 +121,680 @@ export default {
     //初始化
     init() {
 
-      let testData = {
-        "children": [{
-          "children": [{
-            "children": [{
-              "children": [{
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-0ffb37ab7ada5c256",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-07c37c89c1e5feea4",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-019900da7df6437f2",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-0b90f930fab86227e",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-001fb0e8ad2976649",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.security-group(共5 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.security-group",
-              "total": 5
-            }, {
-              "children": [{
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-0871c4a9e3662875e",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-0cd75443ca20a70fb",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-0df905d1ba33c4420",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-00a383641043a764c",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-04a2dcb840b6e1ca4",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.ebs(共5 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.ebs",
-              "total": 5
-            }, {
-              "children": [{
-                "value": 8,
-                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
-                "namespace": null,
-                "type": "ecs"
-              }, {"value": 1, "name": "资源标识:i-0ad808a8c1e077ce7", "namespace": null, "type": "ecs"}, {
-                "value": 1,
-                "name": "资源标识:i-04d32e6dd7adf2868",
-                "namespace": null,
-                "type": "ecs"
-              }, {"value": 1, "name": "资源标识:i-0119c27e6b27d86f1", "namespace": null, "type": "ecs"}],
-              "name": "资源类型: aws.ec2(共4 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.ec2",
-              "total": 4
-            }, {
-              "children": [{
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:eipalloc-0c3f6b39801154ce8",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:eipalloc-0d4aa85f89a41acad",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:eipalloc-0ca933c006f2c7400",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.network-addr(共3 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.network-addr",
-              "total": 3
-            }],
-            "name": "区域: 中国（北京）(共17 个资源)",
-            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-            "regionId": "cn-north-1",
-            "total": 17
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:sg-017c527b52bf0c658",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.security-group(共1 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aws.security-group",
-              "total": 1
-            }],
-            "name": "区域: 中国（宁夏）(共1 个资源)",
-            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-            "regionId": "cn-northwest-1",
-            "total": 1
-          }],
-          "name": "云账号: aws(共18 个资源)",
-          "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-          "type": "tengxun",
-          "total": 18
-        }, {
-          "children": [{
-            "children": [{
-              "children": [{
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-0ffb37ab7ada5c256",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-07c37c89c1e5feea4",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-019900da7df6437f2",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-0b90f930fab86227e",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:sg-001fb0e8ad2976649",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.security-group(共5 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.security-group",
-              "total": 5
-            }, {
-              "children": [{
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-0871c4a9e3662875e",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-0cd75443ca20a70fb",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-0df905d1ba33c4420",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-00a383641043a764c",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:vol-04a2dcb840b6e1ca4",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.ebs(共5 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.ebs",
-              "total": 5
-            }, {
-              "children": [{
-                "value": 8,
-                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
-                "namespace": null,
-                "type": "ecs"
-              }, {"value": 1, "name": "资源标识:i-0ad808a8c1e077ce7", "namespace": null, "type": "ecs"}, {
-                "value": 1,
-                "name": "资源标识:i-04d32e6dd7adf2868",
-                "namespace": null,
-                "type": "ecs"
-              }, {"value": 1, "name": "资源标识:i-0119c27e6b27d86f1", "namespace": null, "type": "ecs"}],
-              "name": "资源类型: aws.ec2(共4 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.ec2",
-              "total": 4
-            }, {
-              "children": [{
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:eipalloc-0c3f6b39801154ce8",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:eipalloc-0d4aa85f89a41acad",
-                "namespace": null,
-                "type": "other"
-              }, {
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:eipalloc-0ca933c006f2c7400",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.network-addr(共3 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-north-1",
-              "resourceType": "aws.network-addr",
-              "total": 3
-            }],
-            "name": "区域: 中国（北京）(共17 个资源)",
-            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-            "regionId": "cn-north-1",
-            "total": 17
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:sg-017c527b52bf0c658",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aws.security-group(共1 个资源)",
-              "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aws.security-group",
-              "total": 1
-            }],
-            "name": "区域: 中国（宁夏）(共1 个资源)",
-            "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-            "regionId": "cn-northwest-1",
-            "total": 1
-          }],
-          "name": "云账号: aws(共18 个资源)",
-          "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
-          "type": "aws",
-          "total": 18
-        }, {
-          "children": [{
-            "children": [{
-              "children": [{
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:oss-123",
-                "namespace": null,
-                "type": "oss"
-              }],
-              "name": "资源类型: aliyun.oss(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.oss",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aliyun.disk(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.disk",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 8,
-                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
-                "namespace": null,
-                "type": "rds"
-              }],
-              "name": "资源类型: aliyun.mongodb(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.mongodb",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
-                "namespace": null,
-                "type": "rds"
-              }],
-              "name": "资源类型: aliyun.rds(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.rds",
-              "total": 1
-            }],
-            "name": "区域: 华东 2（上海）(共4 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-shanghai",
-            "total": 4
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:ecs-017c527b52bf0c656",
-                "namespace": null,
-                "type": "ecs"
-              }],
-              "name": "资源类型: aliyun.ecs(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aliyun.ecs",
-              "total": 1
-            }],
-            "name": "区域: 华北 2（北京）(共1 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-beijing",
-            "total": 1
-          }],
-          "name": "云账号: aliyun(共5 个资源)",
-          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-          "type": "aws",
-          "total": 5
-        }, {
-          "children": [{
-            "children": [{
-              "children": [{
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:oss-123",
-                "namespace": null,
-                "type": "oss"
-              }],
-              "name": "资源类型: aliyun.oss(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.oss",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aliyun.disk(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.disk",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 8,
-                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
-                "namespace": null,
-                "type": "rds"
-              }],
-              "name": "资源类型: aliyun.mongodb(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.mongodb",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
-                "namespace": null,
-                "type": "rds"
-              }],
-              "name": "资源类型: aliyun.rds(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.rds",
-              "total": 1
-            }],
-            "name": "区域: 华东 2（上海）(共4 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-shanghai",
-            "total": 4
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:ecs-017c527b52bf0c656",
-                "namespace": null,
-                "type": "ecs"
-              }],
-              "name": "资源类型: aliyun.ecs(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aliyun.ecs",
-              "total": 1
-            }],
-            "name": "区域: 华北 2（北京）(共1 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-beijing",
-            "total": 1
-          }],
-          "name": "云账号: aliyun(共5 个资源)",
-          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-          "type": "huawei",
-          "total": 5
-        }, {
-          "children": [{
-            "children": [{
-              "children": [{"value": 10, "name": "(有安全合规风险)资源标识:oss-123", "namespace": null}],
-              "name": "资源类型: aliyun.oss(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.oss",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aliyun.disk(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.disk",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 8,
-                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
-                "namespace": null,
-                "type": "ecs"
-              }],
-              "name": "资源类型: aliyun.mongodb(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.mongodb",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
-                "namespace": null,
-                "type": "rds"
-              }],
-              "name": "资源类型: aliyun.rds(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.rds",
-              "total": 1
-            }],
-            "name": "区域: 华东 2（上海）(共4 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-shanghai",
-            "total": 4
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:ecs-017c527b52bf0c656",
-                "namespace": null,
-                "type": "ecs"
-              }],
-              "name": "资源类型: aliyun.ecs(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aliyun.ecs",
-              "total": 1
-            }],
-            "name": "区域: 华北 2（北京）(共1 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-beijing",
-            "total": 1
-          }],
-          "name": "云账号: aliyun(共5 个资源)",
-          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-          "type": "aliyun",
-          "total": 5
-        }, {
-          "children": [{
-            "children": [{
-              "children": [{
-                "value": 10,
-                "name": "(有安全合规风险)资源标识:oss-123",
-                "namespace": null,
-                "type": "oss"
-              }],
-              "name": "资源类型: aliyun.oss(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.oss",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 12,
-                "name": "(有安全合规风险)资源标识:disk-0871c4a9e3662835e",
-                "namespace": null,
-                "type": "other"
-              }],
-              "name": "资源类型: aliyun.disk(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.disk",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 8,
-                "name": "(有安全合规风险)资源标识:i-0d9b2118a5f4b223e",
-                "namespace": null,
-                "type": "rds"
-              }],
-              "name": "资源类型: aliyun.mongodb(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.mongodb",
-              "total": 1
-            }, {
-              "children": [{
-                "value": 6,
-                "name": "(有安全合规风险)资源标识:rds-0c3f6b39801154ce8",
-                "namespace": null,
-                "type": "rds"
-              }],
-              "name": "资源类型: aliyun.rds(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-shanghai",
-              "resourceType": "aliyun.rds",
-              "total": 1
-            }],
-            "name": "区域: 华东 2（上海）(共4 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-shanghai",
-            "total": 4
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:ecs-017c527b52bf0c656",
-                "namespace": null,
-                "type": "ecs"
-              }],
-              "name": "资源类型: aliyun.ecs(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aliyun.ecs",
-              "total": 1
-            }],
-            "name": "区域: 华北 2（北京）(共1 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-beijing",
-            "total": 1
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:ecs-017c527b52bf0c656",
-                "namespace": null,
-                "type": "ecs"
-              }],
-              "name": "资源类型: aliyun.ecs(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aliyun.ecs",
-              "total": 1
-            }],
-            "name": "区域: 华北 2（北京）(共1 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-beijing",
-            "total": 1
-          }, {
-            "children": [{
-              "children": [{
-                "value": 1,
-                "name": "资源标识:ecs-017c527b52bf0c656",
-                "namespace": null,
-                "type": "ecs"
-              }],
-              "name": "资源类型: aliyun.ecs(共1 个资源)",
-              "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-              "regionId": "cn-northwest-1",
-              "resourceType": "aliyun.ecs",
-              "total": 1
-            }],
-            "name": "区域: 华北 2（北京）(共1 个资源)",
-            "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-            "regionId": "cn-beijing",
-            "total": 1
-          }],
-          "name": "云账号: aliyun(共5 个资源)",
-          "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
-          "type": "aliyun",
-          "total": 7
-        }], "name": "Cloud"
-      }
-      // this.result = this.$get(cloudTopologyUrl, response => {
-        //let data = response.data;
-        if (testData.children.length == 0) return;
+      // let data = {
+      //   "children": [{
+      //     "children": [{
+      //       "children": [{
+      //         "children": [{
+      //           "value": 10,
+      //           "name": "sg-0ff37",
+      //           "id": "sg-0ffb37ab7ada5c256",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-07c37",
+      //           "id": "sg-07c37c89c1e5feea4",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-019900da",
+      //           "id": "sg-019900da7df6437f2",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-0b90f93",
+      //           "id": "sg-0b90f930fab86227e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-001fb0e8ad2976649",
+      //           "id": "sg-001fb0e8ad2976649",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.security-group(共5 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.security-group",
+      //         "total": 5
+      //       }, {
+      //         "children": [{
+      //           "value": 12,
+      //           "name": "vol-0871c4a9e3662875e",
+      //           "id": "vol-0871c4a9e3662875e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-0cd75443ca20a70fb",
+      //           "id": "vol-0871c4a9e3662875e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-0df905d1ba33c4420",
+      //           "id": "vol-0df905d1ba33c4420",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-00a383641043a764c",
+      //           "id": "vol-00a383641043a764c",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-04a2dcb840b6e1ca4",
+      //           "id": "vol-04a2dcb840b6e1ca4",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.ebs(共5 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.ebs",
+      //         "total": 5
+      //       }, {
+      //         "children": [{
+      //           "value": 8,
+      //           "name": "i-0d9b2118a5f4b223e",
+      //           "id": "i-0d9b2118a5f4b223e",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }, {"value": 1, "name": "i-0ad808a8c1e077ce7", "id": "i-0ad808a8c1e077ce7", "namespace": null, "type": "ecs"}, {
+      //           "value": 1,
+      //           "name": "i-04d32e6dd7adf2868",
+      //           "id": "i-04d32e6dd7adf2868",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }, {"value": 1, "name": "i-0119c27e6b27d86f1", "id": "i-0119c27e6b27d86f1","namespace": null, "type": "ecs"}],
+      //         "name": "资源类型: aws.ec2(共4 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.ec2",
+      //         "total": 4
+      //       }, {
+      //         "children": [{
+      //           "value": 6,
+      //           "name": "eipalloc-0c3f6b39801154ce8",
+      //           "id": "eipalloc-0c3f6b39801154ce8",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 6,
+      //           "name": "eipalloc-0d4aa85f89a41acad",
+      //           "id": "eipalloc-0d4aa85f89a41acad",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 6,
+      //           "name": "eipalloc-0ca933c006f2c7400",
+      //           "id": "eipalloc-0ca933c006f2c7400",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.network-addr(共3 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.network-addr",
+      //         "total": 3
+      //       }],
+      //       "name": "区域: 中国（北京）(共17 个资源)",
+      //       "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //       "regionId": "cn-north-1",
+      //       "total": 17
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "sg-017c527b52bf0c658",
+      //           "id": "sg-017c527b52bf0c658",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.security-group(共1 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aws.security-group",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 中国（宁夏）(共1 个资源)",
+      //       "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //       "regionId": "cn-northwest-1",
+      //       "total": 1
+      //     }],
+      //     "name": "云账号: aws(共18 个资源)",
+      //     "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //     "type": "hummer-qcloud-plugin",
+      //     "total": 18
+      //   }, {
+      //     "children": [{
+      //       "children": [{
+      //         "children": [{
+      //           "value": 10,
+      //           "name": "sg-0ffb37ab7ada5c256",
+      //           "id": "sg-0ffb37ab7ada5c256",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-07c37c89c1e5feea4",
+      //           "id": "sg-07c37c89c1e5feea4",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-019900da7df6437f2",
+      //           "id": "sg-019900da7df6437f2",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-0b90f930fab86227e",
+      //           "id": "sg-0b90f930fab86227e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 10,
+      //           "name": "sg-001fb0e8ad2976649",
+      //           "id": "sg-001fb0e8ad2976649",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.security-group(共5 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.security-group",
+      //         "total": 5
+      //       }, {
+      //         "children": [{
+      //           "value": 12,
+      //           "name": "vol-0871c4a9e3662875e",
+      //           "id": "vol-0871c4a9e3662875e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-0cd75443ca20a70fb",
+      //           "id": "vol-0cd75443ca20a70fb",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-0df905d1ba33c4420",
+      //           "id": "vol-0df905d1ba33c4420",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-00a383641043a764c",
+      //           "id": "vol-00a383641043a764c",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 12,
+      //           "name": "vol-04a2dcb840b6e1ca4",
+      //           "id": "vol-04a2dcb840b6e1ca4",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.ebs(共5 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.ebs",
+      //         "total": 5
+      //       }, {
+      //         "children": [{
+      //           "value": 8,
+      //           "name": "i-0d9b2118a5f4b223e",
+      //           "id": "i-0d9b2118a5f4b223e",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }, {"value": 1, "name": "i-0ad808a8c1e077ce7", "id": "i-0ad808a8c1e077ce7","namespace": null, "type": "ecs"}, {
+      //           "value": 1,
+      //           "name": "i-04d32e6dd7adf2868",
+      //           "id": "i-04d32e6dd7adf2868",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }, {"value": 1, "name": "i-0119c27e6b27d86f1", "id": "i-0119c27e6b27d86f1","namespace": null, "type": "ecs"}],
+      //         "name": "资源类型: aws.ec2(共4 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.ec2",
+      //         "total": 4
+      //       }, {
+      //         "children": [{
+      //           "value": 6,
+      //           "name": "eipalloc-0c3f6b39801154ce8",
+      //           "id": "eipalloc-0c3f6b39801154ce8",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 6,
+      //           "name": "eipalloc-0d4aa85f89a41acad",
+      //           "id": "eipalloc-0d4aa85f89a41acad",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }, {
+      //           "value": 6,
+      //           "name": "eipalloc-0ca933c006f2c7400",
+      //           "id": "eipalloc-0ca933c006f2c7400",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.network-addr(共3 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-north-1",
+      //         "resourceType": "aws.network-addr",
+      //         "total": 3
+      //       }],
+      //       "name": "区域: 中国（北京）(共17 个资源)",
+      //       "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //       "regionId": "cn-north-1",
+      //       "total": 17
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "sg-017c527b52bf0c658",
+      //           "id": "sg-017c527b52bf0c658",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aws.security-group(共1 个资源)",
+      //         "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aws.security-group",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 中国（宁夏）(共1 个资源)",
+      //       "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //       "regionId": "cn-northwest-1",
+      //       "total": 1
+      //     }],
+      //     "name": "云账号: aws(共18 个资源)",
+      //     "accountId": "fbd20422-9c1a-4120-83a9-2ce4f36f9b93",
+      //     "type": "hummer-aws-plugin",
+      //     "total": 18
+      //   }, {
+      //     "children": [{
+      //       "children": [{
+      //         "children": [{
+      //           "value": 10,
+      //           "name": "oss-123",
+      //           "id": "oss-123",
+      //           "namespace": null,
+      //           "type": "oss"
+      //         }],
+      //         "name": "资源类型: aliyun.oss(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.oss",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 12,
+      //           "name": "disk-0871c4a9e3662835e",
+      //           "id": "disk-0871c4a9e3662835e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aliyun.disk(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.disk",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 8,
+      //           "name": "i-0d9b2118a5f4b223e",
+      //           "id": "i-0d9b2118a5f4b223e",
+      //           "namespace": null,
+      //           "type": "rds"
+      //         }],
+      //         "name": "资源类型: aliyun.mongodb(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.mongodb",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 6,
+      //           "name": "rds-0c3f6b39801154ce8",
+      //           "id": "rds-0c3f6b39801154ce8",
+      //           "namespace": null,
+      //           "type": "rds"
+      //         }],
+      //         "name": "资源类型: aliyun.rds(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.rds",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华东 2（上海）(共4 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-shanghai",
+      //       "total": 4
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "ecs-017c527b52bf0c656",
+      //           "id": "ecs-017c527b52bf0c656",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }],
+      //         "name": "资源类型: aliyun.ecs(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aliyun.ecs",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华北 2（北京）(共1 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-beijing",
+      //       "total": 1
+      //     }],
+      //     "name": "云账号: aliyun(共5 个资源)",
+      //     "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //     "type": "hummer-aws-plugin",
+      //     "total": 5
+      //   }, {
+      //     "children": [{
+      //       "children": [{
+      //         "children": [{
+      //           "value": 10,
+      //           "name": "oss-123",
+      //           "id": "oss-123",
+      //           "namespace": null,
+      //           "type": "oss"
+      //         }],
+      //         "name": "资源类型: aliyun.oss(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.oss",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 12,
+      //           "name": "disk-0871c4a9e3662835e",
+      //           "id": "disk-0871c4a9e3662835e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aliyun.disk(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.disk",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 8,
+      //           "name": "i-0d9b2118a5f4b223e",
+      //           "id": "i-0d9b2118a5f4b223e",
+      //           "namespace": null,
+      //           "type": "rds"
+      //         }],
+      //         "name": "资源类型: aliyun.mongodb(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.mongodb",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 6,
+      //           "name": "rds-0c3f6b39801154ce8",
+      //           "id": "rds-0c3f6b39801154ce8",
+      //           "namespace": null,
+      //           "type": "rds"
+      //         }],
+      //         "name": "资源类型: aliyun.rds(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.rds",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华东 2（上海）(共4 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-shanghai",
+      //       "total": 4
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "ecs-017c527b52bf0c656",
+      //           "id": "ecs-017c527b52bf0c656",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }],
+      //         "name": "资源类型: aliyun.ecs(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aliyun.ecs",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华北 2（北京）(共1 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-beijing",
+      //       "total": 1
+      //     }],
+      //     "name": "云账号: aliyun(共5 个资源)",
+      //     "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //     "type": "hummer-huawei-plugin",
+      //     "total": 5
+      //   }, {
+      //     "children": [{
+      //       "children": [{
+      //         "children": [{"value": 10, "name": "oss-123", "namespace": null}],
+      //         "name": "资源类型: aliyun.oss(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.oss",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 12,
+      //           "name": "disk-0871c4a9e3662835e",
+      //           "id": "disk-0871c4a9e3662835e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aliyun.disk(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.disk",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 8,
+      //           "name": "i-0d9b2118a5f4b223e",
+      //           "id": "i-0d9b2118a5f4b223e",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }],
+      //         "name": "资源类型: aliyun.mongodb(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.mongodb",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 6,
+      //           "name": "rds-0c3f6b39801154ce8",
+      //           "id": "rds-0c3f6b39801154ce8",
+      //           "namespace": null,
+      //           "type": "rds"
+      //         }],
+      //         "name": "资源类型: aliyun.rds(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.rds",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华东 2（上海）(共4 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-shanghai",
+      //       "total": 4
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "ecs-017c527b52bf0c656",
+      //           "id": "ecs-017c527b52bf0c656",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }],
+      //         "name": "资源类型: aliyun.ecs(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aliyun.ecs",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华北 2（北京）(共1 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-beijing",
+      //       "total": 1
+      //     }],
+      //     "name": "云账号: aliyun(共5 个资源)",
+      //     "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //     "type": "hummer-aliyun-plugin",
+      //     "total": 5
+      //   }, {
+      //     "children": [{
+      //       "children": [{
+      //         "children": [{
+      //           "value": 10,
+      //           "name": "oss-123",
+      //           "id": "oss-123",
+      //           "namespace": null,
+      //           "type": "oss"
+      //         }],
+      //         "name": "资源类型: aliyun.oss(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.oss",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 12,
+      //           "name": "disk-0871c4a9e3662835e",
+      //           "id": "disk-0871c4a9e3662835e",
+      //           "namespace": null,
+      //           "type": "other"
+      //         }],
+      //         "name": "资源类型: aliyun.disk(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.disk",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 8,
+      //           "name": "i-0d9b2118a5f4b223e",
+      //           "id": "i-0d9b2118a5f4b223e",
+      //           "namespace": null,
+      //           "type": "rds"
+      //         }],
+      //         "name": "资源类型: aliyun.mongodb(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.mongodb",
+      //         "total": 1
+      //       }, {
+      //         "children": [{
+      //           "value": 6,
+      //           "name": "rds-0c3f6b39801154ce8",
+      //           "id": "rds-0c3f6b39801154ce8",
+      //           "namespace": null,
+      //           "type": "rds"
+      //         }],
+      //         "name": "资源类型: aliyun.rds(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-shanghai",
+      //         "resourceType": "aliyun.rds",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华东 2（上海）(共4 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-shanghai",
+      //       "total": 4
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "ecs-017c527b52bf0c656",
+      //           "id": "ecs-017c527b52bf0c656",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }],
+      //         "name": "资源类型: aliyun.ecs(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aliyun.ecs",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华北 2（北京）(共1 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-beijing",
+      //       "total": 1
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "ecs-017c527b52bf0c656",
+      //           "id": "ecs-017c527b52bf0c656",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }],
+      //         "name": "资源类型: aliyun.ecs(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aliyun.ecs",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华北 2（北京）(共1 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-beijing",
+      //       "total": 1
+      //     }, {
+      //       "children": [{
+      //         "children": [{
+      //           "value": 1,
+      //           "name": "ecs-017c527b52bf0c656",
+      //           "id": "ecs-017c527b52bf0c656",
+      //           "namespace": null,
+      //           "type": "ecs"
+      //         }],
+      //         "name": "资源类型: aliyun.ecs(共1 个资源)",
+      //         "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //         "regionId": "cn-northwest-1",
+      //         "resourceType": "aliyun.ecs",
+      //         "total": 1
+      //       }],
+      //       "name": "区域: 华北 2（北京）(共1 个资源)",
+      //       "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //       "regionId": "cn-beijing",
+      //       "total": 1
+      //     }],
+      //     "name": "云账号: aliyun(共5 个资源)",
+      //     "accountId": "02f21cf0-255b-449f-a0d4-39b1d7fcbd6b",
+      //     "type": "hummer-aliyun-plugin",
+      //     "total": 7
+      //   }], "name": "Cloud"
+      // }
+      this.result = this.$get(cloudTopologyUrl, response => {
+        let data = response.data;
+        if (data.children.length == 0) return;
 
-        this.calculatePlatform(testData.children);
+        this.calculatePlatform(data.children);
 
-        this.initSVG(testData.children);
+        this.initSVG(data.children);
 
-      // });
+      });
 
     },
     //初始化svg
@@ -978,10 +1044,11 @@ export default {
         }
       )
     },
-    //画图中的所有图形元素，ecs,rds等的图形
+    //画图中的所有图形元素，ecs,rds等的图形,节点点击事件
     _plotImageBoxes(d3, cellSize) {
       return (
         (data, selection, pointTransform) => {
+          console.log(data, selection, pointTransform)
           let size = cellSize;
           let boxes = selection.selectAll('g.imagebox').data(data);
           let imageType = ""
@@ -990,6 +1057,7 @@ export default {
             .append('g')
             .classed('imagebox', true)
             .each(function (d) {
+              console.log(444, d)
               d3.select(this).append('image')
                 .attr("xlink:href", () => {
                   var filePath = "`@/assets/img/cloudtopo/"
@@ -1454,21 +1522,14 @@ export default {
             textData.push(rctext)
 
             item3.children.forEach((item4, i4) => {
-              let box = {}
+              let box = item4?item4:{};
               box.position = [item3.posX + i4 % (item3.sizeX - 1), item3.posY + Math.floor(i4 / (item3.sizeY - 1))]
-              // box.type = item3.resourceType
               box.iconType = 'type1'
-              box.id = item4.name.split(':')[1]
-              let typeStr = item3.resourceType.toLowerCase()
-              box.type = item4.type
-              if (typeStr.includes("ec2") || typeStr.includes("ecs") || typeStr.includes("servericon")) {
-                box.type = 'server'
-              }
               box.riskType = 'normal'
               if (item4.value > 1) {
                 box.riskType = 'risk'
               }
-              if (item4.value == 1) {
+              if (item4.value === 1) {
                 box.riskType = 'normal'
               }
               if (item4.value < 1) {
@@ -1650,6 +1711,7 @@ export default {
     //弹框：全局点击事件监听，因为On click方法里获取的this是当前点击元素，获取不到this.dialogVisible，没办法做弹框
     document.addEventListener('click', (e) => {
       let thisClassName = e.target.className;
+      console.log(e.target)
       if (thisClassName.baseVal === 'clicked-box') {
         this.dialogVisible = true;
       }

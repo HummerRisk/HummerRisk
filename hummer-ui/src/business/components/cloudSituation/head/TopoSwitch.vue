@@ -4,8 +4,8 @@
     <el-menu-item index="1" v-show="false">Placeholder</el-menu-item>
     <el-submenu index="2" popper-class="submenu">
       <template v-slot:title>
-        <span class="account-name" :title="accountName">
-          {{ $t('account.cloud_account') }}: {{ accountName }}
+        <span class="account-name" :title="name">
+          {{ $t('account.cloud_account') }}: {{ name }}
         </span>
       </template>
       <search-list @topoSwitch="topoSwitch" @selectAccount="selectAccount"/>
@@ -25,15 +25,21 @@ export default {
   components: {SearchList},
   data() {
     return {
+      name: '',
+    }
+  },
+  watch: {
+    accountName() {
+      this.name = this.accountName;
     }
   },
   methods: {
     topoSwitch(accountId, accountName) {
-      this.accountName = accountName;
+      this.name = accountName;
       this.$emit("topoSwitch", accountId);
     },
     selectAccount(accountId, accountName) {
-      this.accountName = accountName;
+      this.name = accountName;
       this.$emit('selectAccount', accountId, accountName);
     },
   },
