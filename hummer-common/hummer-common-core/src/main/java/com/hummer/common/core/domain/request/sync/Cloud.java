@@ -15,6 +15,8 @@ public class Cloud {
 
     private String type;
 
+    private Integer total;
+
     public List<Region> getChildren() {
         return children;
     }
@@ -45,5 +47,13 @@ public class Cloud {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 }

@@ -16,6 +16,8 @@ public class Region {
 
     private String regionId;
 
+    private Integer total;
+
     public List<ResourceType> getChildren() {
         return children;
     }
@@ -46,5 +48,13 @@ public class Region {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 }
