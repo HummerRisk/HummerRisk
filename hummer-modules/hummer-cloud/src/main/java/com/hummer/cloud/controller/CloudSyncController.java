@@ -63,7 +63,6 @@ public class CloudSyncController {
         return cloudSyncService.getCloudResourceSyncItem(syncId);
     }
 
-    @I18n
     @Operation(summary = "资源态势拓扑图")
     @GetMapping(value = "cloudTopology")
     public CloudTopology cloudTopology() {

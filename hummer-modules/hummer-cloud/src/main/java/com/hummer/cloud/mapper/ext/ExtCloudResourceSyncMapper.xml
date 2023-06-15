@@ -119,6 +119,7 @@
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="type" jdbcType="VARCHAR" property="type" />
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <result column="total" jdbcType="INTEGER" property="total" />
         <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Region" javaType="list"
                     select="selectRegion" column="accountId">
         </collection>
@@ -128,6 +129,7 @@
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="regionId" jdbcType="VARCHAR" property="regionId" />
         <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <result column="total" jdbcType="INTEGER" property="total" />
         <collection property="children" ofType="com.hummer.common.core.domain.request.sync.ResourceType" javaType="list"
                     select="selectResourceType" column="{regionId=regionId, accountId=accountId}">
         </collection>
@@ -140,11 +142,20 @@
         <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
         <result column="value" jdbcType="INTEGER" property="value" />
         <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="total" jdbcType="INTEGER" property="total" />
         <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Resource" javaType="list"
                     select="selectResource" column="{regionId=regionId, accountId=accountId, resourceType=resourceType}">
+            <result column="id" jdbcType="VARCHAR" property="id" />
             <result column="name" jdbcType="VARCHAR" property="name" />
             <result column="value" jdbcType="INTEGER" property="value" />
             <result column="type" jdbcType="VARCHAR" property="type" />
+            <result column="regionId" jdbcType="VARCHAR" property="regionId" />
+            <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+            <result column="regionName" jdbcType="VARCHAR" property="regionName" />
+            <result column="accountName" jdbcType="VARCHAR" property="accountName" />
+            <result column="pluginId" jdbcType="VARCHAR" property="pluginId" />
+            <result column="pluginName" jdbcType="VARCHAR" property="pluginName" />
+            <result column="resourceType" jdbcType="VARCHAR" property="resourceType" />
         </collection>
     </resultMap>
 
@@ -160,6 +171,10 @@
            where t1.account_id = t.account_id
          ), '个资源)'
         ) as name,
+        (
+            select count(t1.id) from cloud_resource_item t1
+            where t1.account_id = t.account_id
+        ) as total,
         t1.plugin_id as type,
         t1.id as accountId
         from cloud_resource_item t
@@ -175,6 +190,10 @@
            where t1.account_id = t.account_id and t1.region_id = t.region_id
          ), '个资源)'
         ) as name,
+        (
+            select count(t1.id) from cloud_resource_item t1
+            where t1.account_id = t.account_id and t1.region_id = t.region_id
+        ) as total,
         t.account_id as accountId,
         t.region_id as regionId
         from cloud_resource_item t
@@ -194,6 +213,10 @@
             WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
             ELSE 'other'
         END AS 'type',
+        (
+            select count(t1.id) from cloud_resource_item t1
+            where t1.account_id = t.account_id and t1.region_id = t.region_id and t1.resource_type = t.resource_type
+        ) as total,
         t.account_id as accountId,
         t.region_id as regionId,
         t.resource_type as resourceType
@@ -206,8 +229,8 @@
         select
         CASE
             WHEN t.hummer_name is not null
-            THEN CONCAT('名称:', t.hummer_name)
-            ELSE CONCAT('标识:', t.hummer_id)
+            THEN CONCAT(t.hummer_name)
+            ELSE CONCAT(t.hummer_id)
         END AS name,
         CASE
             WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
@@ -223,7 +246,16 @@
             WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
             ELSE 'other'
         END AS 'type',
+        t.account_id as accountId,
+        t1.name as accountName,
+        t.region_id as regionId,
+        t.region_name as regionName,
+        t.plugin_id as pluginId,
+        t.plugin_name as pluginName,
+        t.hummer_id as id,
+        t.resource_type as resourceType
         from cloud_resource_item t
+        join cloud_account t1 on t.account_id = t1.id
         where t.resource_type = #{resourceType} and t.region_id = #{regionId} and t.account_id = #{accountId}
     </select>
 </mapper>

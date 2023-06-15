@@ -506,4 +506,13 @@ public class ResourceCreateService {
         return map;
     }
 
+
+    public void dealWithResourceRelation () throws Exception  {
+        try{
+
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }
