@@ -15,46 +15,48 @@
             <i class="el-icon-paperclip"></i>
             {{ $t('resource.Hummer_ID') }}
           </template>
-          {{ 'hummerrisk-0001' }}
+          {{ details.id }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             <i class="el-icon-tickets"></i>
             {{ $t('dashboard.resource_name') }}
           </template>
-          {{ 'hummerrisk-dev' }}
+          {{ details.name }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             <i class="el-icon-cloudy"></i>
             {{ $t('account.cloud_platform') }}
           </template>
-          {{ '阿里云' }}
+          {{ details.pluginName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             <i class="el-icon-house"></i>
             {{ $t('account.cloud_account') }}
           </template>
-          {{ 'aliyun' }}
+          {{ details.accountName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             <i class="el-icon-location-information"></i>
             {{ $t('account.regions') }}
           </template>
-          {{ '北京1' }}
+          {{ details.regionName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
             <i class="el-icon-collection-tag"></i>
             {{ $t('resource.risk') }}
           </template>
-          <span style="color: red;">{{ '有风险' }}</span>
+          <span v-if="details.riskType === 'risk'" style="color: red;">{{ $t('resource.have_risk') }}</span>
+          <span v-if="details.riskType === 'normal'" style="color: green;">{{ $t('resource.n_risk') }}</span>
+          <span v-if="details.riskType === 'uncheck'">{{ $t('resource.uncheck') }}</span>
         </el-descriptions-item>
       </el-descriptions>
       <el-divider><i class="el-icon-folder-opened"></i></el-divider>
-      <result-read-only :row="typeof(resource) === 'string'?JSON.parse(resource):resource"></result-read-only>
+      <result-read-only :row="typeof(details.resource) === 'string'?JSON.parse(details.resource):details.resource"></result-read-only>
       <el-divider><i class="el-icon-document-checked"></i></el-divider>
       <cloud-detail-chart/>
     </el-drawer>
@@ -111,10 +113,19 @@ export default {
       accountId: '',
       accountName: '',
       details: {
-        hummerId: '',
-        resourceName: '',
+        id: '',
+        name: '',
+        pluginId: '',
+        pluginName: '',
+        accountId: '',
+        accountName: '',
+        regionId: '',
+        regionName: '',
+        resourceType: '',
+        riskType: '',
+        type: '',
+        resource: '{}',//resource json : {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
       },
-      resource: {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
     };
   },
   methods: {
@@ -1048,7 +1059,6 @@ export default {
     _plotImageBoxes(d3, cellSize) {
       return (
         (data, selection, pointTransform) => {
-          console.log(data, selection, pointTransform)
           let size = cellSize;
           let boxes = selection.selectAll('g.imagebox').data(data);
           let imageType = ""
@@ -1057,7 +1067,6 @@ export default {
             .append('g')
             .classed('imagebox', true)
             .each(function (d) {
-              console.log(444, d)
               d3.select(this).append('image')
                 .attr("xlink:href", () => {
                   var filePath = "`@/assets/img/cloudtopo/"
@@ -1086,6 +1095,17 @@ export default {
                 .attr('height', size * 1.5 + 'px')
                 .attr('weight', size * 1.2 + 'px')
                 .attr('id', d.id)
+                .attr('name', d.name)
+                .attr('accountId', d.accountId)
+                .attr('accountName', d.accountName)
+                .attr('pluginId', d.pluginId)
+                .attr('pluginName', d.pluginName)
+                .attr('regionId', d.regionId)
+                .attr('regionName', d.regionName)
+                .attr('resourceType', d.resourceType)
+                .attr('riskType', d.riskType)
+                .attr('type', d.type)
+                .attr('resource', d.resource)
                 .attr('imageType', imageType)
               // .attr('transform', ' scale(0.5)')
             })
@@ -1710,9 +1730,23 @@ export default {
     this.init();
     //弹框：全局点击事件监听，因为On click方法里获取的this是当前点击元素，获取不到this.dialogVisible，没办法做弹框
     document.addEventListener('click', (e) => {
-      let thisClassName = e.target.className;
-      console.log(e.target)
+      let target = e.target;
+      let thisClassName = target.className;
       if (thisClassName.baseVal === 'clicked-box') {
+        this.details = {
+            id: target.getAttribute("id"),
+            name: target.getAttribute("name"),
+            pluginId: target.getAttribute("pluginId"),
+            pluginName: target.getAttribute("pluginName"),
+            accountId: target.getAttribute("accountId"),
+            accountName: target.getAttribute("accountName"),
+            regionId: target.getAttribute("regionId"),
+            regionName: target.getAttribute("regionName"),
+            resourceType: target.getAttribute("resourceType"),
+            riskType: target.getAttribute("riskType"),
+            type: target.getAttribute("type"),
+            resource: target.getAttribute("resource"),
+        };
         this.dialogVisible = true;
       }
     })

@@ -29,6 +29,8 @@ public class Resource {
 
     private String resourceType;
 
+    private String resource;
+
     public Integer getValue() {
         return value;
     }
@@ -93,5 +95,43 @@ public class Resource {
         this.resourceType = resourceType;
     }
 
+    public String getAccountName() {
+        return accountName;
+    }
 
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public String getPluginId() {
+        return pluginId;
+    }
+
+    public void setPluginId(String pluginId) {
+        this.pluginId = pluginId;
+    }
+
+    public String getPluginName() {
+        return pluginName;
+    }
+
+    public void setPluginName(String pluginName) {
+        this.pluginName = pluginName;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public String getResource() {
+        return resource;
+    }
+
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
 }
