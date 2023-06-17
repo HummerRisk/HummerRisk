@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `rule` (
 CREATE TABLE IF NOT EXISTS `rule_tag` (
     `tag_key`                    varchar(50)         NOT NULL UNIQUE COMMENT '标签标识',
     `tag_name`                   varchar(100)        NOT NULL UNIQUE COMMENT '标签名',
-    `_index`                     int              NOT NULL AUTO_INCREMENT COMMENT '索引',
+    `_index`                     int                 NOT NULL AUTO_INCREMENT COMMENT '索引',
     `flag`                       tinyint             NOT NULL DEFAULT 0 COMMENT '是否内置',
     PRIMARY KEY (`tag_key`),
     KEY `IDX_KEY_NAME` (`tag_name`),
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `rule_type` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `rule_account_parameter` (
-    `id`                         int              NOT NULL AUTO_INCREMENT,
+    `id`                         int                 NOT NULL AUTO_INCREMENT,
     `account_id`                 varchar(50)         DEFAULT NULL COMMENT '云账号ID',
     `rule_id`                    varchar(50)         DEFAULT NULL COMMENT '规则ID',
     `parameter`                  varchar(1024)       DEFAULT NULL COMMENT '参数',

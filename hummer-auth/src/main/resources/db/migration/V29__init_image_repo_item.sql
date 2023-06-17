@@ -47,7 +47,7 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('a1c9a8d3-97d2-455
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('5ca75854-b03c-4e9f-9ec7-4bf77f16d94d', 'safety');
 
 CREATE TABLE IF NOT EXISTS `package_dependency_json_item` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `severity`                     varchar(50)         DEFAULT NULL COMMENT 'severity',
     `name`                         varchar(50)         DEFAULT NULL COMMENT 'name',

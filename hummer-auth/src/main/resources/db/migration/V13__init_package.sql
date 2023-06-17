@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `package_result_item` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `package_result_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',

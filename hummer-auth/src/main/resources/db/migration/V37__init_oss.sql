@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `oss`
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `oss_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `oss_id`                       varchar(50)         DEFAULT NULL COMMENT 'Oss ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_source` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_source_image` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `source_id`                    varchar(50)         DEFAULT NULL COMMENT 'source ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `image`                        varchar(512)        DEFAULT NULL COMMENT 'image',

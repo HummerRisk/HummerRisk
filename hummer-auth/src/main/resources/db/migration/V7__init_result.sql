@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `cloud_task_item` (
 
 
 CREATE TABLE IF NOT EXISTS `cloud_task_item_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `task_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
     `resource_id`                  varchar(50)         DEFAULT NULL COMMENT '资源ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `cloud_task_item_log` (
 
 CREATE TABLE IF NOT EXISTS `cloud_task_item_resource`
 (
-    `id`                          int              NOT NULL AUTO_INCREMENT,
+    `id`                          int                 NOT NULL AUTO_INCREMENT,
     `task_id`                     varchar(50)         DEFAULT NULL COMMENT '任务ID',
     `task_item_id`                varchar(50)         DEFAULT NULL COMMENT '任务项ID',
     `resource_type`               varchar(64)         DEFAULT NULL COMMENT '资源类型',

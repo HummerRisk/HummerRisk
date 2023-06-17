@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_source` (
-    `id`                         int              NOT NULL AUTO_INCREMENT,
+    `id`                         int                 NOT NULL AUTO_INCREMENT,
     `cloud_native_id`            varchar(50)         DEFAULT NULL COMMENT '云原生ID',
     `source_name`                varchar(256)        DEFAULT NULL COMMENT '资源名称',
     `source_namespace`           varchar(256)        DEFAULT NULL COMMENT '资源标识',
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_result_item`
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_result_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `history_cloud_native_result_item`
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `history_cloud_native_result_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
@@ -124,7 +124,7 @@ ALTER TABLE `history_image_task` ADD `scan_type` varchar(32) DEFAULT 'grype' COM
 ALTER TABLE `history_image_task` ADD `trivy_json` longtext DEFAULT NULL COMMENT 'trivy json';
 
 CREATE TABLE IF NOT EXISTS `image_trivy_json` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `vulnerability_id`             varchar(50)         NOT NULL COMMENT 'VulnerabilityID',
     `pkg_name`                     varchar(50)         DEFAULT NULL COMMENT 'PkgName',
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_config_result` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_config_result_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
@@ -217,7 +217,7 @@ CREATE TABLE IF NOT EXISTS `history_cloud_native_config_result` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `history_cloud_native_config_result_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         DEFAULT NULL COMMENT '检测结果ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',

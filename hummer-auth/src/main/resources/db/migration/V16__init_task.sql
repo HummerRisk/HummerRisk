@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `task_item` (
 
 CREATE TABLE IF NOT EXISTS `task_item_resource`
 (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `task_id`                      varchar(50)         DEFAULT NULL COMMENT '任务ID',
     `task_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
     `rule_type`                    varchar(50)         DEFAULT NULL COMMENT '规则类型：rule/tag/group',
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `task_item_resource`
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `task_item_resource_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `task_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
     `task_item_resource_id`        varchar(50)         DEFAULT NULL COMMENT '任务资源ID',
     `resource_id`                  varchar(50)         DEFAULT NULL COMMENT '检测资源结果ID',

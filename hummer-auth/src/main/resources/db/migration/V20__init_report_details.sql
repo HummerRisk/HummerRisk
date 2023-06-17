@@ -1,7 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS `image_grype_table` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
-    `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         NOT N ULL COMMENT 'Result ID',
     `name`                         varchar(256)        DEFAULT NULL COMMENT 'NAME',
     `installed`                    varchar(256)        DEFAULT NULL COMMENT 'INSTALLED',
     `fixed_in`                     varchar(256)        DEFAULT NULL COMMENT 'FIXED-IN',
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `image_grype_table` (
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `image_grype_json` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `name`                         varchar(256)        DEFAULT NULL COMMENT 'name',
     `version`                      varchar(128)        DEFAULT NULL COMMENT 'version',
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `image_grype_json` (
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `image_syft_table` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `name`                         varchar(256)        DEFAULT NULL COMMENT 'NAME',
     `version`                      varchar(256)        DEFAULT NULL COMMENT 'VERSION',
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `image_syft_table` (
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `image_syft_json` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `name`                         varchar(256)        DEFAULT NULL COMMENT 'name',
     `version`                      varchar(256)        DEFAULT NULL COMMENT 'version',
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `image_syft_json` (
     ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `package_dependency_json` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `is_virtual`                   varchar(50)         DEFAULT NULL COMMENT 'isVirtual',
     `file_name`                    varchar(255)        DEFAULT NULL COMMENT 'fileName',

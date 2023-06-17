@@ -1,6 +1,6 @@
 
 CREATE TABLE IF NOT EXISTS `image_repo_sync_log` (
-    `id`                           int              NOT NULL AUTO_INCREMENT,
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
     `repo_id`                      varchar(50)         DEFAULT NULL COMMENT '镜像仓库ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
