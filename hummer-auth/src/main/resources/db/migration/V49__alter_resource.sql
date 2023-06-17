@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_rela` (
 
 CREATE TABLE IF NOT EXISTS `cloud_resource_rela_link` (
     `id`                         int                 NOT NULL AUTO_INCREMENT,
+    `resource_item_id`           varchar(128)        DEFAULT NULL COMMENT 'cloud resource item 标识',
     `source`                     varchar(50)         DEFAULT NULL COMMENT '资源关系ID(源)',
     `target`                     varchar(50)         DEFAULT NULL COMMENT '资源关系ID(目标)',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
