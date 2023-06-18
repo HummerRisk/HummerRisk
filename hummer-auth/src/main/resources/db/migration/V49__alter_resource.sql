@@ -26,3 +26,5 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_rela_link` (
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+ALTER TABLE `rule_group` ADD `image_url` varchar(256) DEFAULT NULL COMMENT '图片地址';
