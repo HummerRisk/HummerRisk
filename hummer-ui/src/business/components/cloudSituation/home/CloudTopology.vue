@@ -85,15 +85,15 @@ const iconData = [
   {"name": "hummer-gcp-plugin", "file": "gcp.svg"},
   {"name": "hummer-qcloud-plugin", "file": "tengxun.svg"},
   {"name": "hummer-azure-plugin", "file": "azure.svg"},
-  {"name": "hummer-baidu-plugin", "file": ""},
-  {"name": "hummer-huoshan-plugin", "file": ""},
-  {"name": "hummer-jdcloud-plugin", "file": ""},
-  {"name": "hummer-ksyun-plugin", "file": ""},
-  {"name": "hummer-openstack-plugin", "file": ""},
-  {"name": "hummer-qingcloud-plugin", "file": ""},
-  {"name": "hummer-qiniu-plugin", "file": ""},
-  {"name": "hummer-ucloud-plugin", "file": ""},
-  {"name": "hummer-vsphere-plugin", "file": ""},
+  {"name": "hummer-baidu-plugin", "file": "baiduyun.png"},
+  {"name": "hummer-huoshan-plugin", "file": "huoshan.svg"},
+  {"name": "hummer-jdcloud-plugin", "file": "jdcloud2.png"},
+  {"name": "hummer-ksyun-plugin", "file": "jinshanyun.png"},
+  {"name": "hummer-openstack-plugin", "file": "openstack.png"},
+  {"name": "hummer-qingcloud-plugin", "file": "qingcloud2.png"},
+  {"name": "hummer-qiniu-plugin", "file": "qiniu2.png"},
+  {"name": "hummer-ucloud-plugin", "file": "ucloud.png"},
+  {"name": "hummer-vsphere-plugin", "file": "vsphere.png"},
 ]
 export default {
   components: {
@@ -945,6 +945,7 @@ export default {
         totalNumber = cloudaccounts[i].total + totalNumber;
         let regionList = cloudaccounts[i].children;
         let regionListN = []
+        console.log(regionList)
         regionList.forEach((d, rindex) => {
           var resourceTypeList = d.children
           var resourceTypeListN = []
@@ -965,7 +966,8 @@ export default {
           })
 
           //根据处理好的结果，更新上级列表中对应节点面积和X,Y信息
-          regionList[rindex].area = basePlat.xasis * basePlat.yasis
+          let maxAsis = Math.max(basePlat.xasis,basePlat.yasis)
+          regionList[rindex].area = maxAsis * maxAsis
           regionList[rindex].sizeX = basePlat.xasis
           regionList[rindex].sizeY = basePlat.yasis
           regionList[rindex].resourceTypeList = resourceTypeListN
@@ -984,7 +986,8 @@ export default {
           item.posNode = rnode;
           regionListN.push(rnode)
         })
-        cloudaccounts[i].area = baseRegionPlat.xasis * baseRegionPlat.yasis
+        let maxAsis = Math.max(baseRegionPlat.xasis,baseRegionPlat.yasis)
+        cloudaccounts[i].area = maxAsis * maxAsis
         cloudaccounts[i].sizeX = baseRegionPlat.xasis
         cloudaccounts[i].sizeY = baseRegionPlat.yasis
         cloudaccounts[i].regionList = regionListN;
@@ -1431,7 +1434,7 @@ export default {
                   .style('font-weight', 'bold')
                   .style('font-size', (d) => d.size ? `${d.size}rem` : '1.5rem')
                   .attr('stroke', "white")
-                  .attr('stroke-width', '2');
+                  .attr('stroke-width', '1');
               }
               d3.select(this)
                 .attr('id', d.id)
@@ -1519,7 +1522,7 @@ export default {
           regionbox.sizey = item2.sizeY
           regionData.push(regionbox)
           let rgtext = {}
-          rgtext.position = [item2.posX - 1, item2.posY + item2.sizeY - 1]
+          rgtext.position = [item2.posX - 1, item2.posY + item2.sizeY - 1.3]
           rgtext.text = item2.name
           rgtext.color = "black"
           rgtext.size = 0.6
@@ -1561,7 +1564,7 @@ export default {
               nodetext.text = item4.name
               nodetext.color = "black"
               nodetext.size = 0.2
-              nodetext.border = false
+              nodetext.border = true
               nodetext.id = box.id + 'text'
               textData.push(nodetext)
             })
@@ -1575,13 +1578,14 @@ export default {
     initSubAvailabList(availableSquareList, starPosition, firstSquare, basePlat) {
       var squareNode = {}
       squareNode.starPosition = starPosition
-      squareNode.sizeX = firstSquare.sizeX;
-      squareNode.sizeY = firstSquare.sizeY;
-      squareNode.area = squareNode.sizeX * squareNode.sizeY
+      let xy = Math.max(firstSquare.sizeX,firstSquare.sizeY)
+      squareNode.sizeX = xy;
+      squareNode.sizeY = xy;
+      squareNode.area = xy * xy
 
       basePlat.starPosition = starPosition;
-      basePlat.xasis = firstSquare.sizeX;
-      basePlat.yasis = firstSquare.sizeY;
+      basePlat.xasis = xy;
+      basePlat.yasis = xy;
 
       availableSquareList.push(squareNode)
     },
