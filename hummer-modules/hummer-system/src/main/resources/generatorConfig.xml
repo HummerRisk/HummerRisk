@@ -170,5 +170,7 @@
 <!--        <table tableName="image_group" domainObjectName="ImageGroup"/>-->
 <!--        <table tableName="server_lynis_result" domainObjectName="ServerLynisResult"/>-->
 <!--        <table tableName="server_lynis_result_detail" domainObjectName="ServerLynisResultDetail"/>-->
+<!--        <table tableName="cloud_resource_rela" domainObjectName="CloudResourceRela"/>-->
+<!--        <table tableName="cloud_resource_rela_link" domainObjectName="CloudResourceRelaLink"/>-->
     </context>
 </generatorConfiguration>
