@@ -100,3 +100,27 @@ UPDATE `rule_group` SET level = '安全合规' where level = '网络检测' and 
 UPDATE `rule_group` SET level = '安全合规' where level = '认证检测' and plugin_id = 'hummer-server-plugin';
 UPDATE `rule_group` SET image_url = 'server-safety.png' where level = '其他安全' and plugin_id = 'hummer-server-plugin';
 UPDATE `rule_group` SET image_url = 'server-compliance.png' where level = '安全合规' and plugin_id = 'hummer-server-plugin';
+
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检测' and plugin_id = 'hummer-k8s-plugin';
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检查' and plugin_id = 'hummer-k8s-plugin';
+UPDATE `rule_group` SET level = '最佳实践' where level = '安全合规' and plugin_id = 'hummer-k8s-plugin';
+UPDATE `rule_group` SET image_url = 'k8s-other.png' where level = '其他安全' and plugin_id = 'hummer-k8s-plugin';
+UPDATE `rule_group` SET image_url = 'k8s-best.png' where level = '最佳实践' and plugin_id = 'hummer-k8s-plugin';
+
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检测' and plugin_id = 'hummer-rancher-plugin';
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检查' and plugin_id = 'hummer-rancher-plugin';
+UPDATE `rule_group` SET level = '最佳实践' where level = '安全合规' and plugin_id = 'hummer-rancher-plugin';
+UPDATE `rule_group` SET image_url = 'rancher-other.png' where level = '其他安全' and plugin_id = 'hummer-rancher-plugin';
+UPDATE `rule_group` SET image_url = 'rancher-best.png' where level = '最佳实践' and plugin_id = 'hummer-rancher-plugin';
+
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检测' and plugin_id = 'hummer-kubesphere-plugin';
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检查' and plugin_id = 'hummer-kubesphere-plugin';
+UPDATE `rule_group` SET level = '最佳实践' where level = '安全合规' and plugin_id = 'hummer-kubesphere-plugin';
+UPDATE `rule_group` SET image_url = 'kubesphere-other.png' where level = '其他安全' and plugin_id = 'hummer-kubesphere-plugin';
+UPDATE `rule_group` SET image_url = 'kubesphere-best.png' where level = '最佳实践' and plugin_id = 'hummer-kubesphere-plugin';
+
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检测' and plugin_id = 'hummer-openshift-plugin';
+UPDATE `rule_group` SET level = '其他安全' where level = '合规检查' and plugin_id = 'hummer-openshift-plugin';
+UPDATE `rule_group` SET level = '最佳实践' where level = '安全合规' and plugin_id = 'hummer-openshift-plugin';
+UPDATE `rule_group` SET image_url = 'openshift-other.png' where level = '其他安全' and plugin_id = 'hummer-openshift-plugin';
+UPDATE `rule_group` SET image_url = 'openshift-best.png' where level = '最佳实践' and plugin_id = 'hummer-openshift-plugin';
