@@ -791,7 +791,7 @@ export default {
     activation_time: '啟用時間',
     scene_description: '場景描述',
     scene_state: '場景狀態',
-    equal_guarantee_level: '風險級別',
+    equal_guarantee_level: '分組類型',
     compliance_results: '合規結果',
     scan_score: '雲賬號整體檢測安全評分',
     no_resources_allowed: '沒有檢測資源',

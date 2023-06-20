@@ -791,7 +791,7 @@ export default {
     activation_time:'Activation time',
     scene_description:'Scene description',
     scene_state:'Scene state',
-    equal_guarantee_level:'risk level',
+    equal_guarantee_level: 'Group type',
     compliance_results:'Compliance Results',
     scan_score:'Cloud account overall scan security score',
     no_resources_allowed:'No resources scanned',

@@ -791,7 +791,7 @@ export default {
     activation_time: '启用时间',
     scene_description: '场景描述',
     scene_state: '场景状态',
-    equal_guarantee_level: '风险级别',
+    equal_guarantee_level: '分组类型',
     compliance_results: '合规结果',
     scan_score: '云账号整体检测安全评分',
     no_resources_allowed: '没有检测资源',
