@@ -37,7 +37,7 @@
 <!--                    <el-row class="desc" v-if="checkedColumnNames.includes('description')">{{ data.description }}</el-row>-->
                     <el-row class="desc" v-if="checkedColumnNames.includes('description')">
                       <el-tooltip class="item" effect="light" :content="data.description" placement="bottom">
-                        <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/aliyun-iso.png`)">
+                        <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${data.imageUrl}`)">
                           <div slot="error" class="image-slot">
                             <i class="el-icon-picture-outline"></i>
                           </div>
