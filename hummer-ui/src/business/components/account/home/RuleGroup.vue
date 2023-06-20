@@ -34,7 +34,6 @@
                         <el-tag type="success" size="mini">{{ data.type }}</el-tag>
                       </span>
                     </el-row>
-<!--                    <el-row class="desc" v-if="checkedColumnNames.includes('description')">{{ data.description }}</el-row>-->
                     <el-row class="desc" v-if="checkedColumnNames.includes('description')">
                       <el-tooltip class="item" effect="light" :content="data.description" placement="bottom">
                         <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${data.imageUrl}`)">
@@ -47,7 +46,6 @@
                   </el-col>
                 </el-row>
               </div>
-<!--              <el-divider></el-divider>-->
               <div style="padding: 0 14px 14px 14px;margin-top: 5px;">
                 <el-row>
                   <el-col :span="19">

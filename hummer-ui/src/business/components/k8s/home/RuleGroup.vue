@@ -34,12 +34,19 @@
                         <el-tag type="success" size="mini">{{ data.type }}</el-tag>
                       </span>
                     </el-row>
-                    <el-row class="desc" v-if="checkedColumnNames.includes('description')">{{ data.description }}</el-row>
+                    <el-row class="desc" v-if="checkedColumnNames.includes('description')">
+                      <el-tooltip class="item" effect="light" :content="data.description" placement="bottom">
+                        <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${data.imageUrl}`)">
+                          <div slot="error" class="image-slot">
+                            <i class="el-icon-picture-outline"></i>
+                          </div>
+                        </el-image>
+                      </el-tooltip>
+                    </el-row>
                   </el-col>
                 </el-row>
               </div>
-              <el-divider></el-divider>
-              <div style="padding: 0 14px 14px 14px;">
+              <div style="padding: 0 14px 14px 14px;margin-top: 5px;">
                 <el-row>
                   <el-col :span="19">
                     <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.name }}</span>
@@ -963,7 +970,7 @@ const columnOptions2 = [
   .desc {
     color: #888888;
     font-size: 13px;
-    margin-top: 10px;
+    margin: 10px 0;
     line-height: 20px;
     overflow: hidden;
     text-overflow: ellipsis;
