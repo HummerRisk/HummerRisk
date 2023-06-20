@@ -92,3 +92,11 @@ UPDATE `rule_group` SET level = '其他安全' where level = '等保三级' and 
 UPDATE `rule_group` SET image_url = 'vsphere-pro.other' where level = '其他安全' and plugin_id = 'hummer-vsphere-plugin';
 
 UPDATE `rule_group` SET image_url = 'ucloud-pro.png' where level = '等保三级' and plugin_id = 'hummer-ucloud-plugin';
+
+UPDATE `rule_group` SET image_url = 'server-best.png' where level = '最佳实践' and plugin_id = 'hummer-server-plugin';
+UPDATE `rule_group` SET level = '其他安全' where level = '服务检测' and plugin_id = 'hummer-server-plugin';
+UPDATE `rule_group` SET level = '其他安全' where level = '系统检测' and plugin_id = 'hummer-server-plugin';
+UPDATE `rule_group` SET level = '安全合规' where level = '网络检测' and plugin_id = 'hummer-server-plugin';
+UPDATE `rule_group` SET level = '安全合规' where level = '认证检测' and plugin_id = 'hummer-server-plugin';
+UPDATE `rule_group` SET image_url = 'server-safety.png' where level = '其他安全' and plugin_id = 'hummer-server-plugin';
+UPDATE `rule_group` SET image_url = 'server-compliance.png' where level = '安全合规' and plugin_id = 'hummer-server-plugin';
