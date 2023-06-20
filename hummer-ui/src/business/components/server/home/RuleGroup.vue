@@ -150,8 +150,17 @@
           <el-form-item :label="$t('commons.description')" prop="description">
             <el-input type="textarea" :rows="5" v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
           </el-form-item>
-          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
-            <el-input v-model="createForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
+              <el-option
+                v-for="item in checkPlugins"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value">
+                <img :src="require(`@/assets/img/mod/${item.value}`)" style="width: 50px; height: 32px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <dialog-footer
@@ -170,8 +179,17 @@
           <el-form-item :label="$t('commons.description')" prop="description">
             <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
-          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
-            <el-input v-model="infoForm.level" autocomplete="off" :placeholder="$t('resource.equal_guarantee_level')"/>
+          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
+              <el-option
+                v-for="item in checkPlugins"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value">
+                <img :src="require(`@/assets/img/mod/${item.value}`)" style="width: 50px; height: 32px; vertical-align:middle" alt=""/>
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <dialog-footer
@@ -190,12 +208,24 @@
           <el-form-item :label="$t('commons.description')" prop="description">
             {{ infoForm.description }}
           </el-form-item>
-          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level">
-            {{ infoForm.level }}
-          </el-form-item>
           <el-form-item :label="$t('dashboard.scan_types')">
             {{ infoForm.pluginName }}
           </el-form-item>
+          <el-form-item v-if="infoForm.imageUrl" :label="$t('resource.equal_guarantee_level')" prop="imageUrl">
+            <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${infoForm.imageUrl}`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            {{ infoForm.level }}
+          </el-form-item> <el-form-item v-if="infoForm.imageUrl" :label="$t('resource.equal_guarantee_level')" prop="imageUrl">
+          <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${infoForm.imageUrl}`)">
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline"></i>
+            </div>
+          </el-image>
+          {{ infoForm.level }}
+        </el-form-item>
         </el-form>
       </el-drawer>
       <!--Info group-->
@@ -325,6 +355,7 @@ import {
   ruleGroupSaveUrl,
   ruleGroupUpdateUrl
 } from "@/api/cloud/rule/rule";
+import {RULE_GROUP_IMG} from "@/common/js/constants";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -548,6 +579,7 @@ const columnOptions2 = [
         ],
         checkAll2: true,
         isIndeterminate2: false,
+        checkPlugins: [],
       }
     },
 
@@ -579,12 +611,14 @@ const columnOptions2 = [
         this.checkAll2 = val;
       },
       create() {
-        this.createForm = { level: '最佳实践' };
+        this.createForm = {};
+        this.changePlugin("hummer-server-plugin");
         this.createVisible = true;
 
       },
       handleEdit(item) {
         this.infoForm = item;
+        this.changePlugin(item.pluginId);
         this.updateVisible = true;
       },
       handleList(item) {
@@ -801,6 +835,24 @@ const columnOptions2 = [
             }
           }
         });
+      },
+      changePlugin (pluginId){
+        let plugins = RULE_GROUP_IMG;
+        this.checkPlugins = [];
+        for (let p of plugins) {
+          if (p.id === pluginId) {
+            this.checkPlugins.push(p);
+          }
+        }
+      },
+      changeImage (form) {
+        let plugins = RULE_GROUP_IMG;
+        for (let p of plugins) {
+          if (p.value === form.imageUrl) {
+            form.level = p.name;
+            break;
+          }
+        }
       },
     },
     created() {
