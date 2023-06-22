@@ -426,7 +426,7 @@ public class PlatformUtils {
      * @param params
      * @return
      */
-    public final static String fixedScanner(String policy, Map<String, String> params, String plugin) throws Exception {
+    public final static JSONObject fixedScanner(String policy, Map<String, String> params, String plugin) throws Exception {
         String type = params.get("type");
         String region = params.get("region");
         String proxyType = params.get("proxyType");
@@ -610,7 +610,7 @@ public class PlatformUtils {
                 break;
         }
 
-        return jsonObject.toJSONString();
+        return jsonObject;
 
     }
 

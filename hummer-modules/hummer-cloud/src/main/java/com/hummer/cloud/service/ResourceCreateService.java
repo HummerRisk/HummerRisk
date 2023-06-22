@@ -1,5 +1,6 @@
 package com.hummer.cloud.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.oss.constants.OSSConstants;
@@ -18,7 +19,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +75,10 @@ public class ResourceCreateService {
     private K8sCreateService k8sCreateService;
     @DubboReference
     private ISystemProviderService systemProviderService;
+
+    @Autowired
+    @Qualifier("loadBalanced")
+    private RestTemplate restTemplate;
 
     //云资源检测
     @XxlJob("cloudTasksJobHandler")
@@ -424,10 +434,15 @@ public class ResourceCreateService {
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
 
-            String json = PlatformUtils.fixedScanner(taskItem.getDetails(), map, cloudTask.getPluginId());
-            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + json);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            JSONObject jsonObject = PlatformUtils.fixedScanner(taskItem.getDetails(), map, cloudTask.getPluginId());
+            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
 
-            resultStr = HttpClientUtil.cloudScanner("http://hummer-scaner/run", json);
+            HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
+            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            JSONObject resultJson = JSONObject.parseObject(result);
+            resultStr = resultJson.getString("data").toString();
 
             taskItem.setCommand("api scanner");
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
@@ -456,8 +471,8 @@ public class ResourceCreateService {
                             false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                     HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
-                String custodianRun = json;
-                String metadata = json;
+                String custodianRun = jsonObject.toJSONString();
+                String metadata = jsonObject.toJSONString();
                 String resources = "[]";
                 if(readResource){
                     resources = resultStr;
@@ -507,12 +522,202 @@ public class ResourceCreateService {
     }
 
 
-    public void dealWithResourceRelation () throws Exception  {
+    public void dealWithResourceRelation (CloudResourceItem cloudResourceItem) throws Exception  {
         try{
+            String pluginId = cloudResourceItem.getPluginId();
+            if (StringUtils.equals(pluginId, "hummer-aws-plugin")) {
+                dealAws(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-azure-plugin")) {
+                dealAzure(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-aliyun-plugin")) {
+                dealAliyun(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-huawei-plugin")) {
+                dealHuawei(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-qcloud-plugin")) {
+                dealQcloud(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-vsphere-plugin")) {
+                dealVsphere(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-openstack-plugin")) {
+                dealOpenstack(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-gcp-plugin")) {
+                dealGcp(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-huoshan-plugin")) {
+                dealHuoshan(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-baidu-plugin")) {
+                dealBaidu(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-qiniu-plugin")) {
+                dealQiniu(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-qingcloud-plugin")) {
+                dealQingcloud(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-ucloud-plugin")) {
+                dealUcloud(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-jdcloud-plugin")) {
+                dealJdcloud(cloudResourceItem);
+            } else if (StringUtils.equals(pluginId, "hummer-ksyun-plugin")) {
+                dealKsyun(cloudResourceItem);
+            }
 
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    public void dealAws (CloudResourceItem cloudResourceItem) throws Exception  {
+        String json = cloudResourceItem.getResource();
+        if(StringUtils.isEmpty(json)) return;
+
+        String resourceType = cloudResourceItem.getResourceType();
+        String accountId = cloudResourceItem.getAccountId();
+        String regionId = cloudResourceItem.getRegionId();
+        String hummerId = cloudResourceItem.getHummerId();
+        JSONObject jsonObject = JSONObject.parseObject(json);
+
+        switch (resourceType) {
+            case "aws.ec2":
+                String PublicIpAddress = jsonObject.getString("PublicIpAddress");
+                break;
+            default:
+                break;
+        }
+
+
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        String UUID = UUIDUtil.newUUID();
+        cloudResourceRela.setId(UUID);
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setxAxis(100L);
+        cloudResourceRela.setyAxis(100L);
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+
+    }
+
+    public void dealAzure (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealAliyun (CloudResourceItem cloudResourceItem) throws Exception  {
+        String json = cloudResourceItem.getResource();
+        if(StringUtils.isEmpty(json)) return;
+
+        String resourceType = cloudResourceItem.getResourceType();
+        String accountId = cloudResourceItem.getAccountId();
+        String regionId = cloudResourceItem.getRegionId();
+        String hummerId = cloudResourceItem.getHummerId();
+
+        JSONObject jsonObject = JSONObject.parseObject(json);
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        String UUID = UUIDUtil.newUUID();
+        cloudResourceRela.setId(UUID);
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setxAxis(100L);
+        cloudResourceRela.setyAxis(100L);
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+
+    }
+
+    public void dealHuawei (CloudResourceItem cloudResourceItem) throws Exception  {
+        String json = cloudResourceItem.getResource();
+        if(StringUtils.isEmpty(json)) return;
+
+        String resourceType = cloudResourceItem.getResourceType();
+        String accountId = cloudResourceItem.getAccountId();
+        String regionId = cloudResourceItem.getRegionId();
+        String hummerId = cloudResourceItem.getHummerId();
+
+        JSONObject jsonObject = JSONObject.parseObject(json);
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        String UUID = UUIDUtil.newUUID();
+        cloudResourceRela.setId(UUID);
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setxAxis(100L);
+        cloudResourceRela.setyAxis(100L);
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+
+    }
+
+    public void dealQcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+        String json = cloudResourceItem.getResource();
+        if(StringUtils.isEmpty(json)) return;
+
+        String resourceType = cloudResourceItem.getResourceType();
+        String accountId = cloudResourceItem.getAccountId();
+        String regionId = cloudResourceItem.getRegionId();
+        String hummerId = cloudResourceItem.getHummerId();
+
+        JSONObject jsonObject = JSONObject.parseObject(json);
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        String UUID = UUIDUtil.newUUID();
+        cloudResourceRela.setId(UUID);
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setxAxis(100L);
+        cloudResourceRela.setyAxis(100L);
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+
+    }
+
+    public void dealVsphere (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealOpenstack (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealGcp (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealHuoshan (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealBaidu (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealQiniu (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealQingcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealUcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealJdcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public void dealKsyun (CloudResourceItem cloudResourceItem) throws Exception  {
     }
 
 }
