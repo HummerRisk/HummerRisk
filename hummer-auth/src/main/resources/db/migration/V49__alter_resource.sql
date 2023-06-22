@@ -89,7 +89,7 @@ UPDATE `rule_group` SET image_url = 'qingcloud-oss.png' where level = '对象存
 UPDATE `rule_group` SET image_url = 'qiniu-oss.png' where level = '对象存储' and plugin_id = 'hummer-qiniu-plugin';
 
 UPDATE `rule_group` SET level = '其他安全' where level = '等保三级' and plugin_id = 'hummer-vsphere-plugin';
-UPDATE `rule_group` SET image_url = 'vsphere-pro.other' where level = '其他安全' and plugin_id = 'hummer-vsphere-plugin';
+UPDATE `rule_group` SET image_url = 'vsphere-other.png' where level = '其他安全' and plugin_id = 'hummer-vsphere-plugin';
 
 UPDATE `rule_group` SET image_url = 'ucloud-pro.png' where level = '等保三级' and plugin_id = 'hummer-ucloud-plugin';
 
