@@ -1,7 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS `image_grype_table` (
     `id`                           int                 NOT NULL AUTO_INCREMENT,
-    `result_id`                    varchar(50)         NOT N ULL COMMENT 'Result ID',
+    `result_id`                    varchar(50)         NOT NULL COMMENT 'Result ID',
     `name`                         varchar(256)        DEFAULT NULL COMMENT 'NAME',
     `installed`                    varchar(256)        DEFAULT NULL COMMENT 'INSTALLED',
     `fixed_in`                     varchar(256)        DEFAULT NULL COMMENT 'FIXED-IN',
