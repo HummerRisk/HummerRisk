@@ -442,20 +442,20 @@ public class ResourceCreateService {
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
             JSONObject resultJson = JSONObject.parseObject(result);
+            String resultCode = resultJson.getString("code").toString();
+            String resultMsg = resultJson.getString("msg").toString();
+            if (!StringUtils.equals(resultCode, "200")) {
+                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
+            }
+
             resultStr = resultJson.getString("data").toString();
 
             taskItem.setCommand("api scanner");
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
-            if (LogUtil.getLogger().isDebugEnabled()) {
-                LogUtil.getLogger().debug("resource created: {}", resultStr);
-            }
             if(PlatformUtils.isUserForbidden(resultStr)){
                 resultStr = Translator.get("i18n_create_resource_region_failed");
                 readResource = false;
             }
-            if (resultStr.contains("ERROR"))
-                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
-
 
             for (CloudTaskItemResourceWithBLOBs taskItemResource : list) {
 
