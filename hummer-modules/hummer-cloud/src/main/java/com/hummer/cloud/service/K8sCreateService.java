@@ -18,7 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -56,6 +61,10 @@ public class K8sCreateService {
     private ISystemProviderService systemProviderService;
     @DubboReference
     private IK8sProviderService k8sProviderService;
+
+    @Autowired
+    @Qualifier("loadBalanced")
+    private RestTemplate restTemplate;
 
     public void handleTask(CloudTask cloudTask) throws Exception {
         String taskId = cloudTask.getId();
@@ -235,10 +244,21 @@ public class K8sCreateService {
             CloudNative cloudNative = k8sProviderService.cloudNative(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getK8sAccount(cloudNative, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(cloudNative.getProxyId()));
 
-            String json = PlatformUtils.fixedScanner(taskItem.getDetails(), map, cloudTask.getPluginId());
-            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + json);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            JSONObject jsonObject = PlatformUtils.fixedScanner(taskItem.getDetails(), map, cloudTask.getPluginId());
+            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
 
-            resultStr = HttpClientUtil.cloudScanner("http://127.0.0.1:8011/run", json);
+            HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
+            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            JSONObject resultJson = JSONObject.parseObject(result);
+            String resultCode = resultJson.getString("code").toString();
+            String resultMsg = resultJson.getString("msg").toString();
+            if (!StringUtils.equals(resultCode, "200")) {
+                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
+            }
+
+            resultStr = resultJson.getString("data").toString();
 
             taskItem.setCommand("api scanner");
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
@@ -267,8 +287,8 @@ public class K8sCreateService {
                             false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                     HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
-                String custodianRun = json;
-                String metadata = json;
+                String custodianRun = jsonObject.toJSONString();
+                String metadata = jsonObject.toJSONString();
                 String resources = "[]";
                 if(readResource){
                     resources = resultStr;
