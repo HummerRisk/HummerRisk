@@ -130,8 +130,8 @@
                     <property name="name" value="request.name"/>
                 </include>
             </if>
-            <if test="request.acountName != null and request.acountName != ''">
-                and account.name like CONCAT('%', #{request.acountName},'%')
+            <if test="request.accountName != null and request.accountName != ''">
+                and account.name like CONCAT('%', #{request.accountName},'%')
             </if>
             <if test="request.regionName != null and request.regionName != ''">
                 and t.region_name like CONCAT('%', #{request.regionName},'%')
