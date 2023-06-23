@@ -340,8 +340,12 @@ public class ServerService {
         return serverGroupMapper.selectByExample(null);
     }
 
-    public List<Server> allServerList() {
-        return serverMapper.selectByExampleWithBLOBs(null);
+    public List<Server> allServerList(String serverType) {
+        ServerExample example = new ServerExample();
+        if (serverType != null) {
+            example.createCriteria().andTypeEqualTo(serverType);
+        }
+        return serverMapper.selectByExampleWithBLOBs(example);
     }
 
     public List<ServerDTO> getServerList(ServerRequest server) {
@@ -981,7 +985,11 @@ public class ServerService {
     }
 
     public List<ServerRule> unBindList(String id) {
+        RuleGroupExample example = new RuleGroupExample();
+        example.createCriteria().andIdEqualTo(Integer.valueOf(id));
+        RuleGroup ruleGroup = cloudProviderService.ruleGroupList(example).get(0);
         ServerRuleExample ruleExample = new ServerRuleExample();
+        ruleExample.createCriteria().andTypeEqualTo(ruleGroup.getServerType());
         ruleExample.setOrderByClause("name");
         return serverRuleMapper.selectByExample(ruleExample);
     }
@@ -1051,9 +1059,13 @@ public class ServerService {
         }
     }
 
-    public List<RuleGroup> getRuleGroups() {
+    public List<RuleGroup> getRuleGroups(String type) {
         RuleGroupExample example = new RuleGroupExample();
-        example.createCriteria().andPluginIdEqualTo("hummer-server-plugin").andTypeEqualTo("server");
+        if (type != null) {
+            example.createCriteria().andPluginIdEqualTo("hummer-server-plugin").andTypeEqualTo("server").andServerTypeEqualTo(type);
+        } else {
+            example.createCriteria().andPluginIdEqualTo("hummer-server-plugin").andTypeEqualTo("server");
+        }
         return cloudProviderService.ruleGroupList(example);
     }
 

@@ -565,7 +565,8 @@ import {
   serverDownloadExcelUrl,
   serverExcelInsertExpertsUrl,
   serverGroupListUrl,
-  serverListUrl, serverRuleGroupsUrl,
+  serverListUrl, serverRuleGroupsByTypeUrl,
+  serverRuleGroupsUrl,
   serverScanUrl,
   serverValidatesUrl,
   serverValidateUrl,
@@ -1001,7 +1002,7 @@ const columnOptions = [
           return;
         }
         this.serverWithGroup = data;
-        this.result = this.$get(serverRuleGroupsUrl,response => {
+        this.result = this.$get(serverRuleGroupsByTypeUrl + data.type,response => {
           this.ruleGroups = response.data;
           this.scanVisible = true;
         });

@@ -150,7 +150,18 @@
           <el-form-item :label="$t('commons.description')" prop="description">
             <el-input type="textarea" :rows="5" v-model="createForm.description" autocomplete="off" :placeholder="$t('commons.description')"/>
           </el-form-item>
-          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item :label="$t('server.server_type')" prop="serverType" :rules="{required: true, message: $t('server.server_type') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="createForm.serverType" :placeholder="$t('server.server_type')" @change="changePlugin('hummer-server-plugin', createForm.serverType)">
+              <el-option
+                v-for="item in serverTypes"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="createForm.serverType" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
               <el-option
                 v-for="item in checkPlugins"
@@ -179,7 +190,18 @@
           <el-form-item :label="$t('commons.description')" prop="description">
             <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
-          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+          <el-form-item :label="$t('server.server_type')" prop="serverType" :rules="{required: true, message: $t('server.server_type') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
+            <el-select style="width: 100%;" v-model="infoForm.serverType" :placeholder="$t('server.server_type')" @change="changePlugin(infoForm.pluginId, infoForm.serverType)">
+              <el-option
+                v-for="item in serverTypes"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                &nbsp;&nbsp; {{ item.name }}
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="infoForm.serverType" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
             <el-select style="width: 100%;" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
               <el-option
                 v-for="item in checkPlugins"
@@ -211,6 +233,11 @@
           <el-form-item :label="$t('dashboard.scan_types')">
             {{ infoForm.pluginName }}
           </el-form-item>
+          <el-form-item :label="$t('server.server_type')">
+            <span v-if="infoForm.serverType === 'linux'">Linux</span>
+            <span v-if="infoForm.serverType === 'windows'">Windows</span>
+            <span v-if="!infoForm.type">N/A</span>
+          </el-form-item>
           <el-form-item v-if="infoForm.imageUrl" :label="$t('resource.equal_guarantee_level')" prop="imageUrl">
             <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${infoForm.imageUrl}`)">
               <div slot="error" class="image-slot">
@@ -218,14 +245,7 @@
               </div>
             </el-image>
             {{ infoForm.level }}
-          </el-form-item> <el-form-item v-if="infoForm.imageUrl" :label="$t('resource.equal_guarantee_level')" prop="imageUrl">
-          <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${infoForm.imageUrl}`)">
-            <div slot="error" class="image-slot">
-              <i class="el-icon-picture-outline"></i>
-            </div>
-          </el-image>
-          {{ infoForm.level }}
-        </el-form-item>
+          </el-form-item>
         </el-form>
       </el-drawer>
       <!--Info group-->
@@ -342,10 +362,11 @@ import {SERVER_RULE_CONFIGS, SERVER_RULE_GROUP_CONFIGS} from "@/business/compone
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import RuleType from "./RuleType";
 import {
-  allServerListUrl,
+  allServerListByTypeUrl,
   serverAllBindListUrl,
   serverBindRuleUrl,
-  serverRuleListUrl, serverScanByGroupUrl,
+  serverRuleListUrl,
+  serverScanByGroupUrl,
   serverUnBindListUrl
 } from "@/api/k8s/server/server";
 import {
@@ -580,6 +601,10 @@ const columnOptions2 = [
         checkAll2: true,
         isIndeterminate2: false,
         checkPlugins: [],
+        serverTypes: [
+          {id: 'linux', name: 'Linux'},
+          {id: 'windows', name: 'Windows'}
+        ],
       }
     },
 
@@ -612,13 +637,11 @@ const columnOptions2 = [
       },
       create() {
         this.createForm = {};
-        this.changePlugin("hummer-server-plugin");
         this.createVisible = true;
 
       },
       handleEdit(item) {
         this.infoForm = item;
-        this.changePlugin(item.pluginId);
         this.updateVisible = true;
       },
       handleList(item) {
@@ -790,7 +813,7 @@ const columnOptions2 = [
         return item.label.indexOf(query) > -1;
       },
       handleScan(item) {
-        this.viewResult = this.$get(allServerListUrl, response => {
+        this.viewResult = this.$get(allServerListByTypeUrl + item.serverType, response => {
           if (response.data != undefined && response.data != null) {
             this.accounts = response.data;
             this.groupId = item.id;
@@ -836,11 +859,11 @@ const columnOptions2 = [
           }
         });
       },
-      changePlugin (pluginId){
+      changePlugin (pluginId, serverType){
         let plugins = RULE_GROUP_IMG;
         this.checkPlugins = [];
         for (let p of plugins) {
-          if (p.id === pluginId) {
+          if (p.id === pluginId && (p.value.indexOf(serverType) > -1)) {
             this.checkPlugins.push(p);
           }
         }

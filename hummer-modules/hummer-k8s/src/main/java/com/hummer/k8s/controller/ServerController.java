@@ -51,7 +51,14 @@ public class ServerController {
     @Operation(summary = "所有主机")
     @GetMapping("allServerList")
     public List<Server> allServerList() {
-        return serverService.allServerList();
+        return serverService.allServerList(null);
+    }
+
+    @I18n
+    @Operation(summary = "按类型查询所有主机")
+    @GetMapping("allServerListByType/{serverType}")
+    public List<Server> allServerListByType(@PathVariable String serverType) {
+        return serverService.allServerList(serverType);
     }
 
     @I18n
@@ -354,7 +361,14 @@ public class ServerController {
     @Operation(summary = "规则组")
     @GetMapping(value = "ruleGroups")
     public List<RuleGroup> getRuleGroups() {
-        return serverService.getRuleGroups();
+        return serverService.getRuleGroups(null);
+    }
+
+    @I18n
+    @Operation(summary = "按类型查询规则组")
+    @GetMapping(value = "ruleGroupsByType/{type}")
+    public List<RuleGroup> ruleGroupsByType(@PathVariable String type) {
+        return serverService.getRuleGroups(type);
     }
 
     @I18n

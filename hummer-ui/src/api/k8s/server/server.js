@@ -75,6 +75,8 @@ export const dragServerGroupUrl = "/k8s/server/drag";
 
 export const allServerListUrl = "/k8s/server/allServerList";
 
+export const allServerListByTypeUrl = "/k8s/server/allServerListByType/";
+
 export const serverTopInfoUrl = "/k8s/server/topInfo";
 
 export const allCertificateListUrl = "/k8s/server/allCertificateList";
@@ -82,6 +84,8 @@ export const allCertificateListUrl = "/k8s/server/allCertificateList";
 export const serverBindRuleUrl = "/k8s/server/bindRule";
 
 export const serverRuleGroupsUrl = "/k8s/server/ruleGroups";
+
+export const serverRuleGroupsByTypeUrl = "/k8s/server/ruleGroupsByType/";
 
 export const serverUnBindListUrl = "/k8s/server/unBindList/";
 

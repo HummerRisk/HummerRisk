@@ -99,7 +99,7 @@
                :destroy-on-close="true">
       <el-form :model="createRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createRuleForm">
         <el-form-item :label="$t('task.task_rule_type')" ref="type" prop="type">
-          <el-select style="width: 100%;" filterable :clearable="true" v-model="createRuleForm.type" :placeholder="$t('task.task_rule_type')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="createRuleForm.type" :placeholder="$t('task.task_rule_type')" @change="ruleGroupsFnc(createRuleForm.type)">
             <el-option
               v-for="item in types"
               :key="item.value"
@@ -185,7 +185,7 @@
                :destroy-on-close="true">
       <el-form :model="updateRuleForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateRuleForm">
         <el-form-item :label="$t('task.task_rule_type')" ref="type" prop="type">
-          <el-select style="width: 100%;" filterable :clearable="true" v-model="updateRuleForm.type" :placeholder="$t('task.task_rule_type')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="updateRuleForm.type" :placeholder="$t('task.task_rule_type')" @change="ruleGroupsFnc(updateRuleForm.type)">
             <el-option
               v-for="item in types"
               :key="item.value"
@@ -287,7 +287,7 @@ import {
   addServerRuleUrl,
   deleteServerRulesUrl,
   deleteServerRuleUrl,
-  serverchangeStatusUrl,
+  serverchangeStatusUrl, serverRuleGroupsByTypeUrl,
   serverRuleGroupsUrl,
   serverRuleListUrl,
   updateServerRuleUrl
@@ -517,7 +517,7 @@ export default {
     init() {
       this.tagLists();
       this.severityOptionsFnc();
-      this.ruleGroupsFnc();
+      this.ruleGroupsFnc("linux");
       this.search();
     },
     sort(column) {
@@ -602,8 +602,8 @@ export default {
         this.search();
       });
     },
-    ruleGroupsFnc () {
-      this.$get(serverRuleGroupsUrl, res => {
+    ruleGroupsFnc (type) {
+      this.$get(serverRuleGroupsByTypeUrl + type, res => {
         this.ruleGroups = res.data;
       });
     },
