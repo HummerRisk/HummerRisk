@@ -19,12 +19,18 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.IOperationLogService;
+import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,6 +69,12 @@ public class CloudSyncService {
     private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
     @DubboReference
     private IOperationLogService operationLogService;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
+    @Autowired
+    @Qualifier("loadBalanced")
+    private RestTemplate restTemplate;
+
     /**
      * 获取同步日志
      *
@@ -162,28 +174,68 @@ public class CloudSyncService {
                     boolean readResource = true;
                     try {
                         long nowDate = new Date().getTime();
-                        dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid + "/" + region;
-                        CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml", false);
-                        Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
-                        String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-                        LogUtil.warn(account.getId() + " {}[command]: " + command);
-                        resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-                        if (LogUtil.getLogger().isDebugEnabled()) {
-                            LogUtil.getLogger().debug("resource created: {}", resultStr);
-                        }
-                        if (PlatformUtils.isUserForbidden(resultStr)) {
-                            resultStr = Translator.get("i18n_create_resource_region_failed");
-                            readResource = false;
-                        }
-                        if (resultStr.contains("ERROR"))
-                            HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
 
-                        String custodianRun = ReadFileUtils.readToBuffer(dirPath + "/all-resources/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
-                        String metadata = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.METADATA_RESULT_FILE);
                         String resources = "[]";
-                        if (readResource) {
-                            resources = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.RESOURCES_RESULT_FILE);
+                        String custodianRun = "";
+                        String metadata = "";
+
+                        Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
+
+                        if (systemProviderService.license()) {
+                            HttpHeaders headers = new HttpHeaders();
+                            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+                            JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, account.getPluginId());
+                            LogUtil.warn("sync all resource {scanner}[api body]: " + jsonObject.toJSONString());
+
+                            HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
+                            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+                            JSONObject resultJson = JSONObject.parseObject(result);
+                            String resultCode = resultJson.getString("code").toString();
+                            String resultMsg = resultJson.getString("msg").toString();
+                            if (!StringUtils.equals(resultCode, "200")) {
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
+                            }
+
+                            resultStr = resultJson.getString("data").toString();
+
+                            if (PlatformUtils.isUserForbidden(resultStr)) {
+                                resultStr = Translator.get("i18n_create_resource_region_failed");
+                                readResource = false;
+                            }
+                            if (resultStr.contains("ERROR"))
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+
+                            custodianRun = jsonObject.toJSONString();
+                            metadata = jsonObject.toJSONString();
+
+                            if (readResource) {
+                                resources = resultStr;
+                            }
+
+                        } else {
+                            dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid + "/" + region;
+                            CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml", false);
+                            String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
+                            LogUtil.warn(account.getId() + " {}[command]: " + command);
+                            resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
+                            if (LogUtil.getLogger().isDebugEnabled()) {
+                                LogUtil.getLogger().debug("resource created: {}", resultStr);
+                            }
+                            if (PlatformUtils.isUserForbidden(resultStr)) {
+                                resultStr = Translator.get("i18n_create_resource_region_failed");
+                                readResource = false;
+                            }
+                            if (resultStr.contains("ERROR"))
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+
+                            custodianRun = ReadFileUtils.readToBuffer(dirPath + "/all-resources/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
+                            metadata = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.METADATA_RESULT_FILE);
+
+                            if (readResource) {
+                                resources = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.RESOURCES_RESULT_FILE);
+                            }
                         }
+
                         CloudResourceWithBLOBs cloudResourceWithBLOBs = new CloudResourceWithBLOBs();
                         cloudResourceWithBLOBs.setId(UUIDUtil.newUUID());
                         cloudResourceWithBLOBs.setCustodianRunLog(custodianRun);
