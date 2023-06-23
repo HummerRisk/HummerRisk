@@ -131,3 +131,6 @@ UPDATE `rule_group` SET level = '其他安全' where level = '合规检查' and 
 UPDATE `rule_group` SET level = '最佳实践' where level = '安全合规' and plugin_id = 'hummer-openshift-plugin';
 UPDATE `rule_group` SET image_url = 'openshift-other.png' where level = '其他安全' and plugin_id = 'hummer-openshift-plugin';
 UPDATE `rule_group` SET image_url = 'openshift-best.png' where level = '最佳实践' and plugin_id = 'hummer-openshift-plugin';
+
+UPDATE `server_rule` SET `script` = 'if [[ `cat /etc/host.conf |grep \"nospoof\"|awk \'{print $2}\'` == \"on\" ]];then\n  echo \"HummerSuccess: 已关闭 IP 伪装，符合要求\"\nelse \n  echo \"HummerError: 未关闭 IP 伪装，存在风险\"\nfi' where id = 'f7f08183-3972-4e8e-ba54-9e0cf64074d5';
+
