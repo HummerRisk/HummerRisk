@@ -1499,6 +1499,8 @@ public class ServerService {
                 return "STATUS_ACTIVE";
             case "CHECK NEEDED":
                 return "STATUS_CHECK_NEEDED";
+            case "CHECKNEEDED":
+                return "STATUS_CHECK_NEEDED";
             case "DEBUG":
                 return "STATUS_DEBUG";
             case "DEFAULT":
@@ -1519,6 +1521,8 @@ public class ServerService {
                 return "STATUS_FAILED";
             case "FILES FOUND":
                 return "STATUS_FILES_FOUND";
+            case "FILESFOUND":
+                return "STATUS_FILES_FOUND";
             case "FOUND":
                 return "STATUS_FOUND";
             case "HARDENED":
@@ -1527,13 +1531,19 @@ public class ServerService {
                 return "STATUS_INSTALLED";
             case "LOCAL ONLY":
                 return "STATUS_LOCAL_ONLY";
+            case "LOCALONLY":
+                return "STATUS_LOCAL_ONLY";
             case "MEDIUM":
                 return "STATUS_MEDIUM";
             case "NO":
                 return "STATUS_NO";
             case "NO UPDATE":
                 return "STATUS_NO_UPDATE";
+            case "NOUPDATE":
+                return "STATUS_NO_UPDATE";
             case "NON DEFAULT":
+                return "STATUS_NON_DEFAULT";
+            case "NONDEFAULT":
                 return "STATUS_NON_DEFAULT";
             case "NONE":
                 return "STATUS_NONE";
@@ -1541,11 +1551,19 @@ public class ServerService {
                 return "STATUS_NOT_CONFIGURED";
             case "NOT DISABLED":
                 return "STATUS_NOT_DISABLED";
+            case "NOTDISABLED":
+                return "STATUS_NOT_DISABLED";
             case "NOT ENABLED":
+                return "STATUS_NOT_ENABLED";
+            case "NOTENABLED":
                 return "STATUS_NOT_ENABLED";
             case "NOT FOUND":
                 return "STATUS_NOT_FOUND";
+            case "NOTFOUND":
+                return "STATUS_NOT_FOUND";
             case "NOT RUNNING":
+                return "STATUS_NOT_RUNNING";
+            case "NOTRUNNING":
                 return "STATUS_NOT_RUNNING";
             case "OFF":
                 return "STATUS_OFF";
@@ -1568,6 +1586,8 @@ public class ServerService {
             case "UNSAFE":
                 return "STATUS_UNSAFE";
             case "UPDATE AVAILABLE":
+                return "STATUS_UPDATE_AVAILABLE";
+            case "UPDATEAVAILABLE":
                 return "STATUS_UPDATE_AVAILABLE";
             case "WARNING":
                 return "STATUS_WARNING";
