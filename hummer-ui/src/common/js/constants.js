@@ -222,9 +222,13 @@ export const RULE_GROUP_IMG = [
   {value: "kubesphere-best.png", name: "最佳实践", id: "hummer-kubesphere-plugin"},
   {value: "kubesphere-other.png", name: "其他安全", id: "hummer-kubesphere-plugin"},
   {value: "kubesphere-custom.png", name: "自定义", id: "hummer-kubesphere-plugin"},
-  {value: "server-compliance.png", name: "安全合规", id: "hummer-server-plugin"},
-  {value: "server-best.png", name: "最佳实践", id: "hummer-server-plugin"},
-  {value: "server-safety.png", name: "其他安全", id: "hummer-server-plugin"},
-  {value: "server-other.png", name: "自定义", id: "hummer-server-plugin"},
+  {value: "linux-compliance.png", name: "安全合规", id: "hummer-server-plugin"},
+  {value: "linux-best.png", name: "最佳实践", id: "hummer-server-plugin"},
+  {value: "linux-safety.png", name: "其他安全", id: "hummer-server-plugin"},
+  {value: "linux-other.png", name: "自定义", id: "hummer-server-plugin"},
+  {value: "windows-compliance.png", name: "安全合规", id: "hummer-server-plugin"},
+  {value: "windows-best.png", name: "最佳实践", id: "hummer-server-plugin"},
+  {value: "windows-safety.png", name: "其他安全", id: "hummer-server-plugin"},
+  {value: "windows-other.png", name: "自定义", id: "hummer-server-plugin"},
 ]
 

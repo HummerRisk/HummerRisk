@@ -93,13 +93,20 @@ UPDATE `rule_group` SET image_url = 'vsphere-other.png' where level = '其他安
 
 UPDATE `rule_group` SET image_url = 'ucloud-pro.png' where level = '等保三级' and plugin_id = 'hummer-ucloud-plugin';
 
-UPDATE `rule_group` SET image_url = 'server-best.png' where level = '最佳实践' and plugin_id = 'hummer-server-plugin';
+ALTER TABLE `rule_group` ADD `server_type` varchar(50) DEFAULT 'linux' COMMENT '主机类型';
+UPDATE `rule_group` SET `server_type` = 'linux' where name in ('Linux Docker 最佳安全配置', 'Linux 服务相关配置的检测', 'Linux 系统配置的检测', 'Linux 网络的配置检测', 'Linux 认证相关的配置检测');
+UPDATE `rule_group` SET `server_type` = 'windows' where name in ('Windows 服务相关配置的检测', 'Windows 系统配置的检测', 'Windows 认证相关的配置检测');
+
+UPDATE `rule_group` SET image_url = 'linux-best.png' where level = '最佳实践' and plugin_id = 'hummer-server-plugin' and server_type = 'linux';
+UPDATE `rule_group` SET image_url = 'windows-best.png' where level = '最佳实践' and plugin_id = 'hummer-server-plugin' and server_type = 'windows';
 UPDATE `rule_group` SET level = '其他安全' where level = '服务检测' and plugin_id = 'hummer-server-plugin';
 UPDATE `rule_group` SET level = '其他安全' where level = '系统检测' and plugin_id = 'hummer-server-plugin';
 UPDATE `rule_group` SET level = '安全合规' where level = '网络检测' and plugin_id = 'hummer-server-plugin';
 UPDATE `rule_group` SET level = '安全合规' where level = '认证检测' and plugin_id = 'hummer-server-plugin';
-UPDATE `rule_group` SET image_url = 'server-safety.png' where level = '其他安全' and plugin_id = 'hummer-server-plugin';
-UPDATE `rule_group` SET image_url = 'server-compliance.png' where level = '安全合规' and plugin_id = 'hummer-server-plugin';
+UPDATE `rule_group` SET image_url = 'linux-safety.png' where level = '其他安全' and plugin_id = 'hummer-server-plugin' and server_type = 'linux';
+UPDATE `rule_group` SET image_url = 'linux-compliance.png' where level = '安全合规' and plugin_id = 'hummer-server-plugin' and server_type = 'linux';
+UPDATE `rule_group` SET image_url = 'windows-safety.png' where level = '其他安全' and plugin_id = 'hummer-server-plugin' and server_type = 'windows';
+UPDATE `rule_group` SET image_url = 'windows-compliance.png' where level = '安全合规' and plugin_id = 'hummer-server-plugin' and server_type = 'windows';
 
 UPDATE `rule_group` SET level = '其他安全' where level = '合规检测' and plugin_id = 'hummer-k8s-plugin';
 UPDATE `rule_group` SET level = '其他安全' where level = '合规检查' and plugin_id = 'hummer-k8s-plugin';
