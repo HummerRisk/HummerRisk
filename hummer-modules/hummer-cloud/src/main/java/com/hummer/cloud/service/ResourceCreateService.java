@@ -1,5 +1,6 @@
 package com.hummer.cloud.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.hummer.cloud.mapper.*;
@@ -15,8 +16,7 @@ import com.hummer.common.core.utils.*;
 import com.hummer.system.api.ISystemProviderService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,6 +69,10 @@ public class ResourceCreateService {
     private CloudResourceSyncMapper cloudResourceSyncMapper;
     @Autowired
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
+    @Autowired
+    private CloudResourceRelaMapper cloudResourceRelaMapper;
+    @Autowired
+    private CloudResourceRelaLinkMapper cloudResourceRelaLinkMapper;
     @Autowired
     private CommonThreadPool commonThreadPool;
     @Autowired
@@ -574,7 +578,203 @@ public class ResourceCreateService {
 
         switch (resourceType) {
             case "aws.ec2":
-                String publicIpAddress = jsonObject.getString("PublicIpAddress");
+                String PublicIpAddress = jsonObject.getString("PublicIpAddress");
+                String Internet = UUIDUtil.newUUID();
+                Long x = 100L, y = 100L;
+                if (StringUtils.isEmpty(PublicIpAddress)) {
+                    CloudResourceRela cloudResourceRela = new CloudResourceRela();
+
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+                    cloudResourceRela.setName("No Internet");
+                    cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+                    cloudResourceRela.setAccountId(accountId);
+                    cloudResourceRela.setRegionId(regionId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setCreateTime(System.currentTimeMillis());
+                    cloudResourceRela.setxAxis(x);//100
+                    cloudResourceRela.setyAxis(y);//100
+
+                    cloudResourceRelaMapper.insertSelective(cloudResourceRela);
+                } else {
+                    CloudResourceRela cloudResourceRela = new CloudResourceRela();
+
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+                    cloudResourceRela.setName("Internet");
+                    cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+                    cloudResourceRela.setAccountId(accountId);
+                    cloudResourceRela.setRegionId(regionId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setxAxis(x);//100
+                    cloudResourceRela.setyAxis(y);//100
+
+                    insertCloudResourceRela(cloudResourceRela);
+                }
+
+                JSONArray networkInterfaces = JSONArray.parseArray(!StringUtils.isEmpty(jsonObject.getString("NetworkInterfaces"))?jsonObject.getString("NetworkInterfaces"):"[]");
+
+                for (Object obj : networkInterfaces) {
+                    JSONObject jsonObj = JSONObject.parseObject(obj.toString());
+                    String SubnetId = jsonObj.getString("SubnetId");
+                    String VpcId = jsonObj.getString("VpcId");
+                    JSONObject Association = JSONObject.parseObject(!StringUtils.isEmpty(jsonObj.getString("Association"))?jsonObj.getString("Association"):"{}");
+                    String PublicIp = Association.getString("PublicIp");
+                    JSONArray Groups = JSONArray.parseArray(!StringUtils.isEmpty(jsonObj.getString("Groups"))?jsonObj.getString("Groups"):"[]");
+
+                    String SubnetRelaId = UUIDUtil.newUUID();
+                    String VpcRelaId = UUIDUtil.newUUID();
+                    String PublicRelaIp = UUIDUtil.newUUID();
+
+                    if (!StringUtils.isEmpty(SubnetId)) {
+                        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+
+                        cloudResourceRela.setId(SubnetRelaId);
+                        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+                        cloudResourceRela.setName(SubnetId);
+                        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+                        cloudResourceRela.setAccountId(accountId);
+                        cloudResourceRela.setRegionId(regionId);
+                        cloudResourceRela.setResourceType(resourceType);
+                        cloudResourceRela.setHummerId(SubnetId);
+                        cloudResourceRela.setxAxis(x);//100
+                        cloudResourceRela.setyAxis(y + 100L);//200
+                        cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+
+                        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+                        cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
+                        cloudResourceRelaLink.setSource(Internet);
+                        cloudResourceRelaLink.setTarget(cloudResourceRela.getId());
+                        insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                        y = y + 100L;
+
+                        if (!StringUtils.isEmpty(VpcId)) {
+                            CloudResourceRela cloudResourceRela2 = new CloudResourceRela();
+
+                            cloudResourceRela2.setId(VpcRelaId);
+                            cloudResourceRela2.setResourceItemId(cloudResourceItem.getId());
+                            cloudResourceRela2.setName(SubnetId);
+                            cloudResourceRela2.setPluginId(cloudResourceItem.getPluginId());
+                            cloudResourceRela2.setAccountId(accountId);
+                            cloudResourceRela2.setRegionId(regionId);
+                            cloudResourceRela2.setResourceType(resourceType);
+                            cloudResourceRela2.setHummerId(SubnetId);
+                            cloudResourceRela2.setxAxis(x + 100L);//200
+                            cloudResourceRela2.setyAxis(y);//200
+                            cloudResourceRela2 = insertCloudResourceRela(cloudResourceRela2);
+
+                            CloudResourceRelaLink cloudResourceRelaLink2 = new CloudResourceRelaLink();
+                            cloudResourceRelaLink2.setResourceItemId(cloudResourceItem.getId());
+                            cloudResourceRelaLink2.setSource(SubnetRelaId);
+                            cloudResourceRelaLink2.setTarget(cloudResourceRela2.getId());
+                            insertCloudResourceRelaLink(cloudResourceRelaLink2);
+
+                            x = x + 100L;
+
+                            if (!StringUtils.isEmpty(PublicIp)) {
+                                CloudResourceRela cloudResourceRela3 = new CloudResourceRela();
+
+                                cloudResourceRela3.setId(PublicRelaIp);
+                                cloudResourceRela3.setResourceItemId(cloudResourceItem.getId());
+                                cloudResourceRela3.setName(PublicIp);
+                                cloudResourceRela3.setPluginId(cloudResourceItem.getPluginId());
+                                cloudResourceRela3.setAccountId(accountId);
+                                cloudResourceRela3.setRegionId(regionId);
+                                cloudResourceRela3.setResourceType(resourceType);
+                                cloudResourceRela3.setHummerId(PublicIp);
+                                cloudResourceRela3.setxAxis(x + 100L);//300
+                                cloudResourceRela3.setyAxis(y);//200
+                                cloudResourceRela3 = insertCloudResourceRela(cloudResourceRela3);
+
+                                CloudResourceRelaLink cloudResourceRelaLink3 = new CloudResourceRelaLink();
+                                cloudResourceRelaLink3.setResourceItemId(cloudResourceItem.getId());
+                                cloudResourceRelaLink3.setSource(VpcRelaId);
+                                cloudResourceRelaLink3.setTarget(cloudResourceRela3.getId());
+                                insertCloudResourceRelaLink(cloudResourceRelaLink3);
+
+                                x = x + 200L;
+                                y = y - 100L;
+
+                                String EcsRelaId = UUIDUtil.newUUID();
+
+                                CloudResourceRela cloudResourceRela5 = new CloudResourceRela();
+                                cloudResourceRela5.setId(EcsRelaId);
+                                cloudResourceRela5.setResourceItemId(cloudResourceItem.getId());
+                                cloudResourceRela5.setName(cloudResourceItem.getHummerName());
+                                cloudResourceRela5.setPluginId(cloudResourceItem.getPluginId());
+                                cloudResourceRela5.setAccountId(accountId);
+                                cloudResourceRela5.setRegionId(regionId);
+                                cloudResourceRela5.setResourceType(resourceType);
+                                cloudResourceRela5.setHummerId(cloudResourceItem.getHummerId());
+                                cloudResourceRela5.setxAxis(x);//400
+                                cloudResourceRela5.setyAxis(y + 100L);//200
+                                cloudResourceRela5 = insertCloudResourceRela(cloudResourceRela5);
+
+                                if (Groups.size() > 0) {
+
+                                    for (Object o : Groups) {
+                                        JSONObject jsonO = JSONObject.parseObject(o.toString());
+                                        String GroupId = jsonO.getString("GroupId");
+                                        String GroupName = jsonO.getString("GroupName");
+                                        String GroupRelaId = UUIDUtil.newUUID();
+
+                                        CloudResourceRela cloudResourceRela4 = new CloudResourceRela();
+
+                                        cloudResourceRela4.setId(GroupRelaId);
+                                        cloudResourceRela4.setResourceItemId(cloudResourceItem.getId());
+                                        cloudResourceRela4.setName(GroupName);
+                                        cloudResourceRela4.setPluginId(cloudResourceItem.getPluginId());
+                                        cloudResourceRela4.setAccountId(accountId);
+                                        cloudResourceRela4.setRegionId(regionId);
+                                        cloudResourceRela4.setResourceType(resourceType);
+                                        cloudResourceRela4.setHummerId(GroupId);
+                                        cloudResourceRela4.setxAxis(x);//400
+                                        cloudResourceRela4.setyAxis(y + 100L);//200
+                                        cloudResourceRela4 = insertCloudResourceRela(cloudResourceRela4);
+
+                                        CloudResourceRelaLink cloudResourceRelaLink4 = new CloudResourceRelaLink();
+                                        cloudResourceRelaLink4.setResourceItemId(cloudResourceItem.getId());
+                                        cloudResourceRelaLink4.setSource(PublicRelaIp);
+                                        cloudResourceRelaLink4.setTarget(cloudResourceRela4.getId());
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink4);
+
+                                        CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
+                                        cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
+                                        cloudResourceRelaLink5.setSource(cloudResourceRela4.getId());
+                                        cloudResourceRelaLink5.setTarget(cloudResourceRela5.getId());
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink5);
+                                    }
+
+                                }
+
+                            } else {
+
+                            }
+
+                        } else {
+
+                        }
+
+                    } else {
+
+                    }
+
+                }
+                break;
+            case "aws.ebs":
+                break;
+            case "aws.elb":
+                break;
+            case "aws.network-addr":
+                break;
+            case "aws.rds":
+                break;
+            case "aws.s3":
+                break;
+            case "aws.security-group":
                 break;
             default:
                 break;
@@ -582,21 +782,7 @@ public class ResourceCreateService {
 
 
 
-        CloudResourceRela cloudResourceRela = new CloudResourceRela();
-        String UUID = UUIDUtil.newUUID();
-        cloudResourceRela.setId(UUID);
-        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
-        cloudResourceRela.setName(cloudResourceItem.getHummerName());
-        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
-        cloudResourceRela.setAccountId(accountId);
-        cloudResourceRela.setRegionId(regionId);
-        cloudResourceRela.setResourceType(resourceType);
-        cloudResourceRela.setHummerId(hummerId);
-        cloudResourceRela.setCreateTime(System.currentTimeMillis());
-        cloudResourceRela.setxAxis(100L);
-        cloudResourceRela.setyAxis(100L);
 
-        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
 
     }
 
@@ -604,90 +790,12 @@ public class ResourceCreateService {
     }
 
     public void dealAliyun (CloudResourceItem cloudResourceItem) throws Exception  {
-        String json = cloudResourceItem.getResource();
-        if(StringUtils.isEmpty(json)) return;
-
-        String resourceType = cloudResourceItem.getResourceType();
-        String accountId = cloudResourceItem.getAccountId();
-        String regionId = cloudResourceItem.getRegionId();
-        String hummerId = cloudResourceItem.getHummerId();
-
-        JSONObject jsonObject = JSONObject.parseObject(json);
-
-        CloudResourceRela cloudResourceRela = new CloudResourceRela();
-        String UUID = UUIDUtil.newUUID();
-        cloudResourceRela.setId(UUID);
-        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
-        cloudResourceRela.setName(cloudResourceItem.getHummerName());
-        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
-        cloudResourceRela.setAccountId(accountId);
-        cloudResourceRela.setRegionId(regionId);
-        cloudResourceRela.setResourceType(resourceType);
-        cloudResourceRela.setHummerId(hummerId);
-        cloudResourceRela.setCreateTime(System.currentTimeMillis());
-        cloudResourceRela.setxAxis(100L);
-        cloudResourceRela.setyAxis(100L);
-
-        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
-
     }
 
     public void dealHuawei (CloudResourceItem cloudResourceItem) throws Exception  {
-        String json = cloudResourceItem.getResource();
-        if(StringUtils.isEmpty(json)) return;
-
-        String resourceType = cloudResourceItem.getResourceType();
-        String accountId = cloudResourceItem.getAccountId();
-        String regionId = cloudResourceItem.getRegionId();
-        String hummerId = cloudResourceItem.getHummerId();
-
-        JSONObject jsonObject = JSONObject.parseObject(json);
-
-        CloudResourceRela cloudResourceRela = new CloudResourceRela();
-        String UUID = UUIDUtil.newUUID();
-        cloudResourceRela.setId(UUID);
-        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
-        cloudResourceRela.setName(cloudResourceItem.getHummerName());
-        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
-        cloudResourceRela.setAccountId(accountId);
-        cloudResourceRela.setRegionId(regionId);
-        cloudResourceRela.setResourceType(resourceType);
-        cloudResourceRela.setHummerId(hummerId);
-        cloudResourceRela.setCreateTime(System.currentTimeMillis());
-        cloudResourceRela.setxAxis(100L);
-        cloudResourceRela.setyAxis(100L);
-
-        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
-
     }
 
     public void dealQcloud (CloudResourceItem cloudResourceItem) throws Exception  {
-        String json = cloudResourceItem.getResource();
-        if(StringUtils.isEmpty(json)) return;
-
-        String resourceType = cloudResourceItem.getResourceType();
-        String accountId = cloudResourceItem.getAccountId();
-        String regionId = cloudResourceItem.getRegionId();
-        String hummerId = cloudResourceItem.getHummerId();
-
-        JSONObject jsonObject = JSONObject.parseObject(json);
-
-        CloudResourceRela cloudResourceRela = new CloudResourceRela();
-        String UUID = UUIDUtil.newUUID();
-        cloudResourceRela.setId(UUID);
-        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
-        cloudResourceRela.setName(cloudResourceItem.getHummerName());
-        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
-        cloudResourceRela.setAccountId(accountId);
-        cloudResourceRela.setRegionId(regionId);
-        cloudResourceRela.setResourceType(resourceType);
-        cloudResourceRela.setHummerId(hummerId);
-        cloudResourceRela.setCreateTime(System.currentTimeMillis());
-        cloudResourceRela.setxAxis(100L);
-        cloudResourceRela.setyAxis(100L);
-
-        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
-
     }
 
     public void dealVsphere (CloudResourceItem cloudResourceItem) throws Exception  {
@@ -718,6 +826,23 @@ public class ResourceCreateService {
     }
 
     public void dealKsyun (CloudResourceItem cloudResourceItem) throws Exception  {
+    }
+
+    public CloudResourceRela insertCloudResourceRela (CloudResourceRela cloudResourceRela) throws Exception  {
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        CloudResourceRelaExample example = new CloudResourceRelaExample();
+        example.createCriteria().andResourceItemIdEqualTo(cloudResourceRela.getResourceItemId()).andHummerIdEqualTo(cloudResourceRela.getHummerId()).andNameEqualTo(cloudResourceRela.getName());
+        List<CloudResourceRela> list = cloudResourceRelaMapper.selectByExample(example);
+        if(list.size() == 0) {
+            cloudResourceRelaMapper.insertSelective(cloudResourceRela);
+            cloudResourceRela = list.get(0);
+        }
+        return cloudResourceRela;
+    }
+
+    public void insertCloudResourceRelaLink (CloudResourceRelaLink cloudResourceRelaLink) throws Exception  {
+        cloudResourceRelaLink.setCreateTime(System.currentTimeMillis());
+        cloudResourceRelaLinkMapper.insertSelective(cloudResourceRelaLink);
     }
 
 }
