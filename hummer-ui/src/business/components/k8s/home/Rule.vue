@@ -154,7 +154,7 @@
               <el-option
                 v-for="item in inspectionSeportOptions"
                 :key="item.id"
-                :label="item.id + '. ' + item.project.substring(0, 50) + '...'"
+                :label="item.id + '. ' + item.project?item.project.substring(0, 50):'' + '...'"
                 :value="item.id">
               </el-option>
             </el-select>
@@ -252,7 +252,7 @@
               <el-option
                 v-for="item in inspectionSeportOptions"
                 :key="item.id"
-                :label="item.id + '. ' + item.project.substring(0, 50) + '...'"
+                :label="item.id + '. ' + item.project?item.project.substring(0, 50):'' + '...'"
                 :value="item.id">
               </el-option>
             </el-select>
@@ -350,7 +350,7 @@
               <el-option
                 v-for="item in inspectionSeportOptions"
                 :key="item.id"
-                :label="item.id + '. ' + item.project.substring(0, 50) + '...'"
+                :label="item.id + '. ' + item.project?item.project.substring(0, 50):'' + '...'"
                 :value="item.id">
               </el-option>
             </el-select>
