@@ -364,8 +364,8 @@ public class CloudSyncService {
         });
     }
 
-    public CloudTopology cloudTopology() {
-        return extCloudResourceSyncMapper.cloudTopology();
+    public CloudTopology cloudTopology(String accountId) {
+        return extCloudResourceSyncMapper.cloudTopology(accountId);
     }
 
 }

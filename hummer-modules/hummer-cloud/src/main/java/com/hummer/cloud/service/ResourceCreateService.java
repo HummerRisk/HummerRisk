@@ -574,7 +574,7 @@ public class ResourceCreateService {
 
         switch (resourceType) {
             case "aws.ec2":
-                String PublicIpAddress = jsonObject.getString("PublicIpAddress");
+                String publicIpAddress = jsonObject.getString("PublicIpAddress");
                 break;
             default:
                 break;

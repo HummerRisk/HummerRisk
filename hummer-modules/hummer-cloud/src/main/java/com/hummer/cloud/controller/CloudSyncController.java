@@ -66,7 +66,13 @@ public class CloudSyncController {
     @Operation(summary = "资源态势拓扑图")
     @GetMapping(value = "cloudTopology")
     public CloudTopology cloudTopology() {
-        return cloudSyncService.cloudTopology();
+        return cloudSyncService.cloudTopology("all");
+    }
+
+    @Operation(summary = "根据云账号ID搜索资源拓扑图")
+    @GetMapping(value = "cloudTopologyByAccountId/{accountId}")
+    public CloudTopology cloudTopologyByAccountId(@PathVariable String accountId) {
+        return cloudSyncService.cloudTopology(accountId);
     }
 
     @Operation(summary = "批量删除同步日志")
