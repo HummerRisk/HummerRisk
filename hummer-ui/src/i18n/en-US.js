@@ -1974,4 +1974,10 @@ export default {
   STATUS_WARNING: 'WARNING',
   STATUS_WEAK: 'WEAK',
   STATUS_YES: 'YES',
+  cloud_topo: {
+    server_resource: 'host resource',
+    db_resource: 'Database resource',
+    oss_resource: 'Object Storage Resource',
+    other_resource: 'Other resources',
+  },
 };

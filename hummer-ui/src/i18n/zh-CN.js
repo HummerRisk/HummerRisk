@@ -1974,4 +1974,10 @@ export default {
   STATUS_WARNING: '警告',
   STATUS_WEAK: '弱',
   STATUS_YES: '是',
+  cloud_topo: {
+    server_resource: '主机资源',
+    db_resource: '数据库资源',
+    oss_resource: '对象存储资源',
+    other_resource: '其他资源',
+  },
 };
