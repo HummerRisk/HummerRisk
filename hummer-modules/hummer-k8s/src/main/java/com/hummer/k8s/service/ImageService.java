@@ -387,6 +387,7 @@ public class ImageService {
                                 imageRepoItem.setId(UUIDUtil.newUUID());
                                 imageRepoItem.setRepository(tcrRepositoryInfo.getName());
                                 imageRepoItem.setTag(tcrImageInfo.getImageVersion());
+                                imageRepoItem.setRepoId(imageRepo.getId());
                                 imageRepoItem.setDigest(tcrImageInfo.getDigest());
                                 imageRepoItem.setProject(tcrRepositoryInfo.getNamespace());
                                 imageRepoItem.setSize(changeFlowFormat(tcrImageInfo.getSize()));
@@ -430,10 +431,12 @@ public class ImageService {
                         imageRepoItem.setId(UUIDUtil.newUUID());
                         imageRepoItem.setRepository(repName);
                         imageRepoItem.setTag(imageTagDetail.getImageTag());
+                        imageRepoItem.setRepoId(imageRepo.getId());
                         imageRepoItem.setDigest(imageTagDetail.getImageDetail().getImageDigest());
-                        imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:"");
+                        imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:repName);
                         imageRepoItem.setSize(changeFlowFormat(imageTagDetail.getImageDetail().getImageSizeInBytes()));
                         imageRepoItem.setPath(repUri+":"+imageTagDetail.getImageTag());
+                        imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,imageTagDetail.getImageDetail().getImagePushedAt()));
                         imageRepoItemMapper.insertSelective(imageRepoItem);
                     });
                 });
