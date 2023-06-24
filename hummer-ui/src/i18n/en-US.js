@@ -1979,5 +1979,6 @@ export default {
     db_resource: 'Database resource',
     oss_resource: 'Object Storage Resource',
     other_resource: 'Other resources',
+    resource_relation: 'Resource relationship',
   },
 };

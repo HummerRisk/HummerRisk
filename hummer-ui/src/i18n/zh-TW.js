@@ -1979,5 +1979,6 @@ export default {
     db_resource: '數據庫資源',
     oss_resource: '對象存儲資源',
     other_resource: '其他資源',
+    resource_relation: '資源關係',
   },
 };

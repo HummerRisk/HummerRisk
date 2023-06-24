@@ -4,7 +4,7 @@
       <el-form-item :key="element.key" v-for="element in elements" :label="element.key + ' : '">
         <span v-if="!element.flag" show-overflow-tooltip>
           <el-tooltip class="item" effect="dark" :content="JSON.stringify(element.value)" placement="top">
-            <el-link type="primary" @click="showJson(element)">{{ 'Details' }}</el-link>
+            <el-link type="primary">{{ 'Details' }}</el-link>
           </el-tooltip>
         </span>
         <el-tooltip v-if="element.flag && !!element.value" class="item" effect="light" :content="typeof(element.value) === 'boolean'?element.value.toString():element.value" placement="top">
@@ -16,11 +16,6 @@
       </el-form-item>
     </el-form>
 
-    <!--details-->
-    <el-drawer class="rtl" :title="string2Key" :visible.sync="visible" size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-      <codemirror ref="cmEditor" v-model="string2PrettyFormat" class="code-mirror" :options="cmOptions" />
-    </el-drawer>
-    <!--details-->
   </div>
 </template>
 
@@ -76,14 +71,6 @@ export default {
             this.elements.push(map);
           }
         }
-      },
-      showJson (element) {
-        this.string2Key = element.key;
-        this.string2PrettyFormat = "";
-        this.$post(string2PrettyFormatUrl, {json: JSON.stringify(element.value)}, res => {
-          this.string2PrettyFormat = res.data;
-        });
-        this.visible =  true;
       },
       handleClose() {
         this.visible =  false;
