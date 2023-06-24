@@ -62,7 +62,7 @@
           <span v-if="details.riskType === 'uncheck'">{{ $t('resource.uncheck') }}</span>
         </el-descriptions-item>
       </el-descriptions>
-      <cloud-detail-chart v-if="resources"/>
+      <cloud-detail-chart v-if="resources && supportPlugins.includes(details.pluginId)"/>
       <div class="desc-top" v-if="resources">
         <el-divider><i class="el-icon-folder-opened"></i></el-divider>
         <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
@@ -136,6 +136,7 @@ export default {
         type: '',
       },
       resources: '{}',//resource json : {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
+      supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin'],
     };
   },
   methods: {
