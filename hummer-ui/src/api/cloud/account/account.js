@@ -57,6 +57,8 @@ export const cloudListByGroupUrl = "/cloud/account/listByGroup/";
 
 export const cloudResourceListUrl = "/cloud/cloudResource/list/";
 
+export const cloudResourceByIdUrl = "/cloud/cloudResource/resources/";
+
 export const resourceSummaryReport = "/cloud/cloudResource/summary/";
 
 export const resourceSummaryToReport = "/cloud/cloudResource/summary";

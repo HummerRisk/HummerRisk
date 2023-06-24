@@ -9,7 +9,7 @@
     </el-card>
     <el-drawer class="rtl" :title="$t('resource.cloud_resource_detail')" :visible.sync="dialogVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
-      <el-descriptions class="margin-top" title="" :column="2" border>
+      <el-descriptions class="margin-top desc-top" title="" :column="2" border>
         <el-descriptions-item>
           <template slot="label">
             <i class="el-icon-paperclip"></i>
@@ -47,6 +47,13 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
+            <i class="el-icon-location-information"></i>
+            {{ $t('dashboard.resource_type') }}
+          </template>
+          {{ details.resourceType }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
             <i class="el-icon-collection-tag"></i>
             {{ $t('resource.risk') }}
           </template>
@@ -55,10 +62,10 @@
           <span v-if="details.riskType === 'uncheck'">{{ $t('resource.uncheck') }}</span>
         </el-descriptions-item>
       </el-descriptions>
-      <el-divider><i class="el-icon-folder-opened"></i></el-divider>
-      <result-read-only :row="typeof(details.resource) === 'string'?JSON.parse(details.resource):details.resource"></result-read-only>
-      <el-divider><i class="el-icon-document-checked"></i></el-divider>
       <cloud-detail-chart/>
+      <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+      <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
+      <el-divider><i class="el-icon-document-checked"></i></el-divider>
     </el-drawer>
   </main-container>
 </template>
@@ -70,6 +77,7 @@ import TopoSwitch from "@/business/components/cloudSituation/head/TopoSwitch";
 import * as d3 from 'd3';
 import * as math from 'mathjs';
 import {cloudTopologyUrl} from "@/api/cloud/sync/sync";
+import {cloudResourceByIdUrl} from "@/api/cloud/account/account";
 /* eslint-disable */
 const width = 1600;
 const height = 1100;
@@ -124,7 +132,7 @@ export default {
         resourceType: '',
         riskType: '',
         type: '',
-        resource: '{}',//resource json : {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
+        resources: '{}',//resource json : {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
       },
     };
   },
@@ -1733,24 +1741,30 @@ export default {
   mounted() {
     this.init();
     //弹框：全局点击事件监听，因为On click方法里获取的this是当前点击元素，获取不到this.dialogVisible，没办法做弹框
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', async (e) => {
       let target = e.target;
       let thisClassName = target.className;
       if (thisClassName.baseVal === 'clicked-box') {
         this.details = {
-            id: target.getAttribute("id"),
-            name: target.getAttribute("name"),
-            pluginId: target.getAttribute("pluginId"),
-            pluginName: target.getAttribute("pluginName"),
-            accountId: target.getAttribute("accountId"),
-            accountName: target.getAttribute("accountName"),
-            regionId: target.getAttribute("regionId"),
-            regionName: target.getAttribute("regionName"),
-            resourceType: target.getAttribute("resourceType"),
-            riskType: target.getAttribute("riskType"),
-            type: target.getAttribute("type"),
-            resource: target.getAttribute("resource"),
+          id: target.getAttribute("id"),
+          name: target.getAttribute("name"),
+          pluginId: target.getAttribute("pluginId"),
+          pluginName: target.getAttribute("pluginName"),
+          accountId: target.getAttribute("accountId"),
+          accountName: target.getAttribute("accountName"),
+          regionId: target.getAttribute("regionId"),
+          regionName: target.getAttribute("regionName"),
+          resourceType: target.getAttribute("resourceType"),
+          riskType: target.getAttribute("riskType"),
+          type: target.getAttribute("type"),
+          resource: target.getAttribute("resource"),
         };
+        if (this.details.resource) {
+          await this.$get(cloudResourceByIdUrl + this.details.resource, response => {
+            let data = response.data;
+            this.resources = data;
+          });
+        }
         this.dialogVisible = true;
       }
     })
@@ -1766,5 +1780,9 @@ svg {
 
 .table-card >>> .el-card__body {
   padding: 0;
+}
+
+.desc-top {
+  margin: 15px;
 }
 </style>

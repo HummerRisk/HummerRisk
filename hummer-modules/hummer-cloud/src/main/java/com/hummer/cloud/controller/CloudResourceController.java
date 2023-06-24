@@ -10,9 +10,9 @@ import com.hummer.common.core.dto.CloudResourceItemDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
@@ -34,6 +34,12 @@ public class CloudResourceController {
     @GetMapping(value = "summary/{accountId}")
     public List<CloudResourceSummary> summaryByAccountId(@PathVariable String accountId) throws Exception {
         return cloudResourceService.getSummary(accountId);
+    }
+
+    @I18n
+    @GetMapping(value = "resources/{id}")
+    public String resources(@PathVariable String id) throws Exception {
+        return cloudResourceService.resources(id);
     }
 
     @I18n

@@ -254,7 +254,7 @@
         t.plugin_id as pluginId,
         t.plugin_name as pluginName,
         t.hummer_id as id,
-        t.resource as resource,
+        t.id as resource,
         t.resource_type as resourceType
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id

@@ -1,7 +1,9 @@
 package com.hummer.cloud.service;
 
+import com.hummer.cloud.mapper.CloudResourceItemMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceItemMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.common.core.domain.CloudResourceItem;
 import com.hummer.common.core.domain.CloudResourceSummary;
 import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceItemRequest;
@@ -17,6 +19,8 @@ public class CloudResourceService {
     @Autowired
     private ExtCloudResourceItemMapper extCloudResourceItemMapper;
     @Autowired
+    private CloudResourceItemMapper cloudResourceItemMapper;
+    @Autowired
     private ExtCloudTaskMapper extCloudTaskMapper;
 
     public List<CloudResourceSummary> getSummary(String accountId){
@@ -29,6 +33,11 @@ public class CloudResourceService {
             item.setRiskCount(extCloudResourceItemMapper.selectResourceRiskCount(item.getHummerId()));
         });
         return cloudResourceItems;
+    }
+
+    public String resources(String id){
+        CloudResourceItem cloudResourceItem = cloudResourceItemMapper.selectByPrimaryKey(id);
+        return cloudResourceItem.getResource();
     }
 
     public List<ResourceRuleDTO> getResourceRule(String hummerId){
