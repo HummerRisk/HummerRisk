@@ -10,14 +10,29 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.HttpResponse;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.cloudtrail.AWSCloudTrail;
+import com.amazonaws.services.cloudtrail.AWSCloudTrailClient;
+import com.amazonaws.services.ecr.AmazonECR;
+import com.amazonaws.services.ecr.AmazonECRClient;
+import com.amazonaws.services.ecr.model.AwsEcrContainerImageDetails;
+import com.amazonaws.services.ecr.model.DescribeRepositoriesResult;
+import com.amazonaws.services.ecrpublic.AmazonECRPublic;
+import com.amazonaws.services.ecrpublic.AmazonECRPublicClient;
+import com.amazonaws.services.ecrpublic.model.*;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.Image;
 import com.hummer.common.core.domain.request.image.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.aliyun.AliyunCredential;
+import com.hummer.common.core.proxy.aws.AWSCredential;
 import com.hummer.common.core.proxy.tencent.QCloudCredential;
 import com.hummer.common.core.utils.*;
 import com.hummer.k8s.mapper.*;
@@ -30,6 +45,9 @@ import com.tencentcloudapi.common.profile.ClientProfile;
 import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.tcr.v20190924.TcrClient;
 import com.tencentcloudapi.tcr.v20190924.models.*;
+import com.tencentcloudapi.tcr.v20190924.models.DescribeImagesRequest;
+import com.tencentcloudapi.tcr.v20190924.models.DescribeRepositoriesRequest;
+import com.tencentcloudapi.tcr.v20190924.models.Registry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -369,6 +387,7 @@ public class ImageService {
                                 imageRepoItem.setId(UUIDUtil.newUUID());
                                 imageRepoItem.setRepository(tcrRepositoryInfo.getName());
                                 imageRepoItem.setTag(tcrImageInfo.getImageVersion());
+                                imageRepoItem.setRepoId(imageRepo.getId());
                                 imageRepoItem.setDigest(tcrImageInfo.getDigest());
                                 imageRepoItem.setProject(tcrRepositoryInfo.getNamespace());
                                 imageRepoItem.setSize(changeFlowFormat(tcrImageInfo.getSize()));
@@ -378,6 +397,50 @@ public class ImageService {
                         }
                     }
                 }
+            }else if(StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "aws.png")){
+                AWSCredential awsCredential = null;
+                if(imageRepo.getIsBindAccount()){
+                    String accountId = imageRepo.getAccountId();
+                    AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+                    if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())){
+                        awsCredential = JSON.parseObject(imageRepo.getCredential(),AWSCredential.class);
+                    }else {
+                        awsCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AWSCredential.class);
+                    }
+                }else{
+                    awsCredential = JSON.parseObject(imageRepo.getCredential(),AWSCredential.class);
+                }
+
+                AWSCredentials awsCredentials = new BasicAWSCredentials(awsCredential.getAccessKey(), awsCredential.getSecretKey());
+                AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
+                AmazonECRPublic ecrPublic = AmazonECRPublicClient.builder().withRegion("us-east-1").withCredentials(awsCredentialsProvider).build();
+                com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest describeRepositoriesRequest = new com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest();
+                com.amazonaws.services.ecrpublic.model.DescribeRepositoriesResult describeRepositoriesResult = ecrPublic.describeRepositories(describeRepositoriesRequest);
+                List<Repository> repositories = describeRepositoriesResult.getRepositories();
+                repositories.forEach(repository -> {
+                    String repName = repository.getRepositoryName();
+                    String registryId = repository.getRegistryId();
+                    String repUri = repository.getRepositoryUri();
+                    DescribeImageTagsRequest describeImageTagsRequest = new DescribeImageTagsRequest();
+                    describeImageTagsRequest.setRegistryId(registryId);
+                    describeImageTagsRequest.setRepositoryName(repName);
+                    DescribeImageTagsResult describeImageTagsResult = ecrPublic.describeImageTags(describeImageTagsRequest);
+                    List<ImageTagDetail> imageTagDetails = describeImageTagsResult.getImageTagDetails();
+                    imageTagDetails.forEach(imageTagDetail -> {
+                        ImageRepoItem imageRepoItem = new ImageRepoItem();
+                        imageRepoItem.setId(UUIDUtil.newUUID());
+                        imageRepoItem.setRepository(repName);
+                        imageRepoItem.setTag(imageTagDetail.getImageTag());
+                        imageRepoItem.setRepoId(imageRepo.getId());
+                        imageRepoItem.setDigest(imageTagDetail.getImageDetail().getImageDigest());
+                        imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:repName);
+                        imageRepoItem.setSize(changeFlowFormat(imageTagDetail.getImageDetail().getImageSizeInBytes()));
+                        imageRepoItem.setPath(repUri+":"+imageTagDetail.getImageTag());
+                        imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,imageTagDetail.getImageDetail().getImagePushedAt()));
+                        imageRepoItemMapper.insertSelective(imageRepoItem);
+                    });
+                });
+
             }else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
                 return true;
             }
