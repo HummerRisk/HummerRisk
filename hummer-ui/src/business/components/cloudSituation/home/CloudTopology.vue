@@ -62,10 +62,12 @@
           <span v-if="details.riskType === 'uncheck'">{{ $t('resource.uncheck') }}</span>
         </el-descriptions-item>
       </el-descriptions>
-      <cloud-detail-chart/>
-      <el-divider><i class="el-icon-folder-opened"></i></el-divider>
-      <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
-      <el-divider><i class="el-icon-document-checked"></i></el-divider>
+      <cloud-detail-chart v-if="resources"/>
+      <div class="desc-top" v-if="resources">
+        <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+        <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
+        <el-divider><i class="el-icon-document-checked"></i></el-divider>
+      </div>
     </el-drawer>
   </main-container>
 </template>
