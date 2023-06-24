@@ -15,6 +15,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
 import com.hummer.common.core.domain.request.sync.CloudTopology;
 import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
+import com.hummer.common.core.dto.TopoChartDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
@@ -67,6 +68,10 @@ public class CloudSyncService {
     private ProxyMapper proxyMapper;
     @Autowired
     private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
+    @Autowired
+    private CloudResourceRelaMapper cloudResourceRelaMapper;
+    @Autowired
+    private CloudResourceRelaLinkMapper cloudResourceRelaLinkMapper;
     @DubboReference
     private IOperationLogService operationLogService;
     @DubboReference
@@ -366,6 +371,24 @@ public class CloudSyncService {
 
     public CloudTopology cloudTopology(String accountId) {
         return extCloudResourceSyncMapper.cloudTopology(accountId);
+    }
+
+    public TopoChartDTO cloudTopologyRela(String resourceItemId)  {
+
+        TopoChartDTO topoChartDTO = new TopoChartDTO();
+
+        CloudResourceRelaExample cloudResourceRelaExample = new CloudResourceRelaExample();
+        cloudResourceRelaExample.createCriteria().andResourceItemIdEqualTo(resourceItemId);
+        List<CloudResourceRela> cloudResourceRelaList = cloudResourceRelaMapper.selectByExample(cloudResourceRelaExample);
+
+        CloudResourceRelaLinkExample cloudResourceRelaLinkExample = new CloudResourceRelaLinkExample();
+        cloudResourceRelaLinkExample.createCriteria().andResourceItemIdEqualTo(resourceItemId);
+        List<CloudResourceRelaLink> cloudResourceRelaLinkList = cloudResourceRelaLinkMapper.selectByExample(cloudResourceRelaLinkExample);
+
+        topoChartDTO.setCloudResourceRelaList(cloudResourceRelaList);
+        topoChartDTO.setCloudResourceRelaLinkList(cloudResourceRelaLinkList);
+
+        return topoChartDTO;
     }
 
 }

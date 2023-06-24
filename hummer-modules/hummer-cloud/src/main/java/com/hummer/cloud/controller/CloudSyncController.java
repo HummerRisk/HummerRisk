@@ -7,12 +7,13 @@ import com.hummer.common.core.domain.CloudResourceSync;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
 import com.hummer.common.core.domain.request.sync.CloudTopology;
 import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
+import com.hummer.common.core.dto.TopoChartDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +64,12 @@ public class CloudSyncController {
         return cloudSyncService.getCloudResourceSyncItem(syncId);
     }
 
+    @Operation(summary = "批量删除同步日志")
+    @PostMapping("deleteLogs")
+    public void deleteLogs(@RequestBody List<String> selectIds) throws Exception {
+        cloudSyncService.deleteLogs(selectIds);
+    }
+
     @Operation(summary = "资源态势拓扑图")
     @GetMapping(value = "cloudTopology")
     public CloudTopology cloudTopology() {
@@ -75,10 +82,10 @@ public class CloudSyncController {
         return cloudSyncService.cloudTopology(accountId);
     }
 
-    @Operation(summary = "批量删除同步日志")
-    @PostMapping("deleteLogs")
-    public void deleteLogs(@RequestBody List<String> selectIds) throws Exception {
-        cloudSyncService.deleteLogs(selectIds);
+    @Operation(summary = "资源关系图")
+    @GetMapping(value = "cloudTopologyRela/{resourceItemId}")
+    public TopoChartDTO cloudTopologyRela(@PathVariable String resourceItemId) {
+        return cloudSyncService.cloudTopologyRela(resourceItemId);
     }
 
 }

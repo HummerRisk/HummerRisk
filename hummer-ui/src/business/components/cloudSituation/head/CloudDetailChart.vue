@@ -27,7 +27,7 @@ export default {
       //   let data = response.data;
         this.options = {
           title: {
-            text: '资源关系'
+            text: this.$t('cloud_topo.resource_relation')
           },
           tooltip: {},
           xAxis: {
