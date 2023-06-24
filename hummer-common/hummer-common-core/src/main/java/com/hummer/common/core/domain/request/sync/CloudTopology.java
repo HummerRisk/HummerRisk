@@ -11,6 +11,8 @@ public class CloudTopology {
 
     private String name;
 
+    private String accountId;
+
     public List<Cloud> getChildren() {
         return children;
     }
@@ -25,5 +27,13 @@ public class CloudTopology {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 }

@@ -11,6 +11,6 @@ public interface ExtCloudResourceSyncMapper {
 
     List<CloudResourceSync> selectByRequest(@Param("request") CloudResourceSyncRequest request);
 
-    CloudTopology cloudTopology();
+    CloudTopology cloudTopology(@Param("accountId")  String accountId);
 
 }

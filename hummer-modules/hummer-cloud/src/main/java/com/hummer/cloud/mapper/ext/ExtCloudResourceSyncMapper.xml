@@ -111,7 +111,8 @@
 
     <resultMap id="D3BaseResultMap" type="com.hummer.common.core.domain.request.sync.CloudTopology">
         <result column="name" jdbcType="VARCHAR" property="name" />
-        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Cloud" javaType="list" select="selectCloudAccount" column="name">
+        <result column="accountId" jdbcType="VARCHAR" property="accountId" />
+        <collection property="children" ofType="com.hummer.common.core.domain.request.sync.Cloud" javaType="list" select="selectCloudAccount" column="accountId">
         </collection>
     </resultMap>
 
@@ -161,7 +162,9 @@
     </resultMap>
 
     <select id="cloudTopology" resultMap="D3BaseResultMap">
-        select 'Cloud' as name
+        select
+            'Cloud' as name,
+            #{accountId} as accountId
     </select>
 
     <select id="selectCloudAccount" resultMap="CloudBaseResultMap">
@@ -180,6 +183,9 @@
         t1.id as accountId
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id
+        <if test='accountId != null and accountId != "" and accountId != "all"'>
+            where t.account_id = #{accountId}
+        </if>
         group by t.account_id
     </select>
 
