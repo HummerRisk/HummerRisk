@@ -222,7 +222,7 @@
             </el-link>
           </el-table-column>
           <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('severity')" :label="$t('rule.severity')" min-width="110"
-                           :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true" show-overflow-tooltip>
+                           prop="severity" :sortable="true" show-overflow-tooltip>
             <severity-type :row="scope.row"></severity-type>
           </el-table-column>
           <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
@@ -405,7 +405,7 @@
               {{ scope.row.resourceType }}
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="100"
-                             :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                             prop="severity" :sortable="true"
                              show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>

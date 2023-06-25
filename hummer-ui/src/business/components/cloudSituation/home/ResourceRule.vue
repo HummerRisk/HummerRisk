@@ -44,7 +44,7 @@
           </el-link>
         </el-table-column>
         <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%"
-                         :sort-by="['HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                         prop="severity" :sortable="true"
                          show-overflow-tooltip>
           <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
           <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;">{{ $t('rule.MediumRisk') }}</span>

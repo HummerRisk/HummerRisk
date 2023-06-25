@@ -100,7 +100,7 @@
                       <el-table-column v-slot:default="scope" :label="$t('account.creator')" min-width="6%" show-overflow-tooltip>
                         {{ scope.row.applyUser }}
                       </el-table-column>
-                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+                      <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="8%" prop="severity" :sortable="true"  show-overflow-tooltip>
                         <severity-type :row="scope.row"></severity-type>
                       </el-table-column>
                       <el-table-column v-slot:default="scope" :label="$t('resource.status')" min-width="10%" prop="status" sortable show-overflow-tooltip>

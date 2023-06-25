@@ -54,7 +54,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="100" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="100" prop="severity" :sortable="true"  show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>
             <el-table-column :label="$t('resource.status')" min-width="100" prop="resourceStatus" show-overflow-tooltip>
@@ -119,7 +119,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="100" :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"  show-overflow-tooltip>
+            <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="100" :sortable="true"  show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>
             <el-table-column :label="$t('resource.status')" min-width="100" prop="resourceStatus" show-overflow-tooltip>

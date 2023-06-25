@@ -188,7 +188,7 @@
               </template>
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')"  :label="$t('rule.severity')" min-width="90"
-                             :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                             prop="severity" :sortable="true"
                              show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>

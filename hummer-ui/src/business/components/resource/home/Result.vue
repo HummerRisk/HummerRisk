@@ -222,10 +222,11 @@
             </el-link>
           </el-table-column>
           <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('severity')" :label="$t('rule.severity')" min-width="110"
-                           :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true" show-overflow-tooltip>
+                           prop="severity" :sortable="true" show-overflow-tooltip>
             <severity-type :row="scope.row"></severity-type>
           </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status" sortable show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status"
+                           :sortable="true" show-overflow-tooltip>
             <el-button @click="showTaskLog(scope.row)" plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
               <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
             </el-button>
@@ -245,7 +246,8 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum" sortable show-overflow-tooltip min-width="80">
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('returnSum')" :label="$t('resource.i18n_not_compliance')" prop="returnSum"
+                           :sortable="true" show-overflow-tooltip min-width="80">
             <el-tooltip class="item" effect="dark" :content="$t('history.resource_result')" placement="top">
               <span v-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
               <span v-if="(scope.row.returnSum != null) && (scope.row.returnSum == 0)">
@@ -258,13 +260,15 @@
             </span>
             </el-tooltip>
           </el-table-column>
-          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="resourcesSum" sortable show-overflow-tooltip min-width="110">
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('resourcesSum')" :label="$t('resource.status_on_off')" prop="resourcesSum"
+                           :sortable="true" show-overflow-tooltip min-width="110">
             <span v-if="scope.row.returnSum == 0" style="color: #46ad59;">{{ $t('resource.i18n_compliance_true') }}</span>
             <span v-else-if="(scope.row.returnSum != null) && (scope.row.returnSum > 0)"
                   style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
             <span v-else-if="scope.row.returnSum == null && scope.row.resourcesSum == null"> N/A</span>
           </el-table-column>
-          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')" sortable show-overflow-tooltip>
+          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')"
+                           :sortable="true" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
@@ -440,7 +444,7 @@
               </template>
             </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('severity')" :label="$t('rule.severity')" min-width="90"
-                             :sort-by="['CriticalRisk', 'HighRisk', 'MediumRisk', 'LowRisk']" prop="severity" :sortable="true"
+                             prop="severity" :sortable="true"
                              show-overflow-tooltip>
               <severity-type :row="scope.row"></severity-type>
             </el-table-column>
