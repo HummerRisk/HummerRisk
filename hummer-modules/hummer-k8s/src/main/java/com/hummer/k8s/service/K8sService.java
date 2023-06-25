@@ -209,22 +209,46 @@ public class K8sService {
     private ValidateDTO validateKubenchStatus(CloudNative cloudNative) {
         ValidateDTO validateDTO = new ValidateDTO();
         try {
-            //检验
+            //清理旧数据，插入新数据
+            CloudNativeSourceExample example1 = new CloudNativeSourceExample();
+            example1.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+            CloudNativeSourceExample example2 = new CloudNativeSourceExample();
+            example2.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Job").andSourceNameLike("kube-bench");
+            //Job
+            cloudNativeSourceMapper.deleteByExample(example2);
+            //Pod
+            cloudNativeSourceMapper.deleteByExample(example1);
 
-            CloudNativeSourceExample example = new CloudNativeSourceExample();
-            example.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("kube-bench");
-            List<CloudNativeSourceWithBLOBs> cloudNativeSources = cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
+            K8sRequest k8sRequest = new K8sRequest();
+            k8sRequest.setCredential(cloudNative.getCredential());
 
-            for (CloudNativeSourceWithBLOBs cloudNativeSource : cloudNativeSources) {
-                String sourceJsonStr = cloudNativeSource.getSourceJson();
+            //Job
+            K8sSource job = k8sRequest.getKubenchJob(cloudNative);
+            for (CloudNativeSourceWithBLOBs k8sSource : job.getK8sSource()) {
+                cloudNativeSourceMapper.insertSelective(k8sSource);
+            }
+            for (CloudNativeSourceImage cloudNativeSourceImage : job.getK8sSourceImage()) {
+                cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+            }
+
+            //Pod
+            K8sSource pod = k8sRequest.getKubenchPod(cloudNative);
+
+            for (CloudNativeSourceImage cloudNativeSourceImage : pod.getK8sSourceImage()) {
+                cloudNativeSourceImageMapper.insertSelective(cloudNativeSourceImage);
+            }
+
+            for (CloudNativeSourceWithBLOBs k8sSource : pod.getK8sSource()) {
+                cloudNativeSourceMapper.insertSelective(k8sSource);
+                //检验
+                String sourceJsonStr = k8sSource.getSourceJson();
                 if(StringUtils.isNotBlank(sourceJsonStr)) {
                     JSONObject sourceJson = JSONObject.parseObject(sourceJsonStr);
                     if (sourceJson != null) {
                         JSONObject statusJson = JSONObject.parseObject(sourceJson.getString("status"));
-                        String completionTime = statusJson.getString("completionTime");
-                        String succeeded = statusJson.getString("succeeded");
-                        if(StringUtils.isNotBlank(completionTime) && StringUtils.isNotBlank(succeeded)) {
-                            if(Integer.valueOf(succeeded) > 0) {
+                        String succeeded = statusJson.getString("phase");
+                        if(StringUtils.isNotBlank(succeeded)) {
+                            if(StringUtils.equals("Succeeded", succeeded)) {
                                 validateDTO.setFlag(true);
                                 validateDTO.setMessage("Verification : " + true);
                                 return validateDTO;
@@ -891,7 +915,7 @@ public class K8sService {
             ValidateDTO kubenchIsInstall = validateKubenchStatus(cloudNative);
             if (!kubenchIsInstall.isFlag()) {
 
-                createKubench(k8sRequest, example1, example2, cloudNative);
+                createKubench(k8sRequest, cloudNative);
             }
 
             List<CloudNativeSource> cloudNativeSources = cloudNativeSourceMapper.selectByExample(example1);
@@ -926,20 +950,26 @@ public class K8sService {
         return "Unable to retrieve container logs for docker, Kubebench job 对应的 SourceName 已经过期失效，请重新安装 Kubebench。";
     }
 
-    void createKubench(K8sRequest k8sRequest, CloudNativeSourceExample example1, CloudNativeSourceExample example2, CloudNative cloudNative) throws Exception {
+    void createKubench(K8sRequest k8sRequest, CloudNative cloudNative) throws Exception {
         try {
+            CloudNativeSourceExample example1 = new CloudNativeSourceExample();
+            example1.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
+
+            CloudNativeSourceExample example2 = new CloudNativeSourceExample();
+            example2.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Job").andSourceNameLike("kube-bench");
+
             //Job
             k8sRequest.deleteKubenchJob();
             cloudNativeSourceMapper.deleteByExample(example2);
 
             //Pod
-            cloudNativeSourceMapper.deleteByExample(example1);
             List<CloudNativeSource> list = cloudNativeSourceMapper.selectByExample(example1);
             for (CloudNativeSource cloudNativeSource : list) {
                 k8sRequest.deleteKubenchPod(cloudNativeSource.getSourceName());
             }
+            cloudNativeSourceMapper.deleteByExample(example1);
 
-            k8sRequest.createKubenchJob();
+            k8sRequest.createKubenchJob();//创建Job并带有Pod
 
             //Job
             K8sSource job = k8sRequest.getKubenchJob(cloudNative);
@@ -1453,13 +1483,7 @@ public class K8sService {
             K8sRequest k8sRequest = new K8sRequest();
             k8sRequest.setCredential(cloudNative.getCredential());
 
-            CloudNativeSourceExample example1 = new CloudNativeSourceExample();
-            example1.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Pod").andSourceNameLike("%kube-bench-%");
-
-            CloudNativeSourceExample example2 = new CloudNativeSourceExample();
-            example2.createCriteria().andCloudNativeIdEqualTo(cloudNative.getId()).andSourceTypeEqualTo("Job").andSourceNameLike("kube-bench");
-
-            createKubench(k8sRequest, example1, example2, cloudNative);
+            createKubench(k8sRequest, cloudNative);
 
             saveCloudNativeResultLog(id, "i18n_end_k8s_kubench", "", true, loginUser);
         } catch (Exception e) {
