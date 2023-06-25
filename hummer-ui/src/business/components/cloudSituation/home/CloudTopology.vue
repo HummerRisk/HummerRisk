@@ -345,7 +345,7 @@ export default {
         let maxAsis = Math.max(baseRegionPlat.xasis,baseRegionPlat.yasis)
         cloudaccounts[i].area = maxAsis * maxAsis
         cloudaccounts[i].sizeX = baseRegionPlat.xasis
-        cloudaccounts[i].sizeY = baseRegionPlat.yasis
+        cloudaccounts[i].sizeY = baseRegionPlat.yasis + 2
         cloudaccounts[i].regionList = regionListN;
         }else{
           cloudaccounts[i].area = 7 * 7
@@ -365,13 +365,6 @@ export default {
         cloudaccounts.forEach((item, i) => {
           var rnode = this.getAiliableSquareList(availableRegionList, cloudaccounts[0], item, baseCloudPlat)
           item.basePosition = position0;
-          rnode.sizeY = rnode.sizeY + 2
-          item.sizeY = rnode.sizeY
-          if (i != 0) {
-            if (rnode.starPosition[1] != position0[1])
-              rnode.starPosition[1] = rnode.starPosition[1] + 2
-  
-          }
           item.posNode = rnode;
   
         })
@@ -1038,10 +1031,10 @@ export default {
         squareNode.area = basePlat.xasis * basePlat.yasis
         if (basePlat.xasis <= basePlat.yasis) {
           Object.assign(squareNode, {starPosition: [basePlat.xasis + basePlat.starPosition[0], basePlat.starPosition[1]]});
-          basePlat.xasis = basePlat.xasis + baseSquare.sizeX;
+          basePlat.xasis = basePlat.xasis + basePlat.xasis;
         } else {
           Object.assign(squareNode, {starPosition: [basePlat.starPosition[0], basePlat.yasis + basePlat.starPosition[1]]});
-          basePlat.yasis = basePlat.yasis + baseSquare.sizeY
+          basePlat.yasis = basePlat.yasis + basePlat.yasis
         }
 
         availableSquareList.push(squareNode)
