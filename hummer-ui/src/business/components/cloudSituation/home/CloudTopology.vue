@@ -146,8 +146,11 @@ export default {
       this.result = this.$get(cloudTopologyByAccountIdUrl + this.accountId, response => {
 
         let data = response.data;
-
-        if (data.children.length == 0) return;
+        this.clearSVG()
+        if (data.children.length == 0) {
+          this.initSVG([]);
+          return;
+        }
 
         this.calculatePlatform(data.children);
 
@@ -156,8 +159,12 @@ export default {
       });
 
     },
+    clearSVG(){
+      d3.selectAll("#cloud-topo > *").remove();
+    },
     //初始化svg
     initSVG(cloudData) {
+
       const svg = d3.select("#cloud-topo").style("width", this.width + 'px')
         .style("height", this.height + 'px');
       const stage = this.createStage(d3, svg, cellSize, cellCountX, cellCountY);
@@ -191,7 +198,8 @@ export default {
       const snapToHalf = makeCoordRoundTransform(cellSize / 2);
       const snapToQuarter = makeCoordRoundTransform(cellSize / 5);
       const isoGrid = drawGrid(container, cellSize, cellCountX, cellCountY, isoTransform);
-
+      if(cloudData.length==0)
+        return;
       const floorData = []
       const boxImageData = []
       const regionData = []
@@ -291,10 +299,10 @@ export default {
 
       for (var i = 0; i < cloudaccounts.length; i++) {
         totalNumber = cloudaccounts[i].total + totalNumber;
-        let regionList = cloudaccounts[i].children;
+        let regionList = (!cloudaccounts[i].children)?[]:cloudaccounts[i].children;
         let regionListN = []
         regionList.forEach((d, rindex) => {
-          var resourceTypeList = d.children
+          var resourceTypeList = (!d.children)?[]:d.children;
           var resourceTypeListN = []
           var availableSquareList = []
           var basePlat = {}
@@ -325,7 +333,8 @@ export default {
         var availableRegionList = []
         // rebuildSublist(regionList);
         var baseRegionPlat = {}
-        this.initSubAvailabList(availableRegionList, [0, 0], regionList[0], baseRegionPlat)
+        if(regionList.length>0){
+          this.initSubAvailabList(availableRegionList, [0, 0], regionList[0], baseRegionPlat)
 
         regionList.forEach((item) => {
           var rnode = this.getAiliableSquareList(availableRegionList, regionList[0], item, baseRegionPlat)
@@ -338,30 +347,38 @@ export default {
         cloudaccounts[i].sizeX = baseRegionPlat.xasis
         cloudaccounts[i].sizeY = baseRegionPlat.yasis
         cloudaccounts[i].regionList = regionListN;
+        }else{
+          cloudaccounts[i].area = 7 * 7
+          cloudaccounts[i].sizeX = 7
+          cloudaccounts[i].sizeY = 7
+        }
+        
       }
       cloudaccounts.sort((a, b) => {
         return b.area - a.area
       })
       var availableRegionList = []
       var baseCloudPlat = {}
-      this.initSubAvailabList(availableRegionList, position0, cloudaccounts[0], baseCloudPlat)
-
-      cloudaccounts.forEach((item, i) => {
-        var rnode = this.getAiliableSquareList(availableRegionList, cloudaccounts[0], item, baseCloudPlat)
-        item.basePosition = position0;
-        rnode.sizeY = rnode.sizeY + 2
-        item.sizeY = rnode.sizeY
-        if (i != 0) {
-          if (rnode.starPosition[1] != position0[1])
-            rnode.starPosition[1] = rnode.starPosition[1] + 2
-
-        }
-        item.posNode = rnode;
-
-      })
-      cellCountX = math.max(baseCloudPlat.xasis, baseCloudPlat.yasis) + 5
-      cellCountY = cellCountX
-      this.calActualPosition(cloudaccounts)
+      if(cloudaccounts.length>0){
+        this.initSubAvailabList(availableRegionList, position0, cloudaccounts[0], baseCloudPlat)
+  
+        cloudaccounts.forEach((item, i) => {
+          var rnode = this.getAiliableSquareList(availableRegionList, cloudaccounts[0], item, baseCloudPlat)
+          item.basePosition = position0;
+          rnode.sizeY = rnode.sizeY + 2
+          item.sizeY = rnode.sizeY
+          if (i != 0) {
+            if (rnode.starPosition[1] != position0[1])
+              rnode.starPosition[1] = rnode.starPosition[1] + 2
+  
+          }
+          item.posNode = rnode;
+  
+        })
+        cellCountX = math.max(baseCloudPlat.xasis, baseCloudPlat.yasis) + 5
+        cellCountY = cellCountX
+        this.calActualPosition(cloudaccounts)
+      }
 
       return cloudaccounts;
     },
@@ -957,10 +974,14 @@ export default {
         item.posX = item.basePosition[0] + item.posNode.starPosition[0]
         item.posY = item.basePosition[1] + item.posNode.starPosition[1]
         var nextBasePos = [item.posX, item.posY]
+        if(!item.children)
+          item.children = []
         item.children.forEach((item1) => {
           item1.posX = nextBasePos[0] + item1.posNode.starPosition[0]
           item1.posY = nextBasePos[1] + item1.posNode.starPosition[1]
           var nextBasePos1 = [item1.posX, item1.posY]
+          if(!item1.children)
+            item1.children = []
           item1.children.forEach((item2) => {
             item2.posX = nextBasePos1[0] + item2.posNode.starPosition[0]
             item2.posY = nextBasePos1[1] + item2.posNode.starPosition[1]
