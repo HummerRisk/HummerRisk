@@ -72,6 +72,9 @@ import {cloneDeep} from "lodash";
         }
       },
       methods: {
+        refresh() {
+          this.$emit('search');
+        },
         changeName(id) {
           for (let item of this.items) {
             if(item.id === id) {
