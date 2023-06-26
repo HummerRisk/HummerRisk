@@ -3,7 +3,7 @@
 
     <div id="pdfDom">
       <el-card class="table-card el-row-card">
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount" @goReport="goReport"/>
+        <account-switch :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch" @goReport="goReport"/>
         <el-divider></el-divider>
         <h2 style="font-size: 18px;" v-if="source">{{ $t('account.cloud_account') }}</h2>
         <el-row v-if="source">
@@ -19,7 +19,7 @@
                         <center-chart v-if="!!source.scanScore" :row="source.scanScore"></center-chart>
                       </el-tooltip>
                     </span>
-                  <span v-else>
+                    <span v-else>
                       <img style="width: 150px;height: 100px;" :src="require(`@/assets/img/gif/loading.gif`)" alt=""/>
                     </span>
                 </el-col>
@@ -117,6 +117,7 @@
                      :stroke-width="26" :percentage="progressResult"></el-progress>
       </el-card>
 
+      <!--规则组-->
       <el-card class="table-card el-row-card" v-if="groupsData.length > 0">
         <el-row v-bind:class="{'box-card1': groups === 1, 'box-card2': groups === 2}">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData"
@@ -611,9 +612,8 @@ import TableOperator from "@/business/components/common/components/TableOperator
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import ResultLog from "./ResultLog";
-import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
-import {ACCOUNT_ID} from "@/common/js/constants";
-import AccountChange from "@/business/components/resource/head/AccountSwitch";
+import {_filter, _sort} from "@/common/js/utils";
+import AccountSwitch from "@/business/components/resource/head/AccountSwitch";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {RESOURCE_CONFIGS, RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
@@ -621,7 +621,8 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl, resouceGroupsUrl,
+  cloudResourceListUrl,
+  resouceGroupsUrl,
   resourceAccountDeleteUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
@@ -723,12 +724,17 @@ export default {
     DialogFooter,
     CenterChart,
     ResultLog,
-    AccountChange,
+    AccountSwitch,
     TableSearchBar,
     ResultReadOnly,
     SeverityType,
     HideTable,
     TableSearchRight,
+  },
+  props: {
+    query: {
+      id: ''
+    }
   },
   data() {
     return {
@@ -743,7 +749,7 @@ export default {
       condition: {
         components: RESULT_CONFIGS
       },
-      accountId: localStorage.getItem(ACCOUNT_ID),
+      accountId: '',
       direction: 'rtl',
       tagSelect: [],
       resourceTypes: [],
@@ -955,15 +961,6 @@ export default {
         }
       });
     },
-    cloudAccountSwitch(accountId) {
-      this.accountId = accountId;
-      this.search();
-      this.initGroup();
-      this.regionDataSearch();
-      this.ruleDataSearch();
-      this.resourceTypeDataSearch();
-      this.severityDataSearch();
-    },
     async search() {
       await this.$get(resourceSourceUrl + this.accountId, response => {
         this.source = response.data;
@@ -1001,9 +998,6 @@ export default {
           this.resourceTypes.push(typeItem);
         }
       });
-      if (!!getCurrentAccountID()) {
-        this.accountId = getCurrentAccountID();
-      }
     },
     goResource(params) {
       if (params.returnSum == 0) {
@@ -1032,6 +1026,7 @@ export default {
       this.resourceSearch();
     },
     init() {
+      if (!this.accountId) return;
       this.initSelect();
       this.search();
       this.initGroup();
@@ -1040,6 +1035,11 @@ export default {
       this.resourceTypeDataSearch();
       this.ruleDataSearch();
       this.resourceSearch();
+    },
+    cloudAccountSwitch(accountId, accountName) {
+      this.accountId = accountId;
+      this.currentAccount = accountName;
+      this.init();
     },
     getStatus() {
       if (this.checkStatus(this.tableData)) {
@@ -1276,10 +1276,6 @@ export default {
         }
       });
     },
-    selectAccount(accountId, accountName) {
-      this.accountId = accountId;
-      this.currentAccount = accountName;
-    },
     goReport() {
       let p = '/report/cloudReport';
       this.$router.push({
@@ -1287,6 +1283,7 @@ export default {
       }).catch(error => error);
     },
     initGroup() {
+      this.groupsData = [];
       this.result = this.$post(resouceGroupsUrl, {id: this.accountId}, response => {
         this.groupsData = response.data;
       });
@@ -1306,7 +1303,10 @@ export default {
     }
   },
   activated() {
-    this.init();
+    if (this.$route.params.id) this.accountId = this.$route.params.id;
+  },
+  created() {
+    if (this.$route.params.id) this.accountId = this.$route.params.id;
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {

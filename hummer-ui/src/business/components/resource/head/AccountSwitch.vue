@@ -8,7 +8,7 @@
           {{ $t('account.cloud_account') }}: {{ currentAccount }}
         </span>
       </template>
-      <search-list @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
+      <search-list :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch"/>
 
       <el-divider/>
 
@@ -30,30 +30,27 @@
 
 <script>
 import SearchList from "@/business/components/common/head/SearchList";
-import {ACCOUNT_NAME} from "../../../../common/js/constants";
 import htmlToPdf from "@/common/js/htmlToPdf";
 
 /* eslint-disable */
 export default {
   name: "AccountSwitch",
   props: {
-    accountName: String
+    accountId: String
   },
   components: {SearchList},
   data() {
     return {
       htmlTitle: this.$t('pdf.html_title'),
-      currentAccount: this.accountName?this.accountName:localStorage.getItem(ACCOUNT_NAME)
+      currentAccount: ''
     }
+  },
+  created() {
   },
   methods: {
     cloudAccountSwitch(accountId, accountName) {
       this.currentAccount = accountName;
-      this.$emit("cloudAccountSwitch", accountId);
-    },
-    selectAccount(accountId, accountName) {
-      this.currentAccount = accountName;
-      this.$emit('selectAccount', accountId, accountName);
+      this.$emit("cloudAccountSwitch", accountId, accountName);
     },
     goReport() {
       this.$emit('goReport');

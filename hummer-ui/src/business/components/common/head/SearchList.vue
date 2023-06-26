@@ -12,7 +12,7 @@
         </span>
     </div>
     <div v-else style="height: 150px;overflow: auto">
-      <el-menu-item :key="i.id" v-for="i in items" @click="change(i.id)">
+      <el-menu-item :key="i.id" v-for="i in items" @click="changeAccountName(i.id)">
         <template slot="title">
           <div class="title">
             <img :src="require(`@/assets/img/platform/${i.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
@@ -27,9 +27,6 @@
 </template>
 
 <script>
-import {getCurrentAccountID, getCurrentAccountName, getCurrentUser} from "@/common/js/utils";
-import {ACCOUNT, ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
-import {userUpdateCurrentUrl} from "@/api/system/system";
 import {allListUrl} from "@/api/cloud/account/account";
 
 /* eslint-disable */
@@ -46,45 +43,34 @@ export default {
       items: [],
       searchArray: [],
       searchString: '',
-      userId: getCurrentUser().id,
-      currentAccountId: getCurrentAccountID(),
-      accountName: getCurrentAccountName(),
+      currentAccountId: '',
+      accountName: '',
     }
+  },
+  props: {
+    accountId: String
   },
   watch: {
     searchString(val) {
       this.query(val)
-    }
+    },
+    accountId() {
+      this.init();
+    },
   },
   methods: {
     async init () {
+      this.currentAccountId = this.accountId;
       await this.$get(allListUrl, response => {
         this.items = response.data;
         this.searchArray = response.data;
         if (this.currentAccountId) {
           let account = this.searchArray.filter(p => p.id === this.currentAccountId);
           this.accountName = account[0].name;
-          localStorage.setItem(ACCOUNT_NAME, this.accountName);
-          localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
-          this.changecurrentAccount(this.currentAccountId);
+          this.changeAccountName(this.currentAccountId);
         } else {
-          let userLastAccountId = getCurrentUser().lastAccountId;
-          if (userLastAccountId) {
-            // id 是否存在
-            if (this.searchArray.length > 0 && this.searchArray.map(p => p.id).indexOf(userLastAccountId) !== -1) {
-              localStorage.setItem(ACCOUNT_ID, userLastAccountId);
-              let account = this.searchArray.filter(p => p.id === userLastAccountId);
-              if(account) {
-                this.accountName = account[0].name;
-                localStorage.setItem(ACCOUNT_NAME, this.accountName);
-                localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
-                this.changecurrentAccount(this.currentAccountId);
-              }
-            }
-          } else {
-            if (this.items.length > 0) {
-              this.change(this.items[0].id);
-            }
+          if (this.items.length > 0) {
+            this.changeAccountName(this.items[0].id);
           }
         }
       });
@@ -97,33 +83,12 @@ export default {
         return (item.name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
       };
     },
-    change(accountId) {
-      let currentAccountId = getCurrentAccountID();
-      if (accountId === currentAccountId) {
-        return;
-      }
-      this.$post(userUpdateCurrentUrl, {id: this.userId, lastAccountId: accountId}, () => {
-        localStorage.setItem(ACCOUNT_ID, accountId);
-        let account = this.searchArray.filter(p => p.id === accountId);
-        if(account) {
-          this.accountName = account[0].name;
-          localStorage.setItem(ACCOUNT_NAME, this.accountName);
-          localStorage.setItem(ACCOUNT, JSON.stringify(account[0]));
-        }
-
-        this.currentAccountId = accountId;
-        this.$emit("cloudAccountSwitch", accountId, this.accountName);
-        this.changecurrentAccount(accountId);
-      });
-    },
-    changecurrentAccount(accountId) {
+    changeAccountName(accountId) {
       if (accountId) {
         let account = this.searchArray.filter(p => p.id === accountId);
         if (account.length > 0) {
-          this.$emit("selectAccount", accountId, !!this.accountName?this.accountName:account[0].name);
+          this.$emit("cloudAccountSwitch", accountId, !!this.currentAccount?this.currentAccount:account[0].name);
         }
-      } else {
-        this.$emit("selectAccount", null, this.$t('account.select'));
       }
     }
   }

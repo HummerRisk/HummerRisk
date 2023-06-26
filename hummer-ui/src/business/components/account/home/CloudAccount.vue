@@ -833,7 +833,8 @@ const columnOptions = [
                 this.$success(this.$t('account.i18n_hr_create_success'));
                 this.scanVisible = false;
                 this.$router.push({
-                  path: '/account/result',
+                  name: 'cloudResult',
+                  params: {id: this.accountWithGroup.id},
                 }).catch(error => error);
               });
             }
