@@ -3,8 +3,7 @@
   <div>
     <el-row type="flex" justify="space-between" align="middle">
       <span>
-        <account-change class="account-change" :accountName="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"
-                        @selectAccount="selectAccount"/>
+        <account-switch class="account-change" :accountId="accountId"  @cloudAccountSwitch="cloudAccountSwitch"/>
       </span>
       <span>
         <table-search-bar :condition.sync="condition" @change="search" @search="search" class="search-bar" :tip="tip" :items="items" ref="conditionSearch"/>
@@ -29,18 +28,17 @@
 import TableSearchBar from '@/business/components/report/head/TableSearchBar';
 import TableButton from '@/business/components/common/components/TableButton';
 import TableAdvSearchBar from "@/business/components/common/components/search/TableAdvSearchBar";
-import AccountChange from "@/business/components/oss/head/AccountSwitch";
-import {ACCOUNT_NAME} from "@/common/js/constants";
 import Vue from "vue";
+import AccountSwitch from "@/business/components/report/head/AccountSwitch";
 
 /* eslint-disable */
   export default {
     name: "TableHeader",
     components: {
+      AccountSwitch,
       TableAdvSearchBar,
       TableSearchBar,
       TableButton,
-      AccountChange
     },
     data(){
       return {
@@ -49,6 +47,7 @@ import Vue from "vue";
       }
     },
     props: {
+      accountId: String,
       title: {
         type: String,
         default() {
@@ -104,7 +103,7 @@ import Vue from "vue";
       },
       currentAccount: {
         type: String,
-        default: localStorage.getItem(ACCOUNT_NAME)
+        default: ''
       },
       items: {
         type: [Object,Array],
@@ -133,14 +132,11 @@ import Vue from "vue";
       validate() {
         this.$emit('validate');
       },
-      cloudAccountSwitch(accountId) {
-        this.$emit('cloudAccountSwitch', accountId);
+      cloudAccountSwitch(accountId, accountName) {
+        this.$emit('cloudAccountSwitch', accountId, accountName);
       },
       openDownload() {
         this.$emit('openDownload');
-      },
-      selectAccount(accountId, accountName) {
-        this.$emit('selectAccount', accountId, accountName);
       },
       handleClose(key) {
         Vue.delete(this.condition.combine, key);
