@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -118,6 +119,10 @@ public class ResourceService {
 
     private List<ResourceDTO> getComplianceResult(ResourceRequest resourceRequest) {
         return extResourceMapper.getComplianceResult(resourceRequest);
+    }
+
+    public List<ResourceDTO> getK8sComplianceResult(ResourceRequest resourceRequest) {
+        return extResourceMapper.getK8sComplianceResult(resourceRequest);
     }
 
     public ResourceWithBLOBs saveResource(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, CloudTaskItemResourceWithBLOBs taskItemResource) {

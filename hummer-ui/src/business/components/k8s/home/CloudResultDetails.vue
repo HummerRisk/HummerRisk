@@ -588,10 +588,12 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl, resouceGroupsUrl,
+  cloudResourceK8sListUrl,
+  resouceGroupsUrl,
   resourceAccountDeleteUrl,
   resourceK8sSourceUrl,
-  resourceRegionDataUrl, resourceRegulationUrl,
+  resourceRegionDataUrl,
+  resourceRegulationUrl,
   resourceRuleDataUrl,
   resourceSeverityDataUrl,
   resourceTypeDataUrl,
@@ -937,7 +939,7 @@ export default {
       });
     },
     resourceSearch() {
-      let url = cloudResourceListUrl + this.resourcePage + "/" + this.resourceSize;
+      let url = cloudResourceK8sListUrl + this.resourcePage + "/" + this.resourceSize;
       this.resourceCondition.accountId = this.accountId;
       this.result = this.$post(url, this.resourceCondition, response => {
         let data = response.data;

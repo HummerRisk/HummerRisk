@@ -62,6 +62,14 @@ public class ResourceController {
     }
 
     @I18n
+    @Operation(summary = "K8s资源列表")
+    @PostMapping("k8sList/{goPage}/{pageSize}")
+    public Pager<List<ResourceDTO>> k8sList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.getK8sComplianceResult(request));
+    }
+
+    @I18n
     @Operation(summary = "合规报告列表")
     @PostMapping("reportList/{goPage}/{pageSize}")
     public Pager<List<ReportDTO>> reportList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {

@@ -3,6 +3,8 @@ export const resourceLogUrl = "/cloud/resource/resourceLog";
 
 export const cloudResourceListUrl = "/cloud/resource/list/";
 
+export const cloudResourceK8sListUrl = "/cloud/resource/k8sList/";
+
 export const string2PrettyFormatUrl = "/cloud/resource/string2PrettyFormat";
 
 export const resourceReportIsoUrl = "/cloud/resource/report/iso/";
