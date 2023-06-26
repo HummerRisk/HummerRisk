@@ -8,7 +8,7 @@
           {{ $t('oss.oss_account') }}: {{ currentAccount }}
         </span>
       </template>
-      <search-list @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
+      <search-list :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch"/>
 
       <el-divider/>
 
@@ -23,39 +23,38 @@
     </el-submenu>
 
     <el-button class="el-btn-btm" type="warning" plain size="small" @click="pdfDown">{{ $t('pdf.export_pdf') }}<i class="iconfont icon-pdf1"></i></el-button>
+    <el-button class="el-btn-btm" type="success" plain size="small" @click="goReport">{{ $t('resource.statistics') }}<i class="el-icon-right el-icon--right"></i></el-button>
 
   </el-menu>
 </template>
 
 <script>
 import SearchList from "@/business/components/oss/head/SearchList";
-import {ACCOUNT_NAME} from "../../../../common/js/constants";
 import htmlToPdf from "@/common/js/htmlToPdf";
 
 /* eslint-disable */
 export default {
   name: "AccountSwitch",
   props: {
-    accountName: String
+    accountId: String
   },
   components: {SearchList},
   data() {
     return {
       htmlTitle: this.$t('pdf.html_title'),
-      currentAccount: this.accountName?this.accountName:localStorage.getItem(ACCOUNT_NAME)
+      currentAccount: ''
     }
   },
   methods: {
     cloudAccountSwitch(accountId, accountName) {
       this.currentAccount = accountName;
-      this.$emit("cloudAccountSwitch", accountId);
+      this.$emit("cloudAccountSwitch", accountId, accountName);
     },
     openDownload() {
       this.$emit('openDownload');
     },
-    selectAccount(accountId, accountName) {
-      this.currentAccount = accountName;
-      this.$emit('selectAccount', accountId, accountName);
+    goReport() {
+      this.$emit('goReport');
     },
     //下载pdf
     pdfDown() {

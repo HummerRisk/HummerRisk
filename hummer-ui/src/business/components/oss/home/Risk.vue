@@ -5,7 +5,7 @@
 
       <el-card class="table-card el-row-card">
 
-        <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
+        <account-switch :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch" @goReport="goReport"/>
 
         <el-divider><i class="el-icon-tickets"></i></el-divider>
 
@@ -314,17 +314,16 @@ import TableHeader from "@/business/components/common/components/TableHeader";
 import Container from "@/business/components/common/components/Container";
 import MainContainer from "@/business/components/common/components/MainContainer";
 import TableOperators from "@/business/components/common/components/TableOperators";
-import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
+import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {RESOURCE_CONFIGS, RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import TableOperator from "@/business/components/common/components/TableOperator";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import ResultLog from "@/business/components/resource/home/ResultLog";
-import AccountChange from "@/business/components/oss/head/AccountSwitch";
+import AccountSwitch from "@/business/components/oss/head/AccountSwitch";
 import TableSearchBar from "@/business/components/common/components/TableSearchBar";
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import SeverityType from "@/business/components/common/components/SeverityType";
-import {ACCOUNT_ID} from "@/common/js/constants";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   resourceAccountDeleteUrl,
@@ -423,7 +422,7 @@ export default {
     DialogFooter,
     CenterChart,
     ResultLog,
-    AccountChange,
+    AccountSwitch,
     TableSearchBar,
     ResultReadOnly,
     SeverityType,
@@ -440,7 +439,7 @@ export default {
       condition: {
         components: RESULT_CONFIGS
       },
-      accountId: localStorage.getItem(ACCOUNT_ID),
+      accountId: '',
       direction: 'rtl',
       tagSelect: [],
       timer: '',
@@ -624,14 +623,6 @@ export default {
         }
       });
     },
-    cloudAccountSwitch(accountId) {
-      this.accountId = accountId;
-      this.search();
-      this.regionDataSearch();
-      this.ruleDataSearch();
-      this.resourceTypeDataSearch();
-      this.severityDataSearch();
-    },
     async search() {
       let url = ossManualListUrl + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
@@ -656,9 +647,6 @@ export default {
       await this.$get(tagRuleListUrl, response => {
         this.tagSelect = response.data;
       });
-      if (!!getCurrentAccountID()) {
-        this.accountId = getCurrentAccountID();
-      }
     },
     goResource(params) {
       if (params.returnSum == 0) {
@@ -678,7 +666,13 @@ export default {
       }
       this.resourceSearch();
     },
+    cloudAccountSwitch(accountId, accountName) {
+      this.accountId = accountId;
+      this.currentAccount = accountName;
+      this.init();
+    },
     init() {
+      if (!this.accountId) return;
       this.initSelect();
       this.search();
       this.regionDataSearch();
@@ -841,9 +835,11 @@ export default {
         }
       });
     },
-    selectAccount(accountId, accountName) {
-      this.accountId = accountId;
-      this.currentAccount = accountName;
+    goReport() {
+      this.$router.push({
+        name: 'OssReport',
+        params: {id: this.accountId},
+      }).catch(error => error);
     },
   },
   computed: {
@@ -851,8 +847,12 @@ export default {
       return this.$refs.cmEditor.codemirror;
     }
   },
+  activated() {
+    if (this.$route.params.id) this.accountId = this.$route.params.id;
+  },
   created() {
-    this.init();
+    if (this.$route.params.id) this.accountId = this.$route.params.id;
+    this.timer = setInterval(this.getStatus, 10000);
   },
 }
 </script>

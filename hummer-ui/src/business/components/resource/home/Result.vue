@@ -1277,7 +1277,6 @@ export default {
       });
     },
     goReport() {
-      let p = '/report/cloudReport';
       this.$router.push({
         name: 'cloudReport',
         params: {id: this.accountId},
