@@ -936,8 +936,8 @@ const columnOptions3 = [
                     show: false
                   },
                   data: [
-                    { value: tableData.returnSum - tableData.resourcesSum, name: this.$t('report.have_risk_resource') },
-                    { value: tableData.resourcesSum, name: this.$t('report.no_risk_resource') }
+                    { value: tableData.returnSum, name: this.$t('report.have_risk_resource') },
+                    { value: tableData.resourcesSum - tableData.returnSum, name: this.$t('report.no_risk_resource') }
                   ]
                 }
               ],
