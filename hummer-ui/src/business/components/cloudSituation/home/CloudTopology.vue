@@ -62,7 +62,7 @@
           <span v-if="details.riskType === 'uncheck'">{{ $t('resource.uncheck') }}</span>
         </el-descriptions-item>
       </el-descriptions>
-      <cloud-detail-chart v-if="resources && supportPlugins.includes(details.pluginId)"/>
+      <cloud-detail-chart v-if="resources && supportPlugins.includes(details.pluginId)" :resourceItemId="details.id"/>
       <div class="desc-top" v-if="resources">
         <el-divider><i class="el-icon-folder-opened"></i></el-divider>
         <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
@@ -352,7 +352,7 @@ export default {
           cloudaccounts[i].sizeX = 7
           cloudaccounts[i].sizeY = 7
         }
-        
+
       }
       cloudaccounts.sort((a, b) => {
         return b.area - a.area
@@ -361,12 +361,12 @@ export default {
       var baseCloudPlat = {}
       if(cloudaccounts.length>0){
         this.initSubAvailabList(availableRegionList, position0, cloudaccounts[0], baseCloudPlat)
-  
+
         cloudaccounts.forEach((item, i) => {
           var rnode = this.getAiliableSquareList(availableRegionList, cloudaccounts[0], item, baseCloudPlat)
           item.basePosition = position0;
           item.posNode = rnode;
-  
+
         })
         cellCountX = math.max(baseCloudPlat.xasis, baseCloudPlat.yasis) + 5
         cellCountY = cellCountX
