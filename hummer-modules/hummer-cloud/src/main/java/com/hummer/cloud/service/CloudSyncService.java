@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.mapper.*;
+import com.hummer.cloud.mapper.ext.ExtCloudResourceRelaMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncItemMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncMapper;
 import com.hummer.common.core.constant.CloudTaskConstants;
@@ -14,6 +15,7 @@ import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudResource.CloudResourceSyncRequest;
 import com.hummer.common.core.domain.request.sync.CloudTopology;
+import com.hummer.common.core.dto.CloudResourceRelaDTO;
 import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.dto.TopoChartDTO;
 import com.hummer.common.core.exception.HRException;
@@ -70,6 +72,8 @@ public class CloudSyncService {
     private ExtCloudResourceSyncItemMapper extCloudResourceSyncItemMapper;
     @Autowired
     private CloudResourceRelaMapper cloudResourceRelaMapper;
+    @Autowired
+    private ExtCloudResourceRelaMapper extCloudResourceRelaMapper;
     @Autowired
     private CloudResourceRelaLinkMapper cloudResourceRelaLinkMapper;
     @DubboReference
@@ -380,9 +384,7 @@ public class CloudSyncService {
 
         TopoChartDTO topoChartDTO = new TopoChartDTO();
 
-        CloudResourceRelaExample cloudResourceRelaExample = new CloudResourceRelaExample();
-        cloudResourceRelaExample.createCriteria().andResourceItemIdEqualTo(resourceItemId);
-        List<CloudResourceRela> cloudResourceRelaList = cloudResourceRelaMapper.selectByExample(cloudResourceRelaExample);
+        List<CloudResourceRelaDTO> cloudResourceRelaList = extCloudResourceRelaMapper.selectCloudTopologyRela(resourceItemId);
 
         CloudResourceRelaLinkExample cloudResourceRelaLinkExample = new CloudResourceRelaLinkExample();
         cloudResourceRelaLinkExample.createCriteria().andResourceItemIdEqualTo(resourceItemId);
@@ -793,11 +795,6 @@ public class CloudSyncService {
             default:
                 break;
         }
-
-
-
-
-
     }
 
     public void dealAzure (CloudResourceItem cloudResourceItem) throws Exception  {

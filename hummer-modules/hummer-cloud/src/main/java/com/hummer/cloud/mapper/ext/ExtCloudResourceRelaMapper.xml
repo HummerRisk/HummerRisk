@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.cloud.mapper.ext.ExtCloudResourceRelaMapper">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudResourceRelaDTO"
+               extends="com.hummer.cloud.mapper.CloudResourceRelaMapper.BaseResultMap">
+        <result column="value" property="userName"/>
+    </resultMap>
+
+    <select id="selectCloudTopologyRela" resultType="com.hummer.common.core.dto.CloudResourceRelaDTO" parameterType="String">
+        select
+            t.*,
+            t.hummer_id as value,
+            concat(t.resource_type, ' : ', t.name) as name
+        from cloud_resource_rela t
+        where t.resource_item_id = #{resourceItemId}
+    </select>
+
+</mapper>

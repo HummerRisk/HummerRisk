@@ -1,22 +1,21 @@
 package com.hummer.common.core.dto;
 
 
-import com.hummer.common.core.domain.CloudResourceRela;
 import com.hummer.common.core.domain.CloudResourceRelaLink;
 
 import java.util.List;
 
 public class TopoChartDTO {
 
-    private List<CloudResourceRela> cloudResourceRelaList;
+    private List<CloudResourceRelaDTO> cloudResourceRelaList;
 
     private List<CloudResourceRelaLink> cloudResourceRelaLinkList;
 
-    public List<CloudResourceRela> getCloudResourceRelaList() {
+    public List<CloudResourceRelaDTO> getCloudResourceRelaList() {
         return cloudResourceRelaList;
     }
 
-    public void setCloudResourceRelaList(List<CloudResourceRela> cloudResourceRelaList) {
+    public void setCloudResourceRelaList(List<CloudResourceRelaDTO> cloudResourceRelaList) {
         this.cloudResourceRelaList = cloudResourceRelaList;
     }
 
