@@ -6,8 +6,8 @@
         <template v-slot:header>
 
           <report-table-header :condition.sync="condition" @search="search" :items="items"
-                              :currentAccount="currentAccount" @cloudAccountSwitch="cloudAccountSwitch"
-                               @openDownload="openDownload" @selectAccount="selectAccount" :show-open="true"/>
+                               :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch"
+                               @openDownload="openDownload" :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in ftableData"
@@ -527,7 +527,7 @@ import TableOperator from "@/business/components/common/components/TableOperator
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import MetricChart from "./MetricChart";
-import {_filter, _sort, getCurrentAccountID} from "@/common/js/utils";
+import {_filter, _sort} from "@/common/js/utils";
 import {severityOptions} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver.js";
 import FTablePagination from "../../common/pagination/FTablePagination";
@@ -541,8 +541,11 @@ import {ruleInspectionReport, ruleListUrl, ruleReScanUrl, ruleTagsUrl} from "@/a
 import {cloudPluginUrl} from "@/api/system/system";
 import {
   resourceExportUrl,
-  resourceGroupExportUrl, resourceListUrl,
-  resourceRegulationUrl, resourceReportIsoUrl, resourceReportListUrl,
+  resourceGroupExportUrl,
+  resourceListUrl,
+  resourceRegulationUrl,
+  resourceReportIsoUrl,
+  resourceReportListUrl,
   resourceRuleGroupListUrl,
   resourceRuleGroupsUrl
 } from "@/api/cloud/resource/resource";
@@ -802,6 +805,14 @@ const columnOptions3 = [
         isIndeterminate3: false,
       }
     },
+    props: {
+      params: {
+        id: ''
+      }
+    },
+    watch: {
+      '$route': 'init'
+    },
     methods: {
       handleCheckedColumnNamesChange2(value) {
         const checkedCount = value.length;
@@ -841,8 +852,9 @@ const columnOptions3 = [
       },
       select2(selection) {
       },
-      cloudAccountSwitch (accountId) {
+      cloudAccountSwitch (accountId, accountName) {
         this.accountId = accountId;
+        this.currentAccount = accountName;
         this.search();
       },
       async search () {
@@ -985,9 +997,6 @@ const columnOptions3 = [
         this.viewResult = this.$get(ruleTagsUrl, response => {
           this.tags = response.data;
         });
-        if (!!getCurrentAccountID()) {
-          this.accountId = getCurrentAccountID();
-        }
       },
       //查询插件
       activePlugin() {
@@ -1021,6 +1030,7 @@ const columnOptions3 = [
         });
       },
       init() {
+        if (this.$route.params.id) this.accountId = this.$route.params.id;
         this.tagLists();
         this.activePlugin();
         this.severityOptionsFnc();
@@ -1177,10 +1187,6 @@ const columnOptions3 = [
           this.ruleListTotal = data.itemCount;
           this.ruleData = data.listObject;
         });
-      },
-      selectAccount(accountId, accountName) {
-        this.accountId = accountId;
-        this.currentAccount = accountName;
       },
       handleSuggestion(item) {
         window.open(item.suggestion,'_blank','');

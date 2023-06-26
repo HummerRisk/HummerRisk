@@ -732,7 +732,7 @@ export default {
     TableSearchRight,
   },
   props: {
-    query: {
+    params: {
       id: ''
     }
   },
@@ -1279,7 +1279,8 @@ export default {
     goReport() {
       let p = '/report/cloudReport';
       this.$router.push({
-        path: p
+        name: 'cloudReport',
+        params: {id: this.accountId},
       }).catch(error => error);
     },
     initGroup() {
