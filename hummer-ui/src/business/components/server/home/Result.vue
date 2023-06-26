@@ -7,7 +7,7 @@
           <el-tab-pane :label="$t('server.server_dimension')" name="first"></el-tab-pane>
           <el-tab-pane :label="$t('server.rule_dimension')" name="second"></el-tab-pane>
         </el-tabs>
-        <table-header :condition.sync="serverCondition" @search="search"
+        <server-result-table-header :condition.sync="serverCondition" @search="search"
                       :title="$t('server.result_list')" v-if="activeName === 'first'"
                       :items="items2" :columnNames="columnNames2"
                       :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
@@ -19,7 +19,7 @@
                       @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange" @handleCheckAllChange="handleCheckAllChange"/>
       </template>
 
-      <el-row :gutter="20" class="el-row-body" v-if="activeName === 'first'">
+      <el-row :gutter="20" class="el-row-body pdfDom" v-if="activeName === 'first'">
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in serverData"
                 :key="index" class="el-col el-col-su">
           <el-card :body-style="{ padding: '15px' }">
@@ -491,6 +491,7 @@ import TableOperators from "@/business/components/common/components/TableOperato
 import MainContainer from "@/business/components/common/components/MainContainer";
 import Container from "@/business/components/common/components/Container";
 import TableHeader from "@/business/components/common/components/TableHeader";
+import ServerResultTableHeader from "@/business/components/server/head/ServerResultTableHeader";
 import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableOperator from "@/business/components/common/components/TableOperator";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
@@ -503,8 +504,10 @@ import {
   deleteServerResultByIdUrl,
   deleteServerResultsUrl,
   deleteServerResultUrl,
-  getServerResultUrl, rescanServerUrl,
-  resultServerListUrl, resultServerUrl,
+  getServerResultUrl,
+  rescanServerUrl,
+  resultServerListUrl,
+  resultServerUrl,
   serverLogUrl,
   serverReScanUrl,
   serverResultListUrl
@@ -614,6 +617,7 @@ export default {
     DialogFooter,
     RuleType,
     HideTable,
+    ServerResultTableHeader,
   },
   data() {
     return {
