@@ -1018,6 +1018,42 @@ public class CloudSyncService {
 
                 break;
             case "aliyun.polardb":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                String polardbVpcId = jsonObject.getString("VpcId");
+                String polardbVpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(polardbVpcRelaId);
+                cloudResourceRela.setName(polardbVpcId);
+                cloudResourceRela.setResourceType("aliyun.vpc");
+                cloudResourceRela.setHummerId(polardbVpcId);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(polardbVpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String polardbRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(polardbRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(polardbVpcRelaId);
+                cloudResourceRelaLink.setTarget(polardbRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "aliyun.ram":
                 break;
