@@ -1118,10 +1118,158 @@ public class CloudSyncService {
 
                 break;
             case "aliyun.redis":
+
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                String redisVpcId = jsonObject.getString("VpcId");
+                String redisVpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(redisVpcRelaId);
+                cloudResourceRela.setName(redisVpcId);
+                cloudResourceRela.setResourceType("aliyun.vpc");
+                cloudResourceRela.setHummerId(redisVpcId);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(redisVpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String ConnectionDomain = jsonObject.getString("ConnectionDomain");
+                String redisDomainRelaId = UUIDUtil.newUUID();
+                cloudResourceRela.setId(redisDomainRelaId);
+                cloudResourceRela.setResourceType("aliyun.domain");
+                cloudResourceRela.setHummerId(ConnectionDomain);
+                cloudResourceRela.setName(ConnectionDomain);
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(redisVpcRelaId);
+                cloudResourceRelaLink.setTarget(redisDomainRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String redisRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(redisRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(500L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(redisDomainRelaId);
+                cloudResourceRelaLink.setTarget(redisRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             case "aliyun.security-group":
                 break;
             case "aliyun.slb":
+                String AddressType = jsonObject.getString("AddressType");
+                String Address = jsonObject.getString("Address");
+
+                if (StringUtils.equals(AddressType, "intranet")) {
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("No Internet");
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("No Internet");
+                    cloudResourceRela.setxAxis(100L);//100
+                    cloudResourceRela.setyAxis(200L);//100
+                    insertCloudResourceRela(cloudResourceRela);
+                } else {
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("Internet");
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("Internet");
+                    cloudResourceRela.setxAxis(100L);//100
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+                }
+
+                String slbVpcId = jsonObject.getString("VpcId");
+
+                if (!slbVpcId.isEmpty()) {
+                    String slbVpcRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(slbVpcRelaId);
+                    cloudResourceRela.setName(slbVpcId);
+                    cloudResourceRela.setResourceType("aliyun.vpc");
+                    cloudResourceRela.setHummerId(slbVpcId);
+                    cloudResourceRela.setxAxis(300L);//300
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(Internet);
+                    cloudResourceRelaLink.setTarget(slbVpcRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    String slbIpRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(slbIpRelaId);
+                    cloudResourceRela.setName(Address);
+                    cloudResourceRela.setResourceType("aliyun.ip");
+                    cloudResourceRela.setHummerId(Address);
+                    cloudResourceRela.setxAxis(400L);//300
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(slbVpcRelaId);
+                    cloudResourceRelaLink.setTarget(slbIpRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    String slbRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(slbRelaId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setxAxis(500L);//100
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(slbIpRelaId);
+                    cloudResourceRelaLink.setTarget(slbRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                } else {
+                    String slbIpRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(slbIpRelaId);
+                    cloudResourceRela.setName(Address);
+                    cloudResourceRela.setResourceType("aliyun.ip");
+                    cloudResourceRela.setHummerId(Address);
+                    cloudResourceRela.setxAxis(300L);//300
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(Internet);
+                    cloudResourceRelaLink.setTarget(slbIpRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    String slbRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(slbRelaId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setxAxis(400L);//100
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(slbIpRelaId);
+                    cloudResourceRelaLink.setTarget(slbRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+                }
+
                 break;
             case "aliyun.nas":
                 x = 100L;
