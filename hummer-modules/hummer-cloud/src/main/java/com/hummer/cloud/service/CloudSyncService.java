@@ -1056,8 +1056,66 @@ public class CloudSyncService {
                 insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "aliyun.ram":
+                String ramRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(ramRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
                 break;
             case "aliyun.rds":
+                String DBInstanceNetType = jsonObject.getString("DBInstanceNetType");
+
+                if (StringUtils.equals(DBInstanceNetType, "Intranet")) {
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("No Internet");
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("No Internet");
+                    cloudResourceRela.setxAxis(200L);//100
+                    cloudResourceRela.setyAxis(200L);//100
+                    insertCloudResourceRela(cloudResourceRela);
+                } else {
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("Internet");
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("Internet");
+                    cloudResourceRela.setxAxis(200L);//100
+                    cloudResourceRela.setyAxis(200L);//100
+                    insertCloudResourceRela(cloudResourceRela);
+                }
+
+                String VpcIdVpcId = jsonObject.getString("VpcId");
+                String VpcIdVpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(VpcIdVpcRelaId);
+                cloudResourceRela.setName(VpcIdVpcId);
+                cloudResourceRela.setResourceType("aliyun.vpc");
+                cloudResourceRela.setHummerId(VpcIdVpcId);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(VpcIdVpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String rdsRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(rdsRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(VpcIdVpcRelaId);
+                cloudResourceRelaLink.setTarget(rdsRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             case "aliyun.redis":
                 break;
