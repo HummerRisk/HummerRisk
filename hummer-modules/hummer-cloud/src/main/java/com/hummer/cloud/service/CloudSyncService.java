@@ -979,6 +979,43 @@ public class CloudSyncService {
             case "aliyun.mongodb":
                 break;
             case "aliyun.oss":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                String extranet_endpoint = jsonObject.getString("extranet_endpoint");
+                String extranet_endpoint_id = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(extranet_endpoint_id);
+                cloudResourceRela.setName(extranet_endpoint);
+                cloudResourceRela.setResourceType("aliyun.domain");
+                cloudResourceRela.setHummerId(extranet_endpoint);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(extranet_endpoint_id);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String ossRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(ossRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(extranet_endpoint_id);
+                cloudResourceRelaLink.setTarget(ossRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             case "aliyun.polardb":
                 break;
