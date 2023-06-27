@@ -455,6 +455,7 @@ public class CloudSyncService {
         cloudResourceRela.setRegionId(regionId);
         cloudResourceRela.setResourceType(resourceType);
         cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
         cloudResourceRela.setxAxis(x);//100
         cloudResourceRela.setyAxis(y);//100
 
@@ -759,6 +760,7 @@ public class CloudSyncService {
         String regionId = cloudResourceItem.getRegionId();
         String hummerId = cloudResourceItem.getHummerId();
         JSONObject jsonObject = JSONObject.parseObject(json);
+        String Internet = UUIDUtil.newUUID();
 
         Long x = 100L, y = 100L;
 
@@ -787,8 +789,6 @@ public class CloudSyncService {
 
                 String SecurityGroupIds = jsonObject.getString("SecurityGroupIds");
                 JSONArray SecurityGroupId = JSONArray.parseArray(!JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId").isEmpty() ? JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId") : "[]");
-
-                String Internet = UUIDUtil.newUUID();
 
                 if (IpAddress.size() == 0) {
 
@@ -929,20 +929,22 @@ public class CloudSyncService {
             case "aliyun.disk":
                 String InstanceId = jsonObject.getString("InstanceId");
                 String EcsRelaId = UUIDUtil.newUUID();
+                String DiskRelaId = UUIDUtil.newUUID();
 
                 cloudResourceRela.setId(EcsRelaId);
                 cloudResourceRela.setName(InstanceId);
-                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setResourceType("aliyun.ecs");
                 cloudResourceRela.setHummerId(InstanceId);
-                cloudResourceRela.setxAxis(x);//100
-                cloudResourceRela.setyAxis(y + 100L);//200
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
 
-                String DiskRelaId = UUIDUtil.newUUID();
-
                 cloudResourceRela.setId(DiskRelaId);
-                cloudResourceRela.setxAxis(x + 100L);//200
-                cloudResourceRela.setyAxis(y + 100L);//200
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(300L);//200
+                cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
 
                 cloudResourceRelaLink.setSource(EcsRelaId);
@@ -950,6 +952,29 @@ public class CloudSyncService {
                 insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "aliyun.eip":
+                String Eip2EcsInstanceId = jsonObject.getString("InstanceId");
+                String EIPEcsRelaId = UUIDUtil.newUUID();
+                String EIPRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(EIPEcsRelaId);
+                cloudResourceRela.setName(Eip2EcsInstanceId);
+                cloudResourceRela.setResourceType("aliyun.ecs");
+                cloudResourceRela.setHummerId(Eip2EcsInstanceId);
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRela.setId(EIPRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(300L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(EIPEcsRelaId);
+                cloudResourceRelaLink.setTarget(EIPRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "aliyun.mongodb":
                 break;
@@ -968,6 +993,65 @@ public class CloudSyncService {
             case "aliyun.slb":
                 break;
             case "aliyun.nas":
+                x = 100L;
+                y = 100L;
+                String MountTargets = jsonObject.getString("MountTargets");
+                JSONArray MountTarget = JSONArray.parseArray(!JSONObject.parseObject(MountTargets).getString("MountTarget").isEmpty()?JSONObject.parseObject(MountTargets).getString("MountTarget"):"[]");
+
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(x);//100
+                cloudResourceRela.setyAxis(y);//100
+
+                insertCloudResourceRela(cloudResourceRela);
+
+                String NasRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(NasRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                for (Object o : MountTarget) {
+                    JSONObject jsonO = JSONObject.parseObject(o.toString());
+                    String vpcId = jsonO.getString("VpcId");
+                    String vRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(vRelaId);
+                    cloudResourceRela.setName(vpcId);
+                    cloudResourceRela.setResourceType("aliyun.vpc");
+                    cloudResourceRela.setHummerId(vpcId);
+                    cloudResourceRela.setxAxis(100L);//100
+                    cloudResourceRela.setyAxis(y + 100L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    String dRelaId = UUIDUtil.newUUID();
+                    String MountTargetDomain = jsonO.getString("MountTargetDomain");
+
+                    cloudResourceRela.setId(dRelaId);
+                    cloudResourceRela.setName(MountTargetDomain);
+                    cloudResourceRela.setResourceType("aliyun.domain");
+                    cloudResourceRela.setHummerId(MountTargetDomain);
+                    cloudResourceRela.setxAxis(200L);//100
+                    cloudResourceRela.setyAxis(y + 100L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(vRelaId);
+                    cloudResourceRelaLink.setTarget(dRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    cloudResourceRelaLink.setSource(dRelaId);
+                    cloudResourceRelaLink.setTarget(NasRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    y = y + 100L;
+
+                }
                 break;
             case "aliyun.mse":
                 break;
