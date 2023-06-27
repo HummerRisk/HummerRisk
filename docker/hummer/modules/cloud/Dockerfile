@@ -1,5 +1,5 @@
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v1.2 as prowler-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v1.2.0 as prowler-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v1.2.0 as custodian-env
 # 基础镜像
