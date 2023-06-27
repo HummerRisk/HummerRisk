@@ -460,8 +460,8 @@ public class CloudSyncService {
                     cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
                     cloudResourceRela.setAccountId(accountId);
                     cloudResourceRela.setRegionId(regionId);
-                    cloudResourceRela.setResourceType(resourceType);
-                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("No Internet");
                     cloudResourceRela.setCreateTime(System.currentTimeMillis());
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//100
@@ -476,8 +476,8 @@ public class CloudSyncService {
                     cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
                     cloudResourceRela.setAccountId(accountId);
                     cloudResourceRela.setRegionId(regionId);
-                    cloudResourceRela.setResourceType(resourceType);
-                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("Internet");
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//100
 
@@ -518,7 +518,7 @@ public class CloudSyncService {
                         CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
                         cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
                         cloudResourceRelaLink.setSource(Internet);
-                        cloudResourceRelaLink.setTarget(cloudResourceRela.getId());
+                        cloudResourceRelaLink.setTarget(SubnetRelaId);
                         insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                         y = y + 100L;
@@ -537,7 +537,7 @@ public class CloudSyncService {
                             CloudResourceRelaLink cloudResourceRelaLink2 = new CloudResourceRelaLink();
                             cloudResourceRelaLink2.setResourceItemId(cloudResourceItem.getId());
                             cloudResourceRelaLink2.setSource(SubnetRelaId);
-                            cloudResourceRelaLink2.setTarget(cloudResourceRela2.getId());
+                            cloudResourceRelaLink2.setTarget(VpcRelaId);
                             insertCloudResourceRelaLink(cloudResourceRelaLink2);
 
                             x = x + 100L;
@@ -557,7 +557,7 @@ public class CloudSyncService {
                                 CloudResourceRelaLink cloudResourceRelaLink3 = new CloudResourceRelaLink();
                                 cloudResourceRelaLink3.setResourceItemId(cloudResourceItem.getId());
                                 cloudResourceRelaLink3.setSource(VpcRelaId);
-                                cloudResourceRelaLink3.setTarget(cloudResourceRela3.getId());
+                                cloudResourceRelaLink3.setTarget(PublicRelaIp);
                                 insertCloudResourceRelaLink(cloudResourceRelaLink3);
 
                                 x = x + 200L;
@@ -571,7 +571,7 @@ public class CloudSyncService {
                                 cloudResourceRela5.setId(EcsRelaId);
                                 cloudResourceRela5.setName(cloudResourceItem.getHummerName());
                                 cloudResourceRela5.setResourceType(resourceType);
-                                cloudResourceRela5.setHummerId(cloudResourceItem.getHummerId());
+                                cloudResourceRela5.setHummerId(hummerId);
                                 cloudResourceRela5.setxAxis(x);//400
                                 cloudResourceRela5.setyAxis(y + 100L);//200
                                 cloudResourceRela5 = insertCloudResourceRela(cloudResourceRela5);
@@ -598,13 +598,13 @@ public class CloudSyncService {
                                         CloudResourceRelaLink cloudResourceRelaLink4 = new CloudResourceRelaLink();
                                         cloudResourceRelaLink4.setResourceItemId(cloudResourceItem.getId());
                                         cloudResourceRelaLink4.setSource(PublicRelaIp);
-                                        cloudResourceRelaLink4.setTarget(cloudResourceRela4.getId());
+                                        cloudResourceRelaLink4.setTarget(GroupRelaId);
                                         insertCloudResourceRelaLink(cloudResourceRelaLink4);
 
                                         CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
                                         cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink5.setSource(cloudResourceRela4.getId());
-                                        cloudResourceRelaLink5.setTarget(cloudResourceRela5.getId());
+                                        cloudResourceRelaLink5.setSource(GroupRelaId);
+                                        cloudResourceRelaLink5.setTarget(EcsRelaId);
                                         insertCloudResourceRelaLink(cloudResourceRelaLink5);
 
                                         for (Object b : BlockDeviceMappings) {
@@ -626,8 +626,8 @@ public class CloudSyncService {
 
                                             CloudResourceRelaLink cloudResourceRelaLink6 = new CloudResourceRelaLink();
                                             cloudResourceRelaLink6.setResourceItemId(cloudResourceItem.getId());
-                                            cloudResourceRelaLink6.setSource(cloudResourceRela5.getId());
-                                            cloudResourceRelaLink6.setTarget(cloudResourceRela6.getId());
+                                            cloudResourceRelaLink6.setSource(EcsRelaId);
+                                            cloudResourceRelaLink6.setTarget(id);
                                             insertCloudResourceRelaLink(cloudResourceRelaLink6);
 
                                             y = y + 100;
@@ -704,13 +704,13 @@ public class CloudSyncService {
                                         CloudResourceRelaLink cloudResourceRelaLink4 = new CloudResourceRelaLink();
                                         cloudResourceRelaLink4.setResourceItemId(cloudResourceItem.getId());
                                         cloudResourceRelaLink4.setSource(PublicRelaIp);
-                                        cloudResourceRelaLink4.setTarget(cloudResourceRela4.getId());
+                                        cloudResourceRelaLink4.setTarget(GroupRelaId);
                                         insertCloudResourceRelaLink(cloudResourceRelaLink4);
 
                                         CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
                                         cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink5.setSource(cloudResourceRela4.getId());
-                                        cloudResourceRelaLink5.setTarget(cloudResourceRela5.getId());
+                                        cloudResourceRelaLink5.setSource(GroupRelaId);
+                                        cloudResourceRelaLink5.setTarget(EcsRelaId);
                                         insertCloudResourceRelaLink(cloudResourceRelaLink5);
 
                                         for (Object b : BlockDeviceMappings) {
@@ -732,8 +732,8 @@ public class CloudSyncService {
 
                                             CloudResourceRelaLink cloudResourceRelaLink6 = new CloudResourceRelaLink();
                                             cloudResourceRelaLink6.setResourceItemId(cloudResourceItem.getId());
-                                            cloudResourceRelaLink6.setSource(cloudResourceRela5.getId());
-                                            cloudResourceRelaLink6.setTarget(cloudResourceRela6.getId());
+                                            cloudResourceRelaLink6.setSource(EcsRelaId);
+                                            cloudResourceRelaLink6.setTarget(id);
                                             insertCloudResourceRelaLink(cloudResourceRelaLink6);
 
                                             y = y + 100;
@@ -743,8 +743,8 @@ public class CloudSyncService {
                                 } else {
                                     CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
                                     cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
-                                    cloudResourceRelaLink5.setSource(cloudResourceRela2.getId());
-                                    cloudResourceRelaLink5.setTarget(cloudResourceRela5.getId());
+                                    cloudResourceRelaLink5.setSource(VpcRelaId);
+                                    cloudResourceRelaLink5.setTarget(EcsRelaId);
                                     insertCloudResourceRelaLink(cloudResourceRelaLink5);
                                     for (Object b : BlockDeviceMappings) {
                                         String id = UUIDUtil.newUUID();
@@ -765,8 +765,8 @@ public class CloudSyncService {
 
                                         CloudResourceRelaLink cloudResourceRelaLink6 = new CloudResourceRelaLink();
                                         cloudResourceRelaLink6.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink6.setSource(cloudResourceRela5.getId());
-                                        cloudResourceRelaLink6.setTarget(cloudResourceRela6.getId());
+                                        cloudResourceRelaLink6.setSource(EcsRelaId);
+                                        cloudResourceRelaLink6.setTarget(id);
                                         insertCloudResourceRelaLink(cloudResourceRelaLink6);
 
                                         y = y + 100;
