@@ -197,7 +197,7 @@ public class CloudSyncService {
                             LogUtil.warn("sync all resource {scanner}[api body]: " + jsonObject.toJSONString());
 
                             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-                            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+                            String result = restTemplate.postForObject("http://hummer-scaner/run", httpEntity, String.class);
                             JSONObject resultJson = JSONObject.parseObject(result);
                             String resultCode = resultJson.getString("code").toString();
                             String resultMsg = resultJson.getString("msg").toString();
@@ -312,9 +312,9 @@ public class CloudSyncService {
         }
     }
 
-    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result, String accountId,String operator) {
+    void saveCloudResourceSyncItemLog(String syncItemId, String operation, String output, boolean result, String accountId, String operator) {
         CloudResourceSyncItemLog log = new CloudResourceSyncItemLog();
-        log.setOperator(operator==null?"system":operator);
+        log.setOperator(operator == null ? "system" : operator);
         log.setSyncItemId(syncItemId);
         log.setCreateTime(System.currentTimeMillis());
         log.setOperation(operation);
@@ -380,7 +380,7 @@ public class CloudSyncService {
         return extCloudResourceSyncMapper.cloudTopology(accountId);
     }
 
-    public TopoChartDTO cloudTopologyRela(String resourceItemId)  {
+    public TopoChartDTO cloudTopologyRela(String resourceItemId) {
 
         TopoChartDTO topoChartDTO = new TopoChartDTO();
 
@@ -396,8 +396,8 @@ public class CloudSyncService {
         return topoChartDTO;
     }
 
-    public void dealWithResourceRelation (CloudResourceItem cloudResourceItem) throws Exception  {
-        try{
+    public void dealWithResourceRelation(CloudResourceItem cloudResourceItem) throws Exception {
+        try {
             String pluginId = cloudResourceItem.getPluginId();
             if (StringUtils.equals(pluginId, "hummer-aws-plugin")) {
                 dealAws(cloudResourceItem);
@@ -436,9 +436,9 @@ public class CloudSyncService {
         }
     }
 
-    public void dealAws (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealAws(CloudResourceItem cloudResourceItem) throws Exception {
         String json = cloudResourceItem.getResource();
-        if(StringUtils.isEmpty(json)) return;
+        if (StringUtils.isEmpty(json)) return;
 
         String resourceType = cloudResourceItem.getResourceType();
         String accountId = cloudResourceItem.getAccountId();
@@ -446,36 +446,40 @@ public class CloudSyncService {
         String hummerId = cloudResourceItem.getHummerId();
         JSONObject jsonObject = JSONObject.parseObject(json);
 
+        Long x = 100L, y = 100L;
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setxAxis(x);//100
+        cloudResourceRela.setyAxis(y);//100
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+        cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
+
         switch (resourceType) {
             case "aws.ec2":
                 String PublicIpAddress = jsonObject.getString("PublicIpAddress");
                 String Internet = UUIDUtil.newUUID();
-                Long x = 100L, y = 100L;
+
                 if (StringUtils.isEmpty(PublicIpAddress)) {
-                    CloudResourceRela cloudResourceRela = new CloudResourceRela();
 
                     cloudResourceRela.setId(Internet);
-                    cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
                     cloudResourceRela.setName("No Internet");
-                    cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
-                    cloudResourceRela.setAccountId(accountId);
-                    cloudResourceRela.setRegionId(regionId);
                     cloudResourceRela.setResourceType("internet");
                     cloudResourceRela.setHummerId("No Internet");
-                    cloudResourceRela.setCreateTime(System.currentTimeMillis());
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//100
 
                     cloudResourceRelaMapper.insertSelective(cloudResourceRela);
                 } else {
-                    CloudResourceRela cloudResourceRela = new CloudResourceRela();
 
                     cloudResourceRela.setId(Internet);
-                    cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
                     cloudResourceRela.setName("Internet");
-                    cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
-                    cloudResourceRela.setAccountId(accountId);
-                    cloudResourceRela.setRegionId(regionId);
                     cloudResourceRela.setResourceType("internet");
                     cloudResourceRela.setHummerId("Internet");
                     cloudResourceRela.setxAxis(x);//100
@@ -484,26 +488,20 @@ public class CloudSyncService {
                     insertCloudResourceRela(cloudResourceRela);
                 }
 
-                JSONArray networkInterfaces = JSONArray.parseArray(!StringUtils.isEmpty(jsonObject.getString("NetworkInterfaces"))?jsonObject.getString("NetworkInterfaces"):"[]");
-                JSONArray BlockDeviceMappings = JSONArray.parseArray(!StringUtils.isEmpty(jsonObject.getString("BlockDeviceMappings"))?jsonObject.getString("BlockDeviceMappings"):"[]");
+                JSONArray networkInterfaces = JSONArray.parseArray(!StringUtils.isEmpty(jsonObject.getString("NetworkInterfaces")) ? jsonObject.getString("NetworkInterfaces") : "[]");
+                JSONArray BlockDeviceMappings = JSONArray.parseArray(!StringUtils.isEmpty(jsonObject.getString("BlockDeviceMappings")) ? jsonObject.getString("BlockDeviceMappings") : "[]");
 
                 for (Object obj : networkInterfaces) {
                     JSONObject jsonObj = JSONObject.parseObject(obj.toString());
                     String SubnetId = jsonObj.getString("SubnetId");
                     String VpcId = jsonObj.getString("VpcId");
-                    JSONObject Association = JSONObject.parseObject(!StringUtils.isEmpty(jsonObj.getString("Association"))?jsonObj.getString("Association"):"{}");
+                    JSONObject Association = JSONObject.parseObject(!StringUtils.isEmpty(jsonObj.getString("Association")) ? jsonObj.getString("Association") : "{}");
                     String PublicIp = Association.getString("PublicIp");
-                    JSONArray Groups = JSONArray.parseArray(!StringUtils.isEmpty(jsonObj.getString("Groups"))?jsonObj.getString("Groups"):"[]");
+                    JSONArray Groups = JSONArray.parseArray(!StringUtils.isEmpty(jsonObj.getString("Groups")) ? jsonObj.getString("Groups") : "[]");
 
                     String SubnetRelaId = UUIDUtil.newUUID();
                     String VpcRelaId = UUIDUtil.newUUID();
                     String PublicRelaIp = UUIDUtil.newUUID();
-
-                    CloudResourceRela cloudResourceRela = new CloudResourceRela();
-                    cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
-                    cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
-                    cloudResourceRela.setAccountId(accountId);
-                    cloudResourceRela.setRegionId(regionId);
 
                     if (!StringUtils.isEmpty(SubnetId)) {
 
@@ -515,8 +513,6 @@ public class CloudSyncService {
                         cloudResourceRela.setyAxis(y + 100L);//200
                         cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
-                        cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
                         cloudResourceRelaLink.setSource(Internet);
                         cloudResourceRelaLink.setTarget(SubnetRelaId);
                         insertCloudResourceRelaLink(cloudResourceRelaLink);
@@ -524,57 +520,46 @@ public class CloudSyncService {
                         y = y + 100L;
 
                         if (!StringUtils.isEmpty(VpcId)) {
-                            CloudResourceRela cloudResourceRela2 = new CloudResourceRela();
-                            cloudResourceRela2 = BeanUtils.copyBean(cloudResourceRela2, cloudResourceRela);
-                            cloudResourceRela2.setId(VpcRelaId);
-                            cloudResourceRela2.setName(SubnetId);
-                            cloudResourceRela2.setResourceType("aws.vpc");
-                            cloudResourceRela2.setHummerId(SubnetId);
-                            cloudResourceRela2.setxAxis(x + 100L);//200
-                            cloudResourceRela2.setyAxis(y);//200
-                            cloudResourceRela2 = insertCloudResourceRela(cloudResourceRela2);
+                            cloudResourceRela.setId(VpcRelaId);
+                            cloudResourceRela.setName(SubnetId);
+                            cloudResourceRela.setResourceType("aws.vpc");
+                            cloudResourceRela.setHummerId(SubnetId);
+                            cloudResourceRela.setxAxis(x + 100L);//200
+                            cloudResourceRela.setyAxis(y);//200
+                            cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                            CloudResourceRelaLink cloudResourceRelaLink2 = new CloudResourceRelaLink();
-                            cloudResourceRelaLink2.setResourceItemId(cloudResourceItem.getId());
-                            cloudResourceRelaLink2.setSource(SubnetRelaId);
-                            cloudResourceRelaLink2.setTarget(VpcRelaId);
-                            insertCloudResourceRelaLink(cloudResourceRelaLink2);
+                            cloudResourceRelaLink.setSource(SubnetRelaId);
+                            cloudResourceRelaLink.setTarget(VpcRelaId);
+                            insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                             x = x + 100L;
 
                             if (!StringUtils.isEmpty(PublicIp)) {
-                                CloudResourceRela cloudResourceRela3 = new CloudResourceRela();
-                                cloudResourceRela3 = BeanUtils.copyBean(cloudResourceRela3, cloudResourceRela);
 
-                                cloudResourceRela3.setId(PublicRelaIp);
-                                cloudResourceRela3.setName(PublicIp);
-                                cloudResourceRela3.setResourceType("aws.publicip");
-                                cloudResourceRela3.setHummerId(PublicIp);
-                                cloudResourceRela3.setxAxis(x + 100L);//300
-                                cloudResourceRela3.setyAxis(y);//200
-                                cloudResourceRela3 = insertCloudResourceRela(cloudResourceRela3);
+                                cloudResourceRela.setId(PublicRelaIp);
+                                cloudResourceRela.setName(PublicIp);
+                                cloudResourceRela.setResourceType("aws.publicip");
+                                cloudResourceRela.setHummerId(PublicIp);
+                                cloudResourceRela.setxAxis(x + 100L);//300
+                                cloudResourceRela.setyAxis(y);//200
+                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                                CloudResourceRelaLink cloudResourceRelaLink3 = new CloudResourceRelaLink();
-                                cloudResourceRelaLink3.setResourceItemId(cloudResourceItem.getId());
-                                cloudResourceRelaLink3.setSource(VpcRelaId);
-                                cloudResourceRelaLink3.setTarget(PublicRelaIp);
-                                insertCloudResourceRelaLink(cloudResourceRelaLink3);
+                                cloudResourceRelaLink.setSource(VpcRelaId);
+                                cloudResourceRelaLink.setTarget(PublicRelaIp);
+                                insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                                 x = x + 200L;
                                 y = y - 100L;
 
                                 String EcsRelaId = UUIDUtil.newUUID();
 
-                                CloudResourceRela cloudResourceRela5 = new CloudResourceRela();
-                                cloudResourceRela5 = BeanUtils.copyBean(cloudResourceRela5, cloudResourceRela);
-
-                                cloudResourceRela5.setId(EcsRelaId);
-                                cloudResourceRela5.setName(cloudResourceItem.getHummerName());
-                                cloudResourceRela5.setResourceType(resourceType);
-                                cloudResourceRela5.setHummerId(hummerId);
-                                cloudResourceRela5.setxAxis(x);//400
-                                cloudResourceRela5.setyAxis(y + 100L);//200
-                                cloudResourceRela5 = insertCloudResourceRela(cloudResourceRela5);
+                                cloudResourceRela.setId(EcsRelaId);
+                                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                                cloudResourceRela.setResourceType(resourceType);
+                                cloudResourceRela.setHummerId(hummerId);
+                                cloudResourceRela.setxAxis(x);//400
+                                cloudResourceRela.setyAxis(y + 100L);//200
+                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
                                 if (Groups.size() > 0) {
 
@@ -584,28 +569,21 @@ public class CloudSyncService {
                                         String GroupName = jsonO.getString("GroupName");
                                         String GroupRelaId = UUIDUtil.newUUID();
 
-                                        CloudResourceRela cloudResourceRela4 = new CloudResourceRela();
-                                        cloudResourceRela4 = BeanUtils.copyBean(cloudResourceRela4, cloudResourceRela);
+                                        cloudResourceRela.setId(GroupRelaId);
+                                        cloudResourceRela.setName(GroupName);
+                                        cloudResourceRela.setResourceType("aws.security-group");
+                                        cloudResourceRela.setHummerId(GroupId);
+                                        cloudResourceRela.setxAxis(x);//400
+                                        cloudResourceRela.setyAxis(y + 100L);//200
+                                        cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                                        cloudResourceRela4.setId(GroupRelaId);
-                                        cloudResourceRela4.setName(GroupName);
-                                        cloudResourceRela4.setResourceType("aws.security-group");
-                                        cloudResourceRela4.setHummerId(GroupId);
-                                        cloudResourceRela4.setxAxis(x);//400
-                                        cloudResourceRela4.setyAxis(y + 100L);//200
-                                        cloudResourceRela4 = insertCloudResourceRela(cloudResourceRela4);
+                                        cloudResourceRelaLink.setSource(PublicRelaIp);
+                                        cloudResourceRelaLink.setTarget(GroupRelaId);
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink);
 
-                                        CloudResourceRelaLink cloudResourceRelaLink4 = new CloudResourceRelaLink();
-                                        cloudResourceRelaLink4.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink4.setSource(PublicRelaIp);
-                                        cloudResourceRelaLink4.setTarget(GroupRelaId);
-                                        insertCloudResourceRelaLink(cloudResourceRelaLink4);
-
-                                        CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
-                                        cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink5.setSource(GroupRelaId);
-                                        cloudResourceRelaLink5.setTarget(EcsRelaId);
-                                        insertCloudResourceRelaLink(cloudResourceRelaLink5);
+                                        cloudResourceRelaLink.setSource(GroupRelaId);
+                                        cloudResourceRelaLink.setTarget(EcsRelaId);
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                                         for (Object b : BlockDeviceMappings) {
                                             String id = UUIDUtil.newUUID();
@@ -614,32 +592,27 @@ public class CloudSyncService {
                                             JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
                                             String VolumeId = Ebs.getString("VolumeId");
 
-                                            CloudResourceRela cloudResourceRela6 = new CloudResourceRela();
-                                            cloudResourceRela6 = BeanUtils.copyBean(cloudResourceRela6, cloudResourceRela);
-                                            cloudResourceRela6.setId(id);
-                                            cloudResourceRela6.setName(DeviceName);
-                                            cloudResourceRela6.setResourceType("aws.ebs");
-                                            cloudResourceRela6.setHummerId(VolumeId);
-                                            cloudResourceRela6.setxAxis(x);//400
-                                            cloudResourceRela6.setyAxis(y + 100L);//200
-                                            cloudResourceRela6 = insertCloudResourceRela(cloudResourceRela6);
+                                            cloudResourceRela.setId(id);
+                                            cloudResourceRela.setName(DeviceName);
+                                            cloudResourceRela.setResourceType("aws.ebs");
+                                            cloudResourceRela.setHummerId(VolumeId);
+                                            cloudResourceRela.setxAxis(x);//400
+                                            cloudResourceRela.setyAxis(y + 100L);//200
+                                            cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                                            CloudResourceRelaLink cloudResourceRelaLink6 = new CloudResourceRelaLink();
-                                            cloudResourceRelaLink6.setResourceItemId(cloudResourceItem.getId());
-                                            cloudResourceRelaLink6.setSource(EcsRelaId);
-                                            cloudResourceRelaLink6.setTarget(id);
-                                            insertCloudResourceRelaLink(cloudResourceRelaLink6);
+                                            cloudResourceRelaLink.setSource(EcsRelaId);
+                                            cloudResourceRelaLink.setTarget(id);
+                                            insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                                             y = y + 100;
                                         }
                                     }
 
                                 } else {
-                                    CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
-                                    cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
-                                    cloudResourceRelaLink5.setSource(cloudResourceRela3.getId());
-                                    cloudResourceRelaLink5.setTarget(cloudResourceRela5.getId());
-                                    insertCloudResourceRelaLink(cloudResourceRelaLink5);
+                                    cloudResourceRelaLink.setSource(cloudResourceRela.getId());
+                                    cloudResourceRelaLink.setTarget(cloudResourceRela.getId());
+                                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                                     for (Object b : BlockDeviceMappings) {
                                         String id = UUIDUtil.newUUID();
                                         JSONObject j = JSONObject.parseObject(b.toString());
@@ -647,21 +620,17 @@ public class CloudSyncService {
                                         JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
                                         String VolumeId = Ebs.getString("VolumeId");
 
-                                        CloudResourceRela cloudResourceRela6 = new CloudResourceRela();
-                                        cloudResourceRela6 = BeanUtils.copyBean(cloudResourceRela6, cloudResourceRela);
-                                        cloudResourceRela6.setId(id);
-                                        cloudResourceRela6.setName(DeviceName);
-                                        cloudResourceRela6.setResourceType("aws.ebs");
-                                        cloudResourceRela6.setHummerId(VolumeId);
-                                        cloudResourceRela6.setxAxis(x);//400
-                                        cloudResourceRela6.setyAxis(y + 100L);//200
-                                        cloudResourceRela6 = insertCloudResourceRela(cloudResourceRela6);
+                                        cloudResourceRela.setId(id);
+                                        cloudResourceRela.setName(DeviceName);
+                                        cloudResourceRela.setResourceType("aws.ebs");
+                                        cloudResourceRela.setHummerId(VolumeId);
+                                        cloudResourceRela.setxAxis(x);//400
+                                        cloudResourceRela.setyAxis(y + 100L);//200
+                                        cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                                        CloudResourceRelaLink cloudResourceRelaLink6 = new CloudResourceRelaLink();
-                                        cloudResourceRelaLink6.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink6.setSource(cloudResourceRela5.getId());
-                                        cloudResourceRelaLink6.setTarget(cloudResourceRela6.getId());
-                                        insertCloudResourceRelaLink(cloudResourceRelaLink6);
+                                        cloudResourceRelaLink.setSource(cloudResourceRela.getId());
+                                        cloudResourceRelaLink.setTarget(cloudResourceRela.getId());
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                                         y = y + 100;
                                     }
@@ -671,16 +640,13 @@ public class CloudSyncService {
 
                                 String EcsRelaId = UUIDUtil.newUUID();
 
-                                CloudResourceRela cloudResourceRela5 = new CloudResourceRela();
-                                cloudResourceRela5 = BeanUtils.copyBean(cloudResourceRela5, cloudResourceRela);
-
-                                cloudResourceRela5.setId(EcsRelaId);
-                                cloudResourceRela5.setName(cloudResourceItem.getHummerName());
-                                cloudResourceRela5.setResourceType(resourceType);
-                                cloudResourceRela5.setHummerId(cloudResourceItem.getHummerId());
-                                cloudResourceRela5.setxAxis(x);//400
-                                cloudResourceRela5.setyAxis(y + 100L);//200
-                                cloudResourceRela5 = insertCloudResourceRela(cloudResourceRela5);
+                                cloudResourceRela.setId(EcsRelaId);
+                                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                                cloudResourceRela.setResourceType(resourceType);
+                                cloudResourceRela.setHummerId(cloudResourceItem.getHummerId());
+                                cloudResourceRela.setxAxis(x);//400
+                                cloudResourceRela.setyAxis(y + 100L);//200
+                                insertCloudResourceRela(cloudResourceRela);
 
                                 if (Groups.size() > 0) {
 
@@ -690,28 +656,21 @@ public class CloudSyncService {
                                         String GroupName = jsonO.getString("GroupName");
                                         String GroupRelaId = UUIDUtil.newUUID();
 
-                                        CloudResourceRela cloudResourceRela4 = new CloudResourceRela();
-                                        cloudResourceRela4 = BeanUtils.copyBean(cloudResourceRela4, cloudResourceRela);
+                                        cloudResourceRela.setId(GroupRelaId);
+                                        cloudResourceRela.setName(GroupName);
+                                        cloudResourceRela.setResourceType("aws.security-group");
+                                        cloudResourceRela.setHummerId(GroupId);
+                                        cloudResourceRela.setxAxis(x);//400
+                                        cloudResourceRela.setyAxis(y + 100L);//200
+                                        cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                                        cloudResourceRela4.setId(GroupRelaId);
-                                        cloudResourceRela4.setName(GroupName);
-                                        cloudResourceRela4.setResourceType("aws.security-group");
-                                        cloudResourceRela4.setHummerId(GroupId);
-                                        cloudResourceRela4.setxAxis(x);//400
-                                        cloudResourceRela4.setyAxis(y + 100L);//200
-                                        cloudResourceRela4 = insertCloudResourceRela(cloudResourceRela4);
+                                        cloudResourceRelaLink.setSource(PublicRelaIp);
+                                        cloudResourceRelaLink.setTarget(GroupRelaId);
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink);
 
-                                        CloudResourceRelaLink cloudResourceRelaLink4 = new CloudResourceRelaLink();
-                                        cloudResourceRelaLink4.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink4.setSource(PublicRelaIp);
-                                        cloudResourceRelaLink4.setTarget(GroupRelaId);
-                                        insertCloudResourceRelaLink(cloudResourceRelaLink4);
-
-                                        CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
-                                        cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink5.setSource(GroupRelaId);
-                                        cloudResourceRelaLink5.setTarget(EcsRelaId);
-                                        insertCloudResourceRelaLink(cloudResourceRelaLink5);
+                                        cloudResourceRelaLink.setSource(GroupRelaId);
+                                        cloudResourceRelaLink.setTarget(EcsRelaId);
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                                         for (Object b : BlockDeviceMappings) {
                                             String id = UUIDUtil.newUUID();
@@ -720,32 +679,26 @@ public class CloudSyncService {
                                             JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
                                             String VolumeId = Ebs.getString("VolumeId");
 
-                                            CloudResourceRela cloudResourceRela6 = new CloudResourceRela();
-                                            cloudResourceRela6 = BeanUtils.copyBean(cloudResourceRela6, cloudResourceRela);
-                                            cloudResourceRela6.setId(id);
-                                            cloudResourceRela6.setName(DeviceName);
-                                            cloudResourceRela6.setResourceType("aws.ebs");
-                                            cloudResourceRela6.setHummerId(VolumeId);
-                                            cloudResourceRela6.setxAxis(x);//400
-                                            cloudResourceRela6.setyAxis(y + 100L);//200
-                                            cloudResourceRela6 = insertCloudResourceRela(cloudResourceRela6);
+                                            cloudResourceRela.setId(id);
+                                            cloudResourceRela.setName(DeviceName);
+                                            cloudResourceRela.setResourceType("aws.ebs");
+                                            cloudResourceRela.setHummerId(VolumeId);
+                                            cloudResourceRela.setxAxis(x);//400
+                                            cloudResourceRela.setyAxis(y + 100L);//200
+                                            insertCloudResourceRela(cloudResourceRela);
 
-                                            CloudResourceRelaLink cloudResourceRelaLink6 = new CloudResourceRelaLink();
-                                            cloudResourceRelaLink6.setResourceItemId(cloudResourceItem.getId());
-                                            cloudResourceRelaLink6.setSource(EcsRelaId);
-                                            cloudResourceRelaLink6.setTarget(id);
-                                            insertCloudResourceRelaLink(cloudResourceRelaLink6);
+                                            cloudResourceRelaLink.setSource(EcsRelaId);
+                                            cloudResourceRelaLink.setTarget(id);
+                                            insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                                             y = y + 100;
                                         }
                                     }
 
                                 } else {
-                                    CloudResourceRelaLink cloudResourceRelaLink5 = new CloudResourceRelaLink();
-                                    cloudResourceRelaLink5.setResourceItemId(cloudResourceItem.getId());
-                                    cloudResourceRelaLink5.setSource(VpcRelaId);
-                                    cloudResourceRelaLink5.setTarget(EcsRelaId);
-                                    insertCloudResourceRelaLink(cloudResourceRelaLink5);
+                                    cloudResourceRelaLink.setSource(VpcRelaId);
+                                    cloudResourceRelaLink.setTarget(EcsRelaId);
+                                    insertCloudResourceRelaLink(cloudResourceRelaLink);
                                     for (Object b : BlockDeviceMappings) {
                                         String id = UUIDUtil.newUUID();
                                         JSONObject j = JSONObject.parseObject(b.toString());
@@ -753,21 +706,17 @@ public class CloudSyncService {
                                         JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
                                         String VolumeId = Ebs.getString("VolumeId");
 
-                                        CloudResourceRela cloudResourceRela6 = new CloudResourceRela();
-                                        cloudResourceRela6 = BeanUtils.copyBean(cloudResourceRela6, cloudResourceRela);
-                                        cloudResourceRela6.setId(id);
-                                        cloudResourceRela6.setName(DeviceName);
-                                        cloudResourceRela6.setResourceType("aws.ebs");
-                                        cloudResourceRela6.setHummerId(VolumeId);
-                                        cloudResourceRela6.setxAxis(x);//400
-                                        cloudResourceRela6.setyAxis(y + 100L);//200
-                                        cloudResourceRela6 = insertCloudResourceRela(cloudResourceRela6);
+                                        cloudResourceRela.setId(id);
+                                        cloudResourceRela.setName(DeviceName);
+                                        cloudResourceRela.setResourceType("aws.ebs");
+                                        cloudResourceRela.setHummerId(VolumeId);
+                                        cloudResourceRela.setxAxis(x);//400
+                                        cloudResourceRela.setyAxis(y + 100L);//200
+                                        cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
 
-                                        CloudResourceRelaLink cloudResourceRelaLink6 = new CloudResourceRelaLink();
-                                        cloudResourceRelaLink6.setResourceItemId(cloudResourceItem.getId());
-                                        cloudResourceRelaLink6.setSource(EcsRelaId);
-                                        cloudResourceRelaLink6.setTarget(id);
-                                        insertCloudResourceRelaLink(cloudResourceRelaLink6);
+                                        cloudResourceRelaLink.setSource(EcsRelaId);
+                                        cloudResourceRelaLink.setTarget(id);
+                                        insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                                         y = y + 100;
                                     }
@@ -797,61 +746,290 @@ public class CloudSyncService {
         }
     }
 
-    public void dealAzure (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealAzure(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealAliyun (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealAliyun(CloudResourceItem cloudResourceItem) throws Exception {
+
+        String json = cloudResourceItem.getResource();
+        if (StringUtils.isEmpty(json)) return;
+
+        String resourceType = cloudResourceItem.getResourceType();
+        String accountId = cloudResourceItem.getAccountId();
+        String regionId = cloudResourceItem.getRegionId();
+        String hummerId = cloudResourceItem.getHummerId();
+        JSONObject jsonObject = JSONObject.parseObject(json);
+
+        Long x = 100L, y = 100L;
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setxAxis(x);//100
+        cloudResourceRela.setyAxis(y);//100
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+        cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
+
+        switch (resourceType) {
+            case "aliyun.ecs":
+                String PublicIpAddress = jsonObject.getString("PublicIpAddress");
+                JSONArray IpAddress = JSONArray.parseArray(!JSONObject.parseObject(PublicIpAddress).getString("IpAddress").isEmpty() ? JSONObject.parseObject(PublicIpAddress).getString("IpAddress") : "[]");
+
+                String VpcAttributes = jsonObject.getString("VpcAttributes");
+                String VpcId = JSONObject.parseObject(VpcAttributes).getString("VpcId");
+
+                String SecurityGroupIds = jsonObject.getString("SecurityGroupIds");
+                JSONArray SecurityGroupId = JSONArray.parseArray(!JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId").isEmpty() ? JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId") : "[]");
+
+                String Internet = UUIDUtil.newUUID();
+
+                if (IpAddress.size() == 0) {
+
+
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("No Internet");
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("No Internet");
+                    cloudResourceRela.setxAxis(x);//100
+                    cloudResourceRela.setyAxis(y);//100
+
+                    cloudResourceRelaMapper.insertSelective(cloudResourceRela);
+                } else {
+
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("Internet");
+                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setHummerId("Internet");
+                    cloudResourceRela.setxAxis(x);//100
+                    cloudResourceRela.setyAxis(y);//100
+
+                    insertCloudResourceRela(cloudResourceRela);
+                }
+
+                String VpcRelaId = UUIDUtil.newUUID();
+
+                if (!StringUtils.isEmpty(VpcId)) {
+
+                    cloudResourceRela.setId(VpcId);
+                    cloudResourceRela.setName(VpcId);
+                    cloudResourceRela.setResourceType("aliyun.vpc");
+                    cloudResourceRela.setHummerId(VpcId);
+                    cloudResourceRela.setxAxis(x);//100
+                    cloudResourceRela.setyAxis(y + 100L);//200
+                    cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(Internet);
+                    cloudResourceRelaLink.setTarget(VpcId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    y = y + 100L;//200
+
+                    String EcsRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(EcsRelaId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setxAxis(x + 200L);//300
+                    cloudResourceRela.setyAxis(y);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    if (IpAddress.size() > 0) {
+
+                        x = x + 100L;
+                        y = y - 100L;
+
+                        for (Object obj : IpAddress) {
+                            String Ip = obj.toString();
+                            String PublicRelaIp = UUIDUtil.newUUID();
+
+                            cloudResourceRela.setId(PublicRelaIp);
+                            cloudResourceRela.setName(Ip);
+                            cloudResourceRela.setResourceType("aliyun.eip");
+                            cloudResourceRela.setHummerId(Ip);
+                            cloudResourceRela.setxAxis(x);//200
+                            cloudResourceRela.setyAxis(y + 100L);//200
+                            cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+
+                            cloudResourceRelaLink.setSource(VpcRelaId);
+                            cloudResourceRelaLink.setTarget(PublicRelaIp);
+                            insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                            cloudResourceRelaLink.setSource(PublicRelaIp);
+                            cloudResourceRelaLink.setTarget(EcsRelaId);
+                            insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                            y = y + 100L;
+                        }
+
+                        if (SecurityGroupId.size() > 0) {
+
+                            y = 100L;
+                            x = 400L;
+
+                            for (Object sg : SecurityGroupId) {
+                                String Sg = sg.toString();
+                                String GroupRelaId = UUIDUtil.newUUID();
+
+                                cloudResourceRela.setId(GroupRelaId);
+                                cloudResourceRela.setName(Sg);
+                                cloudResourceRela.setResourceType("aliyun.security-group");
+                                cloudResourceRela.setHummerId(Sg);
+                                cloudResourceRela.setxAxis(x);//400
+                                cloudResourceRela.setyAxis(y + 100L);//200
+                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+
+                                cloudResourceRelaLink.setSource(EcsRelaId);
+                                cloudResourceRelaLink.setTarget(GroupRelaId);
+                                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                                y = y + 100L;
+                            }
+                        }
+
+                    } else {
+
+                        if (SecurityGroupId.size() > 0) {
+
+                            y = 100L;
+                            x = 200L;
+
+                            for (Object sg : SecurityGroupId) {
+                                String Sg = sg.toString();
+                                String GroupRelaId = UUIDUtil.newUUID();
+
+                                cloudResourceRela.setId(GroupRelaId);
+                                cloudResourceRela.setName(Sg);
+                                cloudResourceRela.setResourceType("aliyun.security-group");
+                                cloudResourceRela.setHummerId(Sg);
+                                cloudResourceRela.setxAxis(x);//400
+                                cloudResourceRela.setyAxis(y + 100L);//200
+                                insertCloudResourceRela(cloudResourceRela);
+
+                                cloudResourceRelaLink.setSource(EcsRelaId);
+                                cloudResourceRelaLink.setTarget(GroupRelaId);
+                                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                                y = y + 100L;
+                            }
+                        }
+                    }
+
+                }
+                break;
+            case "aliyun.cdn":
+                break;
+            case "aliyun.disk":
+                String InstanceId = jsonObject.getString("InstanceId");
+                String EcsRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(EcsRelaId);
+                cloudResourceRela.setName(InstanceId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(InstanceId);
+                cloudResourceRela.setxAxis(x);//100
+                cloudResourceRela.setyAxis(y + 100L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String DiskRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(DiskRelaId);
+                cloudResourceRela.setxAxis(x + 100L);//200
+                cloudResourceRela.setyAxis(y + 100L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(EcsRelaId);
+                cloudResourceRelaLink.setTarget(DiskRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+                break;
+            case "aliyun.eip":
+                break;
+            case "aliyun.mongodb":
+                break;
+            case "aliyun.oss":
+                break;
+            case "aliyun.polardb":
+                break;
+            case "aliyun.ram":
+                break;
+            case "aliyun.rds":
+                break;
+            case "aliyun.redis":
+                break;
+            case "aliyun.security-group":
+                break;
+            case "aliyun.slb":
+                break;
+            case "aliyun.nas":
+                break;
+            case "aliyun.mse":
+                break;
+            case "aliyun.ack":
+                break;
+            case "aliyun.vpc":
+                break;
+            default:
+                break;
+        }
+
     }
 
-    public void dealHuawei (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealHuawei(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealQcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealQcloud(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealVsphere (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealVsphere(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealOpenstack (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealOpenstack(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealGcp (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealGcp(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealHuoshan (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealHuoshan(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealBaidu (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealBaidu(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealQiniu (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealQiniu(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealQingcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealQingcloud(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealUcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealUcloud(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealJdcloud (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealJdcloud(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public void dealKsyun (CloudResourceItem cloudResourceItem) throws Exception  {
+    public void dealKsyun(CloudResourceItem cloudResourceItem) throws Exception {
     }
 
-    public CloudResourceRela insertCloudResourceRela (CloudResourceRela cloudResourceRela) throws Exception  {
+    public CloudResourceRela insertCloudResourceRela(CloudResourceRela cloudResourceRela) throws Exception {
         cloudResourceRela.setCreateTime(System.currentTimeMillis());
         CloudResourceRelaExample example = new CloudResourceRelaExample();
         example.createCriteria().andResourceItemIdEqualTo(cloudResourceRela.getResourceItemId()).andHummerIdEqualTo(cloudResourceRela.getHummerId()).andNameEqualTo(cloudResourceRela.getName());
         List<CloudResourceRela> list = cloudResourceRelaMapper.selectByExample(example);
-        if(list.size() == 0) {
+        if (list.size() == 0) {
             cloudResourceRelaMapper.insertSelective(cloudResourceRela);
             cloudResourceRela = list.get(0);
         }
         return cloudResourceRela;
     }
 
-    public void insertCloudResourceRelaLink (CloudResourceRelaLink cloudResourceRelaLink) throws Exception  {
+    public void insertCloudResourceRelaLink(CloudResourceRelaLink cloudResourceRelaLink) throws Exception {
         cloudResourceRelaLink.setCreateTime(System.currentTimeMillis());
         cloudResourceRelaLinkMapper.insertSelective(cloudResourceRelaLink);
     }
