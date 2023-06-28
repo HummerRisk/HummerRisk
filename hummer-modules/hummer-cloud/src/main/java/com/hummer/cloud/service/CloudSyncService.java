@@ -1497,6 +1497,8 @@ public class CloudSyncService {
                 break;
             case "aliyun.event":
                 break;
+            case "aliyun.postgre-sql":
+                break;
             default:
 
                 String defaultRelaId = UUIDUtil.newUUID();
