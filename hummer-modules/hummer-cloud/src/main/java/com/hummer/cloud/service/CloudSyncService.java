@@ -862,6 +862,17 @@ public class CloudSyncService {
 
                 break;
             case "aws.vpc":
+
+                String vpcRelaId_ = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(vpcRelaId_);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
             default:
                 break;
@@ -1046,6 +1057,17 @@ public class CloudSyncService {
                 }
                 break;
             case "aliyun.cdn":
+
+                String cdnRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(cdnRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
             case "aliyun.disk":
                 String InstanceId = jsonObject.getString("InstanceId");
@@ -1492,14 +1514,102 @@ public class CloudSyncService {
                 }
                 break;
             case "aliyun.mse":
+
+                String mseRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(mseRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
             case "aliyun.ack":
+
+                String ackRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(ackRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
             case "aliyun.vpc":
+
+                String Status = jsonObject.getString("Status");
+
+                if (StringUtils.equals(Status, "Available")) {
+                    String vpcRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(vpcRelaId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setxAxis(200L);//200
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+                } else {
+
+                }
+
                 break;
             case "aliyun.event":
+
+                String eventRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(eventRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
             case "aliyun.postgre-sql":
+
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                String postgresqlVpcId = jsonObject.getString("VpcId");
+                String postgresqlVpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(postgresqlVpcRelaId);
+                cloudResourceRela.setName(postgresqlVpcId);
+                cloudResourceRela.setResourceType("aliyun.vpc");
+                cloudResourceRela.setHummerId(postgresqlVpcId);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(postgresqlVpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String postgresqlRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(postgresqlRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(postgresqlVpcRelaId);
+                cloudResourceRelaLink.setTarget(postgresqlRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             default:
 

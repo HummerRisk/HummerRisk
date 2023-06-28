@@ -12,6 +12,7 @@
         <result column="hummer_id" jdbcType="VARCHAR" property="hummerId" />
         <result column="x" jdbcType="BIGINT" property="x" />
         <result column="y" jdbcType="BIGINT" property="y" />
+        <result column="category" jdbcType="VARCHAR" property="category" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="value" property="value"/>
     </resultMap>
@@ -26,6 +27,7 @@
             t.resource_type,
             t.hummer_id,
             t.create_time,
+            t.category,
             t.x_axis as x,
             t.y_axis as y,
             t.hummer_id as value,
