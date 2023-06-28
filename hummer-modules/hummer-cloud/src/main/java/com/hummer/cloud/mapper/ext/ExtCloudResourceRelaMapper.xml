@@ -10,17 +10,26 @@
         <result column="region_id" jdbcType="VARCHAR" property="regionId" />
         <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
         <result column="hummer_id" jdbcType="VARCHAR" property="hummerId" />
-        <result column="x_axis" jdbcType="BIGINT" property="xAxis" />
-        <result column="y_axis" jdbcType="BIGINT" property="yAxis" />
+        <result column="x" jdbcType="BIGINT" property="x" />
+        <result column="y" jdbcType="BIGINT" property="y" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="value" property="value"/>
     </resultMap>
 
     <select id="selectCloudTopologyRela" resultMap="BaseResultMap" parameterType="String">
         select
-            t.*,
+            t.id,
+            t.resource_item_id,
+            t.plugin_id,
+            t.account_id,
+            t.region_id,
+            t.resource_type,
+            t.hummer_id,
+            t.create_time,
+            t.x_axis as x,
+            t.y_axis as y,
             t.hummer_id as value,
-            concat(t.resource_type, ' : ', t.name) as name
+            concat(t.resource_type, ' | ', t.name) as name
         from cloud_resource_rela t
         where t.resource_item_id = #{resourceItemId}
     </select>

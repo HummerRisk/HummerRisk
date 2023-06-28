@@ -46,7 +46,10 @@ export default {
 
               symbolSize: 40,
               label: {
-                show: true
+                show: true,
+                formatter: params => {
+                  return `类型: ${params.name}\n\n\n\n\n\n\n${params.value}`
+                },
               },
               edgeSymbol: ['circle', 'arrow'],
               edgeSymbolSize: [4, 10],
