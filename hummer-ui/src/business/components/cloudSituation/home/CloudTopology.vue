@@ -82,7 +82,7 @@
           <span style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
         </el-table-column>
       </el-table>
-      <cloud-detail-chart v-if="resources && supportPlugins.includes(details.pluginId)" :resourceItemId="details.id"/>
+      <cloud-detail-chart v-if="resources && supportPlugins.includes(details.pluginId)" :resourceItemId="details.resource"/>
       <div class="desc-top" v-if="resources && resources != '{}'">
         <el-divider><i class="el-icon-folder-opened"></i></el-divider>
         <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
@@ -154,6 +154,7 @@ export default {
         resourceType: '',
         riskType: '',
         type: '',
+        resource: '',
       },
       resources: '{}',//resource json : {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
       supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin'],

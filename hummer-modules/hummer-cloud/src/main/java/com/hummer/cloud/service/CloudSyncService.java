@@ -399,7 +399,7 @@ public class CloudSyncService {
     public void dealWithResourceRelation(CloudResourceItem cloudResourceItem) throws Exception {
         try {
             //计算云资源关系拓扑图数据
-            LogUtil.info("开始：计算云资源关系拓扑图数据");
+            LogUtil.info("开始：计算云资源关系拓扑图数据" + cloudResourceItem.getResourceType() + " " + cloudResourceItem.getHummerName());
 
             CloudResourceRelaExample cloudResourceRelaExample = new CloudResourceRelaExample();
             cloudResourceRelaExample.createCriteria().andResourceItemIdEqualTo(cloudResourceItem.getId());
