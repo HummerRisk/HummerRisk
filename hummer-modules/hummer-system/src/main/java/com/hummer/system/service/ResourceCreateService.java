@@ -78,21 +78,19 @@ public class ResourceCreateService {
             HistoryScanTaskExample.Criteria historyScanTaskCriteria = historyScanTaskExample.createCriteria();
             historyScanTaskCriteria.andScanIdEqualTo(historyScan.getId()).andStatusNotIn(historyScanStatus);
             List<HistoryScanTask> historyScanTasks = historyScanTaskMapper.selectByExample(historyScanTaskExample);
-            if(historyScanTasks.size() == 0) {
-                historyScan.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                historyScanMapper.updateByPrimaryKey(historyScan);
-            }
             JSONArray jsonArray = new JSONArray();
-            historyScanTaskCriteria.andStatusIn(historyScanStatus);
             for (HistoryScanTask historyScanTask : historyScanTasks) {
                 if (StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.cloudAccount.getType())) {
                     CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
-                    if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
-                        historyScanTask.setStatus(cloudTask.getStatus());
-                        historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
-                        historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
-
+                    if (cloudTask != null) {
+                        if (historyScanStatus.contains(cloudTask.getStatus())) {
+                            historyScanTask.setStatus(cloudTask.getStatus());
+                            historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
+                            historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
+                            historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.cloudAccount.getType()));
+                        } else {
+                            continue;
+                        }
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
@@ -103,11 +101,15 @@ public class ResourceCreateService {
                     historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
                     ServerResult serverResult = k8sProviderService.serverResult(historyScanTask.getTaskId());
-                    if (serverResult != null && historyScanStatus.contains(serverResult.getResultStatus())) {
-                        historyScanTask.setStatus(serverResult.getResultStatus());
-                        historyScanTask.setResourcesSum(1L);
-                        historyScanTask.setReturnSum(1L);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), serverResult, TaskEnum.serverAccount.getType()));
+                    if (serverResult != null) {
+                        if (historyScanStatus.contains(serverResult.getResultStatus())) {
+                            historyScanTask.setStatus(serverResult.getResultStatus());
+                            historyScanTask.setResourcesSum(1L);
+                            historyScanTask.setReturnSum(1L);
+                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), serverResult, TaskEnum.serverAccount.getType()));
+                        } else {
+                            continue;
+                        }
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
@@ -118,11 +120,15 @@ public class ResourceCreateService {
                     historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
                     ImageResult imageResult = k8sProviderService.imageResult(historyScanTask.getTaskId());
-                    if (imageResult != null && historyScanStatus.contains(imageResult.getResultStatus())) {
-                        historyScanTask.setStatus(imageResult.getResultStatus());
-                        historyScanTask.setResourcesSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
-                        historyScanTask.setReturnSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), imageResult, TaskEnum.imageAccount.getType()));
+                    if (imageResult != null) {
+                        if (historyScanStatus.contains(imageResult.getResultStatus())) {
+                            historyScanTask.setStatus(imageResult.getResultStatus());
+                            historyScanTask.setResourcesSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
+                            historyScanTask.setReturnSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
+                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), imageResult, TaskEnum.imageAccount.getType()));
+                        } else {
+                            continue;
+                        }
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
@@ -133,11 +139,16 @@ public class ResourceCreateService {
                     historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
                     CodeResult codeResult = k8sProviderService.codeResult(historyScanTask.getTaskId());
-                    if (codeResult != null && historyScanStatus.contains(codeResult.getResultStatus())) {
-                        historyScanTask.setStatus(codeResult.getResultStatus());
-                        historyScanTask.setResourcesSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
-                        historyScanTask.setReturnSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), codeResult, TaskEnum.codeAccount.getType()));
+                    if (codeResult != null) {
+                        if (historyScanStatus.contains(codeResult.getResultStatus())) {
+                            historyScanTask.setStatus(codeResult.getResultStatus());
+                            historyScanTask.setResourcesSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
+                            historyScanTask.setReturnSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
+                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), codeResult, TaskEnum.codeAccount.getType()));
+                        } else {
+                            continue;
+                        }
+
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
@@ -148,11 +159,16 @@ public class ResourceCreateService {
                     historyService.updateScanTaskHistory(historyScanTask);
                 }  else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
                     FileSystemResult fileSystemResult = k8sProviderService.fileSystemResult(historyScanTask.getTaskId());
-                    if (fileSystemResult != null && historyScanStatus.contains(fileSystemResult.getResultStatus())) {
-                        historyScanTask.setStatus(fileSystemResult.getResultStatus());
-                        historyScanTask.setResourcesSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
-                        historyScanTask.setReturnSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), fileSystemResult, TaskEnum.fsAccount.getType()));
+                    if (fileSystemResult != null) {
+                        if (historyScanStatus.contains(fileSystemResult.getResultStatus())) {
+                            historyScanTask.setStatus(fileSystemResult.getResultStatus());
+                            historyScanTask.setResourcesSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
+                            historyScanTask.setReturnSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
+                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), fileSystemResult, TaskEnum.fsAccount.getType()));
+                        } else {
+                            continue;
+                        }
+
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
@@ -164,19 +180,29 @@ public class ResourceCreateService {
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
 
                     CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
-                    if (cloudTask != null && historyScanStatus.contains(cloudTask.getStatus())) {
-                        historyScanTask.setStatus(cloudTask.getStatus());
-                        historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
-                        historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.k8sRuleAccount.getType()));
+                    if (cloudTask != null) {
+                        if (historyScanStatus.contains(cloudTask.getStatus())) {
+                            historyScanTask.setStatus(cloudTask.getStatus());
+                            historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
+                            historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
+                            historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.k8sRuleAccount.getType()));
+                        } else {
+                            continue;
+                        }
+
                     }
 
                     CloudNativeResult cloudNativeResult = k8sProviderService.cloudNativeResult(historyScanTask.getTaskId());
-                    if (cloudNativeResult != null && historyScanStatus.contains(cloudNativeResult.getResultStatus())) {
-                        historyScanTask.setStatus(cloudNativeResult.getResultStatus());
-                        historyScanTask.setResourcesSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
-                        historyScanTask.setReturnSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeResult, TaskEnum.k8sAccount.getType()));
+                    if (cloudNativeResult != null) {
+                        if (historyScanStatus.contains(cloudNativeResult.getResultStatus())) {
+                            historyScanTask.setStatus(cloudNativeResult.getResultStatus());
+                            historyScanTask.setResourcesSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
+                            historyScanTask.setReturnSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
+                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeResult, TaskEnum.k8sAccount.getType()));
+                        } else {
+                            continue;
+                        }
+
                     }
 
                     if (cloudTask == null && cloudNativeResult == null) {
@@ -190,11 +216,16 @@ public class ResourceCreateService {
                     historyService.updateScanTaskHistory(historyScanTask);
                 } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
                     CloudNativeConfigResult cloudNativeConfigResult = k8sProviderService.cloudNativeConfigResult(historyScanTask.getTaskId());
-                    if (cloudNativeConfigResult != null && historyScanStatus.contains(cloudNativeConfigResult.getResultStatus())) {
-                        historyScanTask.setStatus(cloudNativeConfigResult.getResultStatus());
-                        historyScanTask.setResourcesSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
-                        historyScanTask.setReturnSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
-                        historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeConfigResult, TaskEnum.configAccount.getType()));
+                    if (cloudNativeConfigResult != null) {
+                        if (historyScanStatus.contains(cloudNativeConfigResult.getResultStatus())) {
+                            historyScanTask.setStatus(cloudNativeConfigResult.getResultStatus());
+                            historyScanTask.setResourcesSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
+                            historyScanTask.setReturnSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
+                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeConfigResult, TaskEnum.configAccount.getType()));
+                        } else {
+                            continue;
+                        }
+
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);
@@ -205,12 +236,8 @@ public class ResourceCreateService {
                     historyService.updateScanTaskHistory(historyScanTask);
                 }
             }
-            long count = historyScanTaskMapper.countByExample(historyScanTaskExample);
-            if(historyScanTasks.size() == count) {
-                historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
-                historyScanMapper.updateByPrimaryKeySelective(historyScan);
-                historyService.updateScanHistory(historyScan);
-            }
+            historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
+            historyService.updateScanHistory(historyScan);
             historyIdMap.remove(historyScanToBeProceed.getId());
         }
 
