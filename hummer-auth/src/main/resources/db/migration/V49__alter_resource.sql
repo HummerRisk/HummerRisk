@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_rela` (
     `region_id`                  varchar(128)        DEFAULT NULL COMMENT '云账号区域ID',
     `resource_type`              varchar(64)         DEFAULT NULL COMMENT '资源类型',
     `hummer_id`                  varchar(128)        DEFAULT NULL COMMENT '资源ID',
+    `category`                   varchar(50)         DEFAULT NULL COMMENT '资源所属类别',
     `x_axis`                     bigint              DEFAULT NULL COMMENT '横坐标',
     `y_axis`                     bigint              DEFAULT NULL COMMENT '纵坐标',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
@@ -23,6 +24,8 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_rela_link` (
     `resource_item_id`           varchar(128)        DEFAULT NULL COMMENT 'cloud resource item 标识',
     `source`                     varchar(50)         DEFAULT NULL COMMENT '资源关系ID(源)',
     `target`                     varchar(50)         DEFAULT NULL COMMENT '资源关系ID(目标)',
+    `value`                      varchar(50)         DEFAULT NULL COMMENT '资源关系描述',
+    `category`                   varchar(50)         DEFAULT NULL COMMENT '资源所属类别',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
