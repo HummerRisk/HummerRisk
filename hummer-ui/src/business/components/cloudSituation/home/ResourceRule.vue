@@ -83,7 +83,6 @@
           <span style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
         </el-table-column>
       </el-table>
-
       <cloud-detail-chart v-if="resources && supportPlugins.includes(pluginId)" :resourceItemId="resourceItemId"/>
       <div class="desc-top" v-if="resources && resources != '{}'">
         <el-divider><i class="el-icon-folder-opened"></i></el-divider>
@@ -244,4 +243,9 @@ export default {
 /deep/ :focus {
   outline: 0;
 }
+
+.desc-top {
+  margin: 15px;
+}
+
 </style>
