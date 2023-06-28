@@ -62,8 +62,28 @@
           <span v-if="details.riskType === 'uncheck'">{{ $t('resource.uncheck') }}</span>
         </el-descriptions-item>
       </el-descriptions>
+      <el-table v-if="details.riskType === 'risk'" :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
+        <el-table-column v-slot:default="scope" :label="$t('rule.rule_name')" min-width="40%" show-overflow-tooltip>
+          <el-link type="primary" :underline="false" class="md-primary text-click">
+            {{ scope.row.taskName }}
+          </el-link>
+        </el-table-column>
+        <el-table-column v-slot:default="scope" :label="$t('rule.severity')" min-width="20%"
+                         prop="severity" :sortable="true"
+                         show-overflow-tooltip>
+          <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
+          <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;">{{ $t('rule.MediumRisk') }}</span>
+          <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
+          <span v-else> N/A</span>
+        </el-table-column>
+
+        <el-table-column v-slot:default="scope" :label="$t('resource.status_on_off')" prop="returnSum" sortable
+                         show-overflow-tooltip min-width="20%">
+          <span style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
+        </el-table-column>
+      </el-table>
       <cloud-detail-chart v-if="resources && supportPlugins.includes(details.pluginId)" :resourceItemId="details.id"/>
-      <div class="desc-top" v-if="resources">
+      <div class="desc-top" v-if="resources && resources != '{}'">
         <el-divider><i class="el-icon-folder-opened"></i></el-divider>
         <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
         <el-divider><i class="el-icon-document-checked"></i></el-divider>
@@ -79,7 +99,7 @@ import TopoSwitch from "@/business/components/cloudSituation/head/TopoSwitch";
 import * as d3 from 'd3';
 import * as math from 'mathjs';
 import {cloudTopologyByAccountIdUrl, cloudTopologyUrl} from "@/api/cloud/sync/sync";
-import {cloudResourceByIdUrl} from "@/api/cloud/account/account";
+import {cloudResourceByIdUrl, resourceRiskListUrl} from "@/api/cloud/account/account";
 /* eslint-disable */
 const width = 1600;
 const height = 1100;
@@ -137,6 +157,7 @@ export default {
       },
       resources: '{}',//resource json : {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
       supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin'],
+      string2PrettyFormat: [],
     };
   },
   methods: {
@@ -1113,6 +1134,9 @@ export default {
             this.resources = data;
           });
         }
+        await this.$get(resourceRiskListUrl + this.details.regionId + "/" + this.details.id, response => {
+          this.string2PrettyFormat = response.data;
+        });
         this.dialogVisible = true;
       }
     })
@@ -1132,5 +1156,9 @@ svg {
 
 .desc-top {
   margin: 15px;
+}
+
+.table-content {
+  padding: 20px;
 }
 </style>

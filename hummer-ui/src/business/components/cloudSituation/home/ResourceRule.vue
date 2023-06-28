@@ -11,8 +11,32 @@
     </el-button>
 
     <!--regions-->
-    <el-drawer class="rtl" :title="$t('resource.vuln_statistics')" :visible.sync="regionsVisible" size="70%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('resource.vuln_statistics')" :visible.sync="regionsVisible" size="70%"
+               :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
+      <el-descriptions class="margin-top desc-top" title="" :column="2" border>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-paperclip"></i>
+            {{ $t('resource.Hummer_ID') }}
+          </template>
+          {{ hummerId }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-house"></i>
+            {{ $t('account.cloud_account') }}
+          </template>
+          {{ accountName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-location-information"></i>
+            {{ $t('dashboard.resource_type') }}
+          </template>
+          {{ resourceType }}
+        </el-descriptions-item>
+      </el-descriptions>
       <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
         <el-table-column v-slot:default="scope" :label="$t('resource.i18n_task_type')" min-width="15%"
                          show-overflow-tooltip>
@@ -47,7 +71,9 @@
                          prop="severity" :sortable="true"
                          show-overflow-tooltip>
           <span v-if="scope.row.severity == 'HighRisk'" style="color: #f84846;"> {{ $t('rule.HighRisk') }}</span>
-          <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;">{{ $t('rule.MediumRisk') }}</span>
+          <span v-else-if="scope.row.severity == 'MediumRisk'" style="color: #fe9636;">{{
+              $t('rule.MediumRisk')
+            }}</span>
           <span v-else-if="scope.row.severity == 'LowRisk'" style="color: #4dabef;"> {{ $t('rule.LowRisk') }}</span>
           <span v-else> N/A</span>
         </el-table-column>
@@ -57,6 +83,13 @@
           <span style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
         </el-table-column>
       </el-table>
+
+      <cloud-detail-chart v-if="resources && supportPlugins.includes(pluginId)" :resourceItemId="resourceItemId"/>
+      <div class="desc-top" v-if="resources && resources != '{}'">
+        <el-divider><i class="el-icon-folder-opened"></i></el-divider>
+        <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
+        <el-divider><i class="el-icon-document-checked"></i></el-divider>
+      </div>
     </el-drawer>
     <!--regions-->
   </div>
@@ -65,126 +98,150 @@
 <script>
 /* eslint-disable */
 import {getCurrentAccountID} from "@/common/js/utils";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
+import CloudDetailChart from "@/business/components/cloudSituation/head/CloudDetailChart";
+import ResultReadOnly from "@/business/components/cloudSituation/head/ResultReadOnly";
 import {resourceTypesUrl, tagRuleListUrl} from "@/api/cloud/rule/rule";
-import {cloudTaskDetailUrl, resourceRiskListUrl, resourceTaskCountUrl} from "@/api/cloud/account/account";
+import {
+  cloudResourceByIdUrl,
+  cloudTaskDetailUrl,
+  resourceRiskListUrl,
+  resourceTaskCountUrl
+} from "@/api/cloud/account/account";
 
 export default {
-    name: "ResourceType",
-    props: {
-      hummerId: String,
-      riskCount: Number,
-      accountId: String,
-      regionId: String,
-      resourceType: String,
-      accountName: String,
+  name: "ResourceType",
+  components: {CloudDetailChart, ResultReadOnly},
+  props: {
+    hummerId: String,
+    riskCount: Number,
+    accountId: String,
+    regionId: String,
+    resourceType: String,
+    accountName: String,
+    resourceItemId: String,
+    pluginId: String,
+  },
+  data() {
+    return {
+      string2PrettyFormat: [],
+      regionsVisible: false,
+      direction: 'rtl',
+      type: 'NO-SCAN',
+      tagSelect: [],
+      detailVisible: false,
+      detailForm: {},
+      resources: '{}',
+      supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin'],
+    }
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      await this.$get(cloudResourceByIdUrl + this.resourceItemId, response => {
+        let data = response.data;
+        this.resources = data;
+      });
     },
-    data() {
-      return {
-        string2PrettyFormat: [],
-        regionsVisible: false,
-        direction: 'rtl',
-        type: 'NO-SCAN',
-        tagSelect: [],
-        detailVisible:false,
-        detailForm:{}
+    async initSelect() {
+      this.tagSelect = [];
+      await this.$get(tagRuleListUrl, response => {
+        this.tagSelect = response.data;
+      });
+      this.resourceTypes = [];
+      await this.$get(resourceTypesUrl, response => {
+        for (let item of response.data) {
+          let typeItem = {};
+          typeItem.value = item.name;
+          typeItem.label = item.name;
+          this.resourceTypes.push(typeItem);
+        }
+      });
+      if (!!getCurrentAccountID()) {
+        this.accountId = getCurrentAccountID();
       }
     },
-    created() {
-
-    },
-    methods: {
-      async initSelect() {
-        this.tagSelect = [];
-        await this.$get(tagRuleListUrl, response => {
-          this.tagSelect = response.data;
-        });
-        this.resourceTypes = [];
-        await this.$get(resourceTypesUrl, response => {
-          for (let item of response.data) {
-            let typeItem = {};
-            typeItem.value = item.name;
-            typeItem.label = item.name;
-            this.resourceTypes.push(typeItem);
+    getType() {
+      this.type = "NO-SCAN";
+      if (this.riskCount && this.riskCount > 0) {
+        this.type = "HAVE-RISK";
+      } else {
+        this.result = this.$get(resourceTaskCountUrl + this.accountId + "/" + this.regionId + "/" + this.resourceType, response => {
+          if (response.data > 0) {
+            this.type = "NO-RISK";
+          } else {
+            this.type = "NO-SCAN";
           }
         });
-        if (!!getCurrentAccountID()) {
-          this.accountId = getCurrentAccountID();
-        }
-      },
-      getType(){
-        this.type = "NO-SCAN";
-        if(this.riskCount && this.riskCount > 0){
-          this.type = "HAVE-RISK";
-        }else{
-          this.result = this.$get(resourceTaskCountUrl +  this.accountId + "/" + this.regionId + "/" + this.resourceType, response => {
-            if(response.data > 0){
-              this.type = "NO-RISK";
-            }else{
-              this.type = "NO-SCAN";
-            }
-          });
-        }
-      },
-      showTaskDetail(item) {
-        localStorage.setItem(ACCOUNT_ID, item.accountId);
-        localStorage.setItem(ACCOUNT_NAME, this.accountName);
-        this.$router.push({
-          path: '/account/result',
-        }).catch(error => error);
-        this.detailForm = {};
-        this.$get(cloudTaskDetailUrl + item.id, response => {
-          if (response.success) {
-            this.detailForm = response.data;
-            this.detailVisible = true;
-          }
-        });
-      },
-      showRegions() {
-        this.initSelect();
-        this.result = this.$get(resourceRiskListUrl + this.regionId + "/" + this.hummerId, response => {
-          this.string2PrettyFormat = response.data
-          this.regionsVisible =  true;
-        });
-      },
-      handleClose() {
-        this.regionsVisible =  false;
-        this.detailVisible = false;
-
-      },
-    },
-    watch:{
-      hummerId:{
-        handler(newVal, oldVal) {
-          this.getType()
-        },
-        // 立即处理 进入页面就触发
-        immediate: true
       }
+    },
+    showTaskDetail(item) {
+      this.$router.push({
+        name: 'cloudResult',
+        params: {id: item.accountId},
+      }).catch(error => error);
+      this.detailForm = {};
+      this.$get(cloudTaskDetailUrl + item.id, response => {
+        if (response.success) {
+          this.detailForm = response.data;
+          this.detailVisible = true;
+        }
+      });
+    },
+    showRegions() {
+      this.initSelect();
+      this.result = this.$get(resourceRiskListUrl + this.regionId + "/" + this.hummerId, response => {
+        this.string2PrettyFormat = response.data
+        this.regionsVisible = true;
+      });
+    },
+    handleClose() {
+      this.regionsVisible = false;
+      this.detailVisible = false;
+
+    },
+  },
+  watch: {
+    hummerId: {
+      handler(newVal, oldVal) {
+        this.getType()
+      },
+      // 立即处理 进入页面就触发
+      immediate: true
     }
   }
+}
 </script>
 
 <style scoped>
-  .rtl >>> .el-drawer__body {
-    overflow-y: auto;
-    padding: 20px;
-  }
-  .rtl >>> input {
-    width: 100%;
-  }
-  .rtl >>> .el-select {
-    width: 80%;
-  }
-  .rtl >>> .el-form-item__content {
-    width: 60%;
-  }
-  .code-mirror {
-    height: 600px !important;
-  }
-  .code-mirror >>> .CodeMirror {
-    /* Set height, width, borders, and global font properties here */
-    height: 600px !important;
-  }
-  /deep/ :focus{outline:0;}
+.rtl >>> .el-drawer__body {
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.rtl >>> input {
+  width: 100%;
+}
+
+.rtl >>> .el-select {
+  width: 80%;
+}
+
+.rtl >>> .el-form-item__content {
+  width: 60%;
+}
+
+.code-mirror {
+  height: 600px !important;
+}
+
+.code-mirror >>> .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  height: 600px !important;
+}
+
+/deep/ :focus {
+  outline: 0;
+}
 </style>

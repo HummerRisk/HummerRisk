@@ -60,8 +60,8 @@
               :label="$t('resource.risk')"
               min-width="120">
               <template v-slot:default="scope">
-                <resource-rule :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount"
-                               :account-id="scope.row.accountId"
+                <resource-rule :hummer-id="scope.row.hummerId" :risk-count="scope.row.riskCount" :pluginId="scope.row.pluginId"
+                               :account-id="scope.row.accountId" :resource-item-id="scope.row.id"
                                :region-id="scope.row.regionId" :resource-type="scope.row.resourceType"
                                :account-name="getAccountName(scope.row.accountId)"
                 ></resource-rule>
