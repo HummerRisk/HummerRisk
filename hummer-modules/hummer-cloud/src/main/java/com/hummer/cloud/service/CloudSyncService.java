@@ -344,6 +344,18 @@ public class CloudSyncService {
         CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
         cloudResourceItemExample.createCriteria().andAccountIdEqualTo(accountId);
         cloudResourceItemMapper.deleteByExample(cloudResourceItemExample);
+
+        CloudResourceRelaExample cloudResourceRelaExample = new CloudResourceRelaExample();
+        cloudResourceRelaExample.createCriteria().andAccountIdEqualTo(accountId);
+        List<CloudResourceRela> cloudResourceRelaList = cloudResourceRelaMapper.selectByExample(cloudResourceRelaExample);
+
+        for (CloudResourceRela cloudResourceRela : cloudResourceRelaList) {
+            CloudResourceRelaLinkExample cloudResourceRelaLinkExample = new CloudResourceRelaLinkExample();
+            cloudResourceRelaLinkExample.createCriteria().andResourceItemIdEqualTo(cloudResourceRela.getResourceItemId());
+            cloudResourceRelaLinkMapper.deleteByExample(cloudResourceRelaLinkExample);
+
+            cloudResourceRelaMapper.deleteByPrimaryKey(cloudResourceRela.getId());
+        }
     }
 
     public void syncResources(LoginUser loginUser) throws Exception {
@@ -1629,9 +1641,145 @@ public class CloudSyncService {
     }
 
     public void dealHuawei(CloudResourceItem cloudResourceItem) throws Exception {
+
+        String json = cloudResourceItem.getResource();
+        if (StringUtils.isEmpty(json)) return;
+
+        String resourceType = cloudResourceItem.getResourceType();
+        String accountId = cloudResourceItem.getAccountId();
+        String regionId = cloudResourceItem.getRegionId();
+        String hummerId = cloudResourceItem.getHummerId();
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        String Internet = UUIDUtil.newUUID();
+
+        Long x = 100L, y = 100L;
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setxAxis(x);//100
+        cloudResourceRela.setyAxis(y);//100
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+        cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
+
+        switch (resourceType) {
+            case "huawei.dds":
+                break;
+            case "huawei.disk":
+                break;
+            case "huawei.ecs":
+                break;
+            case "huawei.eip":
+                break;
+            case "huawei.elb":
+                break;
+            case "huawei.gaussdb":
+                break;
+            case "huawei.gaussdbfornosql":
+                break;
+            case "huawei.gaussdbforopengauss":
+                break;
+            case "huawei.iam":
+                break;
+            case "huawei.obs":
+                break;
+            case "huawei.rds":
+                break;
+            case "huawei.redis":
+                break;
+            case "huawei.security-group":
+                break;
+            default:
+
+                String defaultRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(defaultRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                break;
+        }
+
     }
 
     public void dealQcloud(CloudResourceItem cloudResourceItem) throws Exception {
+
+        String json = cloudResourceItem.getResource();
+        if (StringUtils.isEmpty(json)) return;
+
+        String resourceType = cloudResourceItem.getResourceType();
+        String accountId = cloudResourceItem.getAccountId();
+        String regionId = cloudResourceItem.getRegionId();
+        String hummerId = cloudResourceItem.getHummerId();
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        String Internet = UUIDUtil.newUUID();
+
+        Long x = 100L, y = 100L;
+
+        CloudResourceRela cloudResourceRela = new CloudResourceRela();
+        cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
+        cloudResourceRela.setPluginId(cloudResourceItem.getPluginId());
+        cloudResourceRela.setAccountId(accountId);
+        cloudResourceRela.setRegionId(regionId);
+        cloudResourceRela.setResourceType(resourceType);
+        cloudResourceRela.setHummerId(hummerId);
+        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setxAxis(x);//100
+        cloudResourceRela.setyAxis(y);//100
+
+        CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
+        cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
+
+        switch (resourceType) {
+            case "tencent.cdb":
+                break;
+            case "tencent.clb":
+                break;
+            case "tencent.cos":
+                break;
+            case "tencent.cvm":
+                break;
+            case "tencent.disk":
+                break;
+            case "tencent.eip":
+                break;
+            case "tencent.es":
+                break;
+            case "tencent.mongodb":
+                break;
+            case "tencent.redis":
+                break;
+            case "tencent.security-group":
+                break;
+            case "tencent.vpc":
+                break;
+            default:
+
+                String defaultRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(defaultRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                break;
+        }
+
     }
 
     public void dealVsphere(CloudResourceItem cloudResourceItem) throws Exception {
