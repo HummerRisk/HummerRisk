@@ -398,6 +398,9 @@ public class CloudSyncService {
 
     public void dealWithResourceRelation(CloudResourceItem cloudResourceItem) throws Exception {
         try {
+            //计算云资源关系拓扑图数据
+            LogUtil.info("开始：计算云资源关系拓扑图数据");
+
             CloudResourceRelaExample cloudResourceRelaExample = new CloudResourceRelaExample();
             cloudResourceRelaExample.createCriteria().andResourceItemIdEqualTo(cloudResourceItem.getId());
             cloudResourceRelaMapper.deleteByExample(cloudResourceRelaExample);
@@ -437,8 +440,9 @@ public class CloudSyncService {
             } else if (StringUtils.equals(pluginId, "hummer-ksyun-plugin")) {
                 dealKsyun(cloudResourceItem);
             }
-
+            LogUtil.info("结束：计算云资源关系拓扑图数据");
         } catch (Exception e) {
+            LogUtil.info("报错：计算云资源关系拓扑图数据" + e.getMessage());
             throw e;
         }
     }
@@ -1491,7 +1495,20 @@ public class CloudSyncService {
                 break;
             case "aliyun.vpc":
                 break;
+            case "aliyun.event":
+                break;
             default:
+
+                String defaultRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(defaultRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
         }
 
