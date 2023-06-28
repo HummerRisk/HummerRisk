@@ -861,6 +861,8 @@ public class CloudSyncService {
                 insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                 break;
+            case "aws.vpc":
+                break;
             default:
                 break;
         }

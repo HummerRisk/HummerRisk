@@ -3,7 +3,18 @@
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtCloudResourceRelaMapper">
     <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudResourceRelaDTO"
                extends="com.hummer.cloud.mapper.CloudResourceRelaMapper.BaseResultMap">
-        <result column="value" property="userName"/>
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="resource_item_id" jdbcType="VARCHAR" property="resourceItemId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="region_id" jdbcType="VARCHAR" property="regionId" />
+        <result column="resource_type" jdbcType="VARCHAR" property="resourceType" />
+        <result column="hummer_id" jdbcType="VARCHAR" property="hummerId" />
+        <result column="x_axis" jdbcType="BIGINT" property="xAxis" />
+        <result column="y_axis" jdbcType="BIGINT" property="yAxis" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="value" property="value"/>
     </resultMap>
 
     <select id="selectCloudTopologyRela" resultType="com.hummer.common.core.dto.CloudResourceRelaDTO" parameterType="String">
