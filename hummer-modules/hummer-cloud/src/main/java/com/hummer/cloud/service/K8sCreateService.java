@@ -152,7 +152,7 @@ public class K8sCreateService {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
             List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
-            if (list.isEmpty()) return;
+            if (list.size() == 0) return;
 
             String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + cloudTask.getId() + "/" + taskItem.getRegionId();
             CloudNative cloudNative = k8sProviderService.cloudNative(taskItem.getAccountId());
@@ -239,7 +239,7 @@ public class K8sCreateService {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
             List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
-            if (list.isEmpty()) return;
+            if (list.size() == 0) return;
 
             CloudNative cloudNative = k8sProviderService.cloudNative(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getK8sAccount(cloudNative, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(cloudNative.getProxyId()));

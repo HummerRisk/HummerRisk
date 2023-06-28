@@ -237,7 +237,7 @@ public class ProwlerService {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
             List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
-            if (list.isEmpty()) return;
+            if (list.size() == 0) return;
 
             String dirPath = CloudTaskConstants.PROWLER_RESULT_FILE_PATH;
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());

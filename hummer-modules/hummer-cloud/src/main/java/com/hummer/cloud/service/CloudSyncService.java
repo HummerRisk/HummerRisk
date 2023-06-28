@@ -212,7 +212,7 @@ public class CloudSyncService {
                                 readResource = false;
                             }
                             if (resultStr.contains("ERROR"))
-                                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + " 「api server」: " + resultStr);
 
                             custodianRun = jsonObject.toJSONString();
                             metadata = jsonObject.toJSONString();
@@ -235,7 +235,7 @@ public class CloudSyncService {
                                 readResource = false;
                             }
                             if (resultStr.contains("ERROR"))
-                                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultStr);
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + "「cloud」: " + resultStr);
 
                             custodianRun = ReadFileUtils.readToBuffer(dirPath + "/all-resources/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
                             metadata = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.METADATA_RESULT_FILE);
@@ -501,10 +501,10 @@ public class CloudSyncService {
 
                 for (Object obj : networkInterfaces) {
                     JSONObject jsonObj = JSONObject.parseObject(obj.toString());
-                    String SubnetId = jsonObj.getString("SubnetId");
-                    String VpcId = jsonObj.getString("VpcId");
+                    String SubnetId = !jsonObj.getString("SubnetId").isEmpty()?jsonObj.getString("SubnetId"):"default";
+                    String VpcId = !jsonObj.getString("VpcId").isEmpty()?jsonObj.getString("VpcId"):"default";
                     JSONObject Association = JSONObject.parseObject(!StringUtils.isEmpty(jsonObj.getString("Association")) ? jsonObj.getString("Association") : "{}");
-                    String PublicIp = Association.getString("PublicIp");
+                    String PublicIp = !Association.getString("PublicIp").isEmpty()?jsonObj.getString("PublicIp"):"default";;
                     JSONArray Groups = JSONArray.parseArray(!StringUtils.isEmpty(jsonObj.getString("Groups")) ? jsonObj.getString("Groups") : "[]");
 
                     String SubnetRelaId = UUIDUtil.newUUID();
@@ -1535,13 +1535,7 @@ public class CloudSyncService {
 
     public CloudResourceRela insertCloudResourceRela(CloudResourceRela cloudResourceRela) throws Exception {
         cloudResourceRela.setCreateTime(System.currentTimeMillis());
-        CloudResourceRelaExample example = new CloudResourceRelaExample();
-        example.createCriteria().andResourceItemIdEqualTo(cloudResourceRela.getResourceItemId()).andHummerIdEqualTo(cloudResourceRela.getHummerId()).andNameEqualTo(cloudResourceRela.getName());
-        List<CloudResourceRela> list = cloudResourceRelaMapper.selectByExample(example);
-        if (list.size() == 0) {
-            cloudResourceRelaMapper.insertSelective(cloudResourceRela);
-            cloudResourceRela = list.get(0);
-        }
+        cloudResourceRelaMapper.insertSelective(cloudResourceRela);
         return cloudResourceRela;
     }
 
