@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtCloudResourceRelaMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudResourceRelaDTO"
-               extends="com.hummer.cloud.mapper.CloudResourceRelaMapper.BaseResultMap">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudResourceRelaDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="resource_item_id" jdbcType="VARCHAR" property="resourceItemId" />
@@ -17,7 +16,7 @@
         <result column="value" property="value"/>
     </resultMap>
 
-    <select id="selectCloudTopologyRela" resultType="com.hummer.common.core.dto.CloudResourceRelaDTO" parameterType="String">
+    <select id="selectCloudTopologyRela" resultMap="BaseResultMap" parameterType="String">
         select
             t.*,
             t.hummer_id as value,
