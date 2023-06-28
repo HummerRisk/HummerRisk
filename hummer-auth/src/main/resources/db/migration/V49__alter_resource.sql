@@ -5,7 +5,7 @@ ALTER TABLE `resource_item` ADD `hummer_name` varchar(256) DEFAULT NULL COMMENT 
 
 CREATE TABLE IF NOT EXISTS `cloud_resource_rela` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
-    `name`                       varchar(256)        DEFAULT NULL COMMENT '资源名称',
+    `name`                       varchar(256)        DEFAULT 'default' COMMENT '资源名称',
     `resource_item_id`           varchar(128)        DEFAULT NULL COMMENT 'cloud resource item 标识',
     `plugin_id`                  varchar(128)        DEFAULT NULL COMMENT '云类型ID',
     `account_id`                 varchar(128)        DEFAULT NULL COMMENT '云账号ID',

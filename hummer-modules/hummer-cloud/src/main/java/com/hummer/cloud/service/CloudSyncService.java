@@ -398,6 +398,13 @@ public class CloudSyncService {
 
     public void dealWithResourceRelation(CloudResourceItem cloudResourceItem) throws Exception {
         try {
+            CloudResourceRelaExample cloudResourceRelaExample = new CloudResourceRelaExample();
+            cloudResourceRelaExample.createCriteria().andResourceItemIdEqualTo(cloudResourceItem.getId());
+            cloudResourceRelaMapper.deleteByExample(cloudResourceRelaExample);
+
+            CloudResourceRelaLinkExample cloudResourceRelaLinkExample = new CloudResourceRelaLinkExample();
+            cloudResourceRelaLinkExample.createCriteria().andResourceItemIdEqualTo(cloudResourceItem.getId());
+            cloudResourceRelaLinkMapper.deleteByExample(cloudResourceRelaLinkExample);
             String pluginId = cloudResourceItem.getPluginId();
             if (StringUtils.equals(pluginId, "hummer-aws-plugin")) {
                 dealAws(cloudResourceItem);
@@ -461,11 +468,11 @@ public class CloudSyncService {
 
         CloudResourceRelaLink cloudResourceRelaLink = new CloudResourceRelaLink();
         cloudResourceRelaLink.setResourceItemId(cloudResourceItem.getId());
+        String Internet = UUIDUtil.newUUID();
 
         switch (resourceType) {
             case "aws.ec2":
                 String PublicIpAddress = jsonObject.getString("PublicIpAddress");
-                String Internet = UUIDUtil.newUUID();
 
                 if (StringUtils.isEmpty(PublicIpAddress)) {
 
@@ -476,7 +483,7 @@ public class CloudSyncService {
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//100
 
-                    cloudResourceRelaMapper.insertSelective(cloudResourceRela);
+                    insertCloudResourceRela(cloudResourceRela);
                 } else {
 
                     cloudResourceRela.setId(Internet);
@@ -731,16 +738,124 @@ public class CloudSyncService {
                 }
                 break;
             case "aws.ebs":
+
+                String ebsRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(ebsRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String State = jsonObject.getString("State");
+
+                if (StringUtils.equals(State, "in-use")) {
+                    String Attachments = jsonObject.getString("Attachments");
+                    for (Object o : JSONArray.parseArray(Attachments)) {
+                        JSONObject Attachment = JSONObject.parseObject(o.toString());
+                        String InstanceId = Attachment.getString("InstanceId");
+                        String ebsInstanceRelaId = UUIDUtil.newUUID();
+
+                        cloudResourceRela.setId(ebsInstanceRelaId);
+                        cloudResourceRela.setName(InstanceId);
+                        cloudResourceRela.setResourceType("aliyun.ecs");
+                        cloudResourceRela.setHummerId(InstanceId);
+                        cloudResourceRela.setxAxis(x + 100L);//100
+                        cloudResourceRela.setyAxis(200L);//100
+                        insertCloudResourceRela(cloudResourceRela);
+
+                        cloudResourceRelaLink.setSource(ebsRelaId);
+                        cloudResourceRelaLink.setTarget(ebsInstanceRelaId);
+                        insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                        x = x + 100L;
+                    }
+
+                }
                 break;
             case "aws.elb":
                 break;
             case "aws.network-addr":
+
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                String PublicIp = jsonObject.getString("PublicIp");
+                String addrRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(addrRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(PublicIp);
+                cloudResourceRela.setName(PublicIp);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(addrRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             case "aws.rds":
                 break;
             case "aws.s3":
+
+                String s3RelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(s3RelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
             case "aws.security-group":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                String VpcId = jsonObject.getString("VpcId");
+                String vpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(vpcRelaId);
+                cloudResourceRela.setResourceType("aws.vpc");
+                cloudResourceRela.setHummerId(VpcId);
+                cloudResourceRela.setName(VpcId);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(vpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String sgRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(sgRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(vpcRelaId);
+                cloudResourceRelaLink.setTarget(sgRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             default:
                 break;
@@ -1172,6 +1287,44 @@ public class CloudSyncService {
 
                 break;
             case "aliyun.security-group":
+
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                String sgVpcId = jsonObject.getString("VpcId");
+                String sgVpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(sgVpcRelaId);
+                cloudResourceRela.setName(sgVpcId);
+                cloudResourceRela.setResourceType("aliyun.vpc");
+                cloudResourceRela.setHummerId(sgVpcId);
+                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setyAxis(200L);//100
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(sgVpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String sgRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(sgRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(400L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(sgVpcRelaId);
+                cloudResourceRelaLink.setTarget(sgRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             case "aliyun.slb":
                 String AddressType = jsonObject.getString("AddressType");
