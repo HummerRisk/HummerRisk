@@ -385,6 +385,7 @@ public class AccountService {
                 if (!parameters.isEmpty()) {
                     ruleAccountParameterMapper.updateByExampleSelective(parameter, ruleAccountParameterExample);
                 } else {
+                    parameter.setParameter(rule.getParameter());
                     ruleAccountParameterMapper.insertSelective(parameter);
                 }
             }
