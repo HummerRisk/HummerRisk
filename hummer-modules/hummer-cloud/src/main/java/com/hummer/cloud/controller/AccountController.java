@@ -143,6 +143,12 @@ public class AccountController {
         return accountService.saveParameter(list, tokenService.getLoginUser());
     }
 
+    @Operation(summary = "保存区域参数")
+    @PostMapping("save/regions")
+    public boolean saveRegions(@RequestBody Map<String, String> map) {
+        return accountService.saveRegions(map, tokenService.getLoginUser());
+    }
+
     @I18n
     @Operation(summary = "规则列表")
     @PostMapping(value = "rule/list/{goPage}/{pageSize}")

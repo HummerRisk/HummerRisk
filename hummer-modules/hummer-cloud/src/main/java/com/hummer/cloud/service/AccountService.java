@@ -56,6 +56,8 @@ public class AccountService {
     @Autowired
     private ProxyMapper proxyMapper;
     @Autowired
+    private RuleMapper ruleMapper;
+    @Autowired
     private CloudSyncService cloudSyncService;
     @Autowired
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
@@ -357,6 +359,37 @@ public class AccountService {
         try {
             list.forEach(this::accept);
             operationLogService.log(loginUser, list.get(0).getId(), accountMapper.selectByPrimaryKey(list.get(0).getAccountId()).getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_save_cloud_account");
+        } catch (Exception e) {
+            throw e;
+        }
+        return true;
+    }
+
+    public boolean saveRegions(Map<String, String> map, LoginUser loginUser) {
+        try {
+            AccountWithBLOBs account = accountMapper.selectByPrimaryKey(map.get("accountId"));
+
+            RuleExample example = new RuleExample();
+            example.createCriteria().andPluginIdEqualTo(account.getPluginId());
+            List<Rule> list = ruleMapper.selectByExample(example);
+
+            for (Rule rule : list) {
+                RuleAccountParameter parameter = new RuleAccountParameter();
+                parameter.setAccountId(account.getId());
+                parameter.setRuleId(rule.getId());
+                parameter.setRegions(map.get("regions"));
+
+                RuleAccountParameterExample ruleAccountParameterExample = new RuleAccountParameterExample();
+                ruleAccountParameterExample.createCriteria().andAccountIdEqualTo(account.getId()).andRuleIdEqualTo(rule.getId());
+                List<RuleAccountParameter> parameters = ruleAccountParameterMapper.selectByExample(ruleAccountParameterExample);
+                if (!parameters.isEmpty()) {
+                    ruleAccountParameterMapper.updateByExampleSelective(parameter, ruleAccountParameterExample);
+                } else {
+                    ruleAccountParameterMapper.insertSelective(parameter);
+                }
+            }
+
+            operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_save_cloud_account");
         } catch (Exception e) {
             throw e;
         }

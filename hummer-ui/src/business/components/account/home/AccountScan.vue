@@ -109,7 +109,7 @@ import {
   createManualTaskUrl,
   getAccountUrl,
   ruleListUrl,
-  saveParameterUrl
+  saveParameterUrl, saveRegionsUrl
 } from "@/api/cloud/account/account";
 
 /* eslint-disable */
@@ -270,30 +270,23 @@ import {
         return true;
       },
       saveQuickSettings(form) {
-        if (this.selectIds.size == 0) {
-          this.$alert(this.$t('account.i18n_comfirm_rule_scan'), this.$t('account.save_settings'), {
-            confirmButtonText: this.$t('commons.confirm'),
-            callback: (action) => {
-              if (action === 'confirm') {
-                for (let obj of this.tableData) {
-                  obj.regions = form.quickSettingRegions;
-                }
+        this.$alert(this.$t('account.i18n_comfirm_rule_scan'), this.$t('account.save_settings'), {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+
+              let params = {};
+              params.accountId = this.accountId;
+              params.regions = JSON.stringify(form.quickSettingRegions);
+
+              this.result = this.$post(saveRegionsUrl, params, response => {
+                this.search();
                 this.$success(this.$t('commons.save_success'));
                 this.regionsVisible = false;
-              }
-            }
-          });
-        } else {
-          for (let id of this.selectIds) {
-            for (let obj of this.tableData) {
-              if (id == obj.id) {
-                obj.regions = form.quickSettingRegions;
-              }
+              });
             }
           }
-          this.$success(this.$t('commons.save_success'));
-          this.regionsVisible = false;
-        }
+        });
       },
       setting () {
         this.form = {};

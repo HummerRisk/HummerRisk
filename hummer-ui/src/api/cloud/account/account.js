@@ -5,6 +5,8 @@ export const cleanParameterUrl = "/cloud/account/clean/parameter";
 
 export const saveParameterUrl = "/cloud/account/save/parameter";
 
+export const saveRegionsUrl = "/cloud/account/save/regions";
+
 export const createManualTaskUrl = "/cloud/cloud/task/manual/create";
 
 export const ruleListUrl = "/cloud/account/rule/list/";
