@@ -50,10 +50,8 @@ export default {
           },
           tooltip: {
             formatter(params){
-              console.log(params)
-              return `<b>资源名称: <b/>  ${params.name}
-                <br/>资源标识:  ${params.value}
-                <br/>资源类型:  ${params.resourceType}`;
+              return `${params.name}
+                <br/>${params.value}`;
             }
           },
           series: [
@@ -66,7 +64,6 @@ export default {
                 show: true,
                 textStyle: { fontSize: 12, color: '#000' },
                 formatter: params => {
-                  console.log(111, params)
                   return `${params.name}\n\n\n\n\n\n\n${params.value}`
                 },
               },

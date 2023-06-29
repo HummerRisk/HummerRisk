@@ -32,8 +32,8 @@
             t.x_axis as x,
             t.y_axis as y,
             t.symbol,
-            t.hummer_id as value,
-            concat(t.resource_type, '\n', t.name) as name
+            concat('资源标识:', t.hummer_id) as value,
+            concat('资源类型:', t.resource_type, '\n', '资源名称:', t.name) as name
         from cloud_resource_rela t
         where t.resource_item_id = #{resourceItemId}
     </select>
