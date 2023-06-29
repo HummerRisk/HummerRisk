@@ -48,7 +48,7 @@ export default {
               label: {
                 show: true,
                 formatter: params => {
-                  return `类型: ${params.name}\n\n\n\n\n\n\n${params.value}`
+                  return `${params.name}\n\n\n\n\n\n\n${params.value}`
                 },
               },
               edgeSymbol: ['circle', 'arrow'],

@@ -31,7 +31,7 @@
             t.x_axis as x,
             t.y_axis as y,
             t.hummer_id as value,
-            concat(t.resource_type, ' | ', t.name) as name
+            concat(t.resource_type, '\n', t.name) as name
         from cloud_resource_rela t
         where t.resource_item_id = #{resourceItemId}
     </select>
