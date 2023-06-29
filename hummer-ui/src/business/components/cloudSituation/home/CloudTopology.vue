@@ -7,7 +7,7 @@
     <el-card class="table-card" v-loading="result.loading">
       <svg id="cloud-topo"></svg>
     </el-card>
-    <el-drawer class="rtl" :title="$t('resource.cloud_resource_detail')" :visible.sync="dialogVisible" size="60%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('resource.cloud_resource_detail')" :visible.sync="dialogVisible" size="75%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-descriptions class="margin-top desc-top" title="" :column="2" border>
         <el-descriptions-item>

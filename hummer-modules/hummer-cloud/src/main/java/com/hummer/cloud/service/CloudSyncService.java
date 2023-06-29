@@ -469,7 +469,7 @@ public class CloudSyncService {
         String hummerId = cloudResourceItem.getHummerId();
         JSONObject jsonObject = JSONObject.parseObject(json);
 
-        Long x = 200L, y = 200L;
+        Long x = 100L, y = 200L;
 
         CloudResourceRela cloudResourceRela = new CloudResourceRela();
         cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
@@ -479,6 +479,8 @@ public class CloudSyncService {
         cloudResourceRela.setResourceType(resourceType);
         cloudResourceRela.setHummerId(hummerId);
         cloudResourceRela.setName(cloudResourceItem.getHummerName());
+        cloudResourceRela.setCategory(resourceType);
+        cloudResourceRela.setSymbol("@/assets/img/rela/cloud_service.svg");
         cloudResourceRela.setxAxis(x);//100
         cloudResourceRela.setyAxis(y);//100
 
@@ -494,9 +496,11 @@ public class CloudSyncService {
 
                     cloudResourceRela.setId(Internet);
                     cloudResourceRela.setName("No Internet");
-                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setResourceType("aws.internet");
                     cloudResourceRela.setHummerId("No Internet");
-                    cloudResourceRela.setxAxis(x);//200
+                    cloudResourceRela.setCategory("aws.internet");
+                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//200
 
                     insertCloudResourceRela(cloudResourceRela);
@@ -504,9 +508,11 @@ public class CloudSyncService {
 
                     cloudResourceRela.setId(Internet);
                     cloudResourceRela.setName("Internet");
-                    cloudResourceRela.setResourceType("internet");
+                    cloudResourceRela.setResourceType("aws.internet");
                     cloudResourceRela.setHummerId("Internet");
-                    cloudResourceRela.setxAxis(x);//200
+                    cloudResourceRela.setCategory("aws.internet");
+                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//200
 
                     insertCloudResourceRela(cloudResourceRela);
@@ -515,46 +521,53 @@ public class CloudSyncService {
                 JSONArray networkInterfaces = JSONArray.parseArray(!StringUtils.isEmpty(jsonObject.getString("NetworkInterfaces")) ? jsonObject.getString("NetworkInterfaces") : "[]");
                 JSONArray BlockDeviceMappings = JSONArray.parseArray(!StringUtils.isEmpty(jsonObject.getString("BlockDeviceMappings")) ? jsonObject.getString("BlockDeviceMappings") : "[]");
 
-                y = y -100L;
+                y = y - 100L;
 
                 for (Object obj : networkInterfaces) {
                     JSONObject jsonObj = JSONObject.parseObject(obj.toString());
-                    String SubnetId = !jsonObj.getString("SubnetId").isEmpty()?jsonObj.getString("SubnetId"):"default";
+
                     String VpcId = !jsonObj.getString("VpcId").isEmpty()?jsonObj.getString("VpcId"):"default";
-                    JSONObject Association = JSONObject.parseObject(!StringUtils.isEmpty(jsonObj.getString("Association")) ? jsonObj.getString("Association") : "{}");
-                    String PublicIp = !Association.getString("PublicIp").isEmpty()?jsonObj.getString("PublicIp"):"";;
-                    JSONArray Groups = JSONArray.parseArray(!StringUtils.isEmpty(jsonObj.getString("Groups")) ? jsonObj.getString("Groups") : "[]");
-
-                    String SubnetRelaId = UUIDUtil.newUUID();
                     String VpcRelaId = UUIDUtil.newUUID();
-                    String PublicRelaIp = UUIDUtil.newUUID();
-
-
-                    cloudResourceRela.setId(SubnetRelaId);
-                    cloudResourceRela.setName(SubnetId);
-                    cloudResourceRela.setResourceType("aws.subnet");
-                    cloudResourceRela.setHummerId(SubnetId);
-                    cloudResourceRela.setxAxis(x + 100L);//300
-                    cloudResourceRela.setyAxis(y + 100L);//200
-                    cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
-
-                    cloudResourceRelaLink.setSource(Internet);
-                    cloudResourceRelaLink.setTarget(SubnetRelaId);
-                    insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                     cloudResourceRela.setId(VpcRelaId);
                     cloudResourceRela.setName(VpcId);
                     cloudResourceRela.setResourceType("aws.vpc");
                     cloudResourceRela.setHummerId(VpcId);
-                    cloudResourceRela.setxAxis(x + 200L);//400
+                    cloudResourceRela.setCategory("aws.vpc");
+                    cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                    cloudResourceRela.setxAxis(200L);//300
                     cloudResourceRela.setyAxis(y + 100L);//200
-                    cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                    insertCloudResourceRela(cloudResourceRela);
 
-                    cloudResourceRelaLink.setSource(SubnetRelaId);
+                    cloudResourceRelaLink.setSource(Internet);
                     cloudResourceRelaLink.setTarget(VpcRelaId);
                     insertCloudResourceRelaLink(cloudResourceRelaLink);
 
+                    String SubnetId = !jsonObj.getString("SubnetId").isEmpty()?jsonObj.getString("SubnetId"):"default";
+
+                    String SubnetRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(SubnetRelaId);
+                    cloudResourceRela.setName(SubnetId);
+                    cloudResourceRela.setResourceType("aws.subnet");
+                    cloudResourceRela.setHummerId(SubnetId);
+                    cloudResourceRela.setCategory("aws.subnet");
+                    cloudResourceRela.setSymbol("@/assets/img/rela/network_server.svg");
+                    cloudResourceRela.setxAxis(300L);//300
+                    cloudResourceRela.setyAxis(y + 100L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(VpcRelaId);
+                    cloudResourceRelaLink.setTarget(SubnetRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    JSONObject Association = JSONObject.parseObject(!StringUtils.isEmpty(jsonObj.getString("Association")) ? jsonObj.getString("Association") : "{}");
+                    String PublicIp = !Association.getString("PublicIp").isEmpty()?jsonObj.getString("PublicIp"):"";;
+                    JSONArray Groups = JSONArray.parseArray(!StringUtils.isEmpty(jsonObj.getString("Groups")) ? jsonObj.getString("Groups") : "[]");
+
                     if (!StringUtils.isEmpty(PublicIp)) {
+
+                        String PublicRelaIp = UUIDUtil.newUUID();
 
                         cloudResourceRela.setId(PublicRelaIp);
                         cloudResourceRela.setName(PublicIp);
@@ -562,7 +575,7 @@ public class CloudSyncService {
                         cloudResourceRela.setHummerId(PublicIp);
                         cloudResourceRela.setxAxis(x + 300L);//500
                         cloudResourceRela.setyAxis(y + 100L);//200
-                        cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                        insertCloudResourceRela(cloudResourceRela);
 
                         cloudResourceRelaLink.setSource(VpcRelaId);
                         cloudResourceRelaLink.setTarget(PublicRelaIp);
@@ -578,7 +591,7 @@ public class CloudSyncService {
                             cloudResourceRela.setHummerId(hummerId);
                             cloudResourceRela.setxAxis(x + 500L);//700
                             cloudResourceRela.setyAxis(y + 100L);//200
-                            cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                            insertCloudResourceRela(cloudResourceRela);
 
                             for (Object o : Groups) {
                                 JSONObject jsonO = JSONObject.parseObject(o.toString());
@@ -592,7 +605,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setHummerId(GroupId);
                                 cloudResourceRela.setxAxis(x + 400L);//400
                                 cloudResourceRela.setyAxis(y + 100L);//200
-                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                                insertCloudResourceRela(cloudResourceRela);
 
                                 cloudResourceRelaLink.setSource(PublicRelaIp);
                                 cloudResourceRelaLink.setTarget(GroupRelaId);
@@ -619,7 +632,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setHummerId(VolumeId);
                                 cloudResourceRela.setxAxis(x + 600L);//800
                                 cloudResourceRela.setyAxis(i + 100L);//200
-                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                                insertCloudResourceRela(cloudResourceRela);
 
                                 cloudResourceRelaLink.setSource(EcsRelaId);
                                 cloudResourceRelaLink.setTarget(id);
@@ -636,7 +649,7 @@ public class CloudSyncService {
                             cloudResourceRela.setHummerId(hummerId);
                             cloudResourceRela.setxAxis(x + 400L);//600
                             cloudResourceRela.setyAxis(y + 100L);//200
-                            cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                            insertCloudResourceRela(cloudResourceRela);
 
                             cloudResourceRelaLink.setSource(cloudResourceRela.getId());
                             cloudResourceRelaLink.setTarget(cloudResourceRela.getId());
@@ -657,7 +670,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setHummerId(VolumeId);
                                 cloudResourceRela.setxAxis(x + 500L);//700
                                 cloudResourceRela.setyAxis(i + 100L);//200
-                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                                insertCloudResourceRela(cloudResourceRela);
 
                                 cloudResourceRelaLink.setSource(EcsRelaId);
                                 cloudResourceRelaLink.setTarget(id);
@@ -677,9 +690,13 @@ public class CloudSyncService {
                             cloudResourceRela.setName(cloudResourceItem.getHummerName());
                             cloudResourceRela.setResourceType(resourceType);
                             cloudResourceRela.setHummerId(cloudResourceItem.getHummerId());
-                            cloudResourceRela.setxAxis(x + 400L);//400
+                            cloudResourceRela.setCategory(resourceType);
+                            cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                            cloudResourceRela.setxAxis(400L);//400
                             cloudResourceRela.setyAxis(y + 100L);//200
                             insertCloudResourceRela(cloudResourceRela);
+
+                            Long j = y;
 
                             for (Object o : Groups) {
                                 JSONObject jsonO = JSONObject.parseObject(o.toString());
@@ -691,36 +708,37 @@ public class CloudSyncService {
                                 cloudResourceRela.setName(GroupName);
                                 cloudResourceRela.setResourceType("aws.security-group");
                                 cloudResourceRela.setHummerId(GroupId);
-                                cloudResourceRela.setxAxis(x + 300L);//400
-                                cloudResourceRela.setyAxis(y + 100L);//200
-                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                                cloudResourceRela.setCategory("aws.security-group");
+                                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                                cloudResourceRela.setxAxis(500L);//500
+                                cloudResourceRela.setyAxis(j + 100L);//200
+                                insertCloudResourceRela(cloudResourceRela);
 
-                                cloudResourceRelaLink.setSource(PublicRelaIp);
+                                cloudResourceRelaLink.setSource(EcsRelaId);
                                 cloudResourceRelaLink.setTarget(GroupRelaId);
                                 insertCloudResourceRelaLink(cloudResourceRelaLink);
 
-                                cloudResourceRelaLink.setSource(GroupRelaId);
-                                cloudResourceRelaLink.setTarget(EcsRelaId);
-                                insertCloudResourceRelaLink(cloudResourceRelaLink);
-
+                                j = j + 100;
                             }
 
                             Long i = y;
 
                             for (Object b : BlockDeviceMappings) {
                                 String id = UUIDUtil.newUUID();
-                                JSONObject j = JSONObject.parseObject(b.toString());
-                                String DeviceName = j.getString("DeviceName");
-                                JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
+                                JSONObject obj1 = JSONObject.parseObject(b.toString());
+                                String DeviceName = obj1.getString("DeviceName");
+                                JSONObject Ebs = JSONObject.parseObject(obj1.getString("Ebs"));
                                 String VolumeId = Ebs.getString("VolumeId");
 
                                 cloudResourceRela.setId(id);
                                 cloudResourceRela.setName(DeviceName);
                                 cloudResourceRela.setResourceType("aws.ebs");
                                 cloudResourceRela.setHummerId(VolumeId);
-                                cloudResourceRela.setxAxis(x + 500L);//800
+                                cloudResourceRela.setCategory("aws.ebs");
+                                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                                cloudResourceRela.setxAxis(600L);//800
                                 cloudResourceRela.setyAxis(i + 100L);//200
-                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                                insertCloudResourceRela(cloudResourceRela);
 
                                 cloudResourceRelaLink.setSource(EcsRelaId);
                                 cloudResourceRelaLink.setTarget(id);
@@ -735,12 +753,14 @@ public class CloudSyncService {
                             cloudResourceRela.setName(cloudResourceItem.getHummerName());
                             cloudResourceRela.setResourceType(resourceType);
                             cloudResourceRela.setHummerId(hummerId);
-                            cloudResourceRela.setxAxis(x + 300L);//600
+                            cloudResourceRela.setCategory(resourceType);
+                            cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                            cloudResourceRela.setxAxis(400L);//600
                             cloudResourceRela.setyAxis(y + 100L);//200
-                            cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                            insertCloudResourceRela(cloudResourceRela);
 
-                            cloudResourceRelaLink.setSource(cloudResourceRela.getId());
-                            cloudResourceRelaLink.setTarget(cloudResourceRela.getId());
+                            cloudResourceRelaLink.setSource(SubnetRelaId);
+                            cloudResourceRelaLink.setTarget(EcsRelaId);
                             insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                             Long i = y;
@@ -756,9 +776,11 @@ public class CloudSyncService {
                                 cloudResourceRela.setName(DeviceName);
                                 cloudResourceRela.setResourceType("aws.ebs");
                                 cloudResourceRela.setHummerId(VolumeId);
-                                cloudResourceRela.setxAxis(x + 200L);//700
+                                cloudResourceRela.setCategory("aws.ebs");
+                                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                                cloudResourceRela.setxAxis(500L);//500
                                 cloudResourceRela.setyAxis(i + 100L);//200
-                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                                insertCloudResourceRela(cloudResourceRela);
 
                                 cloudResourceRelaLink.setSource(EcsRelaId);
                                 cloudResourceRelaLink.setTarget(id);
@@ -781,6 +803,8 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -796,8 +820,10 @@ public class CloudSyncService {
 
                         cloudResourceRela.setId(ebsInstanceRelaId);
                         cloudResourceRela.setName(InstanceId);
-                        cloudResourceRela.setResourceType("aliyun.ecs");
+                        cloudResourceRela.setResourceType("aws.ecs");
                         cloudResourceRela.setHummerId(InstanceId);
+                        cloudResourceRela.setCategory("aws.ecs");
+                        cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
                         cloudResourceRela.setxAxis(x + 100L);//100
                         cloudResourceRela.setyAxis(200L);//100
                         insertCloudResourceRela(cloudResourceRela);
@@ -812,13 +838,29 @@ public class CloudSyncService {
                 }
                 break;
             case "aws.elb":
+
+                String elbRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(elbRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setCategory("aws.internet");
+                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
             case "aws.network-addr":
 
                 cloudResourceRela.setId(Internet);
                 cloudResourceRela.setName("Internet");
-                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setResourceType("aws.internet");
                 cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("aws.internet");
+                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -830,6 +872,8 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(PublicIp);
                 cloudResourceRela.setName(PublicIp);
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -840,6 +884,70 @@ public class CloudSyncService {
 
                 break;
             case "aws.rds":
+
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("aws.internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("aws.internet");
+                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setxAxis(x);//100
+                cloudResourceRela.setyAxis(y);//200
+
+                insertCloudResourceRela(cloudResourceRela);
+
+                String DBSubnetGroup = jsonObject.getString("DBSubnetGroup");
+                String VpcId = JSONObject.parseObject(DBSubnetGroup).getString("VpcId");
+                String VpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(VpcRelaId);
+                cloudResourceRela.setName(VpcId);
+                cloudResourceRela.setResourceType("aws.vpc");
+                cloudResourceRela.setHummerId(VpcId);
+                cloudResourceRela.setCategory("aws.vpc");
+                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(VpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String Endpoint = jsonObject.getString("Endpoint");
+                String Address = JSONObject.parseObject(Endpoint).getString("Address");
+                String AddressRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(AddressRelaId);
+                cloudResourceRela.setName(Address);
+                cloudResourceRela.setResourceType("aws.domain");
+                cloudResourceRela.setHummerId(Address);
+                cloudResourceRela.setCategory("aws.domain");
+                cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                cloudResourceRela.setxAxis(300L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(VpcRelaId);
+                cloudResourceRelaLink.setTarget(AddressRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String rdsRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(rdsRelaId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setSymbol("@/assets/img/rela/database_management.svg");
+                cloudResourceRela.setxAxis(400L);//400
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(AddressRelaId);
+                cloudResourceRelaLink.setTarget(rdsRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             case "aws.s3":
 
@@ -849,6 +957,8 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_database.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -857,19 +967,23 @@ public class CloudSyncService {
             case "aws.security-group":
                 cloudResourceRela.setId(Internet);
                 cloudResourceRela.setName("Internet");
-                cloudResourceRela.setResourceType("internet");
+                cloudResourceRela.setResourceType("awsinternet");
                 cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("aws.internet");
+                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
 
-                String VpcId = jsonObject.getString("VpcId");
+                String VpcId2 = jsonObject.getString("VpcId");
                 String vpcRelaId = UUIDUtil.newUUID();
 
                 cloudResourceRela.setId(vpcRelaId);
                 cloudResourceRela.setResourceType("aws.vpc");
-                cloudResourceRela.setHummerId(VpcId);
-                cloudResourceRela.setName(VpcId);
+                cloudResourceRela.setHummerId(VpcId2);
+                cloudResourceRela.setName(VpcId2);
+                cloudResourceRela.setCategory("aws.vpc");
+                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -884,6 +998,8 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -901,12 +1017,27 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory("aws.vpc");
+                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
 
                 break;
             default:
+
+                String dRelaId_ = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(dRelaId_);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setSymbol("@/assets/img/rela/authentication.svg");
+                cloudResourceRela.setxAxis(200L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 break;
         }
     }
@@ -926,7 +1057,7 @@ public class CloudSyncService {
         JSONObject jsonObject = JSONObject.parseObject(json);
         String Internet = UUIDUtil.newUUID();
 
-        Long x = 200L, y = 200L;
+        Long x = 100L, y = 200L;
 
         CloudResourceRela cloudResourceRela = new CloudResourceRela();
         cloudResourceRela.setResourceItemId(cloudResourceItem.getId());
@@ -937,6 +1068,8 @@ public class CloudSyncService {
         cloudResourceRela.setHummerId(hummerId);
         cloudResourceRela.setName(cloudResourceItem.getHummerName());
         cloudResourceRela.setCreateTime(System.currentTimeMillis());
+        cloudResourceRela.setCategory(resourceType);
+        cloudResourceRela.setSymbol("@/assets/img/rela/cloud_service.svg");
         cloudResourceRela.setxAxis(x);//100
         cloudResourceRela.setyAxis(y);//100
 
@@ -986,7 +1119,7 @@ public class CloudSyncService {
                     cloudResourceRela.setHummerId(VpcId);
                     cloudResourceRela.setxAxis(x + 100L);//300
                     cloudResourceRela.setyAxis(y);//200
-                    cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                    insertCloudResourceRela(cloudResourceRela);
 
                     cloudResourceRelaLink.setSource(Internet);
                     cloudResourceRelaLink.setTarget(VpcId);
@@ -1017,7 +1150,7 @@ public class CloudSyncService {
                             cloudResourceRela.setHummerId(Ip);
                             cloudResourceRela.setxAxis(x + 200L);//400
                             cloudResourceRela.setyAxis(y + 100L);//200
-                            cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                            insertCloudResourceRela(cloudResourceRela);
 
                             cloudResourceRelaLink.setSource(VpcRelaId);
                             cloudResourceRelaLink.setTarget(PublicRelaIp);
@@ -1045,7 +1178,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setHummerId(Sg);
                                 cloudResourceRela.setxAxis(x);//400
                                 cloudResourceRela.setyAxis(y + 100L);//200
-                                cloudResourceRela = insertCloudResourceRela(cloudResourceRela);
+                                insertCloudResourceRela(cloudResourceRela);
 
                                 cloudResourceRelaLink.setSource(EcsRelaId);
                                 cloudResourceRelaLink.setTarget(GroupRelaId);
@@ -1642,13 +1775,15 @@ public class CloudSyncService {
                 break;
             default:
 
-                String defaultRelaId = UUIDUtil.newUUID();
+                String dRelaId_ = UUIDUtil.newUUID();
 
-                cloudResourceRela.setId(defaultRelaId);
+                cloudResourceRela.setId(dRelaId_);
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
-                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setCategory(resourceType);
+                cloudResourceRela.setSymbol("@/assets/img/rela/authentication.svg");
+                cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
 

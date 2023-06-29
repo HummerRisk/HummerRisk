@@ -11,9 +11,8 @@
     </el-button>
 
     <!--regions-->
-    <el-drawer class="rtl" :title="$t('resource.vuln_statistics')" :visible.sync="regionsVisible" size="70%"
-               :before-close="handleClose" :direction="direction"
-               :destroy-on-close="true">
+    <el-drawer class="rtl" :title="$t('resource.vuln_statistics')" :visible.sync="regionsVisible" size="75%"
+               :before-close="handleClose" :direction="direction" :destroy-on-close="true">
       <el-descriptions class="margin-top desc-top" title="" :column="2" border>
         <el-descriptions-item>
           <template slot="label">
