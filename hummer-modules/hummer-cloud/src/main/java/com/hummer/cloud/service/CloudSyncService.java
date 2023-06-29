@@ -956,13 +956,12 @@ public class CloudSyncService {
 
                 if (IpAddress.size() == 0) {
 
-
                     cloudResourceRela.setId(Internet);
                     cloudResourceRela.setName("No Internet");
                     cloudResourceRela.setResourceType("internet");
                     cloudResourceRela.setHummerId("No Internet");
-                    cloudResourceRela.setxAxis(x);//100
-                    cloudResourceRela.setyAxis(y);//100
+                    cloudResourceRela.setxAxis(x);//200
+                    cloudResourceRela.setyAxis(y);//200
 
                     cloudResourceRelaMapper.insertSelective(cloudResourceRela);
                 } else {
@@ -971,8 +970,8 @@ public class CloudSyncService {
                     cloudResourceRela.setName("Internet");
                     cloudResourceRela.setResourceType("internet");
                     cloudResourceRela.setHummerId("Internet");
-                    cloudResourceRela.setxAxis(x);//100
-                    cloudResourceRela.setyAxis(y);//100
+                    cloudResourceRela.setxAxis(x);//200
+                    cloudResourceRela.setyAxis(y);//200
 
                     insertCloudResourceRela(cloudResourceRela);
                 }

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_rela` (
     `resource_type`              varchar(64)         DEFAULT NULL COMMENT '资源类型',
     `hummer_id`                  varchar(128)        DEFAULT NULL COMMENT '资源ID',
     `category`                   varchar(50)         DEFAULT NULL COMMENT '资源所属类别',
+    `symbol`                     varchar(50)         DEFAULT NULL COMMENT '图标地址',
     `x_axis`                     bigint              DEFAULT NULL COMMENT '横坐标',
     `y_axis`                     bigint              DEFAULT NULL COMMENT '纵坐标',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',

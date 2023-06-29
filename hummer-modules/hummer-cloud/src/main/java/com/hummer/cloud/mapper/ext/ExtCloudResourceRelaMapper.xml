@@ -13,6 +13,7 @@
         <result column="x" jdbcType="BIGINT" property="x" />
         <result column="y" jdbcType="BIGINT" property="y" />
         <result column="category" jdbcType="VARCHAR" property="category" />
+        <result column="symbol" jdbcType="VARCHAR" property="symbol" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="value" property="value"/>
     </resultMap>
@@ -30,6 +31,7 @@
             t.category,
             t.x_axis as x,
             t.y_axis as y,
+            t.symbol,
             t.hummer_id as value,
             concat(t.resource_type, '\n', t.name) as name
         from cloud_resource_rela t
