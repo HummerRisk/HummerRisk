@@ -103,7 +103,6 @@ export default {
             },
             tooltip: {
               formatter(params){
-                // console.log(params)
                 let tooltipdata = params.data;
                 var result = '';
                 if(params.dataType == 'node'&&(!!tooltipdata.name)){

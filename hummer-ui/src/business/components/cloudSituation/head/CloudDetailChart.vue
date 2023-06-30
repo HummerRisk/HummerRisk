@@ -48,9 +48,9 @@ export default {
           tooltip: {
             formatter(params){
               let strs = params.name.split("\n");
-              return `${strs[0]}
-                <br/>${strs[1]}
-                <br/>${params.value}`;
+              return `<b>资源类型: <b/> ${strs[0]}
+                <br/><b>资源名称: <b/> ${strs[1]}
+                <br/><b>资源标识: <b/> ${params.value}`;
             }
           },
           series: [

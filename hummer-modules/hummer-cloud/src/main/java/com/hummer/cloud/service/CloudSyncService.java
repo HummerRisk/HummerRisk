@@ -696,17 +696,21 @@ public class CloudSyncService {
 
                         String EcsRelaId = UUIDUtil.newUUID();
 
-                        if (Groups.size() > 0) {
+                        cloudResourceRela.setId(EcsRelaId);
+                        cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                        cloudResourceRela.setResourceType(resourceType);
+                        cloudResourceRela.setHummerId(cloudResourceItem.getHummerId());
+                        cloudResourceRela.setCategory(resourceType);
+                        cloudResourceRela.setSymbol("cloud_server.svg");
+                        cloudResourceRela.setxAxis(400L);//400
+                        cloudResourceRela.setyAxis(y + 100L);//200
+                        insertCloudResourceRela(cloudResourceRela);
 
-                            cloudResourceRela.setId(EcsRelaId);
-                            cloudResourceRela.setName(cloudResourceItem.getHummerName());
-                            cloudResourceRela.setResourceType(resourceType);
-                            cloudResourceRela.setHummerId(cloudResourceItem.getHummerId());
-                            cloudResourceRela.setCategory(resourceType);
-                            cloudResourceRela.setSymbol("cloud_server.svg");
-                            cloudResourceRela.setxAxis(400L);//400
-                            cloudResourceRela.setyAxis(y + 100L);//200
-                            insertCloudResourceRela(cloudResourceRela);
+                        cloudResourceRelaLink.setSource(SubnetRelaId);
+                        cloudResourceRelaLink.setTarget(EcsRelaId);
+                        insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                        if (Groups.size() > 0) {
 
                             Long j = y;
 
