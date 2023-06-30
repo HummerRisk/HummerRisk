@@ -526,7 +526,7 @@ public class CloudSyncService {
                 for (Object obj : networkInterfaces) {
                     JSONObject jsonObj = JSONObject.parseObject(obj.toString());
 
-                    String VpcId = !jsonObj.getString("VpcId").isEmpty()?jsonObj.getString("VpcId"):"default";
+                    String VpcId = !StringUtils.isEmpty(jsonObj.getString("VpcId"))?jsonObj.getString("VpcId"):"default";
                     String VpcRelaId = UUIDUtil.newUUID();
 
                     cloudResourceRela.setId(VpcRelaId);
@@ -543,7 +543,7 @@ public class CloudSyncService {
                     cloudResourceRelaLink.setTarget(VpcRelaId);
                     insertCloudResourceRelaLink(cloudResourceRelaLink);
 
-                    String SubnetId = !jsonObj.getString("SubnetId").isEmpty()?jsonObj.getString("SubnetId"):"default";
+                    String SubnetId = !StringUtils.isEmpty(jsonObj.getString("SubnetId"))?jsonObj.getString("SubnetId"):"default";
 
                     String SubnetRelaId = UUIDUtil.newUUID();
 
@@ -562,7 +562,7 @@ public class CloudSyncService {
                     insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                     JSONObject Association = JSONObject.parseObject(!StringUtils.isEmpty(jsonObj.getString("Association")) ? jsonObj.getString("Association") : "{}");
-                    String PublicIp = !Association.getString("PublicIp").isEmpty()?jsonObj.getString("PublicIp"):"";;
+                    String PublicIp = !StringUtils.isEmpty(Association.getString("PublicIp"))?jsonObj.getString("PublicIp"):"";;
                     JSONArray Groups = JSONArray.parseArray(!StringUtils.isEmpty(jsonObj.getString("Groups")) ? jsonObj.getString("Groups") : "[]");
 
                     if (!StringUtils.isEmpty(PublicIp)) {
@@ -630,7 +630,7 @@ public class CloudSyncService {
                                 JSONObject j = JSONObject.parseObject(b.toString());
                                 String DeviceName = j.getString("DeviceName");
                                 JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
-                                String VolumeId = Ebs.getString("VolumeId");
+                                String VolumeId = !StringUtils.isEmpty(Ebs.getString("VolumeId"))?Ebs.getString("VolumeId"):"default";
 
                                 cloudResourceRela.setId(id);
                                 cloudResourceRela.setName(DeviceName);
@@ -672,7 +672,7 @@ public class CloudSyncService {
                                 JSONObject j = JSONObject.parseObject(b.toString());
                                 String DeviceName = j.getString("DeviceName");
                                 JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
-                                String VolumeId = Ebs.getString("VolumeId");
+                                String VolumeId = !StringUtils.isEmpty(Ebs.getString("VolumeId"))?Ebs.getString("VolumeId"):"default";
 
                                 cloudResourceRela.setId(id);
                                 cloudResourceRela.setName(DeviceName);
@@ -744,7 +744,7 @@ public class CloudSyncService {
                                 JSONObject obj1 = JSONObject.parseObject(b.toString());
                                 String DeviceName = obj1.getString("DeviceName");
                                 JSONObject Ebs = JSONObject.parseObject(obj1.getString("Ebs"));
-                                String VolumeId = Ebs.getString("VolumeId");
+                                String VolumeId = !StringUtils.isEmpty(Ebs.getString("VolumeId"))?Ebs.getString("VolumeId"):"default";
 
                                 cloudResourceRela.setId(id);
                                 cloudResourceRela.setName(DeviceName);
@@ -786,7 +786,7 @@ public class CloudSyncService {
                                 JSONObject j = JSONObject.parseObject(b.toString());
                                 String DeviceName = j.getString("DeviceName");
                                 JSONObject Ebs = JSONObject.parseObject(j.getString("Ebs"));
-                                String VolumeId = Ebs.getString("VolumeId");
+                                String VolumeId = !StringUtils.isEmpty(Ebs.getString("VolumeId"))?Ebs.getString("VolumeId"):"default";
 
                                 cloudResourceRela.setId(id);
                                 cloudResourceRela.setName(DeviceName);
@@ -1095,13 +1095,13 @@ public class CloudSyncService {
         switch (resourceType) {
             case "aliyun.ecs":
                 String PublicIpAddress = jsonObject.getString("PublicIpAddress");
-                JSONArray IpAddress = JSONArray.parseArray(!JSONObject.parseObject(PublicIpAddress).getString("IpAddress").isEmpty() ? JSONObject.parseObject(PublicIpAddress).getString("IpAddress") : "[]");
+                JSONArray IpAddress = JSONArray.parseArray(!StringUtils.isEmpty(JSONObject.parseObject(PublicIpAddress).getString("IpAddress")) ? JSONObject.parseObject(PublicIpAddress).getString("IpAddress") : "[]");
 
                 String VpcAttributes = jsonObject.getString("VpcAttributes");
-                String VpcId = !JSONObject.parseObject(VpcAttributes).getString("VpcId").isEmpty()?JSONObject.parseObject(VpcAttributes).getString("VpcId"):"default";
+                String VpcId = !StringUtils.isEmpty(JSONObject.parseObject(VpcAttributes).getString("VpcId"))?JSONObject.parseObject(VpcAttributes).getString("VpcId"):"default";
 
                 String SecurityGroupIds = jsonObject.getString("SecurityGroupIds");
-                JSONArray SecurityGroupId = JSONArray.parseArray(!JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId").isEmpty() ? JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId") : "[]");
+                JSONArray SecurityGroupId = JSONArray.parseArray(!StringUtils.isEmpty(JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId")) ? JSONObject.parseObject(SecurityGroupIds).getString("SecurityGroupId") : "[]");
 
                 if (IpAddress.size() == 0) {
 
@@ -1633,7 +1633,7 @@ public class CloudSyncService {
 
                 String slbVpcId = jsonObject.getString("VpcId");
 
-                if (!slbVpcId.isEmpty()) {
+                if (!StringUtils.isEmpty(slbVpcId)) {
                     String slbVpcRelaId = UUIDUtil.newUUID();
 
                     cloudResourceRela.setId(slbVpcRelaId);
@@ -1721,7 +1721,7 @@ public class CloudSyncService {
                 x = 100L;
                 y = 100L;
                 String MountTargets = jsonObject.getString("MountTargets");
-                JSONArray MountTarget = JSONArray.parseArray(!JSONObject.parseObject(MountTargets).getString("MountTarget").isEmpty()?JSONObject.parseObject(MountTargets).getString("MountTarget"):"[]");
+                JSONArray MountTarget = JSONArray.parseArray(!StringUtils.isEmpty(JSONObject.parseObject(MountTargets).getString("MountTarget"))?JSONObject.parseObject(MountTargets).getString("MountTarget"):"[]");
 
                 cloudResourceRela.setId(Internet);
                 cloudResourceRela.setName("Internet");
