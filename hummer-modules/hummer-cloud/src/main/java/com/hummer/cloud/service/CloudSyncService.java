@@ -480,7 +480,7 @@ public class CloudSyncService {
         cloudResourceRela.setHummerId(hummerId);
         cloudResourceRela.setName(cloudResourceItem.getHummerName());
         cloudResourceRela.setCategory(resourceType);
-        cloudResourceRela.setSymbol("@/assets/img/rela/cloud_service.svg");
+        cloudResourceRela.setSymbol("cloud_service.svg");
         cloudResourceRela.setxAxis(x);//100
         cloudResourceRela.setyAxis(y);//100
 
@@ -499,7 +499,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aws.internet");
                     cloudResourceRela.setHummerId("No Internet");
                     cloudResourceRela.setCategory("aws.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//200
 
@@ -511,7 +511,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aws.internet");
                     cloudResourceRela.setHummerId("Internet");
                     cloudResourceRela.setCategory("aws.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//200
 
@@ -534,7 +534,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aws.vpc");
                     cloudResourceRela.setHummerId(VpcId);
                     cloudResourceRela.setCategory("aws.vpc");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                    cloudResourceRela.setSymbol("network_hub.svg");
                     cloudResourceRela.setxAxis(200L);//300
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -552,7 +552,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aws.subnet");
                     cloudResourceRela.setHummerId(SubnetId);
                     cloudResourceRela.setCategory("aws.subnet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_server.svg");
+                    cloudResourceRela.setSymbol("network_server.svg");
                     cloudResourceRela.setxAxis(300L);//300
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -574,7 +574,7 @@ public class CloudSyncService {
                         cloudResourceRela.setResourceType("aws.publicip");
                         cloudResourceRela.setHummerId(PublicIp);
                         cloudResourceRela.setCategory("aws.publicip");
-                        cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                        cloudResourceRela.setSymbol("domain.svg");
                         cloudResourceRela.setxAxis(400L);//500
                         cloudResourceRela.setyAxis(y + 100L);//200
                         insertCloudResourceRela(cloudResourceRela);
@@ -592,7 +592,7 @@ public class CloudSyncService {
                             cloudResourceRela.setResourceType(resourceType);
                             cloudResourceRela.setHummerId(hummerId);
                             cloudResourceRela.setCategory(resourceType);
-                            cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                            cloudResourceRela.setSymbol("cloud_server.svg");
                             cloudResourceRela.setxAxis(600L);//600
                             cloudResourceRela.setyAxis(y + 100L);//200
                             insertCloudResourceRela(cloudResourceRela);
@@ -608,7 +608,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aws.security-group");
                                 cloudResourceRela.setHummerId(GroupId);
                                 cloudResourceRela.setCategory("aws.security-group");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                                cloudResourceRela.setSymbol("cloud_security.svg");
                                 cloudResourceRela.setxAxis(500L);//500
                                 cloudResourceRela.setyAxis(y + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -637,7 +637,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aws.ebs");
                                 cloudResourceRela.setHummerId(VolumeId);
                                 cloudResourceRela.setCategory("aws.ebs");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                                cloudResourceRela.setSymbol("data_storage.svg");
                                 cloudResourceRela.setxAxis(700L);//800
                                 cloudResourceRela.setyAxis(i + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -656,7 +656,7 @@ public class CloudSyncService {
                             cloudResourceRela.setResourceType(resourceType);
                             cloudResourceRela.setHummerId(hummerId);
                             cloudResourceRela.setCategory(resourceType);
-                            cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                            cloudResourceRela.setSymbol("cloud_server.svg");
                             cloudResourceRela.setxAxis(500L);//600
                             cloudResourceRela.setyAxis(y + 100L);//200
                             insertCloudResourceRela(cloudResourceRela);
@@ -679,7 +679,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aws.ebs");
                                 cloudResourceRela.setHummerId(VolumeId);
                                 cloudResourceRela.setCategory("aws.ebs");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                                cloudResourceRela.setSymbol("data_storage.svg");
                                 cloudResourceRela.setxAxis(x + 500L);//700
                                 cloudResourceRela.setyAxis(i + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -703,7 +703,7 @@ public class CloudSyncService {
                             cloudResourceRela.setResourceType(resourceType);
                             cloudResourceRela.setHummerId(cloudResourceItem.getHummerId());
                             cloudResourceRela.setCategory(resourceType);
-                            cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                            cloudResourceRela.setSymbol("cloud_server.svg");
                             cloudResourceRela.setxAxis(400L);//400
                             cloudResourceRela.setyAxis(y + 100L);//200
                             insertCloudResourceRela(cloudResourceRela);
@@ -721,7 +721,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aws.security-group");
                                 cloudResourceRela.setHummerId(GroupId);
                                 cloudResourceRela.setCategory("aws.security-group");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                                cloudResourceRela.setSymbol("cloud_security.svg");
                                 cloudResourceRela.setxAxis(500L);//500
                                 cloudResourceRela.setyAxis(j + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -747,7 +747,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aws.ebs");
                                 cloudResourceRela.setHummerId(VolumeId);
                                 cloudResourceRela.setCategory("aws.ebs");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                                cloudResourceRela.setSymbol("data_storage.svg");
                                 cloudResourceRela.setxAxis(600L);//800
                                 cloudResourceRela.setyAxis(i + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -766,7 +766,7 @@ public class CloudSyncService {
                             cloudResourceRela.setResourceType(resourceType);
                             cloudResourceRela.setHummerId(hummerId);
                             cloudResourceRela.setCategory(resourceType);
-                            cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                            cloudResourceRela.setSymbol("cloud_server.svg");
                             cloudResourceRela.setxAxis(400L);//600
                             cloudResourceRela.setyAxis(y + 100L);//200
                             insertCloudResourceRela(cloudResourceRela);
@@ -789,7 +789,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aws.ebs");
                                 cloudResourceRela.setHummerId(VolumeId);
                                 cloudResourceRela.setCategory("aws.ebs");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                                cloudResourceRela.setSymbol("data_storage.svg");
                                 cloudResourceRela.setxAxis(500L);//500
                                 cloudResourceRela.setyAxis(i + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -816,7 +816,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                cloudResourceRela.setSymbol("data_storage.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -835,7 +835,7 @@ public class CloudSyncService {
                         cloudResourceRela.setResourceType("aws.ecs");
                         cloudResourceRela.setHummerId(InstanceId);
                         cloudResourceRela.setCategory("aws.ecs");
-                        cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                        cloudResourceRela.setSymbol("cloud_server.svg");
                         cloudResourceRela.setxAxis(x + 100L);//100
                         cloudResourceRela.setyAxis(200L);//100
                         insertCloudResourceRela(cloudResourceRela);
@@ -859,7 +859,7 @@ public class CloudSyncService {
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
                 cloudResourceRela.setCategory("aws.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -872,7 +872,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aws.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aws.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -885,7 +885,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(PublicIp);
                 cloudResourceRela.setName(PublicIp);
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                cloudResourceRela.setSymbol("domain.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -902,7 +902,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aws.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aws.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(x);//100
                 cloudResourceRela.setyAxis(y);//200
 
@@ -917,7 +917,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aws.vpc");
                 cloudResourceRela.setHummerId(VpcId);
                 cloudResourceRela.setCategory("aws.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(200L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -935,7 +935,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aws.domain");
                 cloudResourceRela.setHummerId(Address);
                 cloudResourceRela.setCategory("aws.domain");
-                cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                cloudResourceRela.setSymbol("domain.svg");
                 cloudResourceRela.setxAxis(300L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -951,7 +951,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/database_management.svg");
+                cloudResourceRela.setSymbol("database_management.svg");
                 cloudResourceRela.setxAxis(400L);//400
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -970,7 +970,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_database.svg");
+                cloudResourceRela.setSymbol("cloud_database.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -982,7 +982,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("awsinternet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aws.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -995,7 +995,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(VpcId2);
                 cloudResourceRela.setName(VpcId2);
                 cloudResourceRela.setCategory("aws.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1011,7 +1011,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                cloudResourceRela.setSymbol("cloud_security.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1030,7 +1030,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory("aws.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1045,7 +1045,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/authentication.svg");
+                cloudResourceRela.setSymbol("authentication.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1081,7 +1081,7 @@ public class CloudSyncService {
         cloudResourceRela.setName(cloudResourceItem.getHummerName());
         cloudResourceRela.setCreateTime(System.currentTimeMillis());
         cloudResourceRela.setCategory(resourceType);
-        cloudResourceRela.setSymbol("@/assets/img/rela/cloud_service.svg");
+        cloudResourceRela.setSymbol("cloud_service.svg");
         cloudResourceRela.setxAxis(x);//100
         cloudResourceRela.setyAxis(y);//100
 
@@ -1106,7 +1106,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.internet");
                     cloudResourceRela.setHummerId("No Internet");
                     cloudResourceRela.setCategory("aliyun.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//200
 
@@ -1118,7 +1118,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.internet");
                     cloudResourceRela.setHummerId("Internet");
                     cloudResourceRela.setCategory("aliyun.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//200
 
@@ -1134,7 +1134,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.vpc");
                     cloudResourceRela.setHummerId(VpcId);
                     cloudResourceRela.setCategory("aliyun.vpc");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                    cloudResourceRela.setSymbol("network_hub.svg");
                     cloudResourceRela.setxAxis(200L);//300
                     cloudResourceRela.setyAxis(y);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1150,7 +1150,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType(resourceType);
                     cloudResourceRela.setHummerId(hummerId);
                     cloudResourceRela.setCategory(resourceType);
-                    cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                    cloudResourceRela.setSymbol("cloud_server.svg");
                     cloudResourceRela.setxAxis(400L);//500
                     cloudResourceRela.setyAxis(y);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1169,7 +1169,7 @@ public class CloudSyncService {
                             cloudResourceRela.setResourceType("aliyun.eip");
                             cloudResourceRela.setHummerId(Ip);
                             cloudResourceRela.setCategory("aliyun.eip");
-                            cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                            cloudResourceRela.setSymbol("domain.svg");
                             cloudResourceRela.setxAxis(300L);//400
                             cloudResourceRela.setyAxis(y + 100L);//200
                             insertCloudResourceRela(cloudResourceRela);
@@ -1199,7 +1199,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aliyun.security-group");
                                 cloudResourceRela.setHummerId(Sg);
                                 cloudResourceRela.setCategory("aliyun.security-group");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                                cloudResourceRela.setSymbol("cloud_security.svg");
                                 cloudResourceRela.setxAxis(x);//400
                                 cloudResourceRela.setyAxis(y + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -1228,7 +1228,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setResourceType("aliyun.security-group");
                                 cloudResourceRela.setHummerId(Sg);
                                 cloudResourceRela.setCategory("aliyun.security-group");
-                                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                                cloudResourceRela.setSymbol("cloud_security.svg");
                                 cloudResourceRela.setxAxis(x + 100L);//400
                                 cloudResourceRela.setyAxis(y + 100L);//200
                                 insertCloudResourceRela(cloudResourceRela);
@@ -1253,7 +1253,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/db_architecture.svg");
+                cloudResourceRela.setSymbol("db_architecture.svg");
                 cloudResourceRela.setxAxis(200L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1269,7 +1269,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.ecs");
                 cloudResourceRela.setHummerId(InstanceId);
                 cloudResourceRela.setCategory("aliyun.ecs");
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                cloudResourceRela.setSymbol("cloud_server.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1279,7 +1279,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/data_storage.svg");
+                cloudResourceRela.setSymbol("data_storage.svg");
                 cloudResourceRela.setxAxis(300L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1298,7 +1298,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.ecs");
                 cloudResourceRela.setHummerId(Eip2EcsInstanceId);
                 cloudResourceRela.setCategory("aliyun.ecs");
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_server.svg");
+                cloudResourceRela.setSymbol("cloud_server.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1308,7 +1308,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory("aliyun.eip");
-                cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                cloudResourceRela.setSymbol("domain.svg");
                 cloudResourceRela.setxAxis(300L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1326,7 +1326,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/database_management.svg");
+                cloudResourceRela.setSymbol("database_management.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1338,7 +1338,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1351,7 +1351,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.domain");
                 cloudResourceRela.setHummerId(extranet_endpoint);
                 cloudResourceRela.setCategory("aliyun.domain");
-                cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                cloudResourceRela.setSymbol("domain.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1367,7 +1367,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_database.svg");
+                cloudResourceRela.setSymbol("cloud_database.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1383,7 +1383,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1396,7 +1396,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.vpc");
                 cloudResourceRela.setHummerId(polardbVpcId);
                 cloudResourceRela.setCategory("aliyun.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1412,7 +1412,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/database_management.svg");
+                cloudResourceRela.setSymbol("database_management.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1429,7 +1429,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/authorization_manager.svg");
+                cloudResourceRela.setSymbol("authorization_manager.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1443,7 +1443,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.internet");
                     cloudResourceRela.setHummerId("No Internet");
                     cloudResourceRela.setCategory("aliyun.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(200L);//100
                     cloudResourceRela.setyAxis(200L);//100
                     insertCloudResourceRela(cloudResourceRela);
@@ -1453,7 +1453,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.internet");
                     cloudResourceRela.setHummerId("Internet");
                     cloudResourceRela.setCategory("aliyun.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(200L);//100
                     cloudResourceRela.setyAxis(200L);//100
                     insertCloudResourceRela(cloudResourceRela);
@@ -1467,7 +1467,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.vpc");
                 cloudResourceRela.setHummerId(VpcIdVpcId);
                 cloudResourceRela.setCategory("aliyun.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1483,7 +1483,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/database_management.svg");
+                cloudResourceRela.setSymbol("database_management.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1500,7 +1500,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1513,7 +1513,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.vpc");
                 cloudResourceRela.setHummerId(redisVpcId);
                 cloudResourceRela.setCategory("aliyun.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1529,7 +1529,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(ConnectionDomain);
                 cloudResourceRela.setName(ConnectionDomain);
                 cloudResourceRela.setCategory("aliyun.domain");
-                cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                cloudResourceRela.setSymbol("domain.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1545,7 +1545,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/database_management.svg");
+                cloudResourceRela.setSymbol("database_management.svg");
                 cloudResourceRela.setxAxis(500L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1562,7 +1562,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1575,7 +1575,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.vpc");
                 cloudResourceRela.setHummerId(sgVpcId);
                 cloudResourceRela.setCategory("aliyun.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1591,7 +1591,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory("aliyun.security-group");
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                cloudResourceRela.setSymbol("cloud_security.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1611,7 +1611,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.internet");
                     cloudResourceRela.setHummerId("No Internet");
                     cloudResourceRela.setCategory("aliyun.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(100L);//100
                     cloudResourceRela.setyAxis(200L);//100
                     insertCloudResourceRela(cloudResourceRela);
@@ -1621,7 +1621,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.internet");
                     cloudResourceRela.setHummerId("Internet");
                     cloudResourceRela.setCategory("aliyun.internet");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                    cloudResourceRela.setSymbol("network_security.svg");
                     cloudResourceRela.setxAxis(100L);//100
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1637,7 +1637,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.vpc");
                     cloudResourceRela.setHummerId(slbVpcId);
                     cloudResourceRela.setCategory("aliyun.vpc");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                    cloudResourceRela.setSymbol("network_hub.svg");
                     cloudResourceRela.setxAxis(300L);//300
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1652,6 +1652,8 @@ public class CloudSyncService {
                     cloudResourceRela.setName(Address);
                     cloudResourceRela.setResourceType("aliyun.ip");
                     cloudResourceRela.setHummerId(Address);
+                    cloudResourceRela.setCategory("aliyun.ip");
+                    cloudResourceRela.setSymbol("domain.svg");
                     cloudResourceRela.setxAxis(400L);//300
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1667,7 +1669,7 @@ public class CloudSyncService {
                     cloudResourceRela.setHummerId(hummerId);
                     cloudResourceRela.setName(cloudResourceItem.getHummerName());
                     cloudResourceRela.setCategory(resourceType);
-                    cloudResourceRela.setSymbol("@/assets/img/rela/cloud_security.svg");
+                    cloudResourceRela.setSymbol("cloud_security.svg");
                     cloudResourceRela.setxAxis(500L);//100
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1683,6 +1685,8 @@ public class CloudSyncService {
                     cloudResourceRela.setName(Address);
                     cloudResourceRela.setResourceType("aliyun.ip");
                     cloudResourceRela.setHummerId(Address);
+                    cloudResourceRela.setCategory("aliyun.ip");
+                    cloudResourceRela.setSymbol("doamin.svg");
                     cloudResourceRela.setxAxis(300L);//300
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1697,6 +1701,8 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType(resourceType);
                     cloudResourceRela.setHummerId(hummerId);
                     cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setCategory(resourceType);
+                    cloudResourceRela.setSymbol("cloud_security.svg");
                     cloudResourceRela.setxAxis(400L);//100
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1718,7 +1724,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(x);//100
                 cloudResourceRela.setyAxis(y);//100
 
@@ -1731,7 +1737,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/file_system.svg");
+                cloudResourceRela.setSymbol("file_system.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1746,7 +1752,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.vpc");
                     cloudResourceRela.setHummerId(vpcId);
                     cloudResourceRela.setCategory("aliyun.vpc");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                    cloudResourceRela.setSymbol("network_hub.svg");
                     cloudResourceRela.setxAxis(100L);//100
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1759,7 +1765,7 @@ public class CloudSyncService {
                     cloudResourceRela.setResourceType("aliyun.domain");
                     cloudResourceRela.setHummerId(MountTargetDomain);
                     cloudResourceRela.setCategory("aliyun.domain");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/domain.svg");
+                    cloudResourceRela.setSymbol("domain.svg");
                     cloudResourceRela.setxAxis(200L);//100
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1785,7 +1791,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_service.svg");
+                cloudResourceRela.setSymbol("cloud_service.svg");
                 cloudResourceRela.setxAxis(200L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1800,7 +1806,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/cloud_service.svg");
+                cloudResourceRela.setSymbol("cloud_service.svg");
                 cloudResourceRela.setxAxis(200L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1818,7 +1824,7 @@ public class CloudSyncService {
                     cloudResourceRela.setHummerId(hummerId);
                     cloudResourceRela.setName(cloudResourceItem.getHummerName());
                     cloudResourceRela.setCategory("aliyun.vpc");
-                    cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                    cloudResourceRela.setSymbol("network_hub.svg");
                     cloudResourceRela.setxAxis(200L);//200
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
@@ -1836,7 +1842,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/fast_processing.svg");
+                cloudResourceRela.setSymbol("fast_processing.svg");
                 cloudResourceRela.setxAxis(200L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1849,7 +1855,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.internet");
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_security.svg");
+                cloudResourceRela.setSymbol("network_security.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1862,7 +1868,7 @@ public class CloudSyncService {
                 cloudResourceRela.setResourceType("aliyun.vpc");
                 cloudResourceRela.setHummerId(postgresqlVpcId);
                 cloudResourceRela.setCategory("aliyun.vpc");
-                cloudResourceRela.setSymbol("@/assets/img/rela/network_hub.svg");
+                cloudResourceRela.setSymbol("network_hub.svg");
                 cloudResourceRela.setxAxis(300L);//100
                 cloudResourceRela.setyAxis(200L);//100
                 insertCloudResourceRela(cloudResourceRela);
@@ -1878,7 +1884,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/database_management.svg");
+                cloudResourceRela.setSymbol("database_management.svg");
                 cloudResourceRela.setxAxis(400L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
@@ -1897,7 +1903,7 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
-                cloudResourceRela.setSymbol("@/assets/img/rela/authentication.svg");
+                cloudResourceRela.setSymbol("authentication.svg");
                 cloudResourceRela.setxAxis(200L);//100
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);

@@ -29,10 +29,7 @@ export default {
         let cloudResourceRelaLinkList = data.cloudResourceRelaLinkList;
 
         for (let obj of cloudResourceRelaList) {
-          if(!!obj.symbol) {
-            obj.symbol = 'image://'+ require(obj.symbol);
-            break;
-          }
+          obj.symbol = 'image://'+ require('@/assets/img/rela/' + obj.symbol);
         }
 
         this.options = {
@@ -50,7 +47,9 @@ export default {
           },
           tooltip: {
             formatter(params){
-              return `${params.name}
+              let strs = params.name.split("\n");
+              return `${strs[0]}
+                <br/>${strs[1]}
                 <br/>${params.value}`;
             }
           },
