@@ -623,7 +623,7 @@ public class CloudSyncService {
 
                             }
 
-                            Long i = y;
+                            Long i = 150L;
 
                             for (Object b : BlockDeviceMappings) {
                                 String id = UUIDUtil.newUUID();
@@ -661,11 +661,11 @@ public class CloudSyncService {
                             cloudResourceRela.setyAxis(y + 100L);//200
                             insertCloudResourceRela(cloudResourceRela);
 
-                            cloudResourceRelaLink.setSource(cloudResourceRela.getId());
-                            cloudResourceRelaLink.setTarget(cloudResourceRela.getId());
+                            cloudResourceRelaLink.setSource(PublicRelaIp);
+                            cloudResourceRelaLink.setTarget(EcsRelaId);
                             insertCloudResourceRelaLink(cloudResourceRelaLink);
 
-                            Long i = y;
+                            Long i = 150L;
 
                             for (Object b : BlockDeviceMappings) {
                                 String id = UUIDUtil.newUUID();
@@ -737,7 +737,7 @@ public class CloudSyncService {
                                 j = j + 100;
                             }
 
-                            Long i = y;
+                            Long i = 150L;
 
                             for (Object b : BlockDeviceMappings) {
                                 String id = UUIDUtil.newUUID();
@@ -779,7 +779,7 @@ public class CloudSyncService {
                             cloudResourceRelaLink.setTarget(EcsRelaId);
                             insertCloudResourceRelaLink(cloudResourceRelaLink);
 
-                            Long i = y;
+                            Long i = 150L;
 
                             for (Object b : BlockDeviceMappings) {
                                 String id = UUIDUtil.newUUID();
@@ -795,7 +795,7 @@ public class CloudSyncService {
                                 cloudResourceRela.setCategory("aws.ebs");
                                 cloudResourceRela.setSymbol("data_storage.svg");
                                 cloudResourceRela.setxAxis(500L);//500
-                                cloudResourceRela.setyAxis(i + 100L);//200
+                                cloudResourceRela.setyAxis(i + 100L);//250
                                 insertCloudResourceRela(cloudResourceRela);
 
                                 cloudResourceRelaLink.setSource(EcsRelaId);
