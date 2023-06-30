@@ -236,8 +236,10 @@ public class ResourceCreateService {
                     historyService.updateScanTaskHistory(historyScanTask);
                 }
             }
-            historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
-            historyService.updateScanHistory(historyScan);
+            if (historyScanTasks.size() == 0) {
+                historyScan.setStatus(TaskConstants.TASK_STATUS.FINISHED.name());
+                historyService.updateScanHistory(historyScan);
+            }
             historyIdMap.remove(historyScanToBeProceed.getId());
         }
 
