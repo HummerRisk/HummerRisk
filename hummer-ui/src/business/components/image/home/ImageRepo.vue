@@ -29,8 +29,12 @@
               </span>
           </template>
         </el-table-column>
-        <el-table-column prop="repo" v-if="checkedColumnNames.includes('repo')" :label="$t('image.image_repo_url')" min-width="220"/>
-        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('image.image_repo_user_name')" min-width="110"/>
+        <el-table-column prop="repo" v-if="checkedColumnNames.includes('repo')" :label="$t('image.image_repo_url')" min-width="220" v-slot:default="scope">
+          {{ scope.row.repo?scope.row.repo:"--" }}
+        </el-table-column>
+        <el-table-column prop="userName" v-if="checkedColumnNames.includes('userName')" :label="$t('image.image_repo_user_name')" min-width="110" v-slot:default="scope">
+          {{ scope.row.userName?scope.row.userName:"--" }}
+        </el-table-column>
         <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="130" :label="$t('image.image_repo_status')"
                          column-key="status"
                          :filters="statusFilters"
