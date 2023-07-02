@@ -14,12 +14,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.cloudtrail.AWSCloudTrail;
-import com.amazonaws.services.cloudtrail.AWSCloudTrailClient;
-import com.amazonaws.services.ecr.AmazonECR;
-import com.amazonaws.services.ecr.AmazonECRClient;
-import com.amazonaws.services.ecr.model.AwsEcrContainerImageDetails;
-import com.amazonaws.services.ecr.model.DescribeRepositoriesResult;
 import com.amazonaws.services.ecrpublic.AmazonECRPublic;
 import com.amazonaws.services.ecrpublic.AmazonECRPublicClient;
 import com.amazonaws.services.ecrpublic.model.*;
@@ -60,6 +54,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -289,7 +284,7 @@ public class ImageService {
                     }else{
                         aliyunCredential = JSON.parseObject(imageRepo.getCredential(),AliyunCredential.class);
                     }
-                       // 设置Client
+                    // 设置Client
                     DefaultProfile.addEndpoint(region, region, "cr", "cr."+region+".aliyuncs.com");
                     IClientProfile profile = DefaultProfile.getProfile(region, aliyunCredential.getAccessKey(), aliyunCredential.getSecretKey());
                     DefaultAcsClient client = new DefaultAcsClient(profile);
@@ -417,10 +412,13 @@ public class ImageService {
                 com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest describeRepositoriesRequest = new com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest();
                 com.amazonaws.services.ecrpublic.model.DescribeRepositoriesResult describeRepositoriesResult = ecrPublic.describeRepositories(describeRepositoriesRequest);
                 List<Repository> repositories = describeRepositoriesResult.getRepositories();
+                AtomicReference<String> repo = new AtomicReference<>();
                 repositories.forEach(repository -> {
                     String repName = repository.getRepositoryName();
                     String registryId = repository.getRegistryId();
                     String repUri = repository.getRepositoryUri();
+                    if(repo.get() == null && repUri.contains("/"))
+                        repo.set(repUri.substring(0, repUri.indexOf("/")));
                     DescribeImageTagsRequest describeImageTagsRequest = new DescribeImageTagsRequest();
                     describeImageTagsRequest.setRegistryId(registryId);
                     describeImageTagsRequest.setRepositoryName(repName);
@@ -440,7 +438,7 @@ public class ImageService {
                         imageRepoItemMapper.insertSelective(imageRepoItem);
                     });
                 });
-
+                imageRepo.setRepo(repo.get());
             }else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
                 return true;
             }
