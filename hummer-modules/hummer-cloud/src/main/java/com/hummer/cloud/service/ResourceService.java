@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -517,6 +516,9 @@ public class ResourceService {
                                 case "hummerId":
                                     add(resource.getHummerId());
                                     break;
+                                case "hummerName":
+                                    add(resource.getHummerName());
+                                    break;
                                 case "resourceName":
                                     add(resource.getResourceName());
                                     break;
@@ -587,6 +589,9 @@ public class ResourceService {
                                     break;
                                 case "hummerId":
                                     add(resource.getHummerId());
+                                    break;
+                                case "hummerName":
+                                    add(resource.getHummerName());
                                     break;
                                 case "resourceName":
                                     add(resource.getResourceName());

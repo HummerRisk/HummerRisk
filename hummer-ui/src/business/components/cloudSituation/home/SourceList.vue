@@ -46,7 +46,7 @@
                 {{ getAccountName(scope.row.accountId) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="hummerId" v-if="checkedColumnNames.includes('hummerId')"
+            <el-table-column prop="hummerName" v-if="checkedColumnNames.includes('hummerName')"
                              :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip
                              sortable></el-table-column>
             <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')"
@@ -109,7 +109,7 @@ const columnOptions = [
   },
   {
     label: 'resource.resource_id',
-    props: 'hummerId',
+    props: 'hummerName',
     disabled: false
   },
   {

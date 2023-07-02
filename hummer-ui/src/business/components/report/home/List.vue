@@ -176,6 +176,9 @@
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerId')" :label="$t('resource.Hummer_ID')" min-width="130">
               {{ scope.row.hummerId }}
             </el-table-column>
+            <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('hummerName')" :label="$t('dashboard.resource_name')" min-width="130">
+              {{ scope.row.hummerName }}
+            </el-table-column>
             <el-table-column v-slot:default="scope" v-if="checkedColumnNames2.includes('resourceType')" :label="$t('rule.resource_type')" min-width="130">
               {{ scope.row.resourceType }}
             </el-table-column>
@@ -559,6 +562,11 @@ const columnOptions2 = [
     disabled: false
   },
   {
+    label: 'dashboard.resource_name',
+    props: 'hummerName',
+    disabled: false
+  },
+  {
     label: 'rule.resource_type',
     props: 'resourceType',
     disabled: false
@@ -776,6 +784,10 @@ const columnOptions3 = [
           {
             name: 'resource.Hummer_ID',
             id: 'hummerId',
+          },
+          {
+            name: 'dashboard.resource_name',
+            id: 'hummerName',
           },
           {
             name: 'account.regions',
@@ -1093,6 +1105,7 @@ const columnOptions3 = [
             if (action === 'confirm') {
               let columns = [
                 {value: this.$t('resource.Hummer_ID'), key: "hummerId"},
+                {value: this.$t('dashboard.resource_name'), key: "hummerName"},
                 {value: this.$t('dashboard.resource_name'), key: "resourceName"},
                 {value: this.$t('rule.resource_type'), key: "resourceType"},
                 {value: this.$t('account.region_id'), key: "regionId"},
@@ -1143,6 +1156,7 @@ const columnOptions3 = [
             if (action === 'confirm') {
               let columns = [
                 {value: this.$t('resource.Hummer_ID'), key: "hummerId"},
+                {value: this.$t('dashboard.resource_name'), key: "hummerName"},
                 {value: this.$t('dashboard.resource_name'), key: "resourceName"},
                 {value: this.$t('rule.resource_type'), key: "resourceType"},
                 {value: this.$t('account.region_id'), key: "regionId"},
