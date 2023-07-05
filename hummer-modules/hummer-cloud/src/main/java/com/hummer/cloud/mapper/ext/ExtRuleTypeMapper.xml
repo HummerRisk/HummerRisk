@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtRuleTypeMapper">
 
-    <select id="selectByExample" resultType="map">
+    <select id="selectByExample" resultType="java.util.Map">
         SELECT
         DISTINCT(t.resource_type) as name
         FROM rule_type t
         GROUP BY t.resource_type
     </select>
 
-    <select id="cloudResourceTypes" resultType="map">
+    <select id="cloudResourceTypes" resultType="java.util.Map">
         SELECT
             DISTINCT(t.resource_type) as name
         FROM rule_type t

@@ -45,6 +45,11 @@
               <regions :row="scope.row"/>
             </template>
           </el-table-column>
+          <el-table-column prop="linked" v-if="checkedColumnNames.includes('linked')" :label="$t('vis.linked') + $t('dashboard.accounts')" min-width="100">
+            <template v-slot:default="scope">
+              <links :row="scope.row"/>
+            </template>
+          </el-table-column>
           <el-table-column min-width="200" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable prop="createTime">
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
@@ -322,15 +327,16 @@
 </template>
 
 <script>
-import TablePagination from "../../common/pagination/TablePagination";
+import TablePagination from "@/business/components/common/pagination/TablePagination";
 import TableHeader from "@/business/components/common/components/TableHeader";
-import Container from "../../common/components/Container";
-import MainContainer from "../../common/components/MainContainer";
+import Container from "@/business/components/common/components/Container";
+import MainContainer from "@/business/components/common/components/MainContainer";
 import AccountStatus from "./AccountStatus";
 import Regions from "./Regions";
-import TableOperators from "../../common/components/TableOperators";
+import Links from "./Links";
+import TableOperators from "@/business/components/common/components/TableOperators";
 import {_filter, _sort} from "@/common/js/utils";
-import {ACCOUNT_CONFIGS} from "../../common/components/search/search-components";
+import {ACCOUNT_CONFIGS} from "@/business/components/common/components/search/search-components";
 import ProxyDialogFooter from "@/business/components/common/components/ProxyDialogFooter";
 import ProxyDialogCreateFooter from "@/business/components/common/components/ProxyDialogCreateFooter";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
@@ -371,6 +377,11 @@ const columnOptions = [
     disabled: false
   },
   {
+    label: 'vis.linked',
+    props: 'linked',
+    disabled: false
+  },
+  {
     label: 'account.create_time',
     props: 'createTime',
     disabled: false
@@ -393,6 +404,7 @@ const columnOptions = [
       TableOperators,
       AccountStatus,
       Regions,
+      Links,
       MainContainer,
       Container,
       TableHeader,

@@ -39,8 +39,7 @@ public class AccountController {
     @I18n
     @Operation(summary = "云账号列表")
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<AccountDTO>> getCloudAccountList(
-            @PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudAccountRequest request) {
+    public Pager<List<AccountDTO>> getCloudAccountList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudAccountRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, accountService.getCloudAccountList(request));
     }

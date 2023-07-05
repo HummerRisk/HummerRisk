@@ -9,6 +9,55 @@
         <result column="proxy_port" jdbcType="VARCHAR" property="proxyPort" />
         <result column="proxy_name" jdbcType="VARCHAR" property="proxyName" />
         <result column="proxy_password" jdbcType="VARCHAR" property="proxyPassword" />
+        <collection property="ossList" ofType="com.hummer.common.core.domain.Oss" javaType="list"
+                    select="selectOssList" column="{accountId=id}">
+            <id column="id" jdbcType="VARCHAR" property="id" />
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="endpoint" jdbcType="VARCHAR" property="endpoint" />
+            <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+            <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+            <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+            <result column="status" jdbcType="VARCHAR" property="status" />
+            <result column="sync_status" jdbcType="VARCHAR" property="syncStatus" />
+            <result column="create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+            <result column="creator" jdbcType="VARCHAR" property="creator" />
+            <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+            <result column="sum" jdbcType="INTEGER" property="sum" />
+            <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        </collection>
+        <collection property="cloudEventSyncLogList" ofType="com.hummer.common.core.domain.CloudEventSyncLog" javaType="list"
+                    select="selectCloudEventSyncLogList" column="{accountId=id}">
+            <id column="id" jdbcType="INTEGER" property="id" />
+            <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+            <result column="region" jdbcType="VARCHAR" property="region" />
+            <result column="data_count" jdbcType="INTEGER" property="dataCount" />
+            <result column="status" jdbcType="INTEGER" property="status" />
+            <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+            <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+            <result column="request_start_time" jdbcType="TIMESTAMP" property="requestStartTime" />
+            <result column="request_end_time" jdbcType="TIMESTAMP" property="requestEndTime" />
+            <result column="create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="exception" jdbcType="VARCHAR" property="exception" />
+            <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+            <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+        </collection>
+        <collection property="imageRepoList" ofType="com.hummer.common.core.domain.ImageRepo" javaType="list"
+                    select="selectImageRepoList" column="{accountId=id}">
+            <id column="id" jdbcType="VARCHAR" property="id" />
+            <result column="name" jdbcType="VARCHAR" property="name" />
+            <result column="status" jdbcType="VARCHAR" property="status" />
+            <result column="create_time" jdbcType="BIGINT" property="createTime" />
+            <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+            <result column="creator" jdbcType="VARCHAR" property="creator" />
+            <result column="repo" jdbcType="VARCHAR" property="repo" />
+            <result column="user_name" jdbcType="VARCHAR" property="userName" />
+            <result column="password" jdbcType="VARCHAR" property="password" />
+            <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+            <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+            <result column="is_bind_account" jdbcType="BIT" property="isBindAccount" />
+            <result column="credential" jdbcType="VARCHAR" property="credential" />
+        </collection>
     </resultMap>
 
     <resultMap id="ServerResultMap" type="com.hummer.common.core.dto.ServerDTO"
@@ -139,6 +188,55 @@
         order by t.update_time desc
     </select>
 
+    <select id="selectOssList" resultType="com.hummer.common.core.domain.Oss">
+        SELECT
+            t.*
+        FROM oss t
+        where t.account_id = #{accountId}
+        ORDER BY t.update_time DESC
+    </select>
+
+    <select id="selectCloudEventSyncLogList" resultType="com.hummer.common.core.domain.CloudEventSyncLog">
+        SELECT
+            t.*
+        FROM cloud_event_sync_log t
+        where t.account_id = #{accountId}
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="selectImageRepoList" resultType="com.hummer.common.core.domain.ImageRepo">
+        SELECT
+            t.*
+        FROM image_repo t
+        where t.account_id = #{accountId}
+        ORDER BY t.update_time DESC
+    </select>
+
+    <select id="groupList" resultType="java.util.Map">
+        SELECT
+        IFNULL( sum( t4.return_sum ), 0 ) AS returnSum,
+        IFNULL( sum( t4.resources_sum ), 0 ) AS resourcesSum,
+        t.name,
+        t.description
+        FROM
+        rule_group t
+        LEFT JOIN rule_group_mapping t1 ON t.id = t1.group_id
+        LEFT JOIN rule t2 ON t1.rule_id = t2.id
+        LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
+        LEFT JOIN resource t4 ON t3.resource_id = t4.id
+        LEFT JOIN plugin p on t2.plugin_id = p.id
+        <where>
+            <if test="accountId != null">
+                AND t4.account_id = #{accountId}
+            </if>
+            and p.type = 'cloud'
+        </where>
+        GROUP BY
+        t.id
+        ORDER BY
+        returnSum desc
+    </select>
+
     <select id="ruleList" parameterType="com.hummer.common.core.dto.QuartzTaskDTO"
             resultMap="com.hummer.cloud.mapper.ext.ExtRuleMapper.BaseResultMap2">
         SELECT
@@ -176,31 +274,6 @@
             </if>
         </where>
         ORDER BY t.id desc
-    </select>
-
-    <select id="groupList" resultType="java.util.Map">
-        SELECT
-            IFNULL( sum( t4.return_sum ), 0 ) AS returnSum,
-            IFNULL( sum( t4.resources_sum ), 0 ) AS resourcesSum,
-            t.name,
-            t.description
-        FROM
-            rule_group t
-            LEFT JOIN rule_group_mapping t1 ON t.id = t1.group_id
-            LEFT JOIN rule t2 ON t1.rule_id = t2.id
-            LEFT JOIN resource_rule t3 ON t2.id = t3.rule_id
-            LEFT JOIN resource t4 ON t3.resource_id = t4.id
-            LEFT JOIN plugin p on t2.plugin_id = p.id
-        <where>
-            <if test="accountId != null">
-                AND t4.account_id = #{accountId}
-            </if>
-            and p.type = 'cloud'
-        </where>
-        GROUP BY
-            t.id
-        ORDER BY
-            returnSum desc
     </select>
 
     <select id="reportList" resultType="java.util.Map">

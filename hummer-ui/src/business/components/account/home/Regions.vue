@@ -3,7 +3,7 @@
     <el-popover
       ref="popover"
       placement="left"
-      width="400"
+      width="600"
       trigger="hover">
       <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
           <el-table-column type="index" min-width="100"/>
