@@ -629,6 +629,7 @@ export default {
       isIndeterminate2: false,
       innerDrawerProxy: false,
       tokenSwitch: false,
+      accountId: '',
     }
   },
   methods: {
@@ -743,6 +744,7 @@ export default {
         let fromJson = typeof(response.data) === 'string'?JSON.parse(response.data):response.data;
         let data = fromJson.data;
         this.$get(getAccountUrl + accountId,res => {
+          this.accountId = accountId;
           this.form = res.data;
           let credentials = typeof(res.data.credential) === 'string'?JSON.parse(res.data.credential):res.data.credential;
           this.tmpList = data;
@@ -783,6 +785,7 @@ export default {
           item["credential"] = JSON.stringify(key);
           item["name"] = item.name;
           item["pluginId"] = item.pluginId;
+          item["accountId"] = this.accountId;
 
           if (type === 'add') {
             this.cloudResult = this.$post(addOssUrl, item,response => {

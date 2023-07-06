@@ -1,9 +1,9 @@
 package com.hummer.common.core.dto;
 
 import com.hummer.common.core.domain.AccountWithBLOBs;
-import com.hummer.common.core.domain.CloudEventSyncLog;
 import com.hummer.common.core.domain.ImageRepo;
 import com.hummer.common.core.domain.Oss;
+import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class AccountDTO extends AccountWithBLOBs {
 
     private List<Oss> ossList;
 
-    private List<CloudEventSyncLog> cloudEventSyncLogList;
+    private List<CloudEventSyncLogVo> cloudEventSyncLogList;
 
     private List<ImageRepo> imageRepoList;
 
@@ -91,11 +91,11 @@ public class AccountDTO extends AccountWithBLOBs {
         this.ossList = ossList;
     }
 
-    public List<CloudEventSyncLog> getCloudEventSyncLogList() {
+    public List<CloudEventSyncLogVo> getCloudEventSyncLogList() {
         return cloudEventSyncLogList;
     }
 
-    public void setCloudEventSyncLogList(List<CloudEventSyncLog> cloudEventSyncLogList) {
+    public void setCloudEventSyncLogList(List<CloudEventSyncLogVo> cloudEventSyncLogList) {
         this.cloudEventSyncLogList = cloudEventSyncLogList;
     }
 
