@@ -1870,6 +1870,7 @@ export default {
     editClusterError: '無法編輯群集。 ',
     unedit: '數據暫時不可修改',
     linked: '關聯',
+    not_linked: '無關聯',
     belong: '所屬',
   },
   fs: {

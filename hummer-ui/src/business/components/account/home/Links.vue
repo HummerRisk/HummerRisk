@@ -4,10 +4,11 @@
       ref="popover"
       placement="top-start"
       width="900"
-      trigger="hover">
+      trigger="hover"
+      v-if="ossList.length > 0 || cloudEventSyncLogList.length > 0 || imageRepoList.length > 0">
       <div>
-        <el-row v-if="ossList"><h3>{{ $t('oss.oss_setting') }}</h3></el-row>
-        <el-table v-if="ossList" :border="true" :stripe="true" :data="ossList" class="adjust-table table-content">
+        <el-row v-if="ossList.length > 0"><h3>{{ $t('oss.oss_setting') }}</h3></el-row>
+        <el-table v-if="ossList.length > 0" :border="true" :stripe="true" :data="ossList" class="adjust-table table-content">
           <el-table-column type="index" min-width="50"/>
           <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip></el-table-column>
           <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
@@ -68,8 +69,8 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-row v-if="cloudEventSyncLogList"><h3>{{ $t('event.audit') }}</h3></el-row>
-        <el-table v-if="cloudEventSyncLogList" :border="true" :stripe="true" :data="cloudEventSyncLogList" class="adjust-table table-content">
+        <el-row v-if="cloudEventSyncLogList.length > 0"><h3>{{ $t('event.audit') }}</h3></el-row>
+        <el-table v-if="cloudEventSyncLogList.length > 0" :border="true" :stripe="true" :data="cloudEventSyncLogList" class="adjust-table table-content">
           <el-table-column type="index" min-width="50"/>
           <el-table-column prop="accountName" :label="$t('event.cloud_account_name')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
@@ -113,8 +114,8 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-row v-if="imageRepoList" ><h3>{{ $t('image.image_repo') }}</h3></el-row>
-        <el-table v-if="imageRepoList" :border="true" :stripe="true" :data="imageRepoList" class="adjust-table table-content">
+        <el-row v-if="imageRepoList.length > 0" ><h3>{{ $t('image.image_repo') }}</h3></el-row>
+        <el-table v-if="imageRepoList.length > 0" :border="true" :stripe="true" :data="imageRepoList" class="adjust-table table-content">
           <el-table-column type="index" min-width="50"/>
           <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="160">
             <template v-slot:default="scope">
@@ -142,16 +143,19 @@
           </el-table-column>
         </el-table>
       </div>
-      <el-button slot="reference" size="mini" type="primary" plain @click="showLinks">
+      <el-button v-if="ossList.length > 0 || cloudEventSyncLogList.length > 0 || imageRepoList.length > 0" slot="reference" size="mini" type="primary" plain @click="showLinks">
         {{ $t('vis.linked') }}
       </el-button>
     </el-popover>
+    <el-button v-else slot="reference" size="mini" type="info" plain>
+      {{ $t('vis.not_linked') }}
+    </el-button>
 
     <!--links-->
     <el-drawer class="rtl" :title="$t('vis.linked') + $t('dashboard.accounts')" :visible.sync="linksVisible" size="75%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-row v-if="ossList"><h3>{{ $t('oss.oss_setting') }}</h3></el-row>
-      <el-table v-if="ossList" :border="true" :stripe="true" :data="ossList" class="adjust-table table-content">
+      <el-row v-if="ossList.length > 0"><h3>{{ $t('oss.oss_setting') }}</h3></el-row>
+      <el-table v-if="ossList.length > 0" :border="true" :stripe="true" :data="ossList" class="adjust-table table-content">
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip></el-table-column>
         <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
@@ -212,8 +216,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-row v-if="cloudEventSyncLogList"><h3>{{ $t('event.audit') }}</h3></el-row>
-      <el-table v-if="cloudEventSyncLogList" :border="true" :stripe="true" :data="cloudEventSyncLogList" class="adjust-table table-content">
+      <el-row v-if="cloudEventSyncLogList.length > 0"><h3>{{ $t('event.audit') }}</h3></el-row>
+      <el-table v-if="cloudEventSyncLogList.length > 0" :border="true" :stripe="true" :data="cloudEventSyncLogList" class="adjust-table table-content">
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="accountName" :label="$t('event.cloud_account_name')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
@@ -257,8 +261,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-row v-if="imageRepoList"><h3>{{ $t('image.image_repo') }}</h3></el-row>
-      <el-table v-if="imageRepoList" :border="true" :stripe="true" :data="imageRepoList" class="adjust-table table-content">
+      <el-row v-if="imageRepoList.length > 0"><h3>{{ $t('image.image_repo') }}</h3></el-row>
+      <el-table v-if="imageRepoList.length > 0" :border="true" :stripe="true" :data="imageRepoList" class="adjust-table table-content">
         <el-table-column type="index" min-width="50"/>
         <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="160">
           <template v-slot:default="scope">

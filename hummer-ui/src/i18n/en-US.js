@@ -1870,6 +1870,7 @@ export default {
     editClusterError: 'Clusters cannot be edited.',
     unedit: 'Data cannot be modified temporarily',
     linked: 'Associated',
+    not_linked: 'Not linked',
     belong: 'belonging to',
   },
   fs: {
