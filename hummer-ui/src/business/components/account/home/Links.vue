@@ -10,14 +10,16 @@
         <el-row v-if="ossList.length > 0"><h3>{{ $t('oss.oss_setting') }}</h3></el-row>
         <el-table v-if="ossList.length > 0" :border="true" :stripe="true" :data="ossList" class="adjust-table table-content">
           <el-table-column type="index" min-width="50"/>
-          <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
+          <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
+                 &nbsp;&nbsp; {{ scope.row.name }}
               </span>
             </template>
+          </el-table-column>
+          <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip v-slot:default="scope">
+            {{ scope.row.pluginName }}
           </el-table-column>
           <el-table-column prop="status" min-width="120" :label="$t('account.status')">
             <template v-slot:default="{row}">
@@ -55,11 +57,9 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column :label="$t('oss.bucket')" min-width="110">
+          <el-table-column :label="$t('oss.bucket')" min-width="100">
             <template v-slot:default="scope">
-              <el-link type="primary" @click="showBuckets(scope.row)">
-                {{ scope.row.sum }}
-              </el-link>
+              {{ scope.row.sum }}
             </template>
           </el-table-column>
           <el-table-column min-width="180" :label="$t('account.create_time')" sortable
@@ -102,9 +102,7 @@
             </el-button>
           </el-table-column>
           <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="90" v-slot:default="scope">
-            <el-link type="primary" :underline="false" class="md-primary text-click">
-              {{ scope.row.dataCount }}
-            </el-link>
+            {{ scope.row.dataCount }}
           </el-table-column>
           <el-table-column :label="$t('event.sync_time_section')" min-width="300">
             <template v-slot:default="scope">
@@ -147,24 +145,26 @@
         {{ $t('vis.linked') }}
       </el-button>
     </el-popover>
-    <el-button v-else slot="reference" size="mini" type="info" plain>
+    <el-button v-if="ossList.length == 0 && cloudEventSyncLogList.length == 0 && imageRepoList.length == 0" slot="reference" size="mini" type="info" plain>
       {{ $t('vis.not_linked') }}
     </el-button>
 
     <!--links-->
-    <el-drawer class="rtl" :title="$t('vis.linked') + $t('dashboard.accounts')" :visible.sync="linksVisible" size="75%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('vis.linked') + $t('dashboard.accounts')" :visible.sync="linksVisible" size="80%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-row v-if="ossList.length > 0"><h3>{{ $t('oss.oss_setting') }}</h3></el-row>
       <el-table v-if="ossList.length > 0" :border="true" :stripe="true" :data="ossList" class="adjust-table table-content">
         <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip>
+        <el-table-column prop="name" :label="$t('oss.name')" min-width="150" show-overflow-tooltip>
           <template v-slot:default="scope">
               <span>
                 <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
+                 &nbsp;&nbsp; {{ scope.row.name }}
               </span>
           </template>
+        </el-table-column>
+        <el-table-column :label="$t('account.cloud_platform')" min-width="150" show-overflow-tooltip v-slot:default="scope">
+          {{ scope.row.pluginName }}
         </el-table-column>
         <el-table-column prop="status" min-width="120" :label="$t('account.status')">
           <template v-slot:default="{row}">
@@ -202,11 +202,9 @@
             <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
           </el-button>
         </el-table-column>
-        <el-table-column :label="$t('oss.bucket')" min-width="110">
+        <el-table-column :label="$t('oss.bucket')" min-width="100">
           <template v-slot:default="scope">
-            <el-link type="primary" @click="showBuckets(scope.row)">
-              {{ scope.row.sum }}
-            </el-link>
+            {{ scope.row.sum }}
           </template>
         </el-table-column>
         <el-table-column min-width="180" :label="$t('account.create_time')" sortable
@@ -214,6 +212,11 @@
           <template v-slot:default="scope">
             <span>{{ scope.row.createTime | timestampFormatDate }}</span>
           </template>
+        </el-table-column>
+        <el-table-column min-width="120" :label="$t('commons.fast_entry')" fixed="right">
+          <el-button plain size="mini" type="success" @click="goOss()">
+            <i class="el-icon-right"></i> {{ $t('oss.oss_setting') }}
+          </el-button>
         </el-table-column>
       </el-table>
       <el-row v-if="cloudEventSyncLogList.length > 0"><h3>{{ $t('event.audit') }}</h3></el-row>
@@ -249,9 +252,7 @@
           </el-button>
         </el-table-column>
         <el-table-column prop="dataCount" :label="$t('event.data_count')" min-width="90" v-slot:default="scope">
-          <el-link type="primary" :underline="false" class="md-primary text-click">
-            {{ scope.row.dataCount }}
-          </el-link>
+          {{ scope.row.dataCount }}
         </el-table-column>
         <el-table-column :label="$t('event.sync_time_section')" min-width="300">
           <template v-slot:default="scope">
@@ -259,6 +260,11 @@
                 scope.row.requestStartTime | timestampFormatDate
               }} - {{ scope.row.requestEndTime | timestampFormatDate }}</span>
           </template>
+        </el-table-column>
+        <el-table-column min-width="120" :label="$t('commons.fast_entry')" fixed="right">
+          <el-button plain size="mini" type="success" @click="goEvent()">
+            <i class="el-icon-right"></i> {{ $t('event.audit') }}
+          </el-button>
         </el-table-column>
       </el-table>
       <el-row v-if="imageRepoList.length > 0"><h3>{{ $t('image.image_repo') }}</h3></el-row>
@@ -288,6 +294,11 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
+        <el-table-column min-width="120" :label="$t('commons.fast_entry')" fixed="right">
+          <el-button plain size="mini" type="success" @click="goRepo()">
+            <i class="el-icon-right"></i> {{ $t('image.image_repo') }}
+          </el-button>
+        </el-table-column>
       </el-table>
     </el-drawer>
     <!--links-->
@@ -305,6 +316,11 @@
     props: {
       row: Object,
     },
+    watch: {
+      row() {
+        this.init();
+      },
+    },
     data() {
       return {
         accountId: '',
@@ -316,16 +332,34 @@
       }
     },
     created() {
-      this.ossList = this.row.ossList;
-      this.cloudEventSyncLogList = this.row.cloudEventSyncLogList;
-      this.imageRepoList = this.row.imageRepoList;
+      this.init();
     },
     methods: {
+      init() {
+        this.ossList = this.row.ossList;
+        this.cloudEventSyncLogList = this.row.cloudEventSyncLogList;
+        this.imageRepoList = this.row.imageRepoList;
+      },
       showLinks() {
         this.linksVisible =  true;
       },
       handleClose() {
         this.linksVisible =  false;
+      },
+      goOss() {
+        this.$router.push({
+          path: '/oss/account'
+        }).catch(error => error);
+      },
+      goEvent() {
+        this.$router.push({
+          path: '/event/sync'
+        }).catch(error => error);
+      },
+      goRepo() {
+        this.$router.push({
+          path: '/image/imageRepo'
+        }).catch(error => error);
       },
     },
   }

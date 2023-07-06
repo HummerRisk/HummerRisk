@@ -35,6 +35,11 @@
     props: {
       row: Object,
     },
+    watch: {
+      row() {
+        this.init();
+      },
+    },
     data() {
       return {
         string2PrettyFormat: [],
@@ -43,9 +48,12 @@
       }
     },
     created() {
-      this.string2PrettyFormat = typeof(this.row.regions) === 'string'?JSON.parse(this.row.regions):this.row.regions;
+      this.init();
     },
     methods: {
+      init() {
+        this.string2PrettyFormat = typeof(this.row.regions) === 'string'?JSON.parse(this.row.regions):this.row.regions;
+      },
       showRegions() {
         this.regionsVisible =  true;
       },
