@@ -363,7 +363,6 @@ import TableOperators from "@/business/components/common/components/TableOperato
 import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS, OSS_BUCKET_CONFIGS} from "@/business/components/common/components/search/search-components";
-import {ACCOUNT_ID, ACCOUNT_NAME} from "@/common/js/constants";
 import {saveAs} from "@/common/js/FileSaver";
 import Regions from "@/business/components/account/home/Regions";
 import HideTable from "@/business/components/common/hideTable/HideTable";
@@ -964,8 +963,6 @@ export default {
     },
     handleScan(account) {
       this.accountWithGroup = account;
-      localStorage.setItem(ACCOUNT_ID, account.id);
-      localStorage.setItem(ACCOUNT_NAME, account.name);
       this.initGroups(account.pluginId);
       this.scanVisible = true;
     },

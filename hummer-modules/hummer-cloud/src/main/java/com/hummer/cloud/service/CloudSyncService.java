@@ -1114,7 +1114,7 @@ public class CloudSyncService {
                     cloudResourceRela.setxAxis(x);//100
                     cloudResourceRela.setyAxis(y);//200
 
-                    cloudResourceRelaMapper.insertSelective(cloudResourceRela);
+                    insertCloudResourceRela(cloudResourceRela);
                 } else {
 
                     cloudResourceRela.setId(Internet);
@@ -1133,7 +1133,7 @@ public class CloudSyncService {
 
                 if (!StringUtils.isEmpty(VpcId)) {
 
-                    cloudResourceRela.setId(VpcId);
+                    cloudResourceRela.setId(VpcRelaId);
                     cloudResourceRela.setName(VpcId);
                     cloudResourceRela.setResourceType("aliyun.vpc");
                     cloudResourceRela.setHummerId(VpcId);
@@ -1144,7 +1144,7 @@ public class CloudSyncService {
                     insertCloudResourceRela(cloudResourceRela);
 
                     cloudResourceRelaLink.setSource(Internet);
-                    cloudResourceRelaLink.setTarget(VpcId);
+                    cloudResourceRelaLink.setTarget(VpcRelaId);
                     insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                     String EcsRelaId = UUIDUtil.newUUID();
@@ -1833,7 +1833,31 @@ public class CloudSyncService {
                     cloudResourceRela.setyAxis(200L);//200
                     insertCloudResourceRela(cloudResourceRela);
                 } else {
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("Internet");
+                    cloudResourceRela.setResourceType("aliyun.internet");
+                    cloudResourceRela.setHummerId("Internet");
+                    cloudResourceRela.setCategory("aliyun.internet");
+                    cloudResourceRela.setSymbol("network_security.svg");
+                    cloudResourceRela.setxAxis(100L);//100
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
 
+                    String vpcRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(vpcRelaId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setCategory("aliyun.vpc");
+                    cloudResourceRela.setSymbol("network_hub.svg");
+                    cloudResourceRela.setxAxis(200L);//200
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(Internet);
+                    cloudResourceRelaLink.setTarget(vpcRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
                 }
 
                 break;
@@ -2025,10 +2049,301 @@ public class CloudSyncService {
             case "tencent.clb":
                 break;
             case "tencent.cos":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("tencent.internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("tencent.internet");
+                cloudResourceRela.setSymbol("network_security.svg");
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String cosRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(cosRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory("tencent.cos");
+                cloudResourceRela.setSymbol("cloud_database.svg");
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(cosRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "tencent.cvm":
+
+                String PublicIpAddresses = jsonObject.getString("PublicIpAddresses");
+                JSONArray IpAddress = JSONArray.parseArray(PublicIpAddresses).size() > 0 ? JSONArray.parseArray(PublicIpAddresses) : new JSONArray();
+
+                String SecurityGroupIds = jsonObject.getString("SecurityGroupIds");
+                JSONArray sg = JSONArray.parseArray(SecurityGroupIds).size() > 0 ? JSONArray.parseArray(SecurityGroupIds) : new JSONArray();
+
+                if (IpAddress.size() == 0) {
+
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("No Internet");
+                    cloudResourceRela.setResourceType("tencent.internet");
+                    cloudResourceRela.setHummerId("No Internet");
+                    cloudResourceRela.setCategory("tencent.internet");
+                    cloudResourceRela.setSymbol("network_security.svg");
+                    cloudResourceRela.setxAxis(x);//100
+                    cloudResourceRela.setyAxis(y);//200
+
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    String VirtualPrivateCloud = jsonObject.getString("VirtualPrivateCloud");
+                    String VpcId = !StringUtils.isEmpty(JSONObject.parseObject(VirtualPrivateCloud).getString("VpcId"))?JSONObject.parseObject(VirtualPrivateCloud).getString("VpcId"):"default";
+                    String SubnetId = !StringUtils.isEmpty(JSONObject.parseObject(VirtualPrivateCloud).getString("SubnetId"))?JSONObject.parseObject(VirtualPrivateCloud).getString("VpcId"):"default";
+                    String VpcRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(VpcRelaId);
+                    cloudResourceRela.setName(VpcId);
+                    cloudResourceRela.setResourceType("tencent.vpc");
+                    cloudResourceRela.setHummerId(VpcId);
+                    cloudResourceRela.setCategory("tencent.vpc");
+                    cloudResourceRela.setSymbol("network_hub.svg");
+                    cloudResourceRela.setxAxis(200L);//300
+                    cloudResourceRela.setyAxis(y);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(Internet);
+                    cloudResourceRelaLink.setTarget(VpcRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    String SubnetRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(SubnetRelaId);
+                    cloudResourceRela.setName(SubnetId);
+                    cloudResourceRela.setResourceType("tencent.subnet");
+                    cloudResourceRela.setHummerId(SubnetId);
+                    cloudResourceRela.setCategory("tencent.subnet");
+                    cloudResourceRela.setSymbol("network_server.svg");
+                    cloudResourceRela.setxAxis(300L);//300
+                    cloudResourceRela.setyAxis(y);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(VpcRelaId);
+                    cloudResourceRelaLink.setTarget(SubnetRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    String EcsRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(EcsRelaId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setCategory(resourceType);
+                    cloudResourceRela.setSymbol("cloud_server.svg");
+                    cloudResourceRela.setxAxis(500L);//500
+                    cloudResourceRela.setyAxis(y);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    Long i = y -100L;
+
+                    for (Object o : IpAddress) {
+                        String eip = o.toString();
+                        String ipRelaId = UUIDUtil.newUUID();
+
+                        cloudResourceRela.setId(ipRelaId);
+                        cloudResourceRela.setName(eip);
+                        cloudResourceRela.setResourceType("tencent.eip");
+                        cloudResourceRela.setHummerId(eip);
+                        cloudResourceRela.setCategory("tencent.eip");
+                        cloudResourceRela.setSymbol("domain.svg");
+                        cloudResourceRela.setxAxis(600L);//400
+                        cloudResourceRela.setyAxis(i + 100L);//200
+                        insertCloudResourceRela(cloudResourceRela);
+
+                        cloudResourceRelaLink.setSource(SubnetId);
+                        cloudResourceRelaLink.setTarget(ipRelaId);
+                        insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                        cloudResourceRelaLink.setSource(ipRelaId);
+                        cloudResourceRelaLink.setTarget(EcsRelaId);
+                        insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                        i = i + 100L;
+                    }
+
+                    y = y - 100L;
+
+                    for (Object obg : sg) {
+                        String Sg = obg.toString();
+                        String GroupRelaId = UUIDUtil.newUUID();
+
+                        cloudResourceRela.setId(GroupRelaId);
+                        cloudResourceRela.setName(Sg);
+                        cloudResourceRela.setResourceType("tencent.security-group");
+                        cloudResourceRela.setHummerId(Sg);
+                        cloudResourceRela.setCategory("tencent.security-group");
+                        cloudResourceRela.setSymbol("cloud_security.svg");
+                        cloudResourceRela.setxAxis(600L);//400
+                        cloudResourceRela.setyAxis(y + 100L);//200
+                        insertCloudResourceRela(cloudResourceRela);
+
+                        cloudResourceRelaLink.setSource(EcsRelaId);
+                        cloudResourceRelaLink.setTarget(GroupRelaId);
+                        insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                        y = y + 100L;
+                    }
+
+                } else {
+
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("Internet");
+                    cloudResourceRela.setResourceType("tencent.internet");
+                    cloudResourceRela.setHummerId("Internet");
+                    cloudResourceRela.setCategory("tencent.internet");
+                    cloudResourceRela.setSymbol("network_security.svg");
+                    cloudResourceRela.setxAxis(x);//100
+                    cloudResourceRela.setyAxis(y);//200
+
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    String VirtualPrivateCloud = jsonObject.getString("VirtualPrivateCloud");
+                    String VpcId = !StringUtils.isEmpty(JSONObject.parseObject(VirtualPrivateCloud).getString("VpcId"))?JSONObject.parseObject(VirtualPrivateCloud).getString("VpcId"):"default";
+                    String SubnetId = !StringUtils.isEmpty(JSONObject.parseObject(VirtualPrivateCloud).getString("SubnetId"))?JSONObject.parseObject(VirtualPrivateCloud).getString("VpcId"):"default";
+                    String VpcRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(VpcRelaId);
+                    cloudResourceRela.setName(VpcId);
+                    cloudResourceRela.setResourceType("tencent.vpc");
+                    cloudResourceRela.setHummerId(VpcId);
+                    cloudResourceRela.setCategory("tencent.vpc");
+                    cloudResourceRela.setSymbol("network_hub.svg");
+                    cloudResourceRela.setxAxis(200L);//300
+                    cloudResourceRela.setyAxis(y);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(Internet);
+                    cloudResourceRelaLink.setTarget(VpcRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    String SubnetRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(SubnetRelaId);
+                    cloudResourceRela.setName(SubnetId);
+                    cloudResourceRela.setResourceType("tencent.subnet");
+                    cloudResourceRela.setHummerId(SubnetId);
+                    cloudResourceRela.setCategory("tencent.subnet");
+                    cloudResourceRela.setSymbol("network_server.svg");
+                    cloudResourceRela.setxAxis(300L);//300
+                    cloudResourceRela.setyAxis(y);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(VpcRelaId);
+                    cloudResourceRelaLink.setTarget(SubnetRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    String EcsRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(EcsRelaId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setCategory(resourceType);
+                    cloudResourceRela.setSymbol("cloud_server.svg");
+                    cloudResourceRela.setxAxis(400L);//500
+                    cloudResourceRela.setyAxis(y);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(SubnetRelaId);
+                    cloudResourceRelaLink.setTarget(EcsRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    y = y - 100L;
+
+                    for (Object obg : sg) {
+                        String Sg = obg.toString();
+                        String GroupRelaId = UUIDUtil.newUUID();
+
+                        cloudResourceRela.setId(GroupRelaId);
+                        cloudResourceRela.setName(Sg);
+                        cloudResourceRela.setResourceType("tencent.security-group");
+                        cloudResourceRela.setHummerId(Sg);
+                        cloudResourceRela.setCategory("tencent.security-group");
+                        cloudResourceRela.setSymbol("cloud_security.svg");
+                        cloudResourceRela.setxAxis(500L);//400
+                        cloudResourceRela.setyAxis(y + 100L);//200
+                        insertCloudResourceRela(cloudResourceRela);
+
+                        cloudResourceRelaLink.setSource(EcsRelaId);
+                        cloudResourceRelaLink.setTarget(GroupRelaId);
+                        insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                        y = y + 100L;
+                    }
+                }
+
+
                 break;
             case "tencent.disk":
+                String InstanceId = jsonObject.getString("InstanceId");
+
+                if (StringUtils.isEmpty(InstanceId)) {
+
+                    String diskRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(diskRelaId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setCategory("tencent.disk");
+                    cloudResourceRela.setSymbol("data_storage.svg");
+                    cloudResourceRela.setxAxis(200L);//200
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                } else {
+                    cloudResourceRela.setId(Internet);
+                    cloudResourceRela.setName("Internet");
+                    cloudResourceRela.setResourceType("tencent.internet");
+                    cloudResourceRela.setHummerId("Internet");
+                    cloudResourceRela.setCategory("tencent.internet");
+                    cloudResourceRela.setSymbol("network_security.svg");
+                    cloudResourceRela.setxAxis(100L);//100
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    String instanceRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(instanceRelaId);
+                    cloudResourceRela.setResourceType("tencent.cvm");
+                    cloudResourceRela.setHummerId(InstanceId);
+                    cloudResourceRela.setName(InstanceId);
+                    cloudResourceRela.setCategory("tencent.cvm");
+                    cloudResourceRela.setSymbol("cloud_server.svg");
+                    cloudResourceRela.setxAxis(200L);//200
+                    cloudResourceRela.setyAxis(200L);//200
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    String diskRelaId = UUIDUtil.newUUID();
+
+                    cloudResourceRela.setId(diskRelaId);
+                    cloudResourceRela.setResourceType(resourceType);
+                    cloudResourceRela.setHummerId(hummerId);
+                    cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                    cloudResourceRela.setCategory("tencent.disk");
+                    cloudResourceRela.setSymbol("data_storage.svg");
+                    cloudResourceRela.setxAxis(200L);//200
+                    cloudResourceRela.setyAxis(300L);//300
+                    insertCloudResourceRela(cloudResourceRela);
+
+                    cloudResourceRelaLink.setSource(Internet);
+                    cloudResourceRelaLink.setTarget(instanceRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                    cloudResourceRelaLink.setSource(instanceRelaId);
+                    cloudResourceRelaLink.setTarget(diskRelaId);
+                    insertCloudResourceRelaLink(cloudResourceRelaLink);
+                }
+
                 break;
             case "tencent.eip":
                 break;
@@ -2039,8 +2354,59 @@ public class CloudSyncService {
             case "tencent.redis":
                 break;
             case "tencent.security-group":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("tencent.internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("tencent.internet");
+                cloudResourceRela.setSymbol("network_security.svg");
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String sgRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(sgRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory("tencent.security-group");
+                cloudResourceRela.setSymbol("cloud_security.svg");
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(sgRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "tencent.vpc":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("tencent.internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("tencent.internet");
+                cloudResourceRela.setSymbol("network_security.svg");
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String vpcRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(vpcRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory("tencent.vpc");
+                cloudResourceRela.setSymbol("network_hub.svg");
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(vpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             default:
 
