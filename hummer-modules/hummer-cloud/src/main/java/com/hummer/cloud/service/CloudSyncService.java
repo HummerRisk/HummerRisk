@@ -1988,14 +1988,92 @@ public class CloudSyncService {
             case "huawei.gaussdbforopengauss":
                 break;
             case "huawei.iam":
+                String iamRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(iamRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
                 break;
             case "huawei.obs":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("huawei.internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("huawei.internet");
+                cloudResourceRela.setSymbol("network_security.svg");
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String obsRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(obsRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory("huawei.obs");
+                cloudResourceRela.setSymbol("cloud_database.svg");
+                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(obsRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "huawei.rds":
                 break;
             case "huawei.redis":
                 break;
             case "huawei.security-group":
+
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("huawei.internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("huawei.internet");
+                cloudResourceRela.setSymbol("network_security.svg");
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String sgVpcRelaId = UUIDUtil.newUUID();
+                String VpcId = !StringUtils.isEmpty(jsonObject.getString("vpc_id"))?jsonObject.getString("vpc_id"):"default";
+
+                cloudResourceRela.setId(sgVpcRelaId);
+                cloudResourceRela.setName(VpcId);
+                cloudResourceRela.setResourceType("huawei.vpc");
+                cloudResourceRela.setHummerId(VpcId);
+                cloudResourceRela.setCategory("huawei.vpc");
+                cloudResourceRela.setSymbol("network_hub.svg");
+                cloudResourceRela.setxAxis(200L);//300
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(sgVpcRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                String sgRelaId = UUIDUtil.newUUID();
+
+                cloudResourceRela.setId(sgRelaId);
+                cloudResourceRela.setResourceType(resourceType);
+                cloudResourceRela.setHummerId(hummerId);
+                cloudResourceRela.setName(cloudResourceItem.getHummerName());
+                cloudResourceRela.setCategory("huawei.security-group");
+                cloudResourceRela.setSymbol("cloud_security.svg");
+                cloudResourceRela.setxAxis(300L);//300
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(sgVpcRelaId);
+                cloudResourceRelaLink.setTarget(sgRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
                 break;
             default:
 
