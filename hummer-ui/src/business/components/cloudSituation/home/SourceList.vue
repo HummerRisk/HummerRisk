@@ -48,7 +48,9 @@
             </el-table-column>
             <el-table-column prop="hummerName" v-if="checkedColumnNames.includes('hummerName')"
                              :label="$t('resource.resource_id')" min-width="130" show-overflow-tooltip
-                             sortable></el-table-column>
+                             sortable v-slot:default="scope">
+              {{ scope.row.hummerName?scope.row.hummerName:scope.row.hummerId }}
+            </el-table-column>
             <el-table-column prop="regionName" v-if="checkedColumnNames.includes('regionName')"
                              :label="$t('event.region')" min-width="150" show-overflow-tooltip
                              sortable></el-table-column>
