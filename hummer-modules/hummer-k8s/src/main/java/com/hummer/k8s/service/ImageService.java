@@ -10,10 +10,13 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.HttpResponse;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.ecr.AmazonECR;
+import com.amazonaws.services.ecr.AmazonECRClient;
 import com.amazonaws.services.ecrpublic.AmazonECRPublic;
 import com.amazonaws.services.ecrpublic.AmazonECRPublicClient;
 import com.amazonaws.services.ecrpublic.model.*;
@@ -408,37 +411,14 @@ public class ImageService {
 
                 AWSCredentials awsCredentials = new BasicAWSCredentials(awsCredential.getAccessKey(), awsCredential.getSecretKey());
                 AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
-                AmazonECRPublic ecrPublic = AmazonECRPublicClient.builder().withRegion("us-east-1").withCredentials(awsCredentialsProvider).build();
-                com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest describeRepositoriesRequest = new com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest();
-                com.amazonaws.services.ecrpublic.model.DescribeRepositoriesResult describeRepositoriesResult = ecrPublic.describeRepositories(describeRepositoriesRequest);
-                List<Repository> repositories = describeRepositoriesResult.getRepositories();
-                AtomicReference<String> repo = new AtomicReference<>();
-                repositories.forEach(repository -> {
-                    String repName = repository.getRepositoryName();
-                    String registryId = repository.getRegistryId();
-                    String repUri = repository.getRepositoryUri();
-                    if(repo.get() == null && repUri.contains("/"))
-                        repo.set(repUri.substring(0, repUri.indexOf("/")));
-                    DescribeImageTagsRequest describeImageTagsRequest = new DescribeImageTagsRequest();
-                    describeImageTagsRequest.setRegistryId(registryId);
-                    describeImageTagsRequest.setRepositoryName(repName);
-                    DescribeImageTagsResult describeImageTagsResult = ecrPublic.describeImageTags(describeImageTagsRequest);
-                    List<ImageTagDetail> imageTagDetails = describeImageTagsResult.getImageTagDetails();
-                    imageTagDetails.forEach(imageTagDetail -> {
-                        ImageRepoItem imageRepoItem = new ImageRepoItem();
-                        imageRepoItem.setId(UUIDUtil.newUUID());
-                        imageRepoItem.setRepository(repName);
-                        imageRepoItem.setTag(imageTagDetail.getImageTag());
-                        imageRepoItem.setRepoId(imageRepo.getId());
-                        imageRepoItem.setDigest(imageTagDetail.getImageDetail().getImageDigest());
-                        imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:repName);
-                        imageRepoItem.setSize(changeFlowFormat(imageTagDetail.getImageDetail().getImageSizeInBytes()));
-                        imageRepoItem.setPath(repUri+":"+imageTagDetail.getImageTag());
-                        imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,imageTagDetail.getImageDetail().getImagePushedAt()));
-                        imageRepoItemMapper.insertSelective(imageRepoItem);
-                    });
-                });
-                imageRepo.setRepo(repo.get());
+                try{
+                    syncAwsPublic(imageRepo,awsCredentialsProvider,"us-east-1");
+                    syncAwsPrivate(imageRepo,awsCredentialsProvider,"us-east-1");
+                }catch (SdkClientException e){
+                    //syncAwsPublic(imageRepo,awsCredentialsProvider,"cn-north-1");
+                    syncAwsPrivate(imageRepo,awsCredentialsProvider,"cn-north-1");
+                }
+
             }else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
                 return true;
             }
@@ -466,6 +446,77 @@ public class ImageService {
         repoImageToImage(imageRepo, loginUser);//同步镜像到镜像管理
         return true;
     }
+
+    private void syncAwsPrivate(ImageRepo imageRepo,AWSCredentialsProvider awsCredentialsProvider,String region){
+        AmazonECR ecr = AmazonECRClient.builder().withRegion(region).withCredentials(awsCredentialsProvider).build();
+        com.amazonaws.services.ecr.model.DescribeRepositoriesRequest describeRepositoriesRequest = new com.amazonaws.services.ecr.model.DescribeRepositoriesRequest();
+        com.amazonaws.services.ecr.model.DescribeRepositoriesResult describeRepositoriesResult = ecr.describeRepositories(describeRepositoriesRequest);
+        List<com.amazonaws.services.ecr.model.Repository> repositories = describeRepositoriesResult.getRepositories();
+        AtomicReference<String> repo = new AtomicReference<>();
+        repositories.forEach(repository -> {
+            String repName = repository.getRepositoryName();
+            String registryId = repository.getRegistryId();
+            String repUri = repository.getRepositoryUri();
+            if(repo.get() == null && repUri.contains("/"))
+                repo.set(repUri.substring(0, repUri.indexOf("/")));
+            com.amazonaws.services.ecr.model.DescribeImagesRequest describeImagesRequest = new com.amazonaws.services.ecr.model.DescribeImagesRequest();
+            describeImagesRequest.setRegistryId(registryId);
+            describeImagesRequest.setRepositoryName(repName);
+            com.amazonaws.services.ecr.model.DescribeImagesResult describeImagesResult = ecr.describeImages(describeImagesRequest);
+            List<com.amazonaws.services.ecr.model.ImageDetail> imageDetails = describeImagesResult.getImageDetails();
+            imageDetails.forEach(imageTagDetail -> {
+                ImageRepoItem imageRepoItem = new ImageRepoItem();
+                imageRepoItem.setId(UUIDUtil.newUUID());
+                imageRepoItem.setRepository(repName);
+                imageRepoItem.setTag(imageTagDetail.getImageTags().size()>0?imageTagDetail.getImageTags().get(0):"");
+                imageRepoItem.setRepoId(imageRepo.getId());
+                imageRepoItem.setDigest(imageTagDetail.getImageDigest());
+                imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:repName);
+                imageRepoItem.setSize(changeFlowFormat(imageTagDetail.getImageSizeInBytes()));
+                imageRepoItem.setPath(repUri+":"+(imageTagDetail.getImageTags().size()>0?imageTagDetail.getImageTags().get(0):""));
+                imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,imageTagDetail.getImagePushedAt()));
+                imageRepoItemMapper.insertSelective(imageRepoItem);
+            });
+        });
+        if(com.hummer.common.core.utils.StringUtils.isNotEmpty(repo.get()))
+          imageRepo.setRepo(repo.get());
+    }
+
+    private void syncAwsPublic(ImageRepo imageRepo,AWSCredentialsProvider awsCredentialsProvider,String region){
+        AmazonECRPublic ecrPublic = AmazonECRPublicClient.builder().withRegion(region).withCredentials(awsCredentialsProvider).build();
+        com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest describeRepositoriesRequest = new com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest();
+        com.amazonaws.services.ecrpublic.model.DescribeRepositoriesResult describeRepositoriesResult = ecrPublic.describeRepositories(describeRepositoriesRequest);
+        List<Repository> repositories = describeRepositoriesResult.getRepositories();
+        AtomicReference<String> repo = new AtomicReference<>();
+        repositories.forEach(repository -> {
+            String repName = repository.getRepositoryName();
+            String registryId = repository.getRegistryId();
+            String repUri = repository.getRepositoryUri();
+            if(repo.get() == null && repUri.contains("/"))
+                repo.set(repUri.substring(0, repUri.indexOf("/")));
+            DescribeImageTagsRequest describeImageTagsRequest = new DescribeImageTagsRequest();
+            describeImageTagsRequest.setRegistryId(registryId);
+            describeImageTagsRequest.setRepositoryName(repName);
+            DescribeImageTagsResult describeImageTagsResult = ecrPublic.describeImageTags(describeImageTagsRequest);
+            List<ImageTagDetail> imageTagDetails = describeImageTagsResult.getImageTagDetails();
+            imageTagDetails.forEach(imageTagDetail -> {
+                ImageRepoItem imageRepoItem = new ImageRepoItem();
+                imageRepoItem.setId(UUIDUtil.newUUID());
+                imageRepoItem.setRepository(repName);
+                imageRepoItem.setTag(imageTagDetail.getImageTag());
+                imageRepoItem.setRepoId(imageRepo.getId());
+                imageRepoItem.setDigest(imageTagDetail.getImageDetail().getImageDigest());
+                imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:repName);
+                imageRepoItem.setSize(changeFlowFormat(imageTagDetail.getImageDetail().getImageSizeInBytes()));
+                imageRepoItem.setPath(repUri+":"+imageTagDetail.getImageTag());
+                imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,imageTagDetail.getImageDetail().getImagePushedAt()));
+                imageRepoItemMapper.insertSelective(imageRepoItem);
+            });
+        });
+        if(com.hummer.common.core.utils.StringUtils.isNotEmpty(repo.get()))
+            imageRepo.setRepo(repo.get());
+    }
+
 
     //插入镜像管理
     public void repoImageToImage(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
