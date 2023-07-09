@@ -157,7 +157,7 @@ export default {
         resource: '',
       },
       resources: '{}',//resource json : {"Logging":{},"CreationDate":"2023-02-02T02:25:28+00:00","Versioning":{"Status":"Enabled"},"Acl":{"Owner":{"ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Grants":[{"Grantee":{"Type":"CanonicalUser","ID":"06ef6af1f3cd38ee2235066e84f042c4c2651d1549a8b2e4cad047a3395a955c"},"Permission":"FULL_CONTROL"}]},"Tags":[],"Notification":{},"Name":"hummerrisk-package","Location":{"LocationConstraint":"ap-east-1"}},
-      supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin'],
+      supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-huawei-plugin', 'hummer-qcloud-plugin'],
       string2PrettyFormat: [],
     };
   },
