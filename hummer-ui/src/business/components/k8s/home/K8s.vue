@@ -1301,6 +1301,8 @@ export default {
       this.result = this.$get(groupsByAccountId + pluginId,response => {
         this.groups = response.data;
         this.scanVisible = true;
+        this.checkedGroups = [];
+        this.checkedScans = ['vuln', 'config', 'kubench'];
       });
     },
     openScanGroup(account) {
@@ -1609,6 +1611,9 @@ export default {
 .txt-click:hover {
   color: aliceblue;
   text-shadow: 1px 1px 1px #000;
+}
+.el-box-card >>> .el-checkbox {
+  margin: 5px 0;
 }
 </style>
 
