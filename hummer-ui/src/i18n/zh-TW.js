@@ -772,7 +772,7 @@ export default {
     risk_free_regulations: '無風險條例',
     security_level: '安全層面',
     control_point: '控制點',
-    basic_requirements_for_grade_protection: '等級保護基本要求條款',
+    basic_requirements_for_grade_protection: '風險點描述',
     pre_check_results: '預檢結果',
     suggestions_for_improvement: '改進建議',
     search_by_name: '根據名稱搜索',

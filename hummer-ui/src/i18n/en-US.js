@@ -772,7 +772,7 @@ export default {
     risk_free_regulations:'No risk regulations',
     security_level:'Security level',
     control_point:'Control point',
-    basic_requirements_for_grade_protection:'Basic requirements for grade protection',
+    basic_requirements_for_grade_protection:'Risk point description',
     pre_check_results:'Pre-check results',
     suggestions_for_improvement:'Improvement suggestions',
     search_by_name:'Search by name',
