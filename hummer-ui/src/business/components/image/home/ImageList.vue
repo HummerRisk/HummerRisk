@@ -646,7 +646,7 @@ export default {
       });
     },
     create() {
-      this.form = {type: 'image'};
+      this.form = {type: 'image', isImageRepo: false};
       if(this.sboms && this.sboms.length > 0) {
         this.form.sbomId = this.sboms[0].id;
         this.initSbom({sbomId: this.form.sbomId});
