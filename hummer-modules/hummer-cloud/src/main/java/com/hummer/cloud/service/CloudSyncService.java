@@ -1988,15 +1988,48 @@ public class CloudSyncService {
             case "huawei.gaussdbforopengauss":
                 break;
             case "huawei.iam":
+                cloudResourceRela.setId(Internet);
+                cloudResourceRela.setName("Internet");
+                cloudResourceRela.setResourceType("huawei.internet");
+                cloudResourceRela.setHummerId("Internet");
+                cloudResourceRela.setCategory("huawei.internet");
+                cloudResourceRela.setSymbol("network_security.svg");
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
+                String domainRelaId = UUIDUtil.newUUID();
+                String domain_id = !StringUtils.isEmpty(jsonObject.getString("domain_id"))?jsonObject.getString("domain_id"):"default";
+                String links = !StringUtils.isEmpty(jsonObject.getString("links"))?jsonObject.getString("links"):"{self: default}";
+                String self = !StringUtils.isEmpty(JSONObject.parseObject(links).getString("self"))?JSONObject.parseObject(links).getString("self"):"default";
+
+                cloudResourceRela.setId(domainRelaId);
+                cloudResourceRela.setName(self);
+                cloudResourceRela.setResourceType("huawei.domain");
+                cloudResourceRela.setHummerId(domain_id);
+                cloudResourceRela.setCategory("huawei.domain");
+                cloudResourceRela.setSymbol("domain.svg");
+                cloudResourceRela.setxAxis(300L);//300
+                cloudResourceRela.setyAxis(200L);//200
+                insertCloudResourceRela(cloudResourceRela);
+
                 String iamRelaId = UUIDUtil.newUUID();
 
                 cloudResourceRela.setId(iamRelaId);
                 cloudResourceRela.setResourceType(resourceType);
                 cloudResourceRela.setHummerId(hummerId);
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
-                cloudResourceRela.setxAxis(200L);//200
+                cloudResourceRela.setxAxis(400L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(domainRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
+
+                cloudResourceRelaLink.setSource(domainRelaId);
+                cloudResourceRelaLink.setTarget(iamRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
                 break;
             case "huawei.obs":
                 cloudResourceRela.setId(Internet);
