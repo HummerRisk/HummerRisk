@@ -581,7 +581,10 @@ export const SOURCE_NAMESPACE = {
   name: "TableSearchSelect", // Vue控件名称
   label: "k8s.source_namespace", // 显示名称
   operator: {
-    options: [OPERATORS.IN, OPERATORS.NOT_IN]
+    options: [OPERATORS.IN, OPERATORS.NOT_IN],
+    change: function (component, value) { // 运算符change事件
+      component.value = value;
+    }
   },
   options: { // 异步获取候选项
     url: namespacesUrl,
@@ -592,7 +595,7 @@ export const SOURCE_NAMESPACE = {
     }
   },
   props: { // 尾部控件的props，一般为element ui控件的props
-    multiple: false
+    multiple: true
   }
 }
 
