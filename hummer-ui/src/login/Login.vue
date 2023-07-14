@@ -29,7 +29,7 @@
           <el-col :span="9">
             <el-form :model="form" :rules="rules" ref="form">
               <div class="title">
-                <img src="../assets/img/logo/logo-dark.png" style="width: 300px" alt="">
+<!--                <img src="../assets/img/logo/logo-dark.png" style="width: 300px" alt="">-->
               </div>
               <div class="border"></div>
               <div class="welcome">
@@ -271,7 +271,7 @@ body {
 }
 
 .image {
-  background-image: url(../assets/img/login/login-left.png);
+  background-image: url(../assets/img/login/login-left2.png);
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }

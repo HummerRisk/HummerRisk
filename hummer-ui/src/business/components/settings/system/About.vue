@@ -3,7 +3,7 @@
     <el-card class="about-card">
 
       <el-row>
-        <img :src="require(`@/assets/img/logo/license.png`)" class="image"/>
+        <img :src="require(`@/assets/img/panel/panel.png`)" class="image"/>
       </el-row>
 
       <div style="padding: 14px;text-align: center;">
@@ -59,7 +59,7 @@
         <el-row>
           <el-col :span="24" class="license-le">
             <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>
-            <el-button plain size="medium" @click="others">{{ $t('dashboard.i18n_other') }}</el-button>
+<!--            <el-button plain size="medium" @click="others">{{ $t('dashboard.i18n_other') }}</el-button>-->
           </el-col>
         </el-row>
       </div>

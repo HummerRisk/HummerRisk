@@ -11,7 +11,7 @@
             </div>
           </el-col>
           <el-col :span="11">
-            <el-image class="logo" :src="require('@/assets/img/logo/logo-red.png')" @click="goDashboard"/>
+<!--            <el-image class="logo" :src="require('@/assets/img/logo/logo-red.png')" @click="goDashboard"/>-->
           </el-col>
 
           <el-col :span="12" class="align-right">

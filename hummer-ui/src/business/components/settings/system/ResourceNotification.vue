@@ -98,7 +98,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -165,7 +165,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -174,7 +174,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -241,7 +241,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -250,7 +250,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -317,7 +317,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -326,7 +326,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -393,7 +393,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -402,7 +402,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -467,7 +467,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -476,7 +476,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -541,7 +541,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -550,7 +550,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -615,7 +615,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -624,7 +624,7 @@ export default {
         '<html lang="en">\n' +
         '<head>\n' +
         '    <meta charset="UTF-8">\n' +
-        '    <title>HummerRisk</title>\n' +
+        '    <title>云原生安全</title>\n' +
         '    <style type="text/css">\n' +
         '        .email-table table {\n' +
         '          font-size: 12px;\n' +
@@ -689,7 +689,7 @@ export default {
         '            </tbody>\n' +
         '        </table>\n' +
         '    </div>\n' +
-        '    <h5 style="color: red;">注：更多详情请登录 HummerRisk 平台查看。</h5>\n' +
+        '    <h5 style="color: red;">注：更多详情请登录 云原生安全 平台查看。</h5>\n' +
         '  \n' +
         '  </div>\n' +
         '</body>\n' +
@@ -708,7 +708,7 @@ export default {
         '\n' +
         '低风险 : #{low}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       textContentVuln:  '尊敬的用户, 您好, 您的漏洞安全检测结果如下:\n' +
         '\n' +
         '漏洞配置名称 : #{name}\n' +
@@ -723,7 +723,7 @@ export default {
         '\n' +
         '低风险 : #{low}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       textContentServer:  '尊敬的用户, 您好, 您的主机安全检测结果如下:\n' +
         '\n' +
         '主机名称 : #{name}\n' +
@@ -738,7 +738,7 @@ export default {
         '\n' +
         '低风险 : #{low}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       textContentK8s:  '尊敬的用户, 您好, 您的K8s安全检测结果如下:\n' +
         '\n' +
         'K8s名称 : #{name}\n' +
@@ -755,7 +755,7 @@ export default {
         '\n' +
         '无风险(Unknown) : #{unknown}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       textContentConfig:  '尊敬的用户, 您好, 您的部署安全检测结果如下:\n' +
         '\n' +
         '部署配置名称 : #{name}\n' +
@@ -772,7 +772,7 @@ export default {
         '\n' +
         '无风险(Unknown) : #{unknown}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       textContentImage:  '尊敬的用户, 您好, 您的镜像安全检测结果如下:\n' +
         '\n' +
         '镜像名称 : #{name}\n' +
@@ -789,7 +789,7 @@ export default {
         '\n' +
         '无风险(Unknown) : #{unknown}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       textContentCode:  '尊敬的用户, 您好, 您的源码安全检测结果如下:\n' +
         '\n' +
         '源码名称 : #{name}\n' +
@@ -806,7 +806,7 @@ export default {
         '\n' +
         '无风险(Unknown) : #{unknown}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       textContentFs:  '尊敬的用户, 您好, 您的文件安全检测结果如下:\n' +
         '\n' +
         '文件名称 : #{name}\n' +
@@ -823,7 +823,7 @@ export default {
         '\n' +
         '无风险(Unknown) : #{unknown}\n' +
         '\n' +
-        '注：更多详情请登录 HummerRisk 平台查看。\n',
+        '注：更多详情请登录 云原生安全 平台查看。\n',
       resourceTask: [{
         taskType: "RESOURCE_TASK",
         event: "",
