@@ -129,7 +129,7 @@ export default {
       detailVisible: false,
       detailForm: {},
       resources: '{}',
-      supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin'],
+      supportPlugins: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-huawei-plugin', 'hummer-qcloud-plugin'],
     }
   },
   created() {

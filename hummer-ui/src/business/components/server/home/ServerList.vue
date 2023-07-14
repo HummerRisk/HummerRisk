@@ -1005,6 +1005,7 @@ const columnOptions = [
         this.result = this.$get(serverRuleGroupsByTypeUrl + data.type,response => {
           this.ruleGroups = response.data;
           this.scanVisible = true;
+          this.checkedGroups = [];
         });
       },
       rowClass() {

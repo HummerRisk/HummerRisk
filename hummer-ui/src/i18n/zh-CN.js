@@ -772,7 +772,7 @@ export default {
     risk_free_regulations: '无风险条例',
     security_level: '安全层面',
     control_point: '控制点',
-    basic_requirements_for_grade_protection: '等级保护基本要求条款',
+    basic_requirements_for_grade_protection: '风险点描述',
     pre_check_results: '预检结果',
     suggestions_for_improvement: '改进建议',
     search_by_name: '根据名称搜索',

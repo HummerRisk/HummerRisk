@@ -51,7 +51,7 @@
     </sql>
 
     <sql id="combine">
-        <if test='${condition}.sourceName != null and (${name} == null or ${name} == "")'>
+        <if test='${condition}.sourceName != null'>
             and t.source_name
             <include refid="condition">
                 <property name="object" value="${condition}.sourceName"/>
@@ -108,7 +108,6 @@
             <if test="request.combine != null">
                 <include refid="combine">
                     <property name="condition" value="request.combine"/>
-                    <property name="name" value="request.name"/>
                 </include>
             </if>
 

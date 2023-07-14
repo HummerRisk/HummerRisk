@@ -78,7 +78,7 @@
           </el-table-column>
           <el-table-column min-width="7%" :label="$t('rule.severity')" column-key="severity">
             <template v-slot:default="{row}">
-              <rule-type :row="row"/>
+              <severity-type :row="row"/>
             </template>
           </el-table-column>
           <el-table-column prop="description" :label="$t('rule.description')" min-width="28%" show-overflow-tooltip></el-table-column>

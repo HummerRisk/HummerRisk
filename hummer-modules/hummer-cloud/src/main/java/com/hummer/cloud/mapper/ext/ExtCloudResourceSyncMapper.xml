@@ -242,7 +242,10 @@
         CASE
             WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
             THEN (SELECT count(t1.hummer_id) FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type) * 2
-            ELSE 1
+            WHEN t.hummer_id NOT IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
+            AND t.hummer_id IN (SELECT t1.hummer_id FROM cloud_resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
+            THEN 1
+            ELSE 0
         END AS value,
         CASE
             WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
