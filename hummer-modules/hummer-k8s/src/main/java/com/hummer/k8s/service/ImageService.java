@@ -15,6 +15,10 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.RegionUtils;
+import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.DescribeRegionsResult;
+import com.amazonaws.services.ec2.model.Region;
 import com.amazonaws.services.ecr.AmazonECR;
 import com.amazonaws.services.ecr.AmazonECRClient;
 import com.amazonaws.services.ecrpublic.AmazonECRPublic;
@@ -30,6 +34,7 @@ import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.aliyun.AliyunCredential;
 import com.hummer.common.core.proxy.aws.AWSCredential;
+import com.hummer.common.core.proxy.aws.AWSRequest;
 import com.hummer.common.core.proxy.tencent.QCloudCredential;
 import com.hummer.common.core.utils.*;
 import com.hummer.k8s.mapper.*;
@@ -400,9 +405,7 @@ public class ImageService {
                 if(imageRepo.getIsBindAccount()){
                     String accountId = imageRepo.getAccountId();
                     AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                    if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())){
-                        awsCredential = JSON.parseObject(imageRepo.getCredential(),AWSCredential.class);
-                    }else {
+                    if(accountWithBLOBs != null && StringUtils.isBlank(imageRepo.getCredential())){
                         awsCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AWSCredential.class);
                     }
                 }else{
@@ -411,12 +414,23 @@ public class ImageService {
 
                 AWSCredentials awsCredentials = new BasicAWSCredentials(awsCredential.getAccessKey(), awsCredential.getSecretKey());
                 AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
+                AmazonEC2Client client = new AmazonEC2Client(awsCredentials);
                 try{
                     syncAwsPublic(imageRepo,awsCredentialsProvider,"us-east-1");
-                    syncAwsPrivate(imageRepo,awsCredentialsProvider,"us-east-1");
+                    client.setRegion(RegionUtils.getRegion("us-east-1"));
+                    DescribeRegionsResult regionsResult = client.describeRegions();
+                    List<Region> regions = regionsResult.getRegions();
+                    regions.forEach(item->{
+                        syncAwsPrivate(imageRepo,awsCredentialsProvider,item.getRegionName());
+                    });
                 }catch (SdkClientException e){
                     //syncAwsPublic(imageRepo,awsCredentialsProvider,"cn-north-1");
-                    syncAwsPrivate(imageRepo,awsCredentialsProvider,"cn-north-1");
+                    client.setRegion(RegionUtils.getRegion("cn-north-1"));
+                    DescribeRegionsResult regionsResult = client.describeRegions();
+                    List<Region> regions = regionsResult.getRegions();
+                    regions.forEach(item->{
+                        syncAwsPrivate(imageRepo,awsCredentialsProvider,item.getRegionName());
+                    });
                 }
 
             }else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
