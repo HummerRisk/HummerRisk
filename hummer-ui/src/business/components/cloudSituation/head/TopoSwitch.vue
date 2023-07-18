@@ -39,6 +39,56 @@
         <span>{{ ' — ' + $t('cloud_topo.oss_resource') }}</span>
       </el-col>
       <el-col :span="3">
+        <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-disk.svg`)">
+          <div slot="error" class="image-slot">
+            <i class="el-icon-picture-outline"></i>
+          </div>
+        </el-image>
+        <span>{{ ' — ' + $t('cloud_topo.disk_resource') }}</span>
+      </el-col>
+      <el-col :span="3">
+        <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-iam.svg`)">
+          <div slot="error" class="image-slot">
+            <i class="el-icon-picture-outline"></i>
+          </div>
+        </el-image>
+        <span>{{ ' — ' + $t('cloud_topo.iam_resource') }}</span>
+      </el-col>
+      <el-col :span="3">
+        <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-eip.svg`)">
+          <div slot="error" class="image-slot">
+            <i class="el-icon-picture-outline"></i>
+          </div>
+        </el-image>
+        <span>{{ ' — ' + $t('cloud_topo.eip_resource') }}</span>
+      </el-col>
+      <el-col :span="3">
+        <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-lb.svg`)">
+          <div slot="error" class="image-slot">
+            <i class="el-icon-picture-outline"></i>
+          </div>
+        </el-image>
+        <span>{{ ' — ' + $t('cloud_topo.elb_resource') }}</span>
+      </el-col>
+      <el-col :span="3">
+        <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-sg.svg`)">
+          <div slot="error" class="image-slot">
+            <i class="el-icon-picture-outline"></i>
+          </div>
+        </el-image>
+        <span>{{ ' — ' + $t('cloud_topo.sg_resource') }}</span>
+      </el-col>
+    </el-row>
+    <el-row style="padding: 10px 10px 10px 20px;">
+      <el-col :span="3">
+        <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-vpc.svg`)">
+          <div slot="error" class="image-slot">
+            <i class="el-icon-picture-outline"></i>
+          </div>
+        </el-image>
+        <span>{{ ' — ' + $t('cloud_topo.vpc_resource') }}</span>
+      </el-col>
+      <el-col :span="3">
         <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-other.svg`)">
           <div slot="error" class="image-slot">
             <i class="el-icon-picture-outline"></i>
