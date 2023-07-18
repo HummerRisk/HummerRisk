@@ -162,7 +162,7 @@ INSERT INTO `rule_inspection_report` (`id`, `project`, `item_sort_first_level`, 
 DELETE FROM `rule_inspection_report_mapping` WHERE `rule_id` in ('f00830cc-7dc5-4f6d-abcb-ad3512e23881', 'f00830cc-7dc5-4f6d-abcb-ad3512e2388c', 'q00830cc-7dc5-4f6d-abcb-ad3512e2388c', '1433cafd-25ae-4966-8079-817bf61b1a5e', '9433cafd-25ae-4966-8079-817bf61b1a51', '9433cafd-25ae-4966-8079-817bf61b1a5e',
                                                                 '15a5b213-1d03-4774-878f-fb6249937047', '85a5b213-1d03-4774-878f-fb6249937041', '85a5b213-1d03-4774-878f-fb6249937047', '1af32c68-0250-4f0c-857c-a91ad525e966', '9af32c68-0250-4f0c-857c-a91ad525e961', '9af32c68-0250-4f0c-857c-a91ad525e966',
                                                                 'b0583908-97bf-43e0-b5c0-3108cb74ec4e', 'c0583908-97bf-43e0-b5c0-3108cb74ec41', 'c0583908-97bf-43e0-b5c0-3108cb74ec4e', '1d40f394-ffc3-498f-b87e-c5ab51d6cc51', '1d40f394-ffc3-498f-b87e-c5ab51d6cc56', '2d40f394-ffc3-498f-b87e-c5ab51d6cc56',
-                                                                'bd603fc9-a85e-428d-ab27-57bf47b2c8d4', 'cd603fc9-a85e-428d-ab27-57bf47b2c8d1', 'cd603fc9-a85e-428d-ab27-57bf47b2c8d4', 'bd603fc9-a85e-428d-ab27-57bf47b2c8d4', 'cd603fc9-a85e-428d-ab27-57bf47b2c8d1', 'cd603fc9-a85e-428d-ab27-57bf47b2c8d4',
+                                                                'bd603fc9-a85e-428d-ab27-57bf47b2c8d4', 'cd603fc9-a85e-428d-ab27-57bf47b2c8d1', 'cd603fc9-a85e-428d-ab27-57bf47b2c8d4', 'e45e11ae-0b92-4b42-83cd-b8d6c0fca981', 'e45e11ae-0b92-4b42-83cd-b8d6c0fca98c', 't45e11ae-0b92-4b42-83cd-b8d6c0fca98c',
                                                                 '19c7c58a-57ca-4142-bd10-5f36e68bdd90', '19c7c58a-57ca-4142-bd10-5f36e68bdd91', '29c7c58a-57ca-4142-bd10-5f36e68bdd90', 'b86e5e4b-a9de-415c-b5b6-061a08812d1f', 'd86e5e4b-a9de-415c-b5b6-061a08812d11', 'd86e5e4b-a9de-415c-b5b6-061a08812d1f',
                                                                 'c2244cfe-074a-4947-a075-d607dc705837', 'c5544cfe-074a-4947-a075-d607dc705837', 'c5544cfe-084a-4947-a075-d607dc705837', '986637d4-8de9-4664-8775-4fa9a4a5afca', '988037d4-8de7-4664-8775-4fa9a4a5afca', '988037d4-8de9-4664-8775-4fa9a4a5afca',
                                                                 '1d18f729-f869-4b69-8772-41a8d58b5c34', '2d08f728-f869-4b69-8772-41a8d58b5c34', '2d08f729-f869-4b69-8772-41a8d58b5c34', '0f2dae7b-da13-4c17-a77d-b2d677b25174', '0f2dae7b-da23-4c17-a77d-b2d677b25174', '0f4rae7b-da23-4c17-a77d-b2d677b25174',
@@ -191,9 +191,9 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('2
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('bd603fc9-a85e-428d-ab27-57bf47b2c8d4', '134');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('cd603fc9-a85e-428d-ab27-57bf47b2c8d1', '134');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('cd603fc9-a85e-428d-ab27-57bf47b2c8d4', '134');
-INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('bd603fc9-a85e-428d-ab27-57bf47b2c8d4', '135');
-INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('cd603fc9-a85e-428d-ab27-57bf47b2c8d1', '135');
-INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('cd603fc9-a85e-428d-ab27-57bf47b2c8d4', '135');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e45e11ae-0b92-4b42-83cd-b8d6c0fca981', '135');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e45e11ae-0b92-4b42-83cd-b8d6c0fca98c', '135');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('t45e11ae-0b92-4b42-83cd-b8d6c0fca98c', '135');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('19c7c58a-57ca-4142-bd10-5f36e68bdd90', '136');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('19c7c58a-57ca-4142-bd10-5f36e68bdd91', '136');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('29c7c58a-57ca-4142-bd10-5f36e68bdd90', '136');
