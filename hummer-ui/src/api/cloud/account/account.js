@@ -70,3 +70,5 @@ export const resourceTaskCountUrl = "/cloud/cloudResource/task/count/";
 export const resourceRiskListUrl = "/cloud/cloudResource/risk/list/";
 
 export const deleteAccountsUrl = "/cloud/account/deletes";
+
+export const checkRegionsUrl = "/cloud/account/check/regions";

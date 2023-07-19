@@ -219,4 +219,11 @@ public class AccountController {
         return PageUtils.setPageInfo(page, accountService.historyDiffList(params));
     }
 
+    @I18n
+    @Operation(summary = "编辑选中区域")
+    @PostMapping("check/regions")
+    public void checkRegions(@RequestBody AccountWithBLOBs accountWithBLOBs) throws Exception {
+        accountService.checkRegions(accountWithBLOBs, tokenService.getLoginUser());
+    }
+
 }

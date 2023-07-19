@@ -30,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 import static com.alibaba.fastjson.JSON.parseObject;
@@ -326,8 +323,10 @@ public class AccountService {
                 if(StringUtils.isEmpty(account.getCheckRegions())) account.setCheckRegions(jsonArray.toJSONString());
                 accountMapper.updateByPrimaryKeySelective(account);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
+            account.setRegions("[]");
+            if(StringUtils.isEmpty(account.getCheckRegions())) account.setCheckRegions("[]");
+            accountMapper.updateByPrimaryKeySelective(account);
             HRException.throwException(e.getMessage());
         }
     }
@@ -479,6 +478,14 @@ public class AccountService {
             }
         }
         return list;
+    }
+
+    public void checkRegions(AccountWithBLOBs accountWithBLOBs, LoginUser loginUser) throws Exception {
+        accountMapper.updateByPrimaryKeySelective(accountWithBLOBs);
+        Map<String, String> map = new HashMap<>();
+        map.put("accountId", accountWithBLOBs.getId());
+        map.put("regions", accountWithBLOBs.getCheckRegions());
+        saveRegions(map, loginUser);
     }
 
 }

@@ -3,12 +3,26 @@
     <el-popover
       ref="popover"
       placement="left"
-      width="600"
+      width="700"
       trigger="hover">
-      <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
-          <el-table-column type="index" min-width="100"/>
-          <el-table-column prop="regionId" :label="$t('account.region_id')" min-width="250"></el-table-column>
-          <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="250"></el-table-column>
+      <el-table :border="true" :stripe="true" :data="regions" class="adjust-table table-content">
+        <el-table-column type="index" min-width="60"/>
+        <el-table-column prop="regionId" :label="$t('account.region_id')" min-width="250">
+          <template v-slot:default="scope">
+            {{ scope.row.regionId }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="250">
+          <template v-slot:default="scope">
+            {{ scope.row.regionName }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="check" :label="$t('account.check_regions')" min-width="250">
+          <template v-slot:default="scope">
+            <el-checkbox v-if="scope.row.check" v-model="scope.row.check">{{ $t('account.checked') }}</el-checkbox>
+            <el-checkbox v-if="!scope.row.check" v-model="scope.row.check">{{ $t('account.not_checked') }}</el-checkbox>
+          </template>
+        </el-table-column>
       </el-table>
       <el-button slot="reference" size="mini" type="primary" plain @click="showRegions">
         {{ $t('account.regions') }}
@@ -16,17 +30,31 @@
     </el-popover>
 
     <!--regions-->
-    <el-drawer class="rtl" :title="$t('account.regions')" :visible.sync="regionsVisible" size="45%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('account.all_regions')" :visible.sync="regionsVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
-        <el-table-column type="index" min-width="100"/>
+      <div style="color: red;font-style:italic;margin: 5px 0 10px 10px;">{{ $t('account.checked_note') }}</div>
+      <el-table :border="true" :stripe="true" :data="regions" class="adjust-table table-content">
+        <el-table-column type="index" min-width="60"/>
         <el-table-column prop="regionId" :label="$t('account.region_id')" min-width="250">
-
+          <template v-slot:default="scope">
+            {{ scope.row.regionId }}
+          </template>
         </el-table-column>
         <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="250">
-
+          <template v-slot:default="scope">
+            {{ scope.row.regionName }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="check" :label="$t('account.check_regions')" min-width="250">
+          <template v-slot:default="scope">
+            <el-checkbox v-if="scope.row.check" v-model="scope.row.check">{{ $t('account.checked') }}</el-checkbox>
+            <el-checkbox v-if="!scope.row.check" v-model="scope.row.check">{{ $t('account.not_checked') }}</el-checkbox>
+          </template>
         </el-table-column>
       </el-table>
+      <dialog-footer
+        @cancel="regionsVisible = false"
+        @confirm="saveCheckRegion()"/>
     </el-drawer>
     <!--regions-->
   </div>
@@ -34,8 +62,12 @@
 
 <script>
   /* eslint-disable */
+  import DialogFooter from "@/business/components/common/components/DialogFooter.vue";
+  import {checkRegionsUrl} from "@/api/cloud/account/account";
+
   export default {
     name: "Regions",
+    components: {DialogFooter},
     props: {
       row: Object,
     },
@@ -46,9 +78,10 @@
     },
     data() {
       return {
-        string2PrettyFormat: [],
+        regions: [],
         regionsVisible: false,
         direction: 'rtl',
+        account: '',
       }
     },
     created() {
@@ -56,13 +89,37 @@
     },
     methods: {
       init() {
-        this.string2PrettyFormat = typeof(this.row.regions) === 'string'?JSON.parse(this.row.regions):this.row.regions;
+        this.account = this.row;
+        let regions = this.row.regions?typeof(this.row.regions) === 'string'?JSON.parse(this.row.regions):this.row.regions:[];
+        let checkRegions = this.row.checkRegions?typeof(this.row.checkRegions) === 'string'?JSON.parse(this.row.checkRegions):this.row.checkRegions:[];
+        for (let region of regions) {
+          for (let checkRegion of checkRegions) {
+            if (region.regionId === checkRegion.regionId) {
+              region.check = true;
+            }
+          }
+        }
+        this.regions = regions;
       },
       showRegions() {
         this.regionsVisible =  true;
       },
       handleClose() {
         this.regionsVisible =  false;
+      },
+      saveCheckRegion() {
+        let checkRegions = [];
+        for (let region of this.regions) {
+          if (region.check) {
+            checkRegions.push(region);
+          }
+        }
+        let params = this.account;
+        params.checkRegions = JSON.stringify(checkRegions);
+        this.$post(checkRegionsUrl, params, response => {
+          this.$success(this.$t('commons.success'));
+          this.handleClose();
+        });
       },
     },
   }

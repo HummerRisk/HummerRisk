@@ -3,6 +3,19 @@
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtAccountMapper">
     <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.AccountDTO"
                extends="com.hummer.cloud.mapper.AccountMapper.BaseResultMap">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="credential" jdbcType="LONGVARCHAR" property="credential" />
+        <result column="regions" jdbcType="LONGVARCHAR" property="regions" />
+        <result column="check_regions" jdbcType="LONGVARCHAR" property="checkRegions" />
         <result column="userName" property="userName"/>
         <result column="isProxy" property="isProxy"/>
         <result column="proxy_ip" jdbcType="VARCHAR" property="proxyIp" />
