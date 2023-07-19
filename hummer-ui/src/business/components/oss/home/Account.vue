@@ -364,7 +364,7 @@ import {_filter, _sort} from "@/common/js/utils";
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {OSS_CONFIGS, OSS_BUCKET_CONFIGS} from "@/business/components/common/components/search/search-components";
 import {saveAs} from "@/common/js/FileSaver";
-import Regions from "@/business/components/account/home/Regions";
+import Regions from "@/business/components/oss/home/Regions";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {proxyListAllUrl} from "@/api/system/system";
 import {
