@@ -230,3 +230,7 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('6
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8d00a470-0a17-4eb3-908e-63e0352edec1', '147');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8d00a470-0a18-4eb3-908e-63e0352edec1', '147');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8d78a470-0a18-4eb3-908e-63e0352edec1', '147');
+
+ALTER TABLE `cloud_account` ADD `check_regions` longtext DEFAULT NULL COMMENT '选中区域';
+
+ALTER TABLE `oss` ADD `check_regions` longtext DEFAULT NULL COMMENT '选中区域';

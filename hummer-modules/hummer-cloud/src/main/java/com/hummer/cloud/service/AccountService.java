@@ -323,6 +323,7 @@ public class AccountService {
             JSONArray jsonArray = PlatformUtils._getRegions(account, proxy, validate(account.getId()).isFlag());
             if (!jsonArray.isEmpty()) {
                 account.setRegions(jsonArray.toJSONString());
+                if(StringUtils.isEmpty(account.getCheckRegions())) account.setCheckRegions(jsonArray.toJSONString());
                 accountMapper.updateByPrimaryKeySelective(account);
             }
         }

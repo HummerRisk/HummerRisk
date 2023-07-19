@@ -20,8 +20,12 @@
                :destroy-on-close="true">
       <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
         <el-table-column type="index" min-width="100"/>
-        <el-table-column prop="regionId" :label="$t('account.region_id')" min-width="250"></el-table-column>
-        <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="250"></el-table-column>
+        <el-table-column prop="regionId" :label="$t('account.region_id')" min-width="250">
+
+        </el-table-column>
+        <el-table-column prop="regionName" :label="$t('account.region_name')" min-width="250">
+
+        </el-table-column>
       </el-table>
     </el-drawer>
     <!--regions-->
