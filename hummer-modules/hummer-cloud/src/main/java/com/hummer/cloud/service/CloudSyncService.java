@@ -125,7 +125,7 @@ public class CloudSyncService {
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         String id = UUIDUtil.newUUID();
         String[] resourceTypes = PlatformUtils.checkoutResourceType(account.getPluginId());
-        JSONArray jsonArray = JSON.parseArray(account.getRegions());
+        JSONArray jsonArray = JSON.parseArray(account.getCheckRegions());
         JSONObject object;
         List<String> regions = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
