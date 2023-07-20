@@ -223,7 +223,7 @@
             WHEN t.resource_type IN ('aliyun.eip', 'huawei.eip', 'tencent.eip', 'aws.network-addr', 'azure.publicip', 'gcp.app-engine-domain', 'qingcloud.eip', 'ucloud.eip', 'jdcloud.eip', 'ksyun.eip', 'volc.eip', 'vsphere.host', 'openstack.network', 'baidu.eip') THEN 'eip'
             WHEN t.resource_type IN ('aliyun.slb', 'huawei.elb', 'tencent.clb', 'aws.elb', 'azure.loadbalancer', 'ucloud.ulb', 'jdcloud.lb', 'ksyun.slb', 'baidu.blb', 'baidu.app-blb') THEN 'elb'
             WHEN t.resource_type IN ('aliyun.security-group', 'huawei.security-group', 'tencent.security-group', 'aws.security-group', 'azure.networksecuritygroup', 'ucloud.securitygroup', 'jdcloud.securitygroup', 'volc.securitygroup', 'openstack.security-group', 'openstack.security-groups', 'baidu.security-group') THEN 'sg'
-            WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc') THEN 'vpc'
+            WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc', 'huawei.vpc', 'gcp.vpc', 'azure.vnet') THEN 'vpc'
             ELSE 'other'
         END AS 'type',
         (
@@ -265,7 +265,7 @@
             WHEN t.resource_type IN ('aliyun.eip', 'huawei.eip', 'tencent.eip', 'aws.network-addr', 'azure.publicip', 'gcp.app-engine-domain', 'qingcloud.eip', 'ucloud.eip', 'jdcloud.eip', 'ksyun.eip', 'volc.eip', 'vsphere.host', 'openstack.network', 'baidu.eip') THEN 'eip'
             WHEN t.resource_type IN ('aliyun.slb', 'huawei.elb', 'tencent.clb', 'aws.elb', 'azure.loadbalancer', 'ucloud.ulb', 'jdcloud.lb', 'ksyun.slb', 'baidu.blb', 'baidu.app-blb') THEN 'elb'
             WHEN t.resource_type IN ('aliyun.security-group', 'huawei.security-group', 'tencent.security-group', 'aws.security-group', 'azure.networksecuritygroup', 'ucloud.securitygroup', 'jdcloud.securitygroup', 'volc.securitygroup', 'openstack.security-group', 'openstack.security-groups', 'baidu.security-group') THEN 'sg'
-            WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc') THEN 'vpc'
+            WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc', 'huawei.vpc', 'gcp.vpc', 'azure.vnet') THEN 'vpc'
             ELSE 'other'
         END AS 'type',
         t.account_id as accountId,
