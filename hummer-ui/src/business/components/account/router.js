@@ -23,6 +23,11 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountScan'),
     },
     {
+      path: "accountscaninglog/:id",
+      name: "accountScaningLog",
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountScaningLog'),
+    },
+    {
       path: "rule",
       name: "cloudRule",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),

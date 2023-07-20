@@ -1993,4 +1993,7 @@ export default {
     other_resource: '其他资源',
     resource_relation: '资源关系',
   },
+  scaning: {
+    scaning_log: '执行过程',
+  },
 };

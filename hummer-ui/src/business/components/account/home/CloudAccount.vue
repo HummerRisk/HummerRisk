@@ -841,14 +841,10 @@ const columnOptions = [
                 accountId: this.accountWithGroup.id,
                 groups: this.checkedGroups
               }
-              this.groupResult = this.$post(ruleScanUrl, params, () => {
-                this.$success(this.$t('account.i18n_hr_create_success'));
-                this.scanVisible = false;
-                this.$router.push({
-                  name: 'cloudResult',
-                  params: {id: this.accountWithGroup.id},
-                }).catch(error => error);
+              this.$post(ruleScanUrl, params, () => {
               });
+              this.scanVisible = false;
+              this.handleScaningLog(params);
             }
           }
         });
@@ -934,6 +930,12 @@ const columnOptions = [
             }
           }
         });
+      },
+      //调参云账号对应的规则
+      handleScaningLog(params) {
+        this.$router.push({
+          path: '/account/accountscaninglog/' + params.accountId,
+        }).catch(error => error);
       },
     },
     computed: {
