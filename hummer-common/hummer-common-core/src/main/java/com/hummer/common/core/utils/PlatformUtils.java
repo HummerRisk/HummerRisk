@@ -1552,10 +1552,14 @@ public class PlatformUtils {
                 }
                 break;
             case tencent:
-                // 不支持资源的区域
-                stringArray = new String[]{"ap-shanghai-fsi", "ap-shenzhen-fsi"};
+                if(StringUtils.contains(resource,"tencent.mongodb")){
+                    stringArray = new String[]{"ap-jakarta","ap-shanghai-fsi", "ap-shenzhen-fsi"};
+                }else{
+                    // 不支持资源的区域
+                    stringArray = new String[]{"ap-shanghai-fsi", "ap-shenzhen-fsi"};
+                    // 利用list的包含方法,进行判断
+                }
                 tempList = Arrays.asList(stringArray);
-                // 利用list的包含方法,进行判断
                 return !tempList.contains(region);
             case vsphere:
                 break;
