@@ -1990,7 +1990,13 @@ export default {
     elb_resource: '負載均衡資源',
     sg_resource: '安全組資源',
     vpc_resource: 'VPC資源',
+    es_resource: 'ES資源',
+    redis_resource: 'Redis資源',
+    mongodb_resource: 'MongoDB資源',
+    postgresql_resource: 'PostgreSQL資源',
     other_resource: '其他資源',
     resource_relation: '資源關係',
+    resource_icon: '資源圖標',
+    risk_icon: '風險類型',
   },
 };

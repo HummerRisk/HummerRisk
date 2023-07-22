@@ -482,6 +482,14 @@ export default {
                     filePosfix = 'sg.svg'
                   if (d.type == 'vpc')
                     filePosfix = 'vpc.svg'
+                  if (d.type == 'es')
+                    filePosfix = 'es.svg'
+                  if (d.type == 'redis')
+                    filePosfix = 'redis.svg'
+                  if (d.type == 'mongodb')
+                    filePosfix = 'mongodb.svg'
+                  if (d.type == 'postgresql')
+                    filePosfix = 'postgresql.svg'
                   let imageFIle = require("@/assets/img/cloudtopo/" + filePrefix + filePosfix)
                   imageType = filePrefix + filePosfix
                   return imageFIle

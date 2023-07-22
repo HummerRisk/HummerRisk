@@ -1990,7 +1990,13 @@ export default {
     elb_resource: 'Load Balanced Resource',
     sg_resource: 'Security Group Resource',
     vpc_resource: 'VPC resource',
+    es_resource: 'ES resource',
+    redis_resource: 'Redis resource',
+    mongodb_resource: 'MongoDB resource',
+    postgresql_resource: 'PostgreSQL resource',
     other_resource: 'Other resources',
     resource_relation: 'Resource relationship',
+    resource_icon: 'Resource icon',
+    risk_icon: 'Risk Type',
   },
 };
