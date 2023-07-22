@@ -4,9 +4,9 @@ package com.hummer.cloud.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.aliyun.actiontrail20171204.Client;
-import com.aliyun.actiontrail20171204.models.LookupEventsRequest;
-import com.aliyun.actiontrail20171204.models.LookupEventsResponse;
+import com.aliyun.actiontrail20200706.Client;
+import com.aliyun.actiontrail20200706.models.LookupEventsRequest;
+import com.aliyun.actiontrail20200706.models.LookupEventsResponse;
 import com.aliyun.teaopenapi.models.Config;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -688,10 +688,17 @@ public class CloudEventService {
         LookupEventsRequest lookupEventsRequest = new LookupEventsRequest();
         lookupEventsRequest.setStartTime(startTime);
         lookupEventsRequest.setEndTime(endTime);
-        lookupEventsRequest.setNextToken((pageNum - 1) * maxResult + "");
-        lookupEventsRequest.setMaxResults(maxResult + "");
-        lookupEventsRequest.setEventRW("Write");
+        if(accountMap.get("nextToken")!=null){
+            lookupEventsRequest.setNextToken(accountMap.get("nextToken"));
+        }
+        lookupEventsRequest.setMaxResults(String.valueOf(maxResult));
+        //lookupEventsRequest.setEventRW("Write");
         LookupEventsResponse lookupEventsResponse = client.lookupEvents(lookupEventsRequest);
+        if(lookupEventsResponse.getBody().getNextToken()!=null){
+            accountMap.put("nextToken",lookupEventsResponse.getBody().getNextToken());
+        }else{
+            accountMap.put("isEnd","true");
+        }
         List<Map<String, ?>> events = lookupEventsResponse.getBody().events;
         return events.stream().map(item -> {
             Map<String, ?> userIdentity = (Map) item.get("userIdentity");

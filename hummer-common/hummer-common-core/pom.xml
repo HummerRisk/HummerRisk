@@ -431,7 +431,13 @@
         <!-- azure -->
 
         <!-- aliyun -->
+
         <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>actiontrail20200706</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <!--<dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>actiontrail20171204</artifactId>
             <version>1.0.1</version>
@@ -441,7 +447,7 @@
                     <groupId>com.squareup.okhttp3</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-cms</artifactId>
