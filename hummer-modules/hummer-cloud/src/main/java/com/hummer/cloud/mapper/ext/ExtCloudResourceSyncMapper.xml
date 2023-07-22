@@ -213,10 +213,10 @@
         CONCAT('资源类型:', t.resource_type) as name,
         CASE
             WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
-                                    'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
-            WHEN t.resource_type IN ('aliyun.mongodb', 'aliyun.polardb', 'aliyun.rds', 'aliyun.redis', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
-                                    'huawei.gaussdbforopengauss', 'huawei.rds', 'huawei.redis', 'tencent.cdb', 'tencent.mongodb', 'tencent.redis', 'aws.rds', 'azure.cosmosdb',
-                                    'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mongodb', 'qingcloud.mysql', 'volc.mongodb') THEN 'rds'
+                                     'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
+            WHEN t.resource_type IN ('aliyun.polardb', 'aliyun.rds', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
+                                     'huawei.gaussdbforopengauss', 'huawei.rds', 'tencent.cdb', 'aws.rds', 'azure.cosmosdb',
+                                     'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mysql') THEN 'rds'
             WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
             WHEN t.resource_type IN ('aliyun.disk', 'huawei.disk', 'tencent.disk', 'aws.ebs', 'azure.disk', 'jdcloud.disk', 'baidu.volume') THEN 'disk'
             WHEN t.resource_type IN ('huawei.iam') THEN 'iam'
@@ -224,6 +224,10 @@
             WHEN t.resource_type IN ('aliyun.slb', 'huawei.elb', 'tencent.clb', 'aws.elb', 'azure.loadbalancer', 'ucloud.ulb', 'jdcloud.lb', 'ksyun.slb', 'baidu.blb', 'baidu.app-blb') THEN 'elb'
             WHEN t.resource_type IN ('aliyun.security-group', 'huawei.security-group', 'tencent.security-group', 'aws.security-group', 'azure.networksecuritygroup', 'ucloud.securitygroup', 'jdcloud.securitygroup', 'volc.securitygroup', 'openstack.security-group', 'openstack.security-groups', 'baidu.security-group') THEN 'sg'
             WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc', 'huawei.vpc', 'gcp.vpc', 'azure.vnet') THEN 'vpc'
+            WHEN t.resource_type IN ('aliyun.redis', 'huawei.redis', 'tencent.redis') THEN 'redis'
+            WHEN t.resource_type IN ('aliyun.mongodb', 'tencent.mongodb', 'qingcloud.mongodb', 'volc.mongodb') THEN 'mongodb'
+            WHEN t.resource_type IN ('aliyun.postgre-sql') THEN 'postgresql'
+            WHEN t.resource_type IN ('tencent.es') THEN 'es'
             ELSE 'other'
         END AS 'type',
         (
@@ -256,9 +260,9 @@
         CASE
             WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
                                     'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
-            WHEN t.resource_type IN ('aliyun.mongodb', 'aliyun.polardb', 'aliyun.rds', 'aliyun.redis', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
-                                    'huawei.gaussdbforopengauss', 'huawei.rds', 'huawei.redis', 'tencent.cdb', 'tencent.mongodb', 'tencent.redis', 'aws.rds', 'azure.cosmosdb',
-                                    'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mongodb', 'qingcloud.mysql', 'volc.mongodb') THEN 'rds'
+            WHEN t.resource_type IN ('aliyun.polardb', 'aliyun.rds', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
+                                    'huawei.gaussdbforopengauss', 'huawei.rds', 'tencent.cdb', 'aws.rds', 'azure.cosmosdb',
+                                    'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mysql') THEN 'rds'
             WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
             WHEN t.resource_type IN ('aliyun.disk', 'huawei.disk', 'tencent.disk', 'aws.ebs', 'azure.disk', 'jdcloud.disk', 'baidu.volume') THEN 'disk'
             WHEN t.resource_type IN ('huawei.iam') THEN 'iam'
