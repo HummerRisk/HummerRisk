@@ -266,6 +266,10 @@
             WHEN t.resource_type IN ('aliyun.slb', 'huawei.elb', 'tencent.clb', 'aws.elb', 'azure.loadbalancer', 'ucloud.ulb', 'jdcloud.lb', 'ksyun.slb', 'baidu.blb', 'baidu.app-blb') THEN 'elb'
             WHEN t.resource_type IN ('aliyun.security-group', 'huawei.security-group', 'tencent.security-group', 'aws.security-group', 'azure.networksecuritygroup', 'ucloud.securitygroup', 'jdcloud.securitygroup', 'volc.securitygroup', 'openstack.security-group', 'openstack.security-groups', 'baidu.security-group') THEN 'sg'
             WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc', 'huawei.vpc', 'gcp.vpc', 'azure.vnet') THEN 'vpc'
+            WHEN t.resource_type IN ('aliyun.redis', 'huawei.redis', 'tencent.redis') THEN 'redis'
+            WHEN t.resource_type IN ('aliyun.mongodb', 'tencent.mongodb', 'qingcloud.mongodb', 'volc.mongodb') THEN 'mongodb'
+            WHEN t.resource_type IN ('aliyun.postgre-sql') THEN 'postgresql'
+            WHEN t.resource_type IN ('tencent.es') THEN 'es'
             ELSE 'other'
         END AS 'type',
         t.account_id as accountId,
