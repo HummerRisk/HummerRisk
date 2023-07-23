@@ -105,5 +105,5 @@ public interface IK8sProviderService {
 
     void saveImageResultLog(String resultId, String operation, String output, boolean result, LoginUser logiUser) throws Exception;
 
-
+    ImageRepo addImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception;
 }

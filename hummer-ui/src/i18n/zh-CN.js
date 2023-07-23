@@ -2001,5 +2001,8 @@ export default {
   },
   scaning: {
     scaning_log: '执行过程',
+    create_log: '同时创建操作审计账号',
+    create_oss: '同时创建对象存储账号',
+    create_image: '同时创建镜像仓库',
   },
 };

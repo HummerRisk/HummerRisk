@@ -21,6 +21,7 @@ import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
+import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.alibaba.fastjson.JSON.parseArray;
@@ -60,8 +62,14 @@ public class AccountService {
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
     @Autowired
     private CloudEventMapper cloudEventMapper;
+    @Autowired
+    private CloudEventService cloudEventService;
+    @Autowired
+    private OssService ossService;
     @DubboReference
     private IOperationLogService operationLogService;
+    @DubboReference
+    private IK8sProviderService ik8sProviderService;
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
@@ -75,7 +83,7 @@ public class AccountService {
     }
 
     public AccountWithBLOBs getAccount(String id) {
-       return accountMapper.selectByPrimaryKey(id);
+        return accountMapper.selectByPrimaryKey(id);
     }
 
     public List<ValidateDTO> validate(List<String> ids) {
@@ -130,7 +138,7 @@ public class AccountService {
     }
 
     public AccountWithBLOBs addAccount(CreateCloudAccountRequest request, LoginUser loginUser) throws HRException {
-        try{
+        try {
             //参数校验
             if (StringUtils.isEmpty(request.getCredential()) || StringUtils.isEmpty(request.getName()) || StringUtils.isEmpty(request.getPluginId())) {
                 HRException.throwException(Translator.get("i18n_ex_cloud_account_name_or_plugin"));
@@ -170,7 +178,49 @@ public class AccountService {
                 accountMapper.insertSelective(account);
                 updateRegionsThrows(account);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
-                if (validate.isFlag() && PlatformUtils.isSyncResource(account.getPluginId())) cloudSyncService.sync(account.getId(), loginUser);
+                if (validate.isFlag() && PlatformUtils.isSyncResource(account.getPluginId()))
+                    cloudSyncService.sync(account.getId(), loginUser);
+
+                if (request.isCreateLog()) {
+                    JSONArray arr = JSONArray.parseArray(account.getCheckRegions());
+                    if (arr.size() == 0) arr = JSONArray.parseArray(account.getRegions());
+                    if (arr.size() > 0) {
+                        String[] regions = new String[arr.size() - 1];
+                        int i = 0;
+                        for (Object o : arr) {
+                            JSONObject jsonObject = JSONObject.parseObject(o.toString());
+                            String regionId = jsonObject.getString("regionId");
+                            regions[i] = regionId;
+                        }
+                        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
+                        sdf.applyPattern("yyyy-MM-dd HH:mm:ss");//
+                        Date date = new Date();// 获取当前时间
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(date);
+                        calendar.add(Calendar.WEEK_OF_YEAR, -1);//一周前
+                        Date weekDate = calendar.getTime();
+
+                        String startTime = sdf.format(weekDate);
+                        String endTime = sdf.format(date);
+                        cloudEventService.syncCloudEvents(account.getId(), regions, startTime, endTime);
+                    }
+
+                    if (request.isCreateOss()) {
+                        OssWithBLOBs oss = new OssWithBLOBs();
+                        BeanUtils.copyBean(oss, account);
+                        oss.setAccountId(account.getId());
+                        ossService.addOss(oss, loginUser);
+                    }
+
+                    if (request.isCreateImage()) {
+                        ImageRepo imageRepo = new ImageRepo();
+                        imageRepo.setIsBindAccount(true);
+                        imageRepo.setAccountId(account.getId());
+                        imageRepo.setName(account.getName());
+                        ik8sProviderService.addImageRepo(imageRepo, loginUser);
+                    }
+                }
+
                 return getCloudAccountById(account.getId());
             }
         } catch (Exception e) {
@@ -307,8 +357,7 @@ public class AccountService {
                 account.setRegions(jsonArray.toJSONString());
                 accountMapper.updateByPrimaryKeySelective(account);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
     }
@@ -320,18 +369,18 @@ public class AccountService {
             JSONArray jsonArray = PlatformUtils._getRegions(account, proxy, validate(account.getId()).isFlag());
             if (!jsonArray.isEmpty()) {
                 account.setRegions(jsonArray.toJSONString());
-                if(StringUtils.isEmpty(account.getCheckRegions())) account.setCheckRegions(jsonArray.toJSONString());
+                if (StringUtils.isEmpty(account.getCheckRegions())) account.setCheckRegions(jsonArray.toJSONString());
                 accountMapper.updateByPrimaryKeySelective(account);
             }
         } catch (Exception e) {
             account.setRegions("[]");
-            if(StringUtils.isEmpty(account.getCheckRegions())) account.setCheckRegions("[]");
+            if (StringUtils.isEmpty(account.getCheckRegions())) account.setCheckRegions("[]");
             accountMapper.updateByPrimaryKeySelective(account);
             HRException.throwException(e.getMessage());
         }
     }
 
-    public String string2PrettyFormat (String regions) {
+    public String string2PrettyFormat(String regions) {
         StringBuilder stringBuffer = new StringBuilder();
         JSONArray jsonArray = parseArray(regions);
         String pretty = JSON.toJSONString(jsonArray, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
@@ -463,7 +512,7 @@ public class AccountService {
     public List<Map<String, Object>> historyList(Map<String, Object> params) {
         List<Map<String, Object>> list = extAccountMapper.historyList(params);
         for (Map<String, Object> map : list) {
-            if(map.get("rsources") != null) {
+            if (map.get("rsources") != null) {
                 map.put("rsources", toJSONString2(map.get("rsources").toString()));
             }
         }
@@ -473,7 +522,7 @@ public class AccountService {
     public List<Map<String, Object>> historyDiffList(Map<String, Object> params) {
         List<Map<String, Object>> list = extAccountMapper.historyDiffList(params);
         for (Map<String, Object> map : list) {
-            if(map.get("rsources") != null) {
+            if (map.get("rsources") != null) {
                 map.put("rsources", toJSONString2(map.get("rsources").toString()));
             }
         }

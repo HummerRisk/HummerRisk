@@ -119,6 +119,11 @@
               <el-form-item v-if="form.pluginId && iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                 <el-switch v-model="form.isProxy"></el-switch>
               </el-form-item>
+              <el-form-item>
+                <el-checkbox v-model="form.createLog" v-if="createLogArr.includes(form.pluginId)">{{ $t('scaning.create_log') }}</el-checkbox>
+                <el-checkbox v-model="form.createOss" v-if="createOssArr.includes(form.pluginId)">{{ $t('scaning.create_oss') }}</el-checkbox>
+                <el-checkbox v-model="form.createImage" v-if="createImageArr.includes(form.pluginId)">{{ $t('scaning.create_image') }}</el-checkbox>
+              </el-form-item>
               <el-form-item v-if="form.script && iamStrategyNotSupport.indexOf(form.pluginId) === -1">
                 <el-link type="danger" @click="addAccountIam(form)">{{ $t('account.iam_strategy') }}</el-link>
                 <div>
@@ -532,6 +537,9 @@ const columnOptions = [
         checkAll: true,
         isIndeterminate: false,
         tokenSwitch: false,
+        createLogArr: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-huawei-plugin', 'hummer-qcloud-plugin', 'hummer-huoshan-plugin', 'hummer-baidu-plugin', 'hummer-ksyun-plugin'],
+        createOssArr: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-huawei-plugin', 'hummer-qcloud-plugin', 'hummer-baidu-plugin', 'hummer-qingcloud-plugin', 'hummer-jdcloud-plugin', 'hummer-qiniu-plugin'],
+        createImageArr: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-qcloud-plugin'],
       }
     },
     watch: {
@@ -550,7 +558,7 @@ const columnOptions = [
         this.checkAll = val;
       },
       create() {
-        this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] } ];
+        this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [], "createLog": false, "createOss": false, "createImage": false } ];
         this.createVisible = true;
         this.tokenSwitch = false;
         this.activePlugin();
@@ -689,6 +697,9 @@ const columnOptions = [
       },
       //新增云账号选择插件查询云账号信息
       async changePluginForAdd (form){
+        form.createLog = false;
+        form.createOss = false;
+        form.createImage = false;
         this.$get(iamStrategyUrl + form.pluginId,res => {
           form.script = res.data;
           this.script = res.data;

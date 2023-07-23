@@ -65,9 +65,6 @@ public class K8sProviderService implements IK8sProviderService {
     private FileSystemService fileSystemService;
     @Autowired
     private ServerGroupMapper serverGroupMapper;
-    @Autowired
-    private CloudNativeConfigMapper cloudNativeConfigMapper;
-
 
     @Override
     public List<CloudNativeResult> cloudNativeResults(CloudNativeResultExample example) {
@@ -314,5 +311,8 @@ public class K8sProviderService implements IK8sProviderService {
         imageService.saveImageResultLog(resultId, operation, output, result, logiUser);
     }
 
-
+    @Override
+    public ImageRepo addImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
+        return imageService.addImageRepo(imageRepo, loginUser);
+    }
 }
