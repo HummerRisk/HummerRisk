@@ -300,34 +300,6 @@
       </el-drawer>
       <!--Update account-->
 
-      <!-- 一键检测选择规则组 -->
-      <el-dialog :close-on-click-modal="false"
-                 :modal-append-to-body="false"
-                 :title="$t('account.scan_group_quick')"
-                 :visible.sync="scanVisible"
-                 class="" width="70%" v-loading="groupResult.loading">
-        <div>
-          <el-card class="box-card el-box-card">
-            <div slot="header" class="clearfix">
-              <span>
-                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} | {{ accountWithGroup.name }}
-              </span>
-              <el-button style="float: right; padding: 3px 0" type="text"  @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
-            </div>
-            <el-checkbox-group v-model="checkedGroups">
-              <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
-                  {{ group.name }}
-              </el-checkbox>
-            </el-checkbox-group>
-          </el-card>
-          <dialog-footer
-            @cancel="scanVisible = false"
-            @confirm="scanGroup()"/>
-        </div>
-      </el-dialog>
-      <!-- 一键检测选择检测组 -->
-
     </main-container>
 </template>
 
@@ -441,7 +413,6 @@ const columnOptions = [
         selectIds: new Set(),
         createVisible: false,
         updateVisible: false,
-        scanVisible: false,
         innerDrawer: false,
         innerDrawerProxy: false,
         plugins: [],
@@ -517,9 +488,6 @@ const columnOptions = [
           {id: 'Http', value: "Http"},
           {id: 'Https', value: "Https"},
         ],
-        accountWithGroup: {pluginIcon: 'aliyun.png'},
-        checkedGroups: [],
-        groups: [],
         iamStrategyNotSupport: ['hummer-openstack-plugin', 'hummer-vsphere-plugin', 'hummer-server-plugin'],
         checkedColumnNames: columnOptions.map((ele) => ele.props),
         columnNames: columnOptions,
@@ -832,33 +800,7 @@ const columnOptions = [
           this.$warning(account.name + ':' + this.$t('account.failed_status'));
           return;
         }
-        this.accountWithGroup = account;
-        localStorage.setItem(ACCOUNT_ID, account.id);
-        localStorage.setItem(ACCOUNT_NAME, account.name);
-        this.initGroups(account.pluginId);
-        this.scanVisible = true;
-      },
-      scanGroup () {
-        let account = this.$t('account.one_scan') + this.$t('account.cloud_account');
-        this.$alert( account + " ？", '', {
-          confirmButtonText: this.$t('commons.confirm'),
-          callback: (action) => {
-            if (action === 'confirm') {
-              if (this.checkedGroups.length === 0) {
-                this.$warning(this.$t('account.please_choose_rule_group'));
-                return;
-              }
-              let params = {
-                accountId: this.accountWithGroup.id,
-                groups: this.checkedGroups
-              }
-              this.$post(ruleScanUrl, params, () => {
-              });
-              this.scanVisible = false;
-              this.handleScaningLog(params);
-            }
-          }
-        });
+        this.handleScaningLog(account);
       },
       createProxy(createProxyForm) {
         this.$refs[createProxyForm].validate(valid => {
@@ -885,11 +827,6 @@ const columnOptions = [
           }
         })
       },
-      initGroups(pluginId) {
-        this.result = this.$get(groupsByAccountId + pluginId,response => {
-          this.groups = response.data;
-        });
-      },
       addAccount (addAccountForm) {
         let newParam = { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [] };
         addAccountForm.push(newParam);
@@ -900,19 +837,6 @@ const columnOptions = [
             parameter.splice(i, 1);
             return;
           }
-        }
-      },
-      handleCheckAllByAccount() {
-        if (this.checkedGroups.length === this.groups.length) {
-          this.checkedGroups = [];
-        } else {
-          let arr = [];
-          this.checkedGroups = [];
-          for (let group of this.groups) {
-            arr.push(group.id);
-          }
-          let concatArr = this.checkedGroups.concat(arr);
-          this.checkedGroups = Array.from(concatArr);
         }
       },
       switchSessionToken(tokenSwitch) {
@@ -942,10 +866,10 @@ const columnOptions = [
           }
         });
       },
-      //调参云账号对应的规则
-      handleScaningLog(params) {
+      handleScaningLog(account) {
         this.$router.push({
-          path: '/account/accountscaninglog/' + params.accountId,
+          name: 'accountScaningLog',
+          params: account,
         }).catch(error => error);
       },
     },
@@ -1005,10 +929,4 @@ const columnOptions = [
     height: 600px !important;
   }
   /deep/ :focus{outline:0;}
-  .el-box-card {
-    margin: 10px 0;
-  }
-  .el-box-card >>> .el-checkbox {
-    margin: 5px 0;
-  }
 </style>

@@ -8,15 +8,34 @@
                         :show-save="false" :show-create="false" :show-setting="false" :show-clean="false"/>
         </template>
 
+        <div>
+          <el-card class="el-box-card">
+            <div slot="header" class="clearfix">
+              <span>
+                <el-button type="primary" size="small" @click="scanGroup()">{{ $t('scaning.perform_detection') }}</el-button>
+                <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style=" margin-left: 15px;width: 16px; height: 16px; vertical-align:middle" alt=""/>
+             &nbsp;&nbsp; {{ accountWithGroup.pluginName }} {{ $t('rule.rule_set') }} | {{ accountWithGroup.name }}
+                <I style="color: red;">{{ $t('scaning.select_scaning') }}</I>
+              </span>
+              <el-button style="float: right; padding: 3px 0" type="text" @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+            </div>
+            <el-checkbox-group v-model="checkedGroups">
+              <el-checkbox v-for="(group, index) in groups" :label="group.id" :value="group.id" :key="index" border >
+                {{ group.name }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-card>
+        </div>
+
         <el-row>
           <el-col :span="4">
             <div style="height: 600px;margin: 25px;">
-              <el-steps direction="vertical" :active="1">
-                <el-step title="初始化配置" description="等待检测项配置">
+              <el-steps direction="vertical" :active="activeStep">
+                <el-step :title="$t('scaning.initial_configuration')" :description="$t('scaning.waiting_configuration')">
                 </el-step>
-                <el-step title="执行检测" description="初始化检测信息">
+                <el-step :title="$t('scaning.perform_detection')" :description="$t('scaning.waiting_perform')">
                 </el-step>
-                <el-step title="输出日志" description="执行检测Log信息">
+                <el-step :title="$t('scaning.output_log')" :description="$t('scaning.execute_output_log')">
                 </el-step>
               </el-steps>
             </div>
@@ -31,9 +50,9 @@
                     <i v-if="percentage1 > 0 && percentage1 < 100" class="el-icon-loading"></i>
                     <i v-if="percentage1 === 0" class="el-icon-video-pause"></i>
                     <i v-if="percentage1 === 100" class="el-icon-circle-check"></i>
-                    {{ '初始化云账号信息...' }}
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                    {{ $t('scaning.init_cloud_account_info') }}
+                    <I v-if="seconds1 > 0" style="float: right;margin-right: 23px;">{{ seconds1 + $t('second.title') }}</I>
+                    <I v-if="seconds1 > 0 && minutes1 > 0" style="float: right">{{ minutes1 + $t('minute.title') }}:</I>
                   </h5>
                   <el-progress :percentage="percentage1" :color="customColorMethod"></el-progress>
                 </el-col>
@@ -41,46 +60,46 @@
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '初始化区域信息...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage2 > 0 && percentage2 < 100,
+                                  'font-end': percentage2 === 0 || percentage2 === 100 }">
+                    <i v-if="percentage2 > 0 && percentage2 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage2 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage2 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.init_cloud_region_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds2 > 0" style="float: right;margin-right: 23px;">{{ seconds2 + $t('second.title') }}</I>
+                    <I v-if="seconds2 > 0 && minutes2 > 0" style="float: right">{{ minutes2 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage2" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '初始化规则组信息...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage3 > 0 && percentage3 < 100,
+                                  'font-end': percentage3 === 0 || percentage3 === 100 }">
+                    <i v-if="percentage3 > 0 && percentage3 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage3 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage3 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.init_cloud_group_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds3 > 0" style="float: right;margin-right: 23px;">{{ seconds3 + $t('second.title') }}</I>
+                    <I v-if="seconds3 > 0 && minutes3 > 0" style="float: right">{{ minutes3 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage3" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '初始化规则信息...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage4 > 0 && percentage4 < 100,
+                                  'font-end': percentage4 === 0 || percentage4 === 100 }">
+                    <i v-if="percentage4 > 0 && percentage4 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage4 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage4 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.init_cloud_rule_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds4 > 0" style="float: right;margin-right: 23px;">{{ seconds4 + $t('second.title') }}</I>
+                    <I v-if="seconds4 > 0 && minutes4 > 0" style="float: right">{{ minutes4 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage4" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
             </div>
@@ -88,76 +107,76 @@
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '初始化检测环境...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage5 > 0 && percentage5 < 100,
+                                  'font-end': percentage5 === 0 || percentage5 === 100 }">
+                    <i v-if="percentage5 > 0 && percentage5 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage5 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage5 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.init_env_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds5 > 0" style="float: right;margin-right: 23px;">{{ seconds5 + $t('second.title') }}</I>
+                    <I v-if="seconds5 > 0 && minutes5 > 0" style="float: right">{{ minutes5 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage5" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '创建检测任务...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage6 > 0 && percentage6 < 100,
+                                  'font-end': percentage6 === 0 || percentage6 === 100 }">
+                    <i v-if="percentage6 > 0 && percentage6 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage6 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage6 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.create_scan_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds6 > 0" style="float: right;margin-right: 23px;">{{ seconds6 + $t('second.title') }}</I>
+                    <I v-if="seconds6 > 0 && minutes6 > 0" style="float: right">{{ minutes6 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage6" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '创建检测规则...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage7 > 0 && percentage7 < 100,
+                                  'font-end': percentage7 === 0 || percentage7 === 100 }">
+                    <i v-if="percentage7 > 0 && percentage7 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage7 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage7 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.create_scan_rule') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds7 > 0" style="float: right;margin-right: 23px;">{{ seconds7 + $t('second.title') }}</I>
+                    <I v-if="seconds7 > 0 && minutes7 > 0" style="float: right">{{ minutes7 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage7" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '检测任务构建...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage8 > 0 && percentage8 < 100,
+                                  'font-end': percentage8 === 0 || percentage8 === 100 }">
+                    <i v-if="percentage8 > 0 && percentage8 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage8 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage8 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.create_scan_task') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds8 > 0" style="float: right;margin-right: 23px;">{{ seconds8 + $t('second.title') }}</I>
+                    <I v-if="seconds8 > 0 && minutes8 > 0" style="float: right">{{ minutes8 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage8" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage > 0 && percentage < 100,
-                                  'font-end': percentage === 0 || percentage === 100 }">
-                    <i v-if="percentage > 0 && percentage < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage === 100" class="el-icon-circle-check"></i>
-                    {{ '开始执行检测...' }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I style="float: right;margin-right: 23px;">{{ seconds + $t('second.title') }}</I>
-                    <I v-if="minutes > 0" style="float: right">{{ minutes + $t('minute.title') }}:</I>
+                                  'font-ing': percentage9 > 0 && percentage9 < 100,
+                                  'font-end': percentage9 === 0 || percentage9 === 100 }">
+                    <i v-if="percentage9 > 0 && percentage9 < 100" class="el-icon-loading"></i>
+                    <i v-if="percentage9 === 0" class="el-icon-video-pause"></i>
+                    <i v-if="percentage9 === 100" class="el-icon-circle-check"></i>
+                    {{ $t('scaning.start_scan_task') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <I v-if="seconds9 > 0" style="float: right;margin-right: 23px;">{{ seconds9 + $t('second.title') }}</I>
+                    <I v-if="seconds9 > 0 && minutes9 > 0" style="float: right">{{ minutes9 + $t('minute.title') }}:</I>
                   </h5>
-                  <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="percentage9" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
             </div>
@@ -168,14 +187,14 @@
                 </el-col>
                 <el-col :span="6">
                   <el-card class="box-card">
-                    <el-result v-if="!resultStatus" icon="warning" title="正在检测" subTitle="检测进行中">
+                    <el-result v-if="!resultStatus" icon="warning" :title="$t('scaning.start_scan')" :subTitle="$t('scaning.start_scan_ing')">
                       <template slot="extra">
-                        <el-button type="primary" size="medium">正在检测</el-button>
+                        <el-button type="primary" size="medium">{{ $t('scaning.start_scan') }}</el-button>
                       </template>
                     </el-result>
-                    <el-result v-if="resultStatus" icon="success" title="检测完成" subTitle="进入检测结果">
+                    <el-result v-if="resultStatus" icon="success" :title="$t('scaning.create_end')" :subTitle="$t('scaning.go_scan_result')">
                       <template slot="extra">
-                        <el-button type="primary" size="medium">进入结果</el-button>
+                        <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.go_result') }}</el-button>
                       </template>
                     </el-result>
                   </el-card>
@@ -202,6 +221,8 @@ import {
   getAccountUrl,
   ruleListUrl,
 } from "@/api/cloud/account/account";
+import {groupsByAccountId} from "@/api/cloud/rule/rule";
+import FakeProgress from "fake-progress";
 
 /* eslint-disable */
   export default {
@@ -215,7 +236,9 @@ import {
       TableOperator,
       DialogFooter
     },
-    props: ["id"],
+    props: {
+      account: {},
+    },
     watch: {
       '$route': 'init'
     },
@@ -239,6 +262,9 @@ import {
         condition: {
           components: []
         },
+        accountWithGroup: {pluginIcon: 'aliyun.png'},
+        checkedGroups: [],
+        groups: [],
         checkAll: false,
         ruleList: [],
         params: [],
@@ -254,7 +280,15 @@ import {
           indentWithTabs: true,
         },
         script: '',
-        percentage1: 1,
+        percentage1: 0,
+        percentage2: 0,
+        percentage3: 0,
+        percentage4: 0,
+        percentage5: 0,
+        percentage6: 0,
+        percentage7: 0,
+        percentage8: 0,
+        percentage9: 0,
         percentage: 0,
         customColor: '#409eff',
         customColors: [
@@ -264,20 +298,85 @@ import {
           {color: '#1989fa', percentage: 80},
           {color: '#6f7ad3', percentage: 100}
         ],
-        minutes: 0,
-        seconds: 0,
-        intervalId: null,
-        resultStatus: true,
+        minutes1: 0,
+        seconds1: 0,
+        intervalId1: null,
+        minutes2: 0,
+        seconds2: 0,
+        intervalId2: null,
+        minutes3: 0,
+        seconds3: 0,
+        intervalId3: null,
+        minutes4: 0,
+        seconds4: 0,
+        intervalId4: null,
+        minutes5: 0,
+        seconds5: 0,
+        intervalId5: null,
+        minutes6: 0,
+        seconds6: 0,
+        intervalId6: null,
+        minutes7: 0,
+        seconds7: 0,
+        intervalId7: null,
+        minutes8: 0,
+        seconds8: 0,
+        intervalId8: null,
+        minutes9: 0,
+        seconds9: 0,
+        intervalId9: null,
+        resultStatus: false,
+        activeStep: 1,
+        fake1: new FakeProgress({
+          timeConstant : 1000,
+          autoStart : true
+        }),
+        fake2: new FakeProgress({
+          timeConstant : 1000,
+          autoStart : true
+        }),
+        fake3: new FakeProgress({
+          timeConstant : 2000,
+          autoStart : true
+        }),
+        fake4: new FakeProgress({
+          timeConstant : 2000,
+          autoStart : true
+        }),
+        fake5: new FakeProgress({
+          timeConstant : 10000,
+          autoStart : true
+        }),
+        fake6: new FakeProgress({
+          timeConstant : 10000,
+          autoStart : true
+        }),
+        fake7: new FakeProgress({
+          timeConstant : 20000,
+          autoStart : true
+        }),
+        fake8: new FakeProgress({
+          timeConstant : 30000,
+          autoStart : true
+        }),
+        fake9: new FakeProgress({
+          timeConstant : 10000,
+          autoStart : true
+        }),
       }
     },
     created() {
+      this.accountId = this.$route.params.id;
       this.init();
     },
     methods: {
       init() {
-        this.accountId = this.$route.params.id;
-        this.search();
-        this.startTimer();
+        this.$get(getAccountUrl + this.accountId,res => {
+          this.accountWithGroup = res.data;
+          this.initGroups(this.accountWithGroup.pluginId);
+          this.search();
+          this.startTimer();
+        });
       },
       sort(column) {
         _sort(column, this.condition);
@@ -341,16 +440,183 @@ import {
         }
       },
       startTimer() {
-        this.intervalId = setInterval(() => {
-          this.seconds++;
-          if (this.seconds === 60) {
-            this.seconds = 0;
-            this.minutes++;
+        //第一步
+        this.intervalId1 = setInterval(() => {
+          this.seconds1++;
+          if (this.seconds1 === 60) {
+            this.seconds1 = 0;
+            this.minutes1++;
           }
+          //进度条前端一直转不会到100%
+          this.percentage1 = parseInt(this.fake1.progress * 100);
         }, 1000);
+        setTimeout(() => {
+          this.percentage1 = 100;
+          this.fake1.end();
+          clearInterval(this.intervalId1);
+
+          //第二步
+          this.intervalId2 = setInterval(() => {
+            this.seconds2++;
+            if (this.seconds2 === 60) {
+              this.seconds2 = 0;
+              this.minutes2++;
+            }
+            //进度条前端一直转不会到100%
+            this.percentage2 = parseInt(this.fake2.progress * 100);
+          }, 1000);
+          setTimeout(() => {
+            this.percentage2 = 100;
+            this.fake2.end();
+            clearInterval(this.intervalId2);
+
+            //第三步
+            this.intervalId3 = setInterval(() => {
+              this.seconds3++;
+              if (this.seconds3 === 60) {
+                this.seconds3 = 0;
+                this.minutes3++;
+              }
+              //进度条前端一直转不会到100%
+              this.percentage3 = parseInt(this.fake3.progress * 100);
+            }, 1000);
+            setTimeout(() => {
+              this.percentage3 = 100;
+              this.fake3.end();
+              clearInterval(this.intervalId3);
+
+              //第四步
+              this.intervalId4 = setInterval(() => {
+                this.seconds4++;
+                if (this.seconds4 === 60) {
+                  this.seconds4 = 0;
+                  this.minutes4++;
+                }
+                //进度条前端一直转不会到100%
+                this.percentage4 = parseInt(this.fake4.progress * 100);
+              }, 1000);
+              setTimeout(() => {
+                this.percentage4 = 100;
+                this.fake4.end();
+                clearInterval(this.intervalId4);
+                this.activeStep = 2;
+
+                //第五步
+                this.intervalId5 = setInterval(() => {
+                  this.seconds5++;
+                  if (this.seconds5 === 60) {
+                    this.seconds5 = 0;
+                    this.minutes5++;
+                  }
+                  //进度条前端一直转不会到100%
+                  this.percentage5 = parseInt(this.fake5.progress * 100);
+                }, 1000);
+                setTimeout(() => {
+                  this.percentage5 = 100;
+                  this.fake5.end();
+                  clearInterval(this.intervalId5);
+
+                  //第六步
+                  this.intervalId6 = setInterval(() => {
+                    this.seconds6++;
+                    if (this.seconds6 === 60) {
+                      this.seconds6 = 0;
+                      this.minutes6++;
+                    }
+                    //进度条前端一直转不会到100%
+                    this.percentage6 = parseInt(this.fake6.progress * 100);
+                  }, 1000);
+                  setTimeout(() => {
+                    this.percentage6 = 100;
+                    this.fake6.end();
+                    clearInterval(this.intervalId6);
+
+                    //第七步
+                    this.intervalId7 = setInterval(() => {
+                      this.seconds7++;
+                      if (this.seconds7 === 60) {
+                        this.seconds7 = 0;
+                        this.minutes7++;
+                      }
+                      //进度条前端一直转不会到100%
+                      this.percentage7 = parseInt(this.fake7.progress * 100);
+                    }, 1000);
+                    setTimeout(() => {
+                      this.percentage7 = 100;
+                      this.fake7.end();
+                      clearInterval(this.intervalId7);
+
+                      //第八步
+                      this.intervalId8 = setInterval(() => {
+                        this.seconds8++;
+                        if (this.seconds8 === 60) {
+                          this.seconds8 = 0;
+                          this.minutes8++;
+                        }
+                        //进度条前端一直转不会到100%
+                        this.percentage8 = parseInt(this.fake8.progress * 100);
+                      }, 1000);
+                      setTimeout(() => {
+                        this.percentage8 = 100;
+                        this.fake8.end();
+                        clearInterval(this.intervalId8);
+                      }, 125000);
+
+                    }, 75000);
+
+                  }, 55000);
+
+                }, 35000);
+
+              }, 6000);
+
+            }, 5000);
+
+          }, 3000);
+
+        }, 4000);
+
       },
       stopTimer() {
-        clearInterval(this.intervalId)
+        clearInterval(this.intervalId1);
+      },
+      initGroups(pluginId) {
+        this.result = this.$get(groupsByAccountId + pluginId,response => {
+          this.groups = response.data;
+        });
+      },
+      scanGroup () {
+        let account = this.$t('account.one_scan') + this.$t('account.cloud_account');
+        this.$alert( account + " ？", '', {
+          confirmButtonText: this.$t('commons.confirm'),
+          callback: (action) => {
+            if (action === 'confirm') {
+              if (this.checkedGroups.length === 0) {
+                this.$warning(this.$t('account.please_choose_rule_group'));
+                return;
+              }
+              let params = {
+                accountId: this.accountWithGroup.id,
+                groups: this.checkedGroups
+              }
+              // this.$post(ruleScanUrl, params, () => {
+              // });
+            }
+          }
+        });
+      },
+      handleCheckAllByAccount() {
+        if (this.checkedGroups.length === this.groups.length) {
+          this.checkedGroups = [];
+        } else {
+          let arr = [];
+          this.checkedGroups = [];
+          for (let group of this.groups) {
+            arr.push(group.id);
+          }
+          let concatArr = this.checkedGroups.concat(arr);
+          this.checkedGroups = Array.from(concatArr);
+        }
       },
     },
     computed: {
@@ -386,6 +652,16 @@ import {
   .box-card >>> .el-card__body {
     padding: 0;
     height: 300px;
+  }
+  .el-box-card {
+    margin: 10px 0;
+  }
+  .el-box-card >>> .el-checkbox {
+    margin: 5px 0;
+  }
+  .el-box-card >>> .el-card__body {
+    padding: 10px;
+    marigin: 5px;
   }
   /deep/ :focus{outline:0;}
 </style>

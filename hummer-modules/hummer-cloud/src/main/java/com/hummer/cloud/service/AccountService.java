@@ -27,6 +27,7 @@ import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -56,15 +57,15 @@ public class AccountService {
     private ProxyMapper proxyMapper;
     @Autowired
     private RuleMapper ruleMapper;
-    @Autowired
+    @Autowired @Lazy
     private CloudSyncService cloudSyncService;
     @Autowired
     private CloudEventSyncLogMapper cloudEventSyncLogMapper;
     @Autowired
     private CloudEventMapper cloudEventMapper;
-    @Autowired
+    @Autowired @Lazy
     private CloudEventService cloudEventService;
-    @Autowired
+    @Autowired @Lazy
     private OssService ossService;
     @DubboReference
     private IOperationLogService operationLogService;
