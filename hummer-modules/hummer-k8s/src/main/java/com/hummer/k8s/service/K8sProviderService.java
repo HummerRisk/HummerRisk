@@ -312,7 +312,7 @@ public class K8sProviderService implements IK8sProviderService {
     }
 
     @Override
-    public ImageRepo addImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
-        return imageService.addImageRepo(imageRepo, loginUser);
+    public ImageRepo addImageRepo(ImageRepo imageRepo, AccountWithBLOBs accountWithBLOBs, LoginUser loginUser) throws Exception {
+        return imageService.addImageRepoByDubbo(imageRepo, accountWithBLOBs, loginUser);
     }
 }

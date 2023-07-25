@@ -183,42 +183,55 @@ public class AccountService {
                     cloudSyncService.sync(account.getId(), loginUser);
 
                 if (request.isCreateLog()) {
-                    JSONArray arr = JSONArray.parseArray(account.getCheckRegions());
-                    if (arr.size() == 0) arr = JSONArray.parseArray(account.getRegions());
-                    if (arr.size() > 0) {
-                        String[] regions = new String[arr.size() - 1];
-                        int i = 0;
-                        for (Object o : arr) {
-                            JSONObject jsonObject = JSONObject.parseObject(o.toString());
-                            String regionId = jsonObject.getString("regionId");
-                            regions[i] = regionId;
-                        }
-                        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
-                        sdf.applyPattern("yyyy-MM-dd HH:mm:ss");//
-                        Date date = new Date();// 获取当前时间
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(date);
-                        calendar.add(Calendar.WEEK_OF_YEAR, -1);//一周前
-                        Date weekDate = calendar.getTime();
+                    try {
+                        JSONArray arr = JSONArray.parseArray(account.getCheckRegions());
+                        if (arr.size() == 0) arr = JSONArray.parseArray(account.getRegions());
+                        if (arr.size() > 0) {
+                            String[] regions = new String[arr.size()];
+                            int i = 0;
+                            for (Object o : arr) {
+                                JSONObject jsonObject = JSONObject.parseObject(o.toString());
+                                String regionId = jsonObject.getString("regionId");
+                                regions[i] = regionId;
+                                i++;
+                            }
+                            SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
+                            sdf.applyPattern("yyyy-MM-dd HH:mm:ss");//
+                            Date date = new Date();// 获取当前时间
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(date);
+                            calendar.add(Calendar.WEEK_OF_YEAR, -1);//一周前
+                            Date weekDate = calendar.getTime();
 
-                        String startTime = sdf.format(weekDate);
-                        String endTime = sdf.format(date);
-                        cloudEventService.syncCloudEvents(account.getId(), regions, startTime, endTime);
+                            String startTime = sdf.format(weekDate);
+                            String endTime = sdf.format(date);
+                            cloudEventService.syncCloudEvents(account.getId(), regions, startTime, endTime);
+                        }
+                    } catch (Exception e1) {
+                        LogUtil.error(e1.getMessage());
                     }
 
                     if (request.isCreateOss()) {
-                        OssWithBLOBs oss = new OssWithBLOBs();
-                        BeanUtils.copyBean(oss, account);
-                        oss.setAccountId(account.getId());
-                        ossService.addOss(oss, loginUser);
+                        try {
+                            OssWithBLOBs oss = new OssWithBLOBs();
+                            BeanUtils.copyBean(oss, account);
+                            oss.setAccountId(account.getId());
+                            ossService.addOss(oss, loginUser);
+                        } catch (Exception e1) {
+                            LogUtil.error(e1.getMessage());
+                        }
                     }
 
                     if (request.isCreateImage()) {
-                        ImageRepo imageRepo = new ImageRepo();
-                        imageRepo.setIsBindAccount(true);
-                        imageRepo.setAccountId(account.getId());
-                        imageRepo.setName(account.getName());
-                        ik8sProviderService.addImageRepo(imageRepo, loginUser);
+                        try {
+                            ImageRepo imageRepo = new ImageRepo();
+                            imageRepo.setIsBindAccount(true);
+                            imageRepo.setAccountId(account.getId());
+                            imageRepo.setName(account.getName());
+                            ik8sProviderService.addImageRepo(imageRepo, account, loginUser);
+                        } catch (Exception e1) {
+                            LogUtil.error(e1.getMessage());
+                        }
                     }
                 }
 

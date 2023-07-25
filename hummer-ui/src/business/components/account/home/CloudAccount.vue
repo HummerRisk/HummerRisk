@@ -722,7 +722,7 @@ const columnOptions = [
             this.$error(this.$t('account.i18n_account_cloud_plugin_param'));
             return;
           }
-          let data = {}, key = {};
+          let data = item, key = {};
           for (let tmp of item.tmpList) {
             key[tmp.name] = tmp.input;
           }

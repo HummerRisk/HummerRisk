@@ -23,18 +23,19 @@ import com.amazonaws.services.ecr.AmazonECR;
 import com.amazonaws.services.ecr.AmazonECRClient;
 import com.amazonaws.services.ecrpublic.AmazonECRPublic;
 import com.amazonaws.services.ecrpublic.AmazonECRPublicClient;
-import com.amazonaws.services.ecrpublic.model.*;
+import com.amazonaws.services.ecrpublic.model.DescribeImageTagsRequest;
+import com.amazonaws.services.ecrpublic.model.DescribeImageTagsResult;
+import com.amazonaws.services.ecrpublic.model.ImageTagDetail;
+import com.amazonaws.services.ecrpublic.model.Repository;
 import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.Image;
 import com.hummer.common.core.domain.request.image.*;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.proxy.aliyun.AliyunCredential;
 import com.hummer.common.core.proxy.aws.AWSCredential;
-import com.hummer.common.core.proxy.aws.AWSRequest;
 import com.hummer.common.core.proxy.tencent.QCloudCredential;
 import com.hummer.common.core.utils.*;
 import com.hummer.k8s.mapper.*;
@@ -47,9 +48,6 @@ import com.tencentcloudapi.common.profile.ClientProfile;
 import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.tcr.v20190924.TcrClient;
 import com.tencentcloudapi.tcr.v20190924.models.*;
-import com.tencentcloudapi.tcr.v20190924.models.DescribeImagesRequest;
-import com.tencentcloudapi.tcr.v20190924.models.DescribeRepositoriesRequest;
-import com.tencentcloudapi.tcr.v20190924.models.Registry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,6 +144,28 @@ public class ImageService {
         if(imageRepo.getIsBindAccount()){
             String accountId = imageRepo.getAccountId();
             AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
+            imageRepo.setCredential(accountWithBLOBs.getCredential());
+        }
+        boolean result = syncImages(imageRepo, loginUser);
+        if (result) {
+            imageRepo.setStatus("VALID");
+        } else {
+            imageRepo.setStatus("INVALID");
+        }
+
+        operationLogService.log(loginUser, imageRepo.getId(), imageRepo.getName(), ResourceTypeConstants.IMAGE.name(), ResourceOperation.CREATE, "i18n_create_image_repo");
+        imageRepoMapper.insertSelective(imageRepo);
+
+        return imageRepo;
+    }
+
+    public ImageRepo addImageRepoByDubbo(ImageRepo imageRepo, AccountWithBLOBs accountWithBLOBs, LoginUser loginUser) throws Exception {
+        String id = UUIDUtil.newUUID();
+        imageRepo.setId(id);
+        imageRepo.setCreator(loginUser.getUserId());
+        imageRepo.setCreateTime(System.currentTimeMillis());
+        imageRepo.setUpdateTime(System.currentTimeMillis());
+        if(imageRepo.getIsBindAccount()){
             imageRepo.setCredential(accountWithBLOBs.getCredential());
         }
         boolean result = syncImages(imageRepo, loginUser);
