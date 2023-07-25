@@ -42,7 +42,7 @@
           </el-col>
           <el-col :span="20">
             <div style="height: 221px;margin: 54px 0;">
-              <el-row style="margin: 15px 0;">
+              <el-row id="row1" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage1 > 0 && percentage1 < 100,
@@ -57,7 +57,7 @@
                   <el-progress :percentage="percentage1" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
-              <el-row style="margin: 15px 0;">
+              <el-row id="row2" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage2 > 0 && percentage2 < 100,
@@ -72,7 +72,7 @@
                   <el-progress :percentage="percentage2" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
-              <el-row style="margin: 15px 0;">
+              <el-row id="row3" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage3 > 0 && percentage3 < 100,
@@ -87,7 +87,7 @@
                   <el-progress :percentage="percentage3" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
-              <el-row style="margin: 15px 0;">
+              <el-row id="row4" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage4 > 0 && percentage4 < 100,
@@ -104,7 +104,7 @@
               </el-row>
             </div>
             <div style="height: 231px;margin: 50px 0;">
-              <el-row style="margin: 15px 0;">
+              <el-row id="row5" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage5 > 0 && percentage5 < 100,
@@ -119,7 +119,7 @@
                   <el-progress :percentage="percentage5" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
-              <el-row style="margin: 15px 0;">
+              <el-row id="row6" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage6 > 0 && percentage6 < 100,
@@ -134,7 +134,7 @@
                   <el-progress :percentage="percentage6" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
-              <el-row style="margin: 15px 0;">
+              <el-row id="row7" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage7 > 0 && percentage7 < 100,
@@ -149,7 +149,7 @@
                   <el-progress :percentage="percentage7" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
-              <el-row style="margin: 15px 0;">
+              <el-row id="row8" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage8 > 0 && percentage8 < 100,
@@ -164,7 +164,7 @@
                   <el-progress :percentage="percentage8" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
-              <el-row style="margin: 15px 0;">
+              <el-row id="row9" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
                                   'font-ing': percentage9 > 0 && percentage9 < 100,
@@ -187,12 +187,17 @@
                 </el-col>
                 <el-col :span="6">
                   <el-card class="box-card">
-                    <el-result v-if="!resultStatus" icon="warning" :title="$t('scaning.start_scan')" :subTitle="$t('scaning.start_scan_ing')">
+                    <el-result v-if="resultStatus == 0" icon="info" :title="$t('scaning.no_scan')" :subTitle="$t('scaning.no_scan_ing')">
                       <template slot="extra">
-                        <el-button type="primary" size="medium">{{ $t('scaning.start_scan') }}</el-button>
+                        <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.no_scan') }}</el-button>
                       </template>
                     </el-result>
-                    <el-result v-if="resultStatus" icon="success" :title="$t('scaning.create_end')" :subTitle="$t('scaning.go_scan_result')">
+                    <el-result v-if="resultStatus == 1" icon="warning" :title="$t('scaning.start_scan')" :subTitle="$t('scaning.start_scan_ing')">
+                      <template slot="extra">
+                        <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.start_scan') }}</el-button>
+                      </template>
+                    </el-result>
+                    <el-result v-if="resultStatus == 2" icon="success" :title="$t('scaning.create_end')" :subTitle="$t('scaning.go_scan_result')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.go_result') }}</el-button>
                       </template>
@@ -218,10 +223,12 @@ import TableOperator from "@/business/components/common/components/TableOperator
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import {_sort} from "@/common/js/utils";
 import {
+  cloudTaskLogByAccountIdUrl,
+  cloudTaskLogByIdUrl,
   getAccountUrl,
   ruleListUrl,
 } from "@/api/cloud/account/account";
-import {groupsByAccountId} from "@/api/cloud/rule/rule";
+import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
 
 /* eslint-disable */
@@ -278,6 +285,10 @@ import FakeProgress from "fake-progress";
           lineNumbers: true,
           line: true,
           indentWithTabs: true,
+          styleActiveLine: true, // 高亮选中行
+          //是否为只读,如果为"nocursor" 不仅仅为只读 连光标都无法在区域聚焦
+          readOnly: true,
+          viewportMargin: 30
         },
         script: '',
         percentage1: 0,
@@ -325,7 +336,8 @@ import FakeProgress from "fake-progress";
         minutes9: 0,
         seconds9: 0,
         intervalId9: null,
-        resultStatus: false,
+        resultStatus: 0,
+        resultTag: false,
         activeStep: 1,
         fake1: new FakeProgress({
           timeConstant : 1000,
@@ -363,6 +375,7 @@ import FakeProgress from "fake-progress";
           timeConstant : 10000,
           autoStart : true
         }),
+        timer: '',
       }
     },
     created() {
@@ -374,8 +387,6 @@ import FakeProgress from "fake-progress";
         this.$get(getAccountUrl + this.accountId,res => {
           this.accountWithGroup = res.data;
           this.initGroups(this.accountWithGroup.pluginId);
-          this.search();
-          this.startTimer();
         });
       },
       sort(column) {
@@ -388,47 +399,24 @@ import FakeProgress from "fake-progress";
           this.selectIds.add(s.id)
         })
       },
-      async search() {
-        if (!this.accountId) {
-          return;
-        }
-        this.result = await this.$get(getAccountUrl + this.accountId, res => {
-          this.accountName = res.data.name;
-          this.regions = typeof(res.data.regions) == 'string'?JSON.parse(res.data.regions):res.data.regions;
-          this.condition.pluginId = res.data.pluginId;
-          this.condition.accountId = this.accountId;
-          this.condition.status = true;
-          let url = ruleListUrl + this.currentPage + "/" + this.pageSize;
-          this.$post(url, this.condition, response => {
-            let data = response.data;
-            this.total = data.itemCount;
-            this.tableData = data.listObject;
-            for (let obj of this.tableData) {
-              obj.parameter = typeof(obj.parameter) == 'string'?JSON.parse(obj.parameter):obj.parameter;
-              if (!!obj.regions && obj.regions.length > 0) {
-                obj.regions = typeof(obj.regions) == 'string'?JSON.parse(obj.regions):obj.regions;
-              } else {
-                obj.regions = [];
-                if (!!this.regions) {
-                  for (let option of this.regions) {
-                    obj.regions.push(option["regionId"]);
-                  }
-                }
-              }
-            }
-          });
-        });
-      },
       back () {
         this.$router.push({
           path: '/account/cloudaccount',
         }).catch(error => error);
       },
       goResult() {
-        this.$router.push({
-          name: 'cloudResult',
-          params: {id: this.accountWithGroup.id},
-        }).catch(error => error);
+        if (this.resultStatus === 0) {
+          this.$warning(this.$t('scaning.no_scan_ing'));
+          return;
+        } else if (this.resultStatus === 1) {
+          this.$warning(this.$t('scaning.start_scan_ing'));
+          return;
+        } else {
+          this.$router.push({
+            name: 'cloudResult',
+            params: {id: this.accountWithGroup.id},
+          }).catch(error => error);
+        }
       },
       customColorMethod(percentage) {
         if (percentage < 30) {
@@ -441,6 +429,7 @@ import FakeProgress from "fake-progress";
       },
       startTimer() {
         //第一步
+        this.goAnchor('row1');
         this.intervalId1 = setInterval(() => {
           this.seconds1++;
           if (this.seconds1 === 60) {
@@ -455,7 +444,14 @@ import FakeProgress from "fake-progress";
           this.fake1.end();
           clearInterval(this.intervalId1);
 
+          this.script = this.script + this.$t('scaning.init_cloud_account_info') + "\r" + "init cloud account info start" + "\r" + "init cloud account info end" + "\r";
+          // 获取滚动信息  注意是cmEditor.codemirror
+          let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+          // 滚动 注意是cmEditor.codemirror
+          this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
           //第二步
+          this.goAnchor('row2');
           this.intervalId2 = setInterval(() => {
             this.seconds2++;
             if (this.seconds2 === 60) {
@@ -470,7 +466,14 @@ import FakeProgress from "fake-progress";
             this.fake2.end();
             clearInterval(this.intervalId2);
 
+            this.script = this.script + this.$t('scaning.init_cloud_region_info') + "\r" + "init cloud account regions start" + "\r" + "init cloud account regions end" + "\r";
+            // 获取滚动信息  注意是cmEditor.codemirror
+            let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+            // 滚动 注意是cmEditor.codemirror
+            this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
             //第三步
+            this.goAnchor('row3');
             this.intervalId3 = setInterval(() => {
               this.seconds3++;
               if (this.seconds3 === 60) {
@@ -485,7 +488,14 @@ import FakeProgress from "fake-progress";
               this.fake3.end();
               clearInterval(this.intervalId3);
 
+              this.script = this.script + this.$t('scaning.init_cloud_group_info') + "\r" + "init rule group start" + "\r" + "init rule group end" + "\r";
+              // 获取滚动信息  注意是cmEditor.codemirror
+              let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+              // 滚动 注意是cmEditor.codemirror
+              this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
               //第四步
+              this.goAnchor('row4');
               this.intervalId4 = setInterval(() => {
                 this.seconds4++;
                 if (this.seconds4 === 60) {
@@ -501,7 +511,14 @@ import FakeProgress from "fake-progress";
                 clearInterval(this.intervalId4);
                 this.activeStep = 2;
 
+                this.script = this.script + this.$t('scaning.init_cloud_rule_info') + "\r" + "init rules start" + "\r" + "init rules end" + "\r";
+                // 获取滚动信息  注意是cmEditor.codemirror
+                let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+                // 滚动 注意是cmEditor.codemirror
+                this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
                 //第五步
+                this.goAnchor('row5');
                 this.intervalId5 = setInterval(() => {
                   this.seconds5++;
                   if (this.seconds5 === 60) {
@@ -516,7 +533,14 @@ import FakeProgress from "fake-progress";
                   this.fake5.end();
                   clearInterval(this.intervalId5);
 
+                  this.script = this.script + this.$t('scaning.init_env_info') + "\r" + "init env start" + "\r" + "init env end" + "\r";
+                  // 获取滚动信息  注意是cmEditor.codemirror
+                  let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+                  // 滚动 注意是cmEditor.codemirror
+                  this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
                   //第六步
+                  this.goAnchor('row6');
                   this.intervalId6 = setInterval(() => {
                     this.seconds6++;
                     if (this.seconds6 === 60) {
@@ -531,7 +555,14 @@ import FakeProgress from "fake-progress";
                     this.fake6.end();
                     clearInterval(this.intervalId6);
 
+                    this.script = this.script + this.$t('scaning.create_scan_info') + "\r" + "create scan start" + "\r" + "create scan end" + "\r";
+                    // 获取滚动信息  注意是cmEditor.codemirror
+                    let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+                    // 滚动 注意是cmEditor.codemirror
+                    this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
                     //第七步
+                    this.goAnchor('row7');
                     this.intervalId7 = setInterval(() => {
                       this.seconds7++;
                       if (this.seconds7 === 60) {
@@ -546,7 +577,14 @@ import FakeProgress from "fake-progress";
                       this.fake7.end();
                       clearInterval(this.intervalId7);
 
+                      this.script = this.script + this.$t('scaning.create_scan_rule') + "\r" + "create scan rule start" + "\r" + "create scan rule end" + "\r";
+                      // 获取滚动信息  注意是cmEditor.codemirror
+                      let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+                      // 滚动 注意是cmEditor.codemirror
+                      this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
                       //第八步
+                      this.goAnchor('row8');
                       this.intervalId8 = setInterval(() => {
                         this.seconds8++;
                         if (this.seconds8 === 60) {
@@ -560,25 +598,57 @@ import FakeProgress from "fake-progress";
                         this.percentage8 = 100;
                         this.fake8.end();
                         clearInterval(this.intervalId8);
-                      }, 125000);
 
-                    }, 75000);
+                        this.script = this.script + this.$t('scaning.create_scan_task') + "\r" + "create scan task start" + "\r" + "create scan task end" + "\r";
+                        // 获取滚动信息  注意是cmEditor.codemirror
+                        let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+                        // 滚动 注意是cmEditor.codemirror
+                        this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
 
-                  }, 55000);
+                        //第九步
+                        this.goAnchor('row9');
+                        this.intervalId9 = setInterval(() => {
+                          this.seconds9++;
+                          if (this.seconds9 === 60) {
+                            this.seconds9 = 0;
+                            this.minutes9++;
+                          }
+                          //进度条前端一直转不会到100%
+                          this.percentage9 = parseInt(this.fake9.progress * 100);
 
-                }, 35000);
+                        }, 1000);
+                        this.timer = setInterval(this.getStatus, 5000);
 
-              }, 6000);
+                      }, Math.round(Math.random() * 9000 ) + 90000);
 
-            }, 5000);
+                    }, Math.round(Math.random() * 9000 ) + 60000);
 
-          }, 3000);
+                  }, Math.round(Math.random() * 9000 ) + 40000);
 
-        }, 4000);
+                }, Math.round(Math.random() * 9000 ) + 20000);
+
+              }, Math.round(Math.random() * 9000 ) + 1000);
+
+            }, Math.round(Math.random() * 9000 ) + 1000);
+
+          }, Math.round(Math.random() * 9000 ) + 1000);
+
+        }, Math.round(Math.random() * 9000 ) + 1000);
 
       },
       stopTimer() {
         clearInterval(this.intervalId1);
+      },
+      getStatus() {
+        if (this.resultTag) {
+          this.showScript();
+          clearInterval(this.timer);
+          clearInterval(this.intervalId9);
+          this.percentage9 = 100;
+          this.fake9.end();
+          this.activeStep = 3;
+          this.resultStatus = 2;
+        }
       },
       initGroups(pluginId) {
         this.result = this.$get(groupsByAccountId + pluginId,response => {
@@ -595,12 +665,15 @@ import FakeProgress from "fake-progress";
                 this.$warning(this.$t('account.please_choose_rule_group'));
                 return;
               }
+              this.resultStatus = 1;
               let params = {
                 accountId: this.accountWithGroup.id,
                 groups: this.checkedGroups
               }
-              // this.$post(ruleScanUrl, params, () => {
-              // });
+              this.startTimer();
+              this.$post(ruleScanUrl, params, res => {
+                this.resultTag = true;
+              });
             }
           }
         });
@@ -617,6 +690,54 @@ import FakeProgress from "fake-progress";
           let concatArr = this.checkedGroups.concat(arr);
           this.checkedGroups = Array.from(concatArr);
         }
+      },
+      showScript() {
+        this.script = this.script + this.$t('scaning.start_scan_task') + "\r" + "scan start" + "\r";
+        // 获取滚动信息  注意是cmEditor.codemirror
+        let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+        // 滚动 注意是cmEditor.codemirror
+        this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+
+        this.$get(cloudTaskLogByAccountIdUrl + this.accountId, response => {
+          for (let logItem of response.data) {
+            let str = this.timestampFormatDate(logItem.createTime) + ' ' + logItem.operator + ' ' + logItem.operation + ' ' + logItem.output;
+            this.script = this.script + str + "\r";
+            // 获取滚动信息  注意是cmEditor.codemirror
+            let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
+            // 滚动 注意是cmEditor.codemirror
+            this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+          }
+        });
+      },
+      timestampFormatDate (timestamp) {
+        if (!timestamp) {
+          return timestamp;
+        }
+
+        let date = new Date(timestamp);
+
+        let y = date.getFullYear();
+
+        let MM = date.getMonth() + 1;
+        MM = MM < 10 ? ('0' + MM) : MM;
+
+        let d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+
+        let h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+
+        let m = date.getMinutes();
+        m = m < 10 ? ('0' + m) : m;
+
+        let s = date.getSeconds();
+        s = s < 10 ? ('0' + s) : s;
+
+        return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
+      },
+      goAnchor(id) {
+        let anchor = document.getElementById(id);
+        anchor.scrollIntoView();
       },
     },
     computed: {
@@ -662,6 +783,9 @@ import FakeProgress from "fake-progress";
   .el-box-card >>> .el-card__body {
     padding: 10px;
     marigin: 5px;
+  }
+  .vue-codemirror, .CodeMirror {
+    height: 100% !important;
   }
   /deep/ :focus{outline:0;}
 </style>

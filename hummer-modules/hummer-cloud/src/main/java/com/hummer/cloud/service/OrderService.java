@@ -476,6 +476,24 @@ public class OrderService {
         return result;
     }
 
+    public List<CloudTaskItemLogWithBLOBs> getTaskItemLogByAccountId(String accountId) {
+        List<CloudTaskItemLogWithBLOBs> result = new ArrayList<>();
+        try {
+            CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+            cloudTaskItemExample.createCriteria().andAccountIdEqualTo(accountId);
+            List<CloudTaskItem> cloudTaskItems = cloudTaskItemMapper.selectByExample(cloudTaskItemExample);
+            for (CloudTaskItem cloudTaskItem : cloudTaskItems) {
+                CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+                cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(cloudTaskItem.getId());
+                result.addAll(cloudTaskItemLogMapper.selectByExampleWithBLOBs(cloudTaskItemLogExample));
+            }
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
+        }
+
+        return result;
+    }
+
     private List<CloudTaskItemLogDTO> getTaskItemLogByTaskItemId(String taskItemId) {
         List<CloudTaskItemLogDTO> result = new ArrayList<>();
         try {

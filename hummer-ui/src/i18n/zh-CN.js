@@ -2020,6 +2020,8 @@ export default {
     create_scan_rule: '创建检测规则...',
     create_scan_task: '检测任务构建...',
     start_scan_task: '开始执行检测...',
+    no_scan: '待检测',
+    no_scan_ing: '未开始检测',
     start_scan: '正在执行',
     start_scan_ing: '检测进行中',
     create_end: '创建完成',

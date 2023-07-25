@@ -43,6 +43,8 @@ export const allListUrl = "/cloud/account/allList";
 
 export const cloudTaskLogByIdUrl = "/cloud/cloud/task/log/taskId/";
 
+export const cloudTaskLogByAccountIdUrl = "/cloud/cloud/task/log/accountId/";
+
 export const cloudTaskDetailUrl = "/cloud/cloud/task/detail/";
 
 export const cloudTaskManualListUrl = "/cloud/cloud/task/manual/list/";

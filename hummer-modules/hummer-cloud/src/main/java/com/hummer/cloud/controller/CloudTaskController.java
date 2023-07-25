@@ -6,6 +6,7 @@ import com.hummer.cloud.service.CloudTaskService;
 import com.hummer.cloud.service.OrderService;
 import com.hummer.cloud.service.ResourceCreateService;
 import com.hummer.common.core.domain.CloudTask;
+import com.hummer.common.core.domain.CloudTaskItemLogWithBLOBs;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
 import com.hummer.common.core.dto.CloudTaskCopyDTO;
 import com.hummer.common.core.dto.CloudTaskDTO;
@@ -68,6 +69,12 @@ public class CloudTaskController {
     @GetMapping(value = "log/taskId/{taskId}")
     public List<CloudTaskItemLogDTO> getTaskItemLogByTask(@PathVariable String taskId) {
         return orderService.getTaskItemLogByTaskId(taskId);
+    }
+
+    @I18n
+    @GetMapping(value = "log/accountId/{accountId}")
+    public List<CloudTaskItemLogWithBLOBs> getTaskItemLogByAccountId(@PathVariable String accountId) {
+        return orderService.getTaskItemLogByAccountId(accountId);
     }
 
     @GetMapping(value = "extendinfo/{taskId}")
