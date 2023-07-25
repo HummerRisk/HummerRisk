@@ -82,8 +82,8 @@
           <span style="color: #f84846;">{{ $t('resource.i18n_compliance_false') }}</span>
         </el-table-column>
       </el-table>
-      <cloud-detail-chart v-if="resources && supportPlugins.includes(details.pluginId)" :resourceItemId="details.resource"/>
-      <div class="desc-top" v-if="resources && resources != '{}'">
+      <cloud-detail-chart v-if="resources && resources !== '{}' && supportPlugins.includes(details.pluginId)" :resourceItemId="details.resource"/>
+      <div class="desc-top" v-if="resources && resources !== '{}'">
         <el-divider><i class="el-icon-folder-opened"></i></el-divider>
         <result-read-only :row="typeof(resources) === 'string'?JSON.parse(resources):resources"></result-read-only>
         <el-divider><i class="el-icon-document-checked"></i></el-divider>
