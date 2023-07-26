@@ -173,11 +173,12 @@
     </select>
 
     <select id="selectByHummerId" resultMap="BaseResultMap" parameterType="String">
-        select d.* FROM resource_item a
-                            join cloud_task_item_resource b on a.resource_id = b.resource_id
-                            join cloud_task_item c on b.task_item_id = c.id
-                            join cloud_task d on d.id = c.task_id
-        where hummer_id = #{hummerId} and a.region_id = #{regionId}
+        select distinct a.id, a.task_name as taskName, a.severity as severity, a.rule_tags as ruleTags, a.type, a.resource_types as resourceTypes
+        FROM cloud_task a
+        join cloud_task_item b on a.id = b.task_id
+        join cloud_task_item_resource c on b.id = c.task_item_id
+        join resource_item d on c.resource_id = d.resource_id
+        where d.hummer_id = #{hummerId} and d.region_id = #{regionId}
     </select>
 
     <sql id="condition">
