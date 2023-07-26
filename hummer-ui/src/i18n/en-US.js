@@ -2001,9 +2001,10 @@ export default {
   },
   scanning: {
     scanning_log: 'Execution process',
-    create_log: 'Create an operation audit account at the same time',
-    create_oss: 'Create an object storage account at the same time',
-    create_image: 'Create a mirror warehouse at the same time',
+    create_log: 'Create and associate operation audit at the same time',
+    create_oss: 'Create and associate object storage at the same time',
+    create_image: 'Create and associate a mirror warehouse at the same time',
+    create_desc: 'This operation is aimed at deassociating and binding accounts in the modules of the HummerRisk system, and does not involve any operations on the cloud. ',
     initial_configuration: 'Initialization configuration',
     waiting_configuration: 'Waiting for detection item configuration',
     perform_detection: 'Perform detection',

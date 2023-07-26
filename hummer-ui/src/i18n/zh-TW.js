@@ -2001,9 +2001,10 @@ export default {
   },
   scaning: {
     scaning_log: '執行過程',
-    create_log: '同時創建操作審計賬號',
-    create_oss: '同時創建對象存儲賬號',
-    create_image: '同時創建鏡像倉庫',
+    create_log: '同時創建並關聯操作審計',
+    create_oss: '同時創建並關聯對象存儲',
+    create_image: '同時創建並關聯鏡像倉庫',
+    create_desc: '本操作旨在 HummerRisk 系統的模塊中去關聯綁定賬號，並不涉及雲上的任何操作。 ',
     initial_configuration: '初始化配置',
     waiting_configuration: '等待檢測項配置',
     perform_detection: '執行檢測',

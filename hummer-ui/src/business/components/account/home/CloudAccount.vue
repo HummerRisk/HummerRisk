@@ -119,11 +119,13 @@
               <el-form-item v-if="form.pluginId && iamStrategyNotSupport.indexOf(form.pluginId) === -1" :label="$t('proxy.is_proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
                 <el-switch v-model="form.isProxy"></el-switch>
               </el-form-item>
-              <el-form-item>
-                <el-checkbox v-model="form.createLog" v-if="createLogArr.includes(form.pluginId)">{{ $t('scaning.create_log') }}</el-checkbox>
-                <el-checkbox v-model="form.createOss" v-if="createOssArr.includes(form.pluginId)">{{ $t('scaning.create_oss') }}</el-checkbox>
-                <el-checkbox v-model="form.createImage" v-if="createImageArr.includes(form.pluginId)">{{ $t('scaning.create_image') }}</el-checkbox>
-              </el-form-item>
+              <el-tooltip class="item" effect="dark" :content="$t('scaning.create_desc')" placement="top">
+                <el-form-item>
+                  <el-checkbox v-model="form.createLog" v-if="createLogArr.includes(form.pluginId)">{{ $t('scaning.create_log') }}</el-checkbox>
+                  <el-checkbox v-model="form.createOss" v-if="createOssArr.includes(form.pluginId)">{{ $t('scaning.create_oss') }}</el-checkbox>
+                  <el-checkbox v-model="form.createImage" v-if="createImageArr.includes(form.pluginId)">{{ $t('scaning.create_image') }}</el-checkbox>
+                </el-form-item>
+              </el-tooltip>
               <el-form-item v-if="form.script && iamStrategyNotSupport.indexOf(form.pluginId) === -1">
                 <el-link type="danger" @click="addAccountIam(form)">{{ $t('account.iam_strategy') }}</el-link>
                 <div>

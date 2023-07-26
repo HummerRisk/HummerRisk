@@ -2001,9 +2001,10 @@ export default {
   },
   scaning: {
     scaning_log: '执行过程',
-    create_log: '同时创建操作审计账号',
-    create_oss: '同时创建对象存储账号',
-    create_image: '同时创建镜像仓库',
+    create_log: '同时创建并关联操作审计',
+    create_oss: '同时创建并关联对象存储',
+    create_image: '同时创建并关联镜像仓库',
+    create_desc: '本操作旨在 HummerRisk 系统的模块中去关联绑定账号，并不涉及云上的任何操作。',
     initial_configuration: '初始化配置',
     waiting_configuration: '等待检测项配置',
     perform_detection: '执行检测',
