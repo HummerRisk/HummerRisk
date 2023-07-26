@@ -1127,6 +1127,17 @@ export default {
       this.accountName = accountName;
       this.init();
     },
+    async cloudResourceById() {
+      await this.$get(cloudResourceByIdUrl + this.details.resource, response => {
+        let data = response.data;
+        this.resources = data;
+      });
+    },
+    async resourceRiskList() {
+      await this.$get(resourceRiskListUrl + this.details.regionId + "/" + this.details.id, response => {
+        this.string2PrettyFormat = response.data;
+      });
+    },
   },
 
   mounted() {
@@ -1150,17 +1161,12 @@ export default {
           resource: target.getAttribute("resource"),
         };
         if (this.details.resource) {
-          await this.$get(cloudResourceByIdUrl + this.details.resource, response => {
-            let data = response.data;
-            this.resources = data;
-          });
+          this.cloudResourceById();
         }
-        await this.$get(resourceRiskListUrl + this.details.regionId + "/" + this.details.id, response => {
-          this.string2PrettyFormat = response.data;
-        });
+        this.resourceRiskList();
         this.dialogVisible = true;
       }
-    })
+    });
   }
 
 }
