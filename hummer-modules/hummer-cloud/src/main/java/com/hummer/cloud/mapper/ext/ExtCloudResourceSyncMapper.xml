@@ -251,8 +251,9 @@
         END AS name,
         CASE
             WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
-            THEN (SELECT count(t1.hummer_id) FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type) * 2
+            THEN 2
             WHEN t.hummer_id NOT IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
+            AND (SELECT count(t1.id) &lt; 0 FROM resource t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
             AND t.hummer_id IN (SELECT t1.hummer_id FROM cloud_resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
             THEN 1
             ELSE 0
