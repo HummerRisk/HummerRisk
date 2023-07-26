@@ -234,3 +234,9 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8
 ALTER TABLE `cloud_account` ADD `check_regions` longtext DEFAULT NULL COMMENT '选中区域';
 
 ALTER TABLE `oss` ADD `check_regions` longtext DEFAULT NULL COMMENT '选中区域';
+
+ALTER TABLE `cloud_task` MODIFY column `resource_types` text DEFAULT NULL COMMENT '资源类型';
+
+ALTER TABLE `history_cloud_task` MODIFY column `resource_types` text DEFAULT NULL COMMENT '资源类型';
+
+ALTER TABLE `cloud_resource_sync` MODIFY column `resource_types` text DEFAULT NULL COMMENT '资源类型';
