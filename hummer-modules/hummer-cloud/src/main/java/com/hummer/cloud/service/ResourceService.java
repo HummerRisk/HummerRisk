@@ -261,29 +261,74 @@ public class ResourceService {
             String uuid = resourceWithBLOBs.getId() != null ? resourceWithBLOBs.getId() : UUIDUtil.newUUID();
             String resultFile = ResourceConstants.QUERY_ALL_RESOURCE.replace("{resource_name}", resourceWithBLOBs.getDirName());
             resultFile = resultFile.replace("{resource_type}", resourceWithBLOBs.getResourceType());
-            dirPath = CommandUtils.saveAsFile(resultFile, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml", false);
-            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
-            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-            String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-            String resources = "[]";
-            if(PlatformUtils.isUserForbidden(resultStr)){
-                resultStr = Translator.get("i18n_create_resource_region_failed");
-            }else{
-                resources = ReadFileUtils.readJsonFile(dirPath + "/" + resourceWithBLOBs.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
-            }
-            if (LogUtil.getLogger().isDebugEnabled()) {
-                LogUtil.getLogger().debug("resource created: {}", resultStr);
-            }
-            JSONArray jsonArray = parseArray(resources);
-            if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
-                resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());
+
+            //企业版
+            if (systemProviderService.license()) {
+                AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
+                Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
+                boolean readResource = true;
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+                JSONObject jsonObject = PlatformUtils.fixedScanner(resultFile, map, resourceWithBLOBs.getPluginId());
+                LogUtil.warn(uuid + " {scanner}[api body]: " + jsonObject.toJSONString());
+
+                HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
+                String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+                JSONObject resultJson = JSONObject.parseObject(result);
+                String resultCode = resultJson.getString("code").toString();
+                String resultMsg = resultJson.getString("msg").toString();
+                if (!com.hummer.common.core.utils.StringUtils.equals(resultCode, "200")) {
+                    HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
+                }
+
+                String resultStr = resultJson.getString("data").toString();
+
+                if(PlatformUtils.isUserForbidden(resultStr)){
+                    resultStr = Translator.get("i18n_create_resource_region_failed");
+                    readResource = false;
+                }
+
+                String resources = "[]";
+                if(readResource){
+                    resources = resultStr;
+                }
+                if (LogUtil.getLogger().isDebugEnabled()) {
+                    LogUtil.getLogger().debug("resource created: {}", resultStr);
+                }
+                JSONArray jsonArray = parseArray(resources);
+                if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
+                    resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());
+                } else {
+                    resourceWithBLOBs.setResourcesSum((long) jsonArray.size());
+                }
+
+            //社区版
             } else {
-                resourceWithBLOBs.setResourcesSum((long) jsonArray.size());
+                dirPath = CommandUtils.saveAsFile(resultFile, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml", false);
+                AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
+                Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
+                String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
+                String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
+                String resources = "[]";
+                if(PlatformUtils.isUserForbidden(resultStr)){
+                    resultStr = Translator.get("i18n_create_resource_region_failed");
+                }else{
+                    resources = ReadFileUtils.readJsonFile(dirPath + "/" + resourceWithBLOBs.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
+                }
+                if (LogUtil.getLogger().isDebugEnabled()) {
+                    LogUtil.getLogger().debug("resource created: {}", resultStr);
+                }
+                JSONArray jsonArray = parseArray(resources);
+                if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
+                    resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());
+                } else {
+                    resourceWithBLOBs.setResourcesSum((long) jsonArray.size());
+                }
+                //执行完删除返回目录文件，以便于下一次操作覆盖
+                String deleteResourceDir = "rm -rf " + dirPath;
+                CommandUtils.commonExecCmdWithResult(deleteResourceDir, dirPath);
             }
-            //执行完删除返回目录文件，以便于下一次操作覆盖
-            String deleteResourceDir = "rm -rf " + dirPath;
-            CommandUtils.commonExecCmdWithResult(deleteResourceDir, dirPath);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
