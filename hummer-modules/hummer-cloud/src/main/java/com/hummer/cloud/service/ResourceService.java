@@ -25,11 +25,16 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -83,6 +88,10 @@ public class ResourceService {
 
     @DubboReference
     private IOperationLogService operationLogService;
+
+    @Autowired
+    @Qualifier("loadBalanced")
+    private RestTemplate restTemplate;
 
     public SourceDTO source (String accountId) {
         return extResourceMapper.source(accountId);
@@ -376,6 +385,10 @@ public class ResourceService {
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
             switch (cloudTask.getScanType()) {
                 case "custodian":
+                    if (systemProviderService.license()) {
+                        createScannerResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation, loginUser);
+                        break;
+                    }
                     createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation, loginUser);
                     break;
                 case "prowler":
@@ -391,6 +404,7 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
+    //社区版调用
     private void createCustodianResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
                                           CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource,
                                           String operation, LoginUser loginUser) {
@@ -417,6 +431,61 @@ public class ResourceService {
             orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
                     + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
                     + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
+                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
+        } catch (Exception e) {
+            HRException.throwException(e.getMessage());
+        }
+    }
+
+    //企业版调用
+    private void createScannerResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
+                                          CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource,
+                                          String operation, LoginUser loginUser) {
+        try {
+            boolean readResource = true;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, resourceWithBLOBs.getPluginId());
+            LogUtil.warn(taskItem.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
+
+            HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
+            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            JSONObject resultJson = JSONObject.parseObject(result);
+            String resultCode = resultJson.getString("code").toString();
+            String resultMsg = resultJson.getString("msg").toString();
+            if (!com.hummer.common.core.utils.StringUtils.equals(resultCode, "200")) {
+                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
+            }
+
+            String resultStr = resultJson.getString("data").toString();
+
+            cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
+            if(PlatformUtils.isUserForbidden(resultStr)){
+                resultStr = Translator.get("i18n_create_resource_region_failed");
+                readResource = false;
+            }
+
+            taskItem.setCommand("api scanner");
+
+            String custodianRun = jsonObject.toJSONString();
+            String metadata = jsonObject.toJSONString();
+            String resources = "[]";
+            if(readResource){
+                resources = resultStr;
+            }
+
+            resourceWithBLOBs.setCustodianRunLog(custodianRun);
+            resourceWithBLOBs.setMetadata(metadata);
+            resourceWithBLOBs.setResources(resources);
+
+            JSONArray jsonArray = parseArray(resourceWithBLOBs.getResources());
+            resourceWithBLOBs.setReturnSum((long) jsonArray.size());
+            resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
+
+            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
+                            + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
+                            + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
                     true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
