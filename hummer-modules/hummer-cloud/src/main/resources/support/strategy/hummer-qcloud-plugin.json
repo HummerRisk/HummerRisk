@@ -1,12 +1,7 @@
 {
-	"version": "2.0",
 	"statement": [
 		{
-			"resource": "",
-			"effect": "allow",
 			"action": [
-				"apigw:Describe",
-				"apigw:GenerateApiDocument",
 				"as:Describe*",
 				"asr:DescribeTaskStatus",
 				"bpaas:Get*",
@@ -18,10 +13,6 @@
 				"cas:Describe*",
 				"cas:Get*",
 				"cas:List*",
-				"ccr:GetUserRepositoryList",
-				"ccr:pull",
-				"ccs:Check*",
-				"ccs:Describe*",
 				"cdb:Describe*",
 				"cdn:Describe*",
 				"cdn:Get*",
@@ -53,13 +44,6 @@
 				"cos:List*",
 				"cos:OptionsObject",
 				"cpdp:Get*",
-				"cr:AccountCheckCode",
-				"cr:AccountCosToken",
-				"cr:AccountSendCode",
-				"cr:AccountStatus",
-				"cr:AcquireAccountLocation",
-				"cr:Describe*",
-				"cr:DownloadReport",
 				"ctsdb:Describe*",
 				"cvm:Describe*",
 				"cvm:Inquiry*",
@@ -80,13 +64,10 @@
 				"gaap:Inquiry*",
 				"gme:Describe*",
 				"gme:Download*",
-				"habo:Describe*",
 				"httpdns:Describe*",
 				"live:Describe*",
 				"mariadb:Describe*",
 				"memcached:Describe*",
-				"mgobe:Describe*",
-				"mgobe:Get*",
 				"mongodb:Describe*",
 				"monitor:Describe*",
 				"monitor:Get*",
@@ -168,9 +149,6 @@
 				"tag:Get*",
 				"tbase:Describe*",
 				"tcaplusdb:Describe*",
-				"tcd:Describe*",
-				"tcd:Get*",
-				"tcd:Query*",
 				"tcr:Describe*",
 				"tcr:PullRepository*",
 				"tcv:Describe*",
@@ -208,7 +186,10 @@
 				"waf:WafPackagePrice",
 				"waf:WafSearchLogs",
 				"wwc:Describe*"
-			]
+			],
+			"effect": "allow",
+			"resource": "*"
 		}
-	]
+	],
+	"version": "2.0"
 }
