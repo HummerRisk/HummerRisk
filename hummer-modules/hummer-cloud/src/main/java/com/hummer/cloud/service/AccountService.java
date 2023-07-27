@@ -228,6 +228,7 @@ public class AccountService {
                             imageRepo.setIsBindAccount(true);
                             imageRepo.setAccountId(account.getId());
                             imageRepo.setName(account.getName());
+                            imageRepo.setPluginIcon(account.getPluginIcon());
                             ik8sProviderService.addImageRepo(imageRepo, account, loginUser);
                         } catch (Exception e1) {
                             LogUtil.error(e1.getMessage());
