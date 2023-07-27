@@ -709,7 +709,7 @@ export default {
   resource: {
     have_risk: '有风险',
     n_risk: '无风险',
-    uncheck: '未检测',
+    uncheck: '待检测',
     risk: '风险',
     vuln_statistics: '风险统计',
     vuln_count: '漏洞数',
@@ -736,7 +736,7 @@ export default {
     i18n_in_process: '正在处理',
     i18n_has_exception: '异  常',
     i18n_has_warn: '告  警',
-    i18n_no_warn: '未检测',
+    i18n_no_warn: '待检测',
     i18n_crteating: '创建中',
     i18n_scaning: '检测中',
     i18n_done: '已完成',

@@ -384,6 +384,9 @@ import FakeProgress from "fake-progress";
     },
     methods: {
       init() {
+        this.search();
+      },
+      search() {
         this.$get(getAccountUrl + this.accountId,res => {
           this.accountWithGroup = res.data;
           this.initGroups(this.accountWithGroup.pluginId);
