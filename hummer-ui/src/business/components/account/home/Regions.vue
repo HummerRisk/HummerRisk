@@ -32,7 +32,16 @@
     <!--regions-->
     <el-drawer class="rtl" :title="$t('account.all_regions')" :visible.sync="regionsVisible" size="50%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
-      <div style="color: red;font-style:italic;margin: 5px 0 10px 10px;">{{ $t('account.checked_note') }}</div>
+      <div style="color: red;font-style:italic;margin: 5px 0 10px 10px;">
+        <el-row>
+          <el-col :span="16">
+            {{ $t('account.checked_note') }}
+          </el-col>
+          <el-col :span="8">
+            <el-button style="float: right; padding: 3px 50px" type="text" @click="handleCheckAllByAccount">{{ $t('account.i18n_sync_all') }}</el-button>
+          </el-col>
+        </el-row>
+      </div>
       <el-table :border="true" :stripe="true" :data="regions" class="adjust-table table-content">
         <el-table-column type="index" min-width="60"/>
         <el-table-column prop="regionId" :label="$t('account.region_id')" min-width="250">
@@ -52,7 +61,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <dialog-footer
+      <dialog-footer style="margin-top: 10px;"
         @cancel="regionsVisible = false"
         @confirm="saveCheckRegion()"/>
     </el-drawer>
@@ -119,6 +128,15 @@
         this.$post(checkRegionsUrl, params, response => {
           this.$success(this.$t('commons.success'));
           this.handleClose();
+        });
+      },
+      handleCheckAllByAccount() {
+        this.regions.forEach(function (e) {
+          if (e.check) {
+            e.check = false;
+          } else {
+            e.check = true;
+          }
         });
       },
     },
