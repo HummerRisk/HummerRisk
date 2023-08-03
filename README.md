@@ -19,9 +19,9 @@
 
 ## HummerRisk 是什么
 
-> HummerRisk 是开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和云原生安全检测。
+> HummerRisk 是由长亭科技自研，牧云团队孵化，开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和云原生安全检测。
 
-HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and K8S container cloud detection.
+HummerRisk is self-developed by chaitin technology, cloudwalker team incubation, an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include CSPM and KSPM.
 
 
 ![架构](./hummer-ui/src/assets/img/readme/architecturev.png)
@@ -129,9 +129,7 @@ curl -sSL https://download.hummerrisk.com/hummerrisk/hummerrisk/releases/downloa
 - [Kube-Bench](https://github.com/aquasecurity/kube-bench)：使用了 Kube-Bench 作为 CIS Kubernetes Benchmark 检测工具
 - [Element](https://element.eleme.cn/#/)：使用了 Element 作为桌面端组件库
 
-## License & Copyright
-
-Copyright (c) 2022 瀚马科技 HummerCloud, All rights reserved.
+## License
 
 Licensed under The GNU General Public License version 3 (GPLv3) (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
