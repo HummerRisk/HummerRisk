@@ -30,4 +30,3 @@ jobs:
           github_token: ${{ github.token }}
           source: 'dev'
           target: 'master'
-          webhook_url: #if present add the Slack webhook
