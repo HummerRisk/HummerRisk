@@ -1,7 +1,7 @@
 name: auto merge dev
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '0 0 * * WED'
 
 jobs:
   merge_schedule:
