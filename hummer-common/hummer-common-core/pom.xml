@@ -432,11 +432,7 @@
 
         <!-- aliyun -->
 
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>actiontrail20200706</artifactId>
-            <version>2.1.0</version>
-        </dependency>
+
         <!--<dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>actiontrail20171204</artifactId>
