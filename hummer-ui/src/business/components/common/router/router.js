@@ -34,7 +34,6 @@ const router = new VueRouter({
     Report,
     CloudSituation,
     Log,
-    Config,
     ReportCenter,
   ]
 });
