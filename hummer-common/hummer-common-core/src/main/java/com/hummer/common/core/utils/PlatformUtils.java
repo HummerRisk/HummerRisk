@@ -1327,64 +1327,6 @@ public class PlatformUtils {
         }
     }
 
-    public static boolean validateCloudNative(CloudNative cloudNative, Proxy proxy) throws Exception {
-        switch (cloudNative.getPluginId()) {
-            case k8s:
-                /**创建默认 Api 客户端**/
-                // 定义连接集群的 Token
-                try {
-                    K8sRequest k8sRequest = new K8sRequest();
-                    k8sRequest.setCredential(cloudNative.getCredential());
-                    ApiClient client = k8sRequest.getK8sClient(proxy);
-                    String pretty = "true";
-                    CoreV1Api apiInstance = new CoreV1Api(client);
-                    V1NodeList result = apiInstance.listNode(pretty, true, null,
-                            null, null, null, null, null, null, null);
-                    return result != null;
-                } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
-                }
-            case openshift:
-                try {
-                    OpenShiftRequest openShiftRequest = new OpenShiftRequest();
-                    openShiftRequest.setCredential(cloudNative.getCredential());
-                    OpenShiftClient openShiftClient = openShiftRequest.getOpenShiftClient(proxy);
-                    NamespaceList ns = openShiftClient.namespaces().list();
-                    return ns != null;
-                } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
-                }
-            case rancher:
-                try {
-                    K8sRequest k8sRequest = new K8sRequest();
-                    k8sRequest.setCredential(cloudNative.getCredential());
-                    ApiClient client = k8sRequest.getK8sClient(proxy);
-                    CoreV1Api apiInstance = new CoreV1Api(client);
-                    String pretty = "true";
-                    V1NodeList result = apiInstance.listNode(pretty, true, null,
-                            null, null, null, null, null, null, null);
-                    return result != null;
-                } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
-                }
-            case kubesphere:
-                try {
-                    K8sRequest k8sRequest = new K8sRequest();
-                    k8sRequest.setCredential(cloudNative.getCredential());
-                    ApiClient client = k8sRequest.getK8sClient(proxy);
-                    CoreV1Api apiInstance = new CoreV1Api(client);
-                    String pretty = "true";
-                    V1NodeList result = apiInstance.listNode(pretty, true, null,
-                            null, null, null, null, null, null, null);
-                    return result != null;
-                } catch (Exception e) {
-                    throw new PluginException(String.format("HRException in verifying cloud native has an error, cloud native: [%s], plugin: [%s], error information:%s", cloudNative.getName(), cloudNative.getPluginName(), e.getMessage()));
-                }
-            default:
-                throw new IllegalStateException("Unexpected value: " + cloudNative.getPluginId());
-        }
-    }
-
     public static String tranforRegionId2RegionName(String strEn, String pluginId) {
         String strCn;
         switch (pluginId) {
@@ -1661,33 +1603,6 @@ public class PlatformUtils {
             }
         }
         return false;
-    }
-
-    /**
-     * 获取K8s相关参数
-     *
-     * @param region
-     * @return
-     */
-    public final static Map<String, String> getK8sAccount(CloudNative cloudNative, String region, Proxy proxy) {
-        Map<String, String> map = new HashMap<>();
-        switch (cloudNative.getPluginId()) {
-            case k8s:
-                map.put("type", k8s);
-                K8sCredential k8sCredential = new Gson().fromJson(cloudNative.getCredential(), K8sCredential.class);
-                map.put("url", k8sCredential.getUrl());
-                map.put("token", k8sCredential.getToken());
-                map.put("region", region);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + cloudNative.getPluginId());
-        }
-        map.put("proxyType", proxy != null ? proxy.getProxyType() : "");
-        map.put("proxyIp", proxy != null ? proxy.getProxyIp() : "");
-        map.put("proxyPort", proxy != null ? proxy.getProxyPort() : "");
-        map.put("proxyName", proxy != null ? proxy.getProxyName() : "");
-        map.put("proxyPassword", proxy != null ? proxy.getProxyPassword() : "");
-        return map;
     }
 
 }

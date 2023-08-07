@@ -1,5 +1,8 @@
 package com.hummer.auth.mapper;
 
+import com.hummer.common.core.domain.HummerLicense;
+import com.hummer.common.core.domain.HummerLicenseExample;
+import com.hummer.common.core.domain.HummerLicenseWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -60,6 +60,4 @@ public interface ICloudProviderService {
 
     long getReturnSum(String accountId);
 
-    void scanK8s(ScanGroupRequest request, CloudNative cloudNative, LoginUser loginUser) throws Exception;
-
 }
