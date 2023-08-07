@@ -423,41 +423,6 @@
         ORDER BY t.create_time DESC
     </select>
 
-    <select id="getServerList" resultMap="ServerResultMap">
-        select
-        t.*,
-        sg.ip,
-        sg.user_name as userName,
-        sg.password,
-        sg.server_group_id as groupId,
-        sg.id as groupItemId,
-        user.name as user
-        from cloud_account as t
-        left join plugin p1 on t.plugin_id = p1.id
-        left join user on t.creator = user.id
-        left join server_group_item sg on sg.server_id = t.id
-        <where>
-            <if test="request.combine != null">
-                <include refid="combine">
-                    <property name="condition" value="request.combine"/>
-                    <property name="name" value="request.name"/>
-                </include>
-            </if>
-
-            <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
-            </if>
-            <if test="request.status != null and request.status != ''">
-                and t.status = #{request.status}
-            </if>
-            <if test="request.groupId != null and request.groupId != ''">
-                and sg.server_group_id = #{request.groupId}
-            </if>
-            and t.plugin_id = 'hummer-server-plugin'
-        </where>
-        order by t.update_time desc
-    </select>
-
     <select id="historyList" resultType="java.util.Map">
         SELECT
         t5.resource_name as resourceName,

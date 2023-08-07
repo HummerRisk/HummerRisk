@@ -21,7 +21,6 @@ import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
@@ -69,8 +68,6 @@ public class AccountService {
     private OssService ossService;
     @DubboReference
     private IOperationLogService operationLogService;
-    @DubboReference
-    private IK8sProviderService ik8sProviderService;
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
@@ -222,18 +219,6 @@ public class AccountService {
                         }
                     }
 
-                    if (request.isCreateImage()) {
-                        try {
-                            ImageRepo imageRepo = new ImageRepo();
-                            imageRepo.setIsBindAccount(true);
-                            imageRepo.setAccountId(account.getId());
-                            imageRepo.setName(account.getName());
-                            imageRepo.setPluginIcon(account.getPluginIcon());
-                            ik8sProviderService.addImageRepo(imageRepo, account, loginUser);
-                        } catch (Exception e1) {
-                            LogUtil.error(e1.getMessage());
-                        }
-                    }
                 }
 
                 return getCloudAccountById(account.getId());

@@ -25,8 +25,6 @@ public interface ExtAccountMapper {
 
     List<Map<String, Object>> resourceList(Map<String, Object> params);
 
-    List<ServerDTO> getServerList(@Param("request") CloudAccountRequest request);
-
     List<Map<String, Object>> historyList(Map<String, Object> params);
 
     List<Map<String, Object>> historyDiffList(Map<String, Object> params);
