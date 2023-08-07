@@ -1,7 +1,6 @@
 package com.hummer.common.core.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hummer.common.core.constant.CloudNativeConstants;
 import com.hummer.common.core.utils.imp.SSLSocketFactoryImp;
 import okhttp3.*;
 import org.apache.http.NameValuePair;
@@ -244,49 +243,6 @@ public class HttpClientUtil {
             e.printStackTrace();
         }
         return builder.build();
-    }
-
-    //检测trivy-operator
-    public static boolean operatorStatus(String url, Map<String, String> param) throws Exception {
-        OkHttpClient client = getClient();
-        Request.Builder builder = new Request.Builder();
-        if (param != null) {
-            for (String key : param.keySet()) {
-                builder.addHeader(key, param.get(key));
-            }
-        }
-        Request request = builder.url(url).method("GET", null).build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                String res = response.body().string();
-                return res.contains(CloudNativeConstants.TRIVY_OPERATOR) ||
-                        res.contains(CloudNativeConstants.AQUASECURITY);
-            } else {
-                return false;
-            }
-        }
-    }
-
-    //检测kube-bench
-    public static boolean kubenchStatus(String url, Map<String, String> param) throws Exception {
-        OkHttpClient client = getClient();
-        Request.Builder builder = new Request.Builder();
-        if (param != null) {
-            for (String key : param.keySet()) {
-                builder.addHeader(key, param.get(key));
-            }
-        }
-        Request request = builder.url(url).method("GET", null).build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                if (!response.body().string().contains("unable to retrieve container logs for docker")) {
-                    return true;
-                }
-                return false;
-            } else {
-                return false;
-            }
-        }
     }
 
     public static String cloudScanner(String url, String body) throws Exception {

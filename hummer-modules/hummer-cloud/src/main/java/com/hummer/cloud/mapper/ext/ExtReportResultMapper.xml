@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.xpack.mapper.ext.ExtReportResultMapper">
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.operator != null'>
+            and t.operator
+            <include refid="condition">
+                <property name="object" value="${condition}.operator"/>
+            </include>
+        </if>
+        <if test="${condition}.updateTime != null">
+            and t.update_time
+            <include refid="condition">
+                <property name="object" value="${condition}.updateTime"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.hummer.xpack.dto.ReportResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="download_number" jdbcType="BIGINT" property="downloadNumber" />
+        <result column="history_number" jdbcType="BIGINT" property="historyNumber" />
+        <result column="pdf_path" jdbcType="VARCHAR" property="pdfPath" />
+        <result column="pdf_log" jdbcType="LONGVARCHAR" property="pdfLog" />
+        <collection property="checkedKeys" ofType="java.lang.String" javaType="list" select="getCheckedKeys" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getCheckedKeys" resultType="java.lang.String">
+        select t.account_id from report_result_detail t where t.result_id = #{id}
+    </select>
+
+    <select id="reportList" resultMap="BaseResultMap" parameterType="com.hummer.xpack.dto.ReportResultDTO">
+        select
+        t.*
+        from report_result as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+
+            <if test="request.operator != null and request.operator != ''">
+                and LOWER(t.operator) like CONCAT('%', LOWER(#{request.operator}),'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.update_time desc
+    </select>
+
+    <select id="getReport" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        t.*
+        from report_result as t
+        <where>
+            and t.id = #{reportId}
+        </where>
+    </select>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <resultMap id="AccountBaseResultMap" type="com.hummer.common.core.domain.request.task.AccountVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectAccountByExample" parameterType="com.hummer.common.core.domain.AccountExample" resultMap="AccountBaseResultMap">
+        select t.id,
+               concat(t.name, ' ( ', t.plugin_name, ' ) ') as name,
+               'cloudAccount' as type
+        from cloud_account t
+        left join plugin p on t.plugin_id = p.id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+</mapper>

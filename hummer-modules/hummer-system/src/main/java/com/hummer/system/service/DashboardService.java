@@ -59,14 +59,6 @@ public class DashboardService {
                 return extVulnMapper.ruleList(params);
             case "accountList":
                 return extVulnMapper.accountList(params);
-            case "k8sVulnList":
-                return extVulnMapper.k8sVulnList(params);
-            case "k8sConfigList":
-                return extVulnMapper.k8sConfigList(params);
-            case "k8sKubenchList":
-                return extVulnMapper.k8sKubenchList(params);
-            case "k8sRuleList":
-                return extVulnMapper.k8sRuleList(params);
             case "regionsList":
                 return extVulnMapper.regionsList(params);
             case "countList":
@@ -226,10 +218,6 @@ public class DashboardService {
         cloudInfo.setResources(extDashboardMapper.getResources());
         cloudInfo.setPlugins(extDashboardMapper.getPlugins());
         return cloudInfo;
-    }
-
-    public List<Map<String, Object>> k8sScanRiskChart(Map<String, Object> params) {
-        return extVulnMapper.k8sScanRiskChart(params);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.hummer.cloud.mapper.ext;
 
+import com.hummer.common.core.domain.Account;
+import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.domain.request.account.CloudAccountRequest;
 import com.hummer.common.core.dto.AccountDTO;
 import com.hummer.common.core.dto.QuartzTaskDTO;
@@ -28,5 +30,9 @@ public interface ExtAccountMapper {
     List<Map<String, Object>> historyList(Map<String, Object> params);
 
     List<Map<String, Object>> historyDiffList(Map<String, Object> params);
+
+    Account account(@Param("id") String id);
+
+    List<CloudTask> cloudTaskList(@Param("id") String id);
 
 }

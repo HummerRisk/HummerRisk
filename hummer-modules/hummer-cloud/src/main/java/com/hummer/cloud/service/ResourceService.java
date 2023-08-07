@@ -129,10 +129,6 @@ public class ResourceService {
         return extResourceMapper.getComplianceResult(resourceRequest);
     }
 
-    public List<ResourceDTO> getK8sComplianceResult(ResourceRequest resourceRequest) {
-        return extResourceMapper.getK8sComplianceResult(resourceRequest);
-    }
-
     public ResourceWithBLOBs saveResource(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, CloudTaskItemResourceWithBLOBs taskItemResource) {
         try {
             //保存创建的资源

@@ -1,32 +1,11 @@
 package com.hummer.common.core.proxy.k8s;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.hummer.common.core.constant.CloudNativeConstants;
 import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.proxy.Request;
-import com.hummer.common.core.utils.LogUtil;
-import com.hummer.common.core.utils.UUIDUtil;
-import com.hummer.common.core.utils.YamlUtil;
-import io.gsonfire.builders.JsonObjectBuilder;
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
-import io.kubernetes.client.openapi.apis.*;
-import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Config;
-import io.kubernetes.client.util.Yaml;
-import org.apache.commons.io.FileUtils;
-import org.springframework.core.io.ClassPathResource;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class K8sRequest extends Request {
 

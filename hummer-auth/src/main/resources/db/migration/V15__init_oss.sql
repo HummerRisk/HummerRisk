@@ -410,3 +410,155 @@ ALTER TABLE `rule_group` ADD `xpack_tag` tinyint DEFAULT 0 COMMENT 'xpack 规则
 update `rule_group` set `xpack_tag` = 0;
 
 ALTER TABLE `server_rule` ADD `xpack_tag` tinyint DEFAULT 0 COMMENT 'xpack 规则标志';
+
+SELECT id INTO @groupId1 FROM rule_group WHERE name = 'Aliyun 等保预检';
+SELECT id INTO @groupId2 FROM rule_group WHERE name = 'Aliyun Redis 最佳安全实践';
+SELECT id INTO @groupId3 FROM rule_group WHERE name = 'Aliyun Ecs 最佳安全实践';
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('05750239-82ff-4076-b0aa-f00d6ec2cb05', 'Aliyun 分配了公网IP地址的 ECS 实例公网出带宽最大值小于指定值', 1, 'LowRisk', 'Aliyun 已分配公网IP地址的 ECS 实例的公网出带宽的最大值小于或等于指定值，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Aliyun 已分配公网IP地址的 ECS 实例的公网出带宽的最大值小于或等于指定值，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ecs-max-bandwidth-out\n      resource: aliyun.ecs\n      filters:\n        - type: max-bandwidth-out\n          max: ${{max}}\n          min: ${{min}}', '[{\"defaultValue\":\"20\",\"name\":\"最大值\",\"key\":\"max\",\"required\":true},{\"defaultValue\":\"0\",\"name\":\"最小值\",\"key\":\"min\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('0ea6035a-b344-426c-bf2e-eb74abe17318', 'Aliyun Redis 实例满足指定内存容量要求', 1, 'LowRisk', 'Aliyun Redis 实例满足指定内存容量要求，符合视为“合规”，否则视为“不合规”', 'policies:\n    #Aliyun Redis 实例满足指定内存容量要求，符合视为“合规”，否则视为“不合规”\n    - name: aliyun-redis-capacity\n      resource: aliyun.redis\n      filters:\n        - type: capacity\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"内存大小\",\"defaultValue\":\"1024\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('4a15ed1e-ed28-403b-a75b-86fa92a46370', 'Aliyun ECS 实例内存满足最低要求', 1, 'LowRisk', 'Aliyun ECS 实例的内存大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Aliyun ECS 实例的内存大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ecs-memory\n      resource: aliyun.ecs\n      filters:\n        - type: memory\n          value: ${{value}}', '[{\"defaultValue\":\"16\",\"name\":\"内存大小，单位 GB\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('8e095e05-d003-4c8d-b6b2-5e168945f861', 'Aliyun ECS 实例付费类型为包年包月', 1, 'MediumRisk', 'Aliyun ECS 实例的付费类型为包年包月，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Aliyun ECS 实例的付费类型为包年包月，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ecs-charge-type\n      resource: aliyun.ecs\n      filters:\n        - type: charge-type\n          chargeType: \"${{chargeType}}\"', '[{\"key\":\"chargeType\",\"name\":\"收费类型 PrePaid：包年包月， PostPaid：按量付费。\",\"defaultValue\":\"PrePaid\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('95fad480-2f79-4e2d-875f-bb07d5f96724', 'Aliyun ECS 实例开启释放保护', 1, 'HighRisk', 'Aliyun ECS实例开启释放保护，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Aliyun ECS实例开启释放保护，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ecs-deletion-protection\n      resource: aliyun.ecs\n      filters:\n        - type: deletion-protection\n          value: ${{value}}', '[{\"defaultValue\":\"true\",\"name\":\"是否开启，开启为true 否则为false\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1,'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('ace99f8d-cfff-49d6-bedf-30aebd92743d', 'Aliyun ECS 实例规格符合标准要求', 1, 'MediumRisk', 'Aliyun ECS实例规格符合标准要求，符合视为“合规”，否则视为“不合规”。', 'policies:\n    # Aliyun ECS实例规格符合标准要求，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ecs-instance-type\n      resource: aliyun.ecs\n      filters:\n        - type: instance-type\n          instanceTypes: \"${{instanceTypes}}\"', '[{\"defaultValue\":\"ecs.c5.large,ecs.c5.2xlargeecs.sn2.large\",\"name\":\"实例规格\",\"key\":\"instanceTypes\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('b01972be-5b30-4686-8368-29421bcf76e4', 'Aliyun ECS 实例 CPU 核数满足最低要求', 1, 'LowRisk', 'Aliyun ECS 实例的 CPU 核数大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #ECS 实例的 CPU 核数大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-cpu-number\n      resource: aliyun.ecs\n      filters:\n        - type: cpu-number\n          value: ${{value}}', '[{\"defaultValue\":\"4\",\"name\":\"CPU 核数\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('b16ddc8d-90b0-46d3-a0b0-5f8f79ea710b', 'Aliyun 按量付费的ECS已停机实例使用节省停机模式', 1, 'MediumRisk', 'Aliyun 按量付费的ECS实例停机时使用节省停机模式，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Aliyun 按量付费的ECS实例停机时使用节省停机模式，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ecs-stopped-mode\n      resource: aliyun.ecs\n      filters:\n        - type: stopped-mode\n          chargeType: \"${{chargeType}}\"\n          stoppedMode: \"${{stoppedMode}}\"', '[{\"key\":\"chargeType\",\"name\":\"收费方式，PrePaid：包年包月。PostPaid：按量付费。\",\"defaultValue\":\"PostPaid\",\"required\":true},{\"key\":\"stoppedMode\",\"name\":\"停机后是否继续收费，KeepCharging：停机后继续收费。 StopCharging：停机后不收费。\",\"defaultValue\":\"StopCharging\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('d1a2010c-efea-418d-a6d6-e734c75102e3', 'Aliyun Redis 实例的节点类型为双副本', 1, 'HighRisk', 'Aliyun Redis 实例的节点类型为双副本，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Aliyun Redis 实例的节点类型为双副本，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-redis-node-type\n      resource: aliyun.redis\n      filters:\n        - type: node-type\n          value: \"${{value}}\"', '[{\"defaultValue\":\"double\",\"name\":\"节点类型：double：双副本，single：单副本。\",\"key\":\"value\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('e298729a-fbff-4b5b-96a0-d6086de159a8', 'Aliyun ECS 固定公网IP实例按固定带宽计费', 1, 'LowRisk', 'Aliyun ECS 实例已分配固定公网IP地址，且公网带宽的计费方式按固定带宽计费，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Aliyun ECS实例已分配固定公网IP地址，且公网带宽的计费方式按固定带宽计费，符合视为“合规”，否则视为“不合规”。\n    - name: aliyun-ecs-internet-charge-type\n      resource: aliyun.ecs\n      filters:\n        - type: internet-charge-type\n          chargeType: \"${{chargeType}}\"', '[{\"key\":\"chargeType\",\"name\":\"网络计费类型。可能值：PayByBandwidth：按固定带宽计费。 PayByTraffic：按使用流量计费。\",\"defaultValue\":\"PayByBandwidth\",\"required\":true}]', 'hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('8e095e05-d003-4c8d-b6b2-5e168945f861', 'cost');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('95fad480-2f79-4e2d-875f-bb07d5f96724', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('b16ddc8d-90b0-46d3-a0b0-5f8f79ea710b', 'cost');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('e298729a-fbff-4b5b-96a0-d6086de159a8', 'cost');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('0ea6035a-b344-426c-bf2e-eb74abe17318', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('d1a2010c-efea-418d-a6d6-e734c75102e3', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('05750239-82ff-4076-b0aa-f00d6ec2cb05', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('b01972be-5b30-4686-8368-29421bcf76e4', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('ace99f8d-cfff-49d6-bedf-30aebd92743d', 'safety');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('52d18897-a9f8-46c6-a79a-4924eba69905', 'b01972be-5b30-4686-8368-29421bcf76e4', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('551cd3d0-3974-42a6-9b06-6cd5bbc0f9a4', 'd1a2010c-efea-418d-a6d6-e734c75102e3', 'aliyun.redis');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('672b785d-2437-4143-be4b-0481fa82827b', '0ea6035a-b344-426c-bf2e-eb74abe17318', 'aliyun.redis');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('69c7ba1a-ba60-4695-b29e-dbd0d790e5b9', '8e095e05-d003-4c8d-b6b2-5e168945f861', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('bd50840f-426c-423f-9d32-7283f8c53597', '4a15ed1e-ed28-403b-a75b-86fa92a46370', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('c4cf560a-b8a2-4b27-95af-bf88e37c030e', 'b16ddc8d-90b0-46d3-a0b0-5f8f79ea710b', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('cd7f9703-8f93-459d-8c0c-69d5d805ad88', 'ace99f8d-cfff-49d6-bedf-30aebd92743d', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('d3ee5bb6-0084-4b70-8763-5ced68a2a9e5', '05750239-82ff-4076-b0aa-f00d6ec2cb05', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('f0d585ac-d59c-4313-bb92-09f1fa3f0c15', '95fad480-2f79-4e2d-875f-bb07d5f96724', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('fd11d60a-ee97-4d95-b3ae-b0aa4206048e', 'e298729a-fbff-4b5b-96a0-d6086de159a8', 'aliyun.ecs');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('0ea6035a-b344-426c-bf2e-eb74abe17318', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('d1a2010c-efea-418d-a6d6-e734c75102e3', '127');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('05750239-82ff-4076-b0aa-f00d6ec2cb05', '2');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('b01972be-5b30-4686-8368-29421bcf76e4', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('4a15ed1e-ed28-403b-a75b-86fa92a46370', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('ace99f8d-cfff-49d6-bedf-30aebd92743d', '115');
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('ace99f8d-cfff-49d6-bedf-30aebd92743d', @groupId1);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('4a15ed1e-ed28-403b-a75b-86fa92a46370', @groupId1);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b01972be-5b30-4686-8368-29421bcf76e4', @groupId1);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('05750239-82ff-4076-b0aa-f00d6ec2cb05', @groupId1);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('d1a2010c-efea-418d-a6d6-e734c75102e3', @groupId1);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0ea6035a-b344-426c-bf2e-eb74abe17318', @groupId1);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0ea6035a-b344-426c-bf2e-eb74abe17318', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('d1a2010c-efea-418d-a6d6-e734c75102e3', @groupId2);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b01972be-5b30-4686-8368-29421bcf76e4', @groupId3);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('4a15ed1e-ed28-403b-a75b-86fa92a46370', @groupId3);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('95fad480-2f79-4e2d-875f-bb07d5f96724', @groupId3);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('05750239-82ff-4076-b0aa-f00d6ec2cb05', @groupId3);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e298729a-fbff-4b5b-96a0-d6086de159a8', @groupId3);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b16ddc8d-90b0-46d3-a0b0-5f8f79ea710b', @groupId3);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('ace99f8d-cfff-49d6-bedf-30aebd92743d', @groupId3);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8e095e05-d003-4c8d-b6b2-5e168945f861', @groupId3);
+
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('013a1d10-1c92-4eb6-bff1-c3979f3501fe', 'Huawei RDS 实例 CPU 核数满足最低要求', 1, 'LowRisk', 'Huawei RDS 实例的 CPU 核数大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Huawei RDS 实例的 CPU 核数大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。\n    - name: huawei-rds-cpu-number\n      resource: huawei.rds\n      filters:\n        - type: cpu-number\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"CPU 核数\",\"defaultValue\":\"4\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('05d0f605-e41d-4191-9437-b804f59decf3', 'Huawei ECS 实例 CPU 核数满足最低要求', 1, 'LowRisk', 'Huawei ECS 实例的 CPU 核数大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #ECS 实例的 CPU 核数大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。\n    - name: huawei-cpu-number\n      resource: huawei.ecs\n      filters:\n        - type: cpu-number\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"CPU 核数\",\"defaultValue\":\"4\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('0bba4b47-0cf4-4cc8-a699-07b016688a98', 'Huawei ELB 实例为独享型实例', 1, 'HighRisk', 'Huawei ELB 实例为独享型实例，符合视为“合规”，否则视为“不合规”', 'policies:\n    # Huawei ELB 实例为独享型实例，符合视为“合规”，否则视为“不合规”\n    - name: huawei-elb-guaranteed\n      resource: huawei.elb\n      filters:\n        - type: guaranteed\n          value: \"${{value}}\"', '[{\"key\":\"value\",\"name\":\"是否为独享型\",\"defaultValue\":\"true\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('1de637fb-fd5e-4b72-a29d-54835e070458', 'Huawei ECS 电源状态检测', 1, 'HighRisk', 'Huawei ECS 电源状态为运行中，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Huawei ECS 电源状态为运行中，符合视为“合规”，否则视为“不合规”。\n    - name: huawei-ecs-power-state\n      resource: huawei.ecs\n      filters:\n        - type: power-state\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"状态 0：NOSTATE，1：RUNNING ，4：SHUTDOWN\",\"defaultValue\":\"1\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('231129f8-2616-4037-8442-112753d55a29', 'Huawei Rds 实例满足指定内存容量要求', 1, 'LowRisk', 'Huawei Rds 实例满足指定内存容量要求，符合视为“合规”，否则视为“不合规”', 'policies:\n    #Huawei Rds 实例满足指定内存容量要求，符合视为“合规”，否则视为“不合规”\n    - name: huawei-rds-memory\n      resource: huawei.rds\n      filters:\n        - type: memory\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"内存大小\",\"defaultValue\":\"16\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('310b8a42-87df-4c6a-8cf6-62a2a59ffe4e', 'Huawei ELB 实例删除保护检测', 1, 'MediumRisk', 'Huawei ELB 实例开启删除保护，符合视为“合规”，否则视为“不合规”', 'policies:\n    # Huawei ELB 实例开启删除保护，符合视为“合规”，否则视为“不合规”\n    - name: huawei-elb-deletion-protection-enable\n      resource: huawei.elb\n      filters:\n        - type: deletion-protection-enable\n          value: \"${{value}}\"', '[{\"key\":\"value\",\"name\":\"是否开启删除保护\",\"defaultValue\":\"true\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('5c477740-6535-46d7-8bb8-bef18493b048', 'Huawei ECS 实例付费类型为包年包月', 1, 'LowRisk', 'Huawei ECS 实例付费类型为包年包月，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Huawei ECS 实例付费类型为包年包月，符合视为“合规”，否则视为“不合规”。\n    - name: huawei-ecs-charging-mode\n      resource: huawei.ecs\n      filters:\n        - type: charging-mode\n          value: \"${{value}}\"', '[{\"key\":\"value\",\"name\":\"记费类型 “0”：按需计费， “1”：按包年包月计费  ， \\\"2\\\"：竞价实例计费\",\"defaultValue\":\"1\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('8ee70e95-9663-42d6-bd7a-e98788c0e5b9', 'Huawei ECS 实例内存满足最低要求', 1, 'LowRisk', 'Huawei ECS 实例的内存大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Huawei ECS 实例的内存大于等于您设置的期望值，符合视为“合规”，否则视为“不合规”。\n    - name: huawei-ecs-memory\n      resource: huawei.ecs\n      filters:\n        - type: memory\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"内存大小，单位 GB\",\"defaultValue\":\"16\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('e126ae95-0e9f-4d12-869a-2d9309e3482b', 'Huawei ECS 状态检测', 1, 'HighRisk', 'Huawei ECS 状态为正常运行状态，符合视为“合规”，否则视为“不合规”。', 'policies:\n    #Huawei ECS 状态为正常运行状态，符合视为“合规”，否则视为“不合规”。\n    - name: huawei-ecs-host-status\n      resource: huawei.ecs\n      filters:\n        - type: host-status\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"实例状态\",\"defaultValue\":\"ACTIVE\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`, `xpack_tag`) VALUES ('e89ab77a-d1ca-489b-9756-9ac3115ee111', 'Huawei ECS 实例规格符合标准要求', 1, 'LowRisk', 'Huawei ECS实例规格符合标准要求，符合视为“合规”，否则视为“不合规”。', 'policies:\n    # Huawei ECS实例规格符合标准要求，符合视为“合规”，否则视为“不合规”。\n    - name: huawei-ecs-instance-type\n      resource: huawei.ecs\n      filters:\n        - type: instance-type\n          instanceTypes: \"${{instanceTypes}}\"', '[{\"defaultValue\":\"s6.large.4.liunx,s6.xlarge.4.liunx\",\"name\":\"规格\",\"key\":\"instanceTypes\",\"required\":true}]', 'hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL, 1);
+
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('013a1d10-1c92-4eb6-bff1-c3979f3501fe', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('05d0f605-e41d-4191-9437-b804f59decf3', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('0bba4b47-0cf4-4cc8-a699-07b016688a98', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('1de637fb-fd5e-4b72-a29d-54835e070458', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('231129f8-2616-4037-8442-112753d55a29', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('310b8a42-87df-4c6a-8cf6-62a2a59ffe4e', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('5c477740-6535-46d7-8bb8-bef18493b048', 'cost');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('8ee70e95-9663-42d6-bd7a-e98788c0e5b9', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('e126ae95-0e9f-4d12-869a-2d9309e3482b', 'safety');
+INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('e89ab77a-d1ca-489b-9756-9ac3115ee111', 'safety');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('10fcf18b-1134-425c-86c8-b7000e45bd18', 'e126ae95-0e9f-4d12-869a-2d9309e3482b', 'huawei.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('2ad3d3a1-a5bc-41f5-b23a-35da6f765707', '231129f8-2616-4037-8442-112753d55a29', 'huawei.rds');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('3697a808-2947-49b3-aeae-743a79b660ea', '05d0f605-e41d-4191-9437-b804f59decf3', 'huawei.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('428af06e-8a63-4acf-a1a8-2250719e0f70', '1de637fb-fd5e-4b72-a29d-54835e070458', 'huawei.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('535306f2-2196-4cd0-87d5-55efda16fa90', 'e89ab77a-d1ca-489b-9756-9ac3115ee111', 'huawei.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('6ae1081c-265a-4c5b-8c44-ac8a78413321', '013a1d10-1c92-4eb6-bff1-c3979f3501fe', 'huawei.rds');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('83ea0879-c94e-44a2-8ca7-24474cd49060', '310b8a42-87df-4c6a-8cf6-62a2a59ffe4e', 'huawei.elb');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('d8daed16-738f-418f-9980-c420889ad0eb', '0bba4b47-0cf4-4cc8-a699-07b016688a98', 'huawei.elb');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('e30c9cb9-1e1b-4b15-8f50-c975ee6b5963', '5c477740-6535-46d7-8bb8-bef18493b048', 'huawei.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('f9b1a83a-20fc-4e0e-9771-04e87ecd8013', '8ee70e95-9663-42d6-bd7a-e98788c0e5b9', 'huawei.ecs');
+
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('013a1d10-1c92-4eb6-bff1-c3979f3501fe', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('05d0f605-e41d-4191-9437-b804f59decf3', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1de637fb-fd5e-4b72-a29d-54835e070458', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('231129f8-2616-4037-8442-112753d55a29', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8ee70e95-9663-42d6-bd7a-e98788c0e5b9', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e126ae95-0e9f-4d12-869a-2d9309e3482b', '115');
+INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('e89ab77a-d1ca-489b-9756-9ac3115ee111', '115');
+
+SELECT id INTO @groupId4 FROM rule_group WHERE name = 'Huawei 等保预检';
+
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('013a1d10-1c92-4eb6-bff1-c3979f3501fe', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('05d0f605-e41d-4191-9437-b804f59decf3', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0bba4b47-0cf4-4cc8-a699-07b016688a98', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('1de637fb-fd5e-4b72-a29d-54835e070458', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('231129f8-2616-4037-8442-112753d55a29', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('310b8a42-87df-4c6a-8cf6-62a2a59ffe4e', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('5c477740-6535-46d7-8bb8-bef18493b048', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8ee70e95-9663-42d6-bd7a-e98788c0e5b9', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e126ae95-0e9f-4d12-869a-2d9309e3482b', @groupId4);
+INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e89ab77a-d1ca-489b-9756-9ac3115ee111', @groupId4);
+
+CREATE TABLE IF NOT EXISTS `report_result` (
+    `id`                         varchar(50)         NOT NULL COMMENT 'ID',
+    `name`                       varchar(256)        DEFAULT NULL COMMENT '名称',
+    `status`                     varchar(45)         DEFAULT NULL COMMENT '状态',
+    `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint              DEFAULT NULL COMMENT '更新时间',
+    `operator`                   varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `download_number`            bigint              DEFAULT NULL COMMENT '下载次数',
+    `history_number`             bigint              DEFAULT NULL COMMENT '历史生成次数',
+    `pdf_path`                   varchar(256)        DEFAULT NULL COMMENT 'pdf path',
+    `pdf_log`                    longtext            DEFAULT NULL COMMENT 'pdf log',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `report_result_log` (
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         DEFAULT NULL COMMENT '报告结果ID',
+    `status`                       varchar(45)         DEFAULT NULL COMMENT '状态',
+    `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
+    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `download_number`              bigint              DEFAULT NULL COMMENT '下载次数',
+    `pdf_path`                     varchar(256)        DEFAULT NULL COMMENT 'pdf path',
+    `pdf_log`                      longtext            DEFAULT NULL COMMENT 'pdf log',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `report_result_detail` (
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
+    `result_id`                    varchar(50)         DEFAULT NULL COMMENT '报告结果ID',
+    `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
+    `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
+    `type`                         varchar(128)        DEFAULT NULL COMMENT '所属类型',
+    `account_id`                   varchar(128)        DEFAULT NULL COMMENT '检测账号ID',
+    `status`                       varchar(100)        DEFAULT NULL COMMENT '状态',
+    `order_index`                  bigint              DEFAULT NULL COMMENT '排序',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4;

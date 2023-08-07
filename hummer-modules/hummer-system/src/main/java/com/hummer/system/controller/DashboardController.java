@@ -127,11 +127,4 @@ public class DashboardController {
         return dashboardService.cloudInfo();
     }
 
-    @I18n
-    @Operation(summary = "K8s合规检测风险统计")
-    @PostMapping("k8sScanRiskChart")
-    public List<Map<String, Object>> k8sScanRiskChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.k8sScanRiskChart(params);
-    }
-
 }

@@ -19,8 +19,6 @@ public interface ExtResourceMapper {
 
     List<ResourceDTO> getComplianceResult(@Param("request") ResourceRequest request);
 
-    List<ResourceDTO> getK8sComplianceResult(@Param("request") ResourceRequest request);
-
     List<ReportDTO> reportList(ResourceRequest resourceRequest);
 
     SourceDTO source(@Param("accountId")String accountId);

@@ -62,7 +62,6 @@ import com.hummer.common.core.proxy.k8s.K8sCredential;
 import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.ksyun.KsyunCredential;
 import com.hummer.common.core.proxy.ksyun.KsyunRequest;
-import com.hummer.common.core.proxy.openshift.OpenShiftRequest;
 import com.hummer.common.core.proxy.openstack.OpenStackCredential;
 import com.hummer.common.core.proxy.openstack.OpenStackRequest;
 import com.hummer.common.core.proxy.openstack.OpenStackUtils;
