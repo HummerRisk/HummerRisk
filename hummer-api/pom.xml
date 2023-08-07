@@ -19,7 +19,6 @@
     <modules>
         <module>hummer-api-system</module>
         <module>hummer-api-cloud</module>
-        <module>hummer-api-k8s</module>
     </modules>
 
     <dependencies>

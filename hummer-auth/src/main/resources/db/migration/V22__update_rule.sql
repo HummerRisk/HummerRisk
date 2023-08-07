@@ -1,2 +1,0 @@
-
-UPDATE rule SET parameter = '[{"key":"ipv4_port","name":"ipv4端口","defaultValue":"[20,21,22,25,80,773,765, 1733,1737,3306,3389,7333,5732,5500]","required":true},{"key":"ipv6_port","name":"ipv6端口","defaultValue":"[20,21,22,25,80,773,765, 1733,1737,3306,3389,7333,5732,5500]","required":true},{"key":"action","name":"Action","defaultValue":"ACCEPT","required":true}]' WHERE id = 'f9d3db46-d340-4487-ae9b-82b827108912'
