@@ -1,7 +1,5 @@
 package com.hummer.cloud.mapper;
 
-import com.hummer.common.core.domain.Favorite;
-import com.hummer.common.core.domain.FavoriteExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

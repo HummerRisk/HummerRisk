@@ -1,8 +1,5 @@
 package com.hummer.system.mapper;
 
-import com.hummer.common.core.domain.HistoryImageResult;
-import com.hummer.common.core.domain.HistoryImageResultExample;
-import com.hummer.common.core.domain.HistoryImageResultWithBLOBs;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

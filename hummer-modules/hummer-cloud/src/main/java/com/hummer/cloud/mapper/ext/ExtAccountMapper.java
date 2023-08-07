@@ -4,7 +4,6 @@ import com.hummer.common.core.domain.request.account.CloudAccountRequest;
 import com.hummer.common.core.dto.AccountDTO;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.common.core.dto.RuleDTO;
-import com.hummer.common.core.dto.ServerDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

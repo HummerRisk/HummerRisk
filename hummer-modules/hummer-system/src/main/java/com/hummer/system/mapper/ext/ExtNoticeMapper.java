@@ -2,7 +2,6 @@ package com.hummer.system.mapper.ext;
 
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.MetricChartDTO;
-import com.hummer.common.core.dto.ServerResultDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

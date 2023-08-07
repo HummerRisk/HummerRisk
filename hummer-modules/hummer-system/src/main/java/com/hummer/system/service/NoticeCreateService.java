@@ -7,7 +7,6 @@ import com.hummer.common.core.constant.NoticeConstants;
 import com.hummer.common.core.constant.ScanConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.MetricChartDTO;
-import com.hummer.common.core.dto.ServerResultDTO;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.common.core.utils.CommonBeanFactory;

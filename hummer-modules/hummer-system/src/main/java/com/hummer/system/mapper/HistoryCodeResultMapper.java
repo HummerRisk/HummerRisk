@@ -1,7 +1,5 @@
 package com.hummer.system.mapper;
 
-import com.hummer.common.core.domain.HistoryCodeResult;
-import com.hummer.common.core.domain.HistoryCodeResultExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

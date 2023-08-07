@@ -1,7 +1,5 @@
 package com.hummer.system.mapper;
 
-import com.hummer.common.core.domain.HistoryServerResult;
-import com.hummer.common.core.domain.HistoryServerResultExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

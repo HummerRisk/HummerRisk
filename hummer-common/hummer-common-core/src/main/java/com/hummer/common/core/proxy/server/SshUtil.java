@@ -1,7 +1,6 @@
 package com.hummer.common.core.proxy.server;
 
 import com.hummer.common.core.domain.Proxy;
-import com.hummer.common.core.domain.Server;
 import com.hummer.common.core.utils.LogUtil;
 import com.hummer.common.core.utils.Md5Utils;
 import org.apache.commons.lang3.StringUtils;

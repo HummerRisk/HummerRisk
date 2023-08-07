@@ -36,7 +36,6 @@ import com.huaweicloud.sdk.iam.v3.model.ProjectResult;
 import com.huaweicloud.sdk.iam.v3.model.ShowCredential;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.AccountWithBLOBs;
-import com.hummer.common.core.domain.CloudNative;
 import com.hummer.common.core.domain.Proxy;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.exception.PluginException;

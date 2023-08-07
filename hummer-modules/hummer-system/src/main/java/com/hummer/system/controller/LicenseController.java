@@ -1,6 +1,5 @@
 package com.hummer.system.controller;
 
-import com.hummer.common.core.domain.HummerLicenseWithBLOBs;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.LicenseService;
