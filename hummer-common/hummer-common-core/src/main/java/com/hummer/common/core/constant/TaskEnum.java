@@ -4,10 +4,7 @@ package com.hummer.common.core.constant;
  * @author harris
  */
 public enum TaskEnum {
-    cloudAccount("cloudAccount"), k8sRuleAccount("k8sRuleAccount"), serverAccount("serverAccount"),
-    imageAccount("imageAccount"), packageAccount("packageAccount"), k8sAccount("k8sAccount"),
-    codeAccount("codeAccount"), configAccount("configAccount"), fsAccount("fsAccount"),
-    rule("rule"), tag("tag"), group("group");
+    cloudAccount("cloudAccount"), rule("rule"), tag("tag"), group("group");
 
     private String type;
 

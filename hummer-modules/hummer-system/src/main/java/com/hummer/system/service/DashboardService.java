@@ -7,14 +7,16 @@ import com.hummer.cloud.api.ICloudProviderService;
 import com.hummer.common.core.constant.ParamConstants;
 import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
-import com.hummer.common.core.domain.*;
+import com.hummer.common.core.domain.CloudTask;
+import com.hummer.common.core.domain.CloudTaskExample;
+import com.hummer.common.core.domain.SystemParameter;
+import com.hummer.common.core.domain.SystemParameterExample;
 import com.hummer.common.core.domain.request.chart.ChartData;
 import com.hummer.common.core.domain.request.dashboard.*;
 import com.hummer.common.core.dto.ChartDTO;
 import com.hummer.common.core.dto.HistoryScanDTO;
 import com.hummer.common.core.dto.TopInfoDTO;
 import com.hummer.common.core.dto.TopScanDTO;
-import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.mapper.SystemParameterMapper;
 import com.hummer.system.mapper.ext.ExtDashboardMapper;
 import com.hummer.system.mapper.ext.ExtVulnMapper;
@@ -41,8 +43,6 @@ public class DashboardService {
     private SystemParameterMapper systemParameterMapper;
     @DubboReference
     private ICloudProviderService cloudProviderService;
-    @DubboReference
-    private IK8sProviderService k8sProviderService;
 
 
     public List<ChartData> vulnDistribution(Map<String, Object> params) {
@@ -120,55 +120,6 @@ public class DashboardService {
         return list;
     }
 
-    public ChartDTO imageChart(Map<String, Object> params) {
-        ChartDTO imageChartDTO = new ChartDTO();
-        List<String> xAxis = extDashboardMapper.imageChartX(params);
-        List<Integer> yAxis = extDashboardMapper.imageChartY(params);
-        imageChartDTO.setXAxis(xAxis);
-        imageChartDTO.setYAxis(yAxis);
-        return imageChartDTO;
-    }
-
-    public ChartDTO codeChart(Map<String, Object> params) {
-        ChartDTO codeChartDTO = new ChartDTO();
-        List<String> xAxis = extDashboardMapper.codeChartX(params);
-        List<Integer> yAxis = extDashboardMapper.codeChartY(params);
-        codeChartDTO.setXAxis(xAxis);
-        codeChartDTO.setYAxis(yAxis);
-        return codeChartDTO;
-    }
-
-    public ChartDTO cloudNativeChart(Map<String, Object> params) {
-        ChartDTO cloudNativeChartDTO = new ChartDTO();
-        List<String> xAxis = extDashboardMapper.cloudNativeChartX(params);
-        List<Integer> yAxis = extDashboardMapper.cloudNativeChartY(params);
-        cloudNativeChartDTO.setXAxis(xAxis);
-        cloudNativeChartDTO.setYAxis(yAxis);
-        return cloudNativeChartDTO;
-    }
-
-    public ChartDTO configChart(Map<String, Object> params) {
-        ChartDTO cloudNativeChartDTO = new ChartDTO();
-        List<String> xAxis = extDashboardMapper.configChartX(params);
-        List<Integer> yAxis = extDashboardMapper.configChartY(params);
-        cloudNativeChartDTO.setXAxis(xAxis);
-        cloudNativeChartDTO.setYAxis(yAxis);
-        return cloudNativeChartDTO;
-    }
-
-    public ChartDTO fsChart(Map<String, Object> params) {
-        ChartDTO fsChartDTO = new ChartDTO();
-        List<String> xAxis = extDashboardMapper.fsChartX(params);
-        List<Integer> yAxis = extDashboardMapper.fsChartY(params);
-        fsChartDTO.setXAxis(xAxis);
-        fsChartDTO.setYAxis(yAxis);
-        return fsChartDTO;
-    }
-
-    public List<TaskCalendarVo> taskCalendar() {
-        return extDashboardMapper.taskCalendar();
-    }
-
     public Integer score() {
         int score = 100, sum = 0, count = 0;//计数器
 
@@ -179,49 +130,7 @@ public class DashboardService {
             sum = sum + historyService.calculateScore(cloudTask.getId(), cloudTask, TaskEnum.cloudAccount.getType());
         }
 
-        CloudNativeResultExample cloudNativeResultExample = new CloudNativeResultExample();
-        cloudNativeResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
-        List<CloudNativeResult> cloudNativeResults = k8sProviderService.cloudNativeResults(cloudNativeResultExample);
-        for (CloudNativeResult cloudNativeResult : cloudNativeResults) {
-            sum = sum + historyService.calculateScore(cloudNativeResult.getId(), cloudNativeResult, TaskEnum.k8sAccount.getType());
-        }
-
-        CloudNativeConfigResultExample cloudNativeConfigResultExample = new CloudNativeConfigResultExample();
-        cloudNativeConfigResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
-        List<CloudNativeConfigResult> cloudNativeConfigResults = k8sProviderService.cloudNativeConfigResults(cloudNativeConfigResultExample);
-        for (CloudNativeConfigResult cloudNativeConfigResult : cloudNativeConfigResults) {
-            sum = sum + historyService.calculateScore(cloudNativeConfigResult.getId(), cloudNativeConfigResult, TaskEnum.configAccount.getType());
-        }
-
-        ServerResultExample serverResultExample = new ServerResultExample();
-        serverResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
-        List<ServerResult> serverResults = k8sProviderService.serverResults(serverResultExample);
-        for (ServerResult serverResult : serverResults) {
-            sum = sum + historyService.calculateScore(serverResult.getId(), serverResult, TaskEnum.serverAccount.getType());
-        }
-
-        ImageResultExample imageResultExample = new ImageResultExample();
-        imageResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
-        List<ImageResult> imageResults = k8sProviderService.imageResults(imageResultExample);
-        for (ImageResult imageResult : imageResults) {
-            sum = sum + historyService.calculateScore(imageResult.getId(), imageResult, TaskEnum.imageAccount.getType());
-        }
-
-        CodeResultExample codeResultExample = new CodeResultExample();
-        codeResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
-        List<CodeResult> codeResults = k8sProviderService.codeResults(codeResultExample);
-        for (CodeResult codeResult : codeResults) {
-            sum = sum + historyService.calculateScore(codeResult.getId(), codeResult, TaskEnum.codeAccount.getType());
-        }
-
-        FileSystemResultExample fileSystemResultExample = new FileSystemResultExample();
-        fileSystemResultExample.createCriteria().andResultStatusEqualTo(TaskConstants.TASK_STATUS.FINISHED.toString());
-        List<FileSystemResult> fileSystemResults = k8sProviderService.fileSystemResults(fileSystemResultExample);
-        for (FileSystemResult fileSystemResult : fileSystemResults) {
-            sum = sum + historyService.calculateScore(fileSystemResult.getId(), fileSystemResult, TaskEnum.fsAccount.getType());
-        }
-
-        count = cloudTasks.size() + cloudNativeResults.size() + cloudNativeConfigResults.size() + serverResults.size() + imageResults.size() + codeResults.size() + fileSystemResults.size();
+        count = cloudTasks.size();
 
         if (count != 0) score = Math.round(sum / count);
 
@@ -317,55 +226,6 @@ public class DashboardService {
         cloudInfo.setResources(extDashboardMapper.getResources());
         cloudInfo.setPlugins(extDashboardMapper.getPlugins());
         return cloudInfo;
-    }
-
-    public CloudInfo k8sInfo() {
-        CloudInfo cloudInfo = new CloudInfo();
-        cloudInfo.setClouds(extDashboardMapper.getK8sClouds());
-        cloudInfo.setAccounts(extDashboardMapper.getK8sAccounts());
-        cloudInfo.setResources(extDashboardMapper.getK8sResources());
-        cloudInfo.setPlugins(extDashboardMapper.getK8sPlugins());
-        return cloudInfo;
-    }
-
-    public AssetsInfo serverInfo() {
-        return extDashboardMapper.serverInfo();
-    }
-
-    public AssetsInfo imageInfo() {
-        return extDashboardMapper.imageInfo();
-    }
-
-    public AssetsInfo configInfo() {
-        return extDashboardMapper.configInfo();
-    }
-
-    public AssetsInfo codeInfo() {
-        return extDashboardMapper.codeInfo();
-    }
-
-    public AssetsInfo fsInfo() {
-        return extDashboardMapper.fsInfo();
-    }
-
-    public List<Map<String, Object>> serverRiskChart(Map<String, Object> params) {
-        return extDashboardMapper.serverRiskChart(params);
-    }
-
-    public List<Map<String, Object>> imageRiskChart(Map<String, Object> params) {
-        return extDashboardMapper.imageRiskChart(params);
-    }
-
-    public List<Map<String, Object>> k8sVulnRiskChart(Map<String, Object> params) {
-        return extDashboardMapper.k8sVulnRiskChart(params);
-    }
-
-    public List<Map<String, Object>> k8sConfigRiskChart(Map<String, Object> params) {
-        return extDashboardMapper.k8sConfigRiskChart(params);
-    }
-
-    public List<Map<String, Object>> k8sKubenchRiskChart(Map<String, Object> params) {
-        return extDashboardMapper.k8sKubenchRiskChart(params);
     }
 
     public List<Map<String, Object>> k8sScanRiskChart(Map<String, Object> params) {

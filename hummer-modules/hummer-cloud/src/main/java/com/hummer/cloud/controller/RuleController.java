@@ -224,12 +224,6 @@ public class RuleController {
         ruleService.reScan(taskId, accountId, tokenService.getLoginUser());
     }
 
-    @Hidden
-    @GetMapping("reScanK8s/{taskId}/{accountId}")
-    public void reScanK8s(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
-        ruleService.reScanK8s(taskId, accountId, tokenService.getLoginUser());
-    }
-
     @Operation(summary = "执行检测")
     @PostMapping("scan")
     public void scan(@RequestBody ScanGroupRequest request) throws Exception {

@@ -2,12 +2,6 @@ package com.hummer.system.service;
 
 
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.code.CodeResultRequest;
-import com.hummer.common.core.domain.request.config.ConfigResultRequest;
-import com.hummer.common.core.domain.request.fs.FsResultRequest;
-import com.hummer.common.core.domain.request.image.ImageResultRequest;
-import com.hummer.common.core.domain.request.k8s.K8sResultRequest;
-import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
@@ -41,23 +35,11 @@ public class SystemProviderService implements ISystemProviderService {
     @Autowired
     private HistoryScanTaskMapper historyScanTaskMapper;
     @Autowired
-    private HistoryCodeResultMapper historyCodeResultMapper;
-    @Autowired
-    private SystemParameterService systemParameterService;
-    @Autowired
-    private HistoryCloudNativeResultMapper historyCloudNativeResultMapper;
-    @Autowired
-    private HistoryCloudNativeConfigResultMapper historyCloudNativeConfigResultMapper;
-    @Autowired
-    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
-    @Autowired
-    private HistoryImageResultMapper historyImageResultMapper;
-    @Autowired
-    private HistoryServerResultMapper historyServerResultMapper;
-    @Autowired
     private UserService userService;
     @Autowired
     private ExtHistoryScanMapper extHistoryScanMapper;
+    @Autowired
+    private SystemParameterService systemParameterService;
     @Autowired
     private LicenseService licenseService;
 
@@ -73,18 +55,8 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
-    public String createK8sMessageOrder(CloudNative cloudNative) throws Exception {
-        return noticeService.createK8sMessageOrder(cloudNative);
-    }
-
-    @Override
     public void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception {
         noticeService.createMessageOrderItem(messageOrderId, cloudTask);
-    }
-
-    @Override
-    public void createK8sMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception {
-        noticeService.createK8sMessageOrderItem(messageOrderId, cloudTask);
     }
 
     @Override
@@ -173,220 +145,13 @@ public class SystemProviderService implements ISystemProviderService {
     }
 
     @Override
-    public void insertHistoryCodeResult(HistoryCodeResult historyCodeResult) {
-        historyService.insertHistoryCodeResult(historyCodeResult);
-    }
-
-    @Override
-    public void updateHistoryCodeResult(HistoryCodeResult historyCodeResult) {
-        historyService.updateHistoryCodeResult(historyCodeResult);
-    }
-
-    @Override
-    public void createCodeMessageOrder(CodeResult result) {
-        noticeService.createCodeMessageOrder(result);
-    }
-
-    @Override
-    public void createImageMessageOrder(ImageResultWithBLOBs result) {
-        noticeService.createImageMessageOrder(result);
-    }
-
-    @Override
-    public String createServerMessageOrder(Server result) {
-        return noticeService.createServerMessageOrder(result);
-    }
-
-    @Override
-    public void createFsMessageOrder(FileSystemResult result) {
-        noticeService.createFsMessageOrder(result);
-    }
-
-    @Override
-    public void createCloudNativeConfigMessageOrder(CloudNativeConfigResult result) {
-        noticeService.createCloudNativeConfigMessageOrder(result);
-    }
-
-    @Override
-    public void createCloudNativeMessageOrder(CloudNativeResult result) {
-        noticeService.createCloudNativeMessageOrder(result);
-    }
-
-    @Override
     public String getSystemParameterValue(String key) {
         return systemParameterService.getValue(key);
     }
 
     @Override
-    public HistoryCodeResult codeResult(String id) {
-        return historyCodeResultMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public HistoryServerResult serverResult(String id) {
-        return historyServerResultMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public HistoryFileSystemResult fsResult(String id) {
-        return historyFileSystemResultMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public HistoryImageResultWithBLOBs imageResult(String id) {
-        return historyImageResultMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public HistoryCloudNativeResultWithBLOBs k8sResult(String id) {
-        return historyCloudNativeResultMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public HistoryCloudNativeConfigResult configResult(String id) {
-        return historyCloudNativeConfigResultMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public void insertHistoryFileSystemResult(HistoryFileSystemResult result) {
-        historyService.insertHistoryFileSystemResult(result);
-    }
-
-    @Override
-    public void updateHistoryFileSystemResult(HistoryFileSystemResult result) {
-        historyService.updateHistoryFileSystemResult(result);
-    }
-
-    @Override
-    public void insertHistoryServerResult(HistoryServerResult result) {
-        historyService.insertHistoryServerResult(result);
-    }
-
-    @Override
-    public void updateHistoryServerResult(HistoryServerResult result) {
-        historyService.updateHistoryServerResult(result);
-    }
-
-    @Override
-    public void insertHistoryImageResult(HistoryImageResultWithBLOBs result) {
-        historyService.insertHistoryImageResult(result);
-    }
-
-    @Override
-    public void updateHistoryImageResult(HistoryImageResultWithBLOBs result) {
-        historyService.updateHistoryImageResult(result);
-    }
-
-    @Override
-    public void insertHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult result) {
-        historyService.insertHistoryCloudNativeConfigResult(result);
-    }
-
-    @Override
-    public void updateHistoryCloudNativeConfigResult(HistoryCloudNativeConfigResult result) {
-        historyService.updateHistoryCloudNativeConfigResult(result);
-    }
-
-    @Override
-    public void insertHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs result) {
-        historyService.insertHistoryCloudNativeResult(result);
-    }
-
-    @Override
-    public void updateHistoryCloudNativeResult(HistoryCloudNativeResultWithBLOBs result) {
-        historyService.updateHistoryCloudNativeResult(result);
-    }
-
-    @Override
-    public List<HistoryCodeResult> historyCodeResultByExample(HistoryCodeResultExample example) {
-        return historyCodeResultMapper.selectByExample(example);
-    }
-
-    @Override
-    public List<HistoryImageResult> historyImageResultByExample(HistoryImageResultExample example) {
-        return historyImageResultMapper.selectByExample(example);
-    }
-
-    @Override
-    public void createServerMessageOrderItem(ServerResult result, String messageOrderId) {
-        noticeService.createServerMessageOrderItem(result, messageOrderId);
-    }
-
-    @Override
-    public void deleteHistoryCodeResult(String id) throws Exception {
-        historyCodeResultMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    public void deleteHistoryCloudNativeConfigResult(String id) throws Exception {
-        historyCloudNativeConfigResultMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    public void deleteHistoryFsResult(String id) throws Exception {
-        historyFileSystemResultMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    public void deleteHistoryImageResult(String id) throws Exception {
-        historyImageResultMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    public void deleteHistoryK8sResult(String id) throws Exception {
-        historyCloudNativeResultMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
-    public void deleteHistoryServerResult(String id) throws Exception {
-        historyServerResultMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
     public LoginUser getLoginUserByName(String id) throws Exception {
         return userService.getLoginUserByName(id);
-    }
-
-    @Override
-    public HistoryImageReportDTO getImageResultDto(String resultId) {
-        HistoryImageReportDTO imageResult = extHistoryScanMapper.getImageResultDto(resultId);
-        return imageResult;
-    }
-
-    @Override
-    public List<HistoryImageResultDTO> imageHistory(ImageResultRequest request) {
-        List<HistoryImageResultDTO> historyList = extHistoryScanMapper.imageHistory(request);
-        return historyList;
-    }
-
-    @Override
-    public List<HistoryCodeResultDTO> codeHistory(CodeResultRequest request) {
-        List<HistoryCodeResultDTO> historyList = extHistoryScanMapper.codeHistory(request);
-        return historyList;
-    }
-
-    @Override
-    public List<HistoryServerResultDTO> serverHistory(ServerResultRequest request) {
-        List<HistoryServerResultDTO> historyList = extHistoryScanMapper.serverHistory(request);
-        return historyList;
-    }
-
-    @Override
-    public List<HistoryFsResultDTO> fsHistory(FsResultRequest request) {
-        List<HistoryFsResultDTO> historyList = extHistoryScanMapper.fsHistory(request);
-        return historyList;
-    }
-
-    @Override
-    public List<HistoryCloudNativeResultDTO> k8sHistory(K8sResultRequest request) {
-        List<HistoryCloudNativeResultDTO> historyList = extHistoryScanMapper.k8sHistory(request);
-        return historyList;
-    }
-
-    @Override
-    public List<HistoryCloudNativeConfigResultDTO> configHistory(ConfigResultRequest request) {
-        List<HistoryCloudNativeConfigResultDTO> historyList = extHistoryScanMapper.configHistory(request);
-        return historyList;
     }
 
     @Override

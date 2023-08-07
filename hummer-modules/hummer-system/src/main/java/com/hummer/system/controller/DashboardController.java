@@ -86,47 +86,6 @@ public class DashboardController {
         return dashboardService.topScanInfo();
     }
 
-    @I18n
-    @Operation(summary = "首页镜像检测统计")
-    @PostMapping("imageChart")
-    public ChartDTO imageChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.imageChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "首页源码检测统计")
-    @PostMapping("codeChart")
-    public ChartDTO codeChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.codeChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "首页云原生检测统计")
-    @PostMapping("cloudNativeChart")
-    public ChartDTO cloudNativeChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.cloudNativeChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "首页云原生检测统计")
-    @PostMapping("configChart")
-    public ChartDTO configChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.configChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "首页文件系统检测统计")
-    @PostMapping("fsChart")
-    public ChartDTO fsChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.fsChart(params);
-    }
-
-    @Operation(summary = "首页任务日历")
-    @GetMapping("taskCalendar")
-    public List<TaskCalendarVo> taskCalendar() {
-        return dashboardService.taskCalendar();
-    }
-
     @Operation(summary = "首页安全评分")
     @GetMapping("score")
     public Integer score() {
@@ -166,83 +125,6 @@ public class DashboardController {
     @PostMapping("cloudInfo")
     public CloudInfo cloudInfo() {
         return dashboardService.cloudInfo();
-    }
-
-    @I18n
-    @Operation(summary = "首页K8s统计")
-    @PostMapping("k8sInfo")
-    public CloudInfo k8sInfo() {
-        return dashboardService.k8sInfo();
-    }
-
-    @I18n
-    @Operation(summary = "首页Server统计")
-    @PostMapping("serverInfo")
-    public AssetsInfo serverInfo() {
-        return dashboardService.serverInfo();
-    }
-
-    @I18n
-    @Operation(summary = "首页Image统计")
-    @PostMapping("imageInfo")
-    public AssetsInfo imageInfo() {
-        return dashboardService.imageInfo();
-    }
-
-    @I18n
-    @Operation(summary = "首页Config统计")
-    @PostMapping("configInfo")
-    public AssetsInfo configInfo() {
-        return dashboardService.configInfo();
-    }
-
-    @I18n
-    @Operation(summary = "首页Code统计")
-    @PostMapping("codeInfo")
-    public AssetsInfo codeInfo() {
-        return dashboardService.codeInfo();
-    }
-
-    @I18n
-    @Operation(summary = "首页FileSystem统计")
-    @PostMapping("fsInfo")
-    public AssetsInfo fsInfo() {
-        return dashboardService.fsInfo();
-    }
-
-    @I18n
-    @Operation(summary = "主机不合规风险统计")
-    @PostMapping("serverRiskChart")
-    public List<Map<String, Object>> serverRiskChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.serverRiskChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "镜像检测风险统计")
-    @PostMapping("imageRiskChart")
-    public List<Map<String, Object>> imageRiskChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.imageRiskChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "K8s漏洞检测风险统计")
-    @PostMapping("k8sVulnRiskChart")
-    public List<Map<String, Object>> k8sVulnRiskChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.k8sVulnRiskChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "K8s配置审计风险统计")
-    @PostMapping("k8sConfigRiskChart")
-    public List<Map<String, Object>> k8sConfigRiskChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.k8sConfigRiskChart(params);
-    }
-
-    @I18n
-    @Operation(summary = "K8s Benchmark 风险统计")
-    @PostMapping("k8sKubenchRiskChart")
-    public List<Map<String, Object>> k8sKubenchRiskChart(@RequestBody Map<String, Object> params) {
-        return dashboardService.k8sKubenchRiskChart(params);
     }
 
     @I18n

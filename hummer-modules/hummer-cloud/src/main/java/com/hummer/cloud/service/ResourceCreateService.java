@@ -74,8 +74,6 @@ public class ResourceCreateService {
     private CloudResourceRelaLinkMapper cloudResourceRelaLinkMapper;
     @Autowired
     private CommonThreadPool commonThreadPool;
-    @Autowired
-    private K8sCreateService k8sCreateService;
     @DubboReference
     private ISystemProviderService systemProviderService;
 
@@ -116,41 +114,6 @@ public class ResourceCreateService {
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudTaskToBeProceed.getId());
-                    }
-                });
-            });
-        }
-
-        //K8s 规则检测
-        final CloudTaskExample cloudTaskExample2 = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria2 = cloudTaskExample2.createCriteria();
-        criteria2.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdIn(PlatformUtils.getK8sPlugin());
-        if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
-        }
-        cloudTaskExample2.setOrderByClause("create_time limit 10");
-        List<CloudTask> cloudTaskList2 = cloudTaskMapper.selectByExample(cloudTaskExample2);
-        if (CollectionUtils.isNotEmpty(cloudTaskList2)) {
-            cloudTaskList2.forEach(task2 -> {
-                LogUtil.info("handling k8sRuleTask: {}", toJSONString(task2));
-                final CloudTask cloudTaskToBeProceed2;
-                try {
-                    cloudTaskToBeProceed2 = BeanUtils.copyBean(new CloudTask(), task2);
-                } catch (Exception e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                if (processingGroupIdMap.get(cloudTaskToBeProceed2.getId()) != null) {
-                    return;
-                }
-                processingGroupIdMap.put(cloudTaskToBeProceed2.getId(), cloudTaskToBeProceed2.getId());
-                commonThreadPool.addTask(() -> {
-                    try {
-                        k8sCreateService.handleTask(cloudTaskToBeProceed2);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        LogUtil.error(e.getMessage());
-                    } finally {
-                        processingGroupIdMap.remove(cloudTaskToBeProceed2.getId());
                     }
                 });
             });

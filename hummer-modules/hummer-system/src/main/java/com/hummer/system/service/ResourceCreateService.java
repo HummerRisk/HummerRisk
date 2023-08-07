@@ -6,8 +6,10 @@ import com.hummer.common.core.constant.TaskConstants;
 import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.utils.BeanUtils;
-import com.hummer.k8s.api.IK8sProviderService;
-import com.hummer.system.mapper.*;
+import com.hummer.system.mapper.HistoryCloudTaskMapper;
+import com.hummer.system.mapper.HistoryScanMapper;
+import com.hummer.system.mapper.HistoryScanTaskMapper;
+import com.hummer.system.mapper.TaskItemResourceLogMapper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,19 +38,9 @@ public class ResourceCreateService {
     @Autowired
     private HistoryCloudTaskMapper historyCloudTaskMapper;
     @Autowired
-    private HistoryServerResultMapper historyServerResultMapper;
-    @Autowired
-    private HistoryImageResultMapper historyImageResultMapper;
-    @Autowired
     private TaskItemResourceLogMapper taskItemResourceLogMapper;
-    @Autowired
-    private HistoryCodeResultMapper historyCodeResultMapper;
-    @Autowired
-    private HistoryFileSystemResultMapper historyFileSystemResultMapper;
     @DubboReference
     private ICloudProviderService cloudProviderService;
-    @DubboReference
-    private IK8sProviderService k8sProviderService;
 
     //历史数据统计
     @XxlJob("historyTasksJobHandler")
@@ -91,141 +83,6 @@ public class ResourceCreateService {
                         } else {
                             continue;
                         }
-                    } else {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.serverAccount.getType())) {
-                    ServerResult serverResult = k8sProviderService.serverResult(historyScanTask.getTaskId());
-                    if (serverResult != null) {
-                        if (historyScanStatus.contains(serverResult.getResultStatus())) {
-                            historyScanTask.setStatus(serverResult.getResultStatus());
-                            historyScanTask.setResourcesSum(1L);
-                            historyScanTask.setReturnSum(1L);
-                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), serverResult, TaskEnum.serverAccount.getType()));
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.imageAccount.getType())) {
-                    ImageResult imageResult = k8sProviderService.imageResult(historyScanTask.getTaskId());
-                    if (imageResult != null) {
-                        if (historyScanStatus.contains(imageResult.getResultStatus())) {
-                            historyScanTask.setStatus(imageResult.getResultStatus());
-                            historyScanTask.setResourcesSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
-                            historyScanTask.setReturnSum(imageResult.getReturnSum()!=null? imageResult.getReturnSum():0);
-                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), imageResult, TaskEnum.imageAccount.getType()));
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.codeAccount.getType())) {
-                    CodeResult codeResult = k8sProviderService.codeResult(historyScanTask.getTaskId());
-                    if (codeResult != null) {
-                        if (historyScanStatus.contains(codeResult.getResultStatus())) {
-                            historyScanTask.setStatus(codeResult.getResultStatus());
-                            historyScanTask.setResourcesSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
-                            historyScanTask.setReturnSum(codeResult.getReturnSum()!=null? codeResult.getReturnSum():0);
-                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), codeResult, TaskEnum.codeAccount.getType()));
-                        } else {
-                            continue;
-                        }
-
-                    } else {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                }  else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.fsAccount.getType())) {
-                    FileSystemResult fileSystemResult = k8sProviderService.fileSystemResult(historyScanTask.getTaskId());
-                    if (fileSystemResult != null) {
-                        if (historyScanStatus.contains(fileSystemResult.getResultStatus())) {
-                            historyScanTask.setStatus(fileSystemResult.getResultStatus());
-                            historyScanTask.setResourcesSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
-                            historyScanTask.setReturnSum(fileSystemResult.getReturnSum()!=null? fileSystemResult.getReturnSum():0);
-                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), fileSystemResult, TaskEnum.fsAccount.getType()));
-                        } else {
-                            continue;
-                        }
-
-                    } else {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.k8sAccount.getType())) {
-
-                    CloudTask cloudTask = cloudProviderService.selectCloudTask(historyScanTask.getTaskId());
-                    if (cloudTask != null) {
-                        if (historyScanStatus.contains(cloudTask.getStatus())) {
-                            historyScanTask.setStatus(cloudTask.getStatus());
-                            historyScanTask.setResourcesSum(cloudTask.getResourcesSum()!=null? cloudTask.getResourcesSum():0);
-                            historyScanTask.setReturnSum(cloudTask.getReturnSum()!=null? cloudTask.getReturnSum():0);
-                            historyScanTask.setScanScore(historyService.calculateScore(cloudTask.getAccountId(), cloudTask, TaskEnum.k8sRuleAccount.getType()));
-                        } else {
-                            continue;
-                        }
-
-                    }
-
-                    CloudNativeResult cloudNativeResult = k8sProviderService.cloudNativeResult(historyScanTask.getTaskId());
-                    if (cloudNativeResult != null) {
-                        if (historyScanStatus.contains(cloudNativeResult.getResultStatus())) {
-                            historyScanTask.setStatus(cloudNativeResult.getResultStatus());
-                            historyScanTask.setResourcesSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
-                            historyScanTask.setReturnSum(cloudNativeResult.getReturnSum()!=null? cloudNativeResult.getReturnSum():0);
-                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeResult, TaskEnum.k8sAccount.getType()));
-                        } else {
-                            continue;
-                        }
-
-                    }
-
-                    if (cloudTask == null && cloudNativeResult == null) {
-                        historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
-                        historyScanTask.setResourcesSum(0L);
-                        historyScanTask.setReturnSum(0L);
-                        historyScanTask.setScanScore(100);
-                    }
-
-                    historyScanTask.setOutput(jsonArray.toJSONString());
-                    historyService.updateScanTaskHistory(historyScanTask);
-                } else if(StringUtils.equalsIgnoreCase(historyScanTask.getAccountType(), TaskEnum.configAccount.getType())) {
-                    CloudNativeConfigResult cloudNativeConfigResult = k8sProviderService.cloudNativeConfigResult(historyScanTask.getTaskId());
-                    if (cloudNativeConfigResult != null) {
-                        if (historyScanStatus.contains(cloudNativeConfigResult.getResultStatus())) {
-                            historyScanTask.setStatus(cloudNativeConfigResult.getResultStatus());
-                            historyScanTask.setResourcesSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
-                            historyScanTask.setReturnSum(cloudNativeConfigResult.getReturnSum()!=null? cloudNativeConfigResult.getReturnSum():0);
-                            historyScanTask.setScanScore(historyService.calculateScore(historyScanTask.getAccountId(), cloudNativeConfigResult, TaskEnum.configAccount.getType()));
-                        } else {
-                            continue;
-                        }
-
                     } else {
                         historyScanTask.setStatus(TaskConstants.TASK_STATUS.ERROR.name());
                         historyScanTask.setResourcesSum(0L);

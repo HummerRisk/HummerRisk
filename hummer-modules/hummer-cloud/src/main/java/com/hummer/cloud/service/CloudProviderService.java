@@ -5,7 +5,6 @@ import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.cloudTask.ManualRequest;
-import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.QuartzTaskDTO;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -179,11 +178,6 @@ public class CloudProviderService implements ICloudProviderService {
     @Override
     public long getReturnSum(String accountId) {
         return cloudTaskService.getReturnSum(accountId);
-    }
-
-    @Override
-    public void scanK8s(ScanGroupRequest request, CloudNative cloudNative, LoginUser loginUser) throws Exception {
-        ruleService.scanK8s(request, cloudNative, loginUser);
     }
 
 }

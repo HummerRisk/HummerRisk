@@ -76,15 +76,6 @@ public class CloudTaskService {
         }
     }
 
-    public CloudTask saveK8sManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId, LoginUser loginUser) {
-        try {
-            this.validateYaml(quartzTaskDTO);
-            return orderService.createK8sTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId, loginUser);
-        } catch (Exception e) {
-            throw new HRException(e.getMessage());
-        }
-    }
-
     public boolean morelTask(String taskId) {
         try {
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
