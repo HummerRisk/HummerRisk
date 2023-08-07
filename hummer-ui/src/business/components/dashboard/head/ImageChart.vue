@@ -6,7 +6,6 @@
 
 <script>
 import HrChart from "@/business/components/common/chart/HrChart";
-import {imageChartUrl} from "@/api/cloud/dashboard/dashboard";
 /* eslint-disable */
 export default {
   name: "ImageChart",
@@ -23,34 +22,6 @@ export default {
   },
   methods: {
     init() {
-      this.$post(imageChartUrl, {}, response => {
-        let data = response.data;
-        this.options = {
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: data.xAxis
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [
-            {
-              data: data.yAxis,
-              type: 'line',
-              areaStyle: {}
-            }
-          ],
-          grid: {
-            top: '10%',
-            left: '1%',
-            right: '2%',
-            bottom: '2%',
-            containLabel: true
-          },
-          color: ['#009ef0', '#11cfae', '#627dec', '#893fdc', '#89ffff','#0051a4']
-        };
-      });
     },
   },
   created() {

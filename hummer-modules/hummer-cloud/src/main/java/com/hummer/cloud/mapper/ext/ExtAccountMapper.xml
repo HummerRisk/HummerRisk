@@ -28,9 +28,6 @@
         <collection property="cloudEventSyncLogList" ofType="com.hummer.common.core.domain.request.event.CloudEventSyncLogVo" javaType="list"
                     select="selectCloudEventSyncLogList" column="{accountId=id}">
         </collection>
-        <collection property="imageRepoList" ofType="com.hummer.common.core.domain.ImageRepo" javaType="list"
-                    select="selectImageRepoList" column="{accountId=id}">
-        </collection>
     </resultMap>
 
     <resultMap id="OssMap" type="com.hummer.common.core.domain.Oss">
@@ -66,29 +63,6 @@
         <result column="region_name" jdbcType="VARCHAR" property="regionName" />
         <result column="account_name" jdbcType="VARCHAR" property="accountName" />
         <result column="account_icon" jdbcType="VARCHAR" property="accountIcon" />
-    </resultMap>
-
-    <resultMap id="ImageRepoMap" type="com.hummer.common.core.domain.ImageRepo">
-        <id column="id" jdbcType="VARCHAR" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="status" jdbcType="VARCHAR" property="status" />
-        <result column="create_time" jdbcType="BIGINT" property="createTime" />
-        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
-        <result column="creator" jdbcType="VARCHAR" property="creator" />
-        <result column="repo" jdbcType="VARCHAR" property="repo" />
-        <result column="user_name" jdbcType="VARCHAR" property="userName" />
-        <result column="password" jdbcType="VARCHAR" property="password" />
-        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
-        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
-        <result column="is_bind_account" jdbcType="BIT" property="isBindAccount" />
-        <result column="credential" jdbcType="VARCHAR" property="credential" />
-    </resultMap>
-
-    <resultMap id="ServerResultMap" type="com.hummer.common.core.dto.ServerDTO"
-               extends="com.hummer.cloud.mapper.AccountMapper.BaseResultMap">
-        <result column="ip" property="ip"/>
-        <result column="userName" property="userName"/>
-        <result column="password" jdbcType="VARCHAR" property="password" />
     </resultMap>
 
     <sql id="condition">
@@ -229,14 +203,6 @@
         left join cloud_account t1 on t.account_id = t1.id
         where t.account_id = #{accountId}
         ORDER BY t.create_time DESC
-    </select>
-
-    <select id="selectImageRepoList" resultMap="ImageRepoMap">
-        SELECT
-            t.*
-        FROM image_repo t
-        where t.account_id = #{accountId}
-        ORDER BY t.update_time DESC
     </select>
 
     <select id="groupList" resultType="java.util.Map">

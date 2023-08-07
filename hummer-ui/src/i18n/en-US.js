@@ -174,6 +174,7 @@ export default {
     version: 'Version',
     cloud_mix_scan: 'Hybrid Cloud Security',
     cloud_scan: 'Multi-cloud detection',
+    cloud_manage: 'Account management',
     cloud_native: 'Cloud native security',
     k8s_scan: 'K8s detection',
     code_scan: 'Source code detection',

@@ -246,3 +246,21 @@ ALTER TABLE `cloud_task` MODIFY column `resource_types` text DEFAULT NULL COMMEN
 ALTER TABLE `history_cloud_task` MODIFY column `resource_types` text DEFAULT NULL COMMENT '资源类型';
 
 ALTER TABLE `cloud_resource_sync` MODIFY column `resource_types` text DEFAULT NULL COMMENT '资源类型';
+
+CREATE TABLE IF NOT EXISTS `hummer_license` (
+    `id`                         varchar(50)        NOT NULL COMMENT 'ID',
+    `company`                    varchar(256)       DEFAULT NULL COMMENT '公司名称',
+    `edition`                    varchar(128)       DEFAULT NULL COMMENT '企业版:Enterprise',
+    `expire_time`                bigint             DEFAULT NULL COMMENT '过期时间',
+    `product_type`               varchar(256)       DEFAULT NULL COMMENT '产品类型:HummerRisk',
+    `authorize_count`            varchar(128)       DEFAULT NULL COMMENT '订阅授权数量:100',
+    `license_key`                text               DEFAULT NULL COMMENT 'license文本',
+    `create_time`                bigint             DEFAULT NULL COMMENT '创建时间',
+    `update_time`                bigint             DEFAULT NULL COMMENT '修改时间',
+    `apply_user`                 varchar(50)        DEFAULT NULL COMMENT '申请人',
+    PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
+
+ALTER TABLE `hummer_license` ADD `status` varchar(50) DEFAULT NULL COMMENT 'valid、invalid、expired，分别代表：有效、无效、已过期';
+
+ALTER TABLE `hummer_license` ADD `message` text DEFAULT NULL COMMENT 'message 提示告警信息';

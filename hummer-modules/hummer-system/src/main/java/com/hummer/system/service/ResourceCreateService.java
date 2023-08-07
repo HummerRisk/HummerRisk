@@ -9,7 +9,6 @@ import com.hummer.common.core.utils.BeanUtils;
 import com.hummer.system.mapper.HistoryCloudTaskMapper;
 import com.hummer.system.mapper.HistoryScanMapper;
 import com.hummer.system.mapper.HistoryScanTaskMapper;
-import com.hummer.system.mapper.TaskItemResourceLogMapper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,8 +36,6 @@ public class ResourceCreateService {
     private HistoryScanTaskMapper historyScanTaskMapper;
     @Autowired
     private HistoryCloudTaskMapper historyCloudTaskMapper;
-    @Autowired
-    private TaskItemResourceLogMapper taskItemResourceLogMapper;
     @DubboReference
     private ICloudProviderService cloudProviderService;
 

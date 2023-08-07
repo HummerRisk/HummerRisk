@@ -799,8 +799,6 @@ UPDATE `rule` SET `suggestion` = 'https://docs.hummerrisk.com/v1.x/v1.x/suggest/
 
 ALTER TABLE `cloud_task_item_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
-ALTER TABLE `task_item_resource_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
-
 ALTER TABLE `history_cloud_task_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';
 
 ALTER TABLE `cloud_resource_sync_item_log` MODIFY column `operation` mediumtext DEFAULT NULL COMMENT '操作内容';

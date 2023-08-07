@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hummer.xpack.mapper.ext.ExtReportResultMapper">
+<mapper namespace="com.hummer.cloud.mapper.ext.ExtReportResultMapper">
 
     <sql id="condition">
         <choose>
@@ -70,7 +70,7 @@
         </if>
     </sql>
 
-    <resultMap id="BaseResultMap" type="com.hummer.xpack.dto.ReportResultDTO">
+    <resultMap id="BaseResultMap" type="com.hummer.cloud.dto.ReportResultDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="status" jdbcType="VARCHAR" property="status" />
@@ -89,7 +89,7 @@
         select t.account_id from report_result_detail t where t.result_id = #{id}
     </select>
 
-    <select id="reportList" resultMap="BaseResultMap" parameterType="com.hummer.xpack.dto.ReportResultDTO">
+    <select id="reportList" resultMap="BaseResultMap" parameterType="com.hummer.cloud.dto.ReportResultDTO">
         select
         t.*
         from report_result as t

@@ -284,11 +284,6 @@
         <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="110" v-slot:default="scope">
           {{ scope.row.userName?scope.row.userName:"--" }}
         </el-table-column>
-        <el-table-column prop="status" min-width="130" :label="$t('image.image_repo_status')">
-          <template v-slot:default="{row}">
-            <image-status :row="row"/>
-          </template>
-        </el-table-column>
         <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="160">
           <template v-slot:default="scope">
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
@@ -308,11 +303,10 @@
 <script>
   /* eslint-disable */
   import TableOperators from "@/business/components/common/components/TableOperators.vue";
-  import ImageStatus from "@/business/components/image/head/ImageStatus.vue";
 
   export default {
     name: "Links",
-    components: {ImageStatus, TableOperators},
+    components: {TableOperators},
     props: {
       row: Object,
     },

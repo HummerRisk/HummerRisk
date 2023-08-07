@@ -195,7 +195,7 @@ import {
   getReportUrl,
   reportListUrl, reportResultLogsUrl,
   updateReportUrl
-} from "@/api/xpack/report";
+} from "@/api/cloud/report/report";
 import Account from "@/business/components/reportcenter/home/Account";
 import {saveAs} from "@/common/js/FileSaver";
 

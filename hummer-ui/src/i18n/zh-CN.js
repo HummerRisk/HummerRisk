@@ -174,6 +174,7 @@ export default {
     version: '版本',
     cloud_mix_scan: '混合云安全',
     cloud_scan: '多云检测',
+    cloud_manage: '账号管理',
     cloud_native: '云原生安全',
     k8s_scan: 'K8s 检测',
     code_scan: '源码检测',

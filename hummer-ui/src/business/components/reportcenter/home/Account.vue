@@ -16,7 +16,7 @@
 <script>
 import AccountTree from "@/business/components/reportcenter/head/AccountTree";
 import MainContainer from "@/business/components/common/components/MainContainer";
-import {reportAccountListUrl} from "@/api/xpack/report";
+import {reportAccountListUrl} from "@/api/cloud/report/report";
 
 /* eslint-disable */
 export default {

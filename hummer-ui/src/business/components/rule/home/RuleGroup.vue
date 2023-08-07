@@ -628,7 +628,7 @@ import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/s
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
   bindRuleUrl,
-  deleteGroupsUrl, k8sRuleListUrl,
+  deleteGroupsUrl,
   ruleAllBindListUrl,
   ruleGroupDeleteUrl,
   ruleGroupListUrl,
@@ -636,11 +636,8 @@ import {
   ruleGroupUpdateUrl,
   ruleListUrl,
   ruleUnBindListUrl,
-  scanByGroupUrl
 } from "@/api/cloud/rule/rule";
-import {cloudListByGroupUrl, iamStrategyUrl} from "@/api/cloud/account/account";
-import {cloudPluginUrl, nativePluginUrl, pluginByIdUrl} from "@/api/system/system";
-import {serverAllBindListUrl, serverRuleListUrl, serverUnBindListUrl} from "@/api/k8s/server/server";
+import {cloudPluginUrl} from "@/api/system/system";
 import {RULE_GROUP_IMG} from "@/common/js/constants";
 
 //列表展示与隐藏
@@ -915,23 +912,7 @@ const columnOptions2 = [
         this.listVisible = true;
       },
       handleListSearch (item) {
-        if(item.type === 'server') {
-          this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-          let url = serverRuleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
-          this.viewResult = this.$post(url, this.ruleCondition, response => {
-            let data = response.data;
-            this.ruleListTotal = data.itemCount;
-            this.ruleForm = data.listObject;
-          });
-        } else if(item.type === 'k8s'){
-          this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-          let url = k8sRuleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
-          this.result = this.$post(url, this.ruleCondition, response => {
-            let data = response.data;
-            this.ruleListTotal = data.itemCount;
-            this.ruleForm = data.listObject;
-          });
-        } else {
+        if(item.type === 'cloud') {
           this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
           let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
           this.viewResult = this.$post(url, this.ruleCondition, response => {
@@ -1057,24 +1038,7 @@ const columnOptions2 = [
       },
       handleBind(item) {
         this.groupId = item.id;
-        if(item.type === 'server') {
-          this.viewResult = this.$get(serverUnBindListUrl + item.id,response => {
-            this.cloudData = [];
-            for(let data of response.data) {
-              this.cloudData.push({
-                key: data.id,
-                label: data.name
-              });
-            }
-            this.bindVisible = true;
-          });
-          this.viewResult = this.$get(serverAllBindListUrl + item.id,response => {
-            this.cloudValue = [];
-            for(let data of response.data) {
-              this.cloudValue.push(data.id);
-            }
-          });
-        } else {
+        if(item.type === 'cloud') {
           this.viewResult = this.$get(ruleUnBindListUrl + item.id,response => {
             this.cloudData = [];
             for(let data of response.data) {
@@ -1132,19 +1096,9 @@ const columnOptions2 = [
           }
         });
       },
-      getK8sPlugins () {
-        this.viewResult = this.$get(nativePluginUrl, response => {
-          this.plugins = response.data;
-        });
-      },
       changeType (form){
         if(form.type === 'cloud') {
           this.getPlugins();
-        } else if (form.type === 'k8s') {
-          this.getK8sPlugins();
-        } else {
-          form.pluginId = 'hummer-server-plugin';
-          this.changePlugin(form.pluginId);
         }
       },
       changePlugin (pluginId){

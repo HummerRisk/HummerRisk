@@ -3,23 +3,13 @@ import VueRouter from 'vue-router';
 import RouterSidebar from "./RouterSidebar";
 import Setting from "@/business/components/settings/router";
 import Account from "@/business/components/account/router";
-import Server from "@/business/components/server/router";
-import Image from "@/business/components/image/router";
 import Rule from "@/business/components/rule/router";
 import Resource from "@/business/components/resource/router";
 import Dashboard from "@/business/components/dashboard/router";
-import Task from "@/business/components/task/router";
-import TaskReport from "@/business/components/taskReport/router";
 import Oss from "@/business/components/oss/router";
 import Report from "@/business/components/report/router";
-import K8s from "@/business/components/k8s/router";
-import K8sSituation from "@/business/components/k8sSituation/router";
 import CloudSituation from "@/business/components/cloudSituation/router";
-import Code from "@/business/components/code/router";
-import Sbom from "@/business/components/sbom/router";
 import Log from "@/business/components/event/router";
-import Config from "@/business/components/config/router";
-import Fs from "@/business/components/fs/router";
 import ReportCenter from "@/business/components/reportcenter/router";
 import {signoutUrl} from "@/api/auth/auth";
 import axios from "axios";
@@ -37,23 +27,14 @@ const router = new VueRouter({
     },
     Setting,
     Account,
-    Server,
-    Image,
     Rule,
     Resource,
-    Task,
-    TaskReport,
     Oss,
     Dashboard,
     Report,
-    K8s,
-    K8sSituation,
     CloudSituation,
-    Code,
-    Sbom,
     Log,
     Config,
-    Fs,
     ReportCenter,
   ]
 });

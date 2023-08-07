@@ -409,8 +409,6 @@ ALTER TABLE `rule_group` ADD `xpack_tag` tinyint DEFAULT 0 COMMENT 'xpack 规则
 
 update `rule_group` set `xpack_tag` = 0;
 
-ALTER TABLE `server_rule` ADD `xpack_tag` tinyint DEFAULT 0 COMMENT 'xpack 规则标志';
-
 SELECT id INTO @groupId1 FROM rule_group WHERE name = 'Aliyun 等保预检';
 SELECT id INTO @groupId2 FROM rule_group WHERE name = 'Aliyun Redis 最佳安全实践';
 SELECT id INTO @groupId3 FROM rule_group WHERE name = 'Aliyun Ecs 最佳安全实践';
