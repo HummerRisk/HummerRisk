@@ -27,7 +27,6 @@ UPDATE plugin SET order_ = 10 WHERE id = 'hummer-huoshan-plugin';
 UPDATE plugin SET order_ = 11 WHERE id = 'hummer-qingcloud-plugin';
 UPDATE plugin SET order_ = 12 WHERE id = 'hummer-ucloud-plugin';
 UPDATE plugin SET order_ = 13 WHERE id = 'hummer-qiniu-plugin';
-UPDATE plugin SET order_ = 14 WHERE id = 'hummer-k8s-plugin';
 
 ALTER TABLE plugin ADD type varchar(32) DEFAULT 'cloud' COMMENT '插件类型';
 
@@ -44,10 +43,3 @@ UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-huoshan-plugin';
 UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-qingcloud-plugin';
 UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-ucloud-plugin';
 UPDATE plugin SET type = 'cloud' WHERE id = 'hummer-qiniu-plugin';
-UPDATE plugin SET type = 'native' WHERE id = 'hummer-k8s-plugin';
-
-INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-rancher-plugin', 'Rancher', 'rancher.png', concat(unix_timestamp(now()), '001'), 'native', 18, 'native');
-INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-openshift-plugin', 'OpenShift', 'openshift.png', concat(unix_timestamp(now()), '001'), 'native', 19, 'native');
-INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-kubesphere-plugin', 'KubeSphere', 'kubesphere.png', concat(unix_timestamp(now()), '001'), 'native', 20, 'native');
-
-

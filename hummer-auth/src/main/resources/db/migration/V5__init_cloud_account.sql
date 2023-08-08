@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS plugin (
 insert into `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-qcloud-plugin', '腾讯云', 'qcloud.png', concat(unix_timestamp(now()), '001'), 'custodian');
 insert into `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-aliyun-plugin', '阿里云', 'aliyun.png', concat(unix_timestamp(now()), '001'), 'custodian');
 insert into `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-huawei-plugin', '华为云', 'fusion.png', concat(unix_timestamp(now()), '001'), 'custodian');
-insert into `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-k8s-plugin', 'Kubernetes', 'k8s.png', concat(unix_timestamp(now()), '001'), 'custodian');
 insert into `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-huoshan-plugin', '火山引擎', 'huoshan2.png', concat(unix_timestamp(now()), '001'), 'custodian');
 insert into `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-baidu-plugin', '百度云', 'baidu.png', concat(unix_timestamp(now()), '001'), 'custodian');
 insert into `plugin` ( `id`, `name`, `icon`, `update_time`, `scan_type`) values ('hummer-qiniu-plugin', '七牛云', 'qiniu.png', concat(unix_timestamp(now()), '001'), 'custodian');

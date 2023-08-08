@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `webhook`
 -- cloud rule
 -- -----------------
 
-INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-jdcloud-plugin', '京东云', 'jdcloud.png', concat(unix_timestamp(now()), '003'), 'custodian', 21, 'cloud');
+INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-jdcloud-plugin', '京东云', 'jdcloud.png', concat(unix_timestamp(now()), '003'), 'custodian', 14, 'cloud');
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('JDCloud 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-jdcloud-plugin', 1);
 SELECT @groupId3 := LAST_INSERT_ID();
@@ -263,7 +263,7 @@ INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('2e26fe00-d8e
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('be1eddc5-9905-4280-8ae1-b841c68ce483', '10');
 INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('be1eddc5-9905-4280-8ae1-b841c68ce483', '13');
 
-INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-ksyun-plugin', '金山云', 'ksyun.png', concat(unix_timestamp(now()), '003'), 'custodian', 22, 'cloud');
+INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-ksyun-plugin', '金山云', 'ksyun.png', concat(unix_timestamp(now()), '003'), 'custodian', 15, 'cloud');
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Ksyun 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-ksyun-plugin', 1);
 SELECT @groupId3 := LAST_INSERT_ID();
