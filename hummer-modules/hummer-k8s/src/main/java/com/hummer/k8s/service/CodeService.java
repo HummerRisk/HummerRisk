@@ -437,9 +437,9 @@ public class CodeService {
             String token = "", branch = "";
             if (codeCredential != null && StringUtils.isNotEmpty(codeCredential.getToken())) {
                 if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITHUB_TOKEN)) {
-                    token = "GITHUB_TOKEN='" + codeCredential.getToken() + "';";
+                    token = "export GITHUB_TOKEN='" + codeCredential.getToken() + "';";
                 } else if (StringUtils.equals(code.getPluginIcon(), CodeConstants.GITLAB_TOKEN)) {
-                    token = "GITLAB_TOKEN='" + codeCredential.getToken() + "';";
+                    token = "unset GITHUB_TOKEN;export GITLAB_TOKEN='" + codeCredential.getToken() + "';";
                 }
             }
             if (codeCredential != null && StringUtils.isNotEmpty(codeCredential.getBranch())) {
