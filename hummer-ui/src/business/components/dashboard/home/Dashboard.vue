@@ -17,13 +17,7 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
-      <cloud-server-risk/>
-    </el-row>
-    <el-row :gutter="20">
-      <k8s-image-risk/>
-    </el-row>
-    <el-row :gutter="20">
-      <bottom-info/>
+      <cloud-rule-risk/>
     </el-row>
   </main-container>
 </template>
@@ -33,9 +27,7 @@ import MainContainer from "@/business/components/common/components/MainContainer
 import EntryInfo from "@/business/components/dashboard/home/EntryInfo";
 import AssetsInfo from "@/business/components/dashboard/home/AssetsInfo";
 import ScoreInfo from "@/business/components/dashboard/home/ScoreInfo";
-import BottomInfo from "@/business/components/dashboard/home/BottomInfo";
-import CloudServerRisk from "@/business/components/dashboard/home/CloudServerRisk";
-import K8sImageRisk from "@/business/components/dashboard/home/K8sImageRisk";
+import CloudRuleRisk from "@/business/components/dashboard/home/CloudRuleRisk.vue";
 import UserInfo from "@/business/components/dashboard/home/UserInfo";
 
 /* eslint-disable */
@@ -46,9 +38,7 @@ export default {
     EntryInfo,
     AssetsInfo,
     ScoreInfo,
-    BottomInfo,
-    CloudServerRisk,
-    K8sImageRisk,
+    CloudRuleRisk,
   },
   data() {
     return {

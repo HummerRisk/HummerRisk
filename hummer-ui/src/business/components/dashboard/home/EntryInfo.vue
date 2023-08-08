@@ -18,19 +18,19 @@
                   <el-button size="small" @click="goResource('cloud')"><i class="iconfont icon-guanyuyunguanjia"></i> {{ $t('commons.cloud_entry') }}</el-button>
                 </el-col>
                 <el-col :span="4">
-                  <el-button size="small" @click="goResource('k8s')"><i class="iconfont icon-adsyunyuanshengshujuku"></i> {{ $t('commons.k8s_entry') }}</el-button>
+                  <el-button size="small" @click="goResource('cloudSituation')"><i class="iconfont icon-taishifenxi_0"></i> {{ $t('account.resource_situation') }}</el-button>
                 </el-col>
                 <el-col :span="4">
-                  <el-button size="small" @click="goResource('server')"><i class="iconfont icon-fuwuqi"></i> {{ $t('commons.server_entry') }}</el-button>
+                  <el-button size="small" @click="goResource('ruleGroup')"><i class="iconfont icon-guizeyinqing"></i> {{ $t('rule.rule_group') }}</el-button>
                 </el-col>
                 <el-col :span="4">
-                  <el-button size="small" @click="goResource('image')"><i class="iconfont icon-jingxiang2"></i> {{ $t('commons.image_entry') }}</el-button>
+                  <el-button size="small" @click="goResource('result')"><i class="iconfont icon-jishufuwu"></i> {{ $t('resource.cloud_resource_result') }}</el-button>
                 </el-col>
                 <el-col :span="4">
-                  <el-button size="small" @click="goResource('code')"><i class="iconfont icon-yuandaimaxiayoudaima"></i> {{ $t('commons.code_entry') }}</el-button>
+                  <el-button size="small" @click="goResource('cloudReport')"><i class="iconfont icon-shujujianguan"></i> {{ $t('resource.cloud_resource_statistics') }}</el-button>
                 </el-col>
                 <el-col :span="4">
-                  <el-button size="small" @click="goResource('fs')"><i class="iconfont icon-wendang"></i> {{ $t('commons.fs_entry') }}</el-button>
+                  <el-button size="small" @click="goResource('event')"><i class="iconfont icon-anquanhegui"></i> {{ $t('event.event_sync') }}</el-button>
                 </el-col>
               </el-row>
             </el-col>
@@ -72,29 +72,29 @@ export default {
             path: '/account/cloudaccount'
           }).catch(error => error);
           break;
-        case 'k8s':
+        case 'cloudSituation':
           this.$router.push({
-            path: '/k8s/k8s'
+            path: '/cloudSituation/cloudSituation'
           }).catch(error => error);
           break;
-        case 'server':
+        case 'ruleGroup':
           this.$router.push({
-            path: '/server/server'
+            path: '/rule/ruleGroup'
           }).catch(error => error);
           break;
-        case 'image':
+        case 'result':
           this.$router.push({
-            path: '/image/image'
+            path: '/resource/result'
           }).catch(error => error);
           break;
-        case 'code':
+        case 'cloudReport':
           this.$router.push({
-            path: '/code/code'
+            path: '/reportcenter/cloudReport'
           }).catch(error => error);
           break;
-        case 'fs':
+        case 'event':
           this.$router.push({
-            path: '/fs/fs'
+            path: '/event/sync'
           }).catch(error => error);
           break;
       }

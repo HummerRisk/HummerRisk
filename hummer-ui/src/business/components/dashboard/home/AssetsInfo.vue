@@ -15,11 +15,11 @@
           <el-row>
             <el-col :span="24">
               <el-row class="lb-row-txt-white">
-                <el-col :span="6">
+                <el-col :span="12">
                   <!-- cloud -->
                   <el-card class="cloud-card">
                     <div slot="header" class="clearfix">
-                      <span>{{ $t('commons.cloud_scan') }}</span>
+                      <span>{{ $t('commons.cloud_manage') }}</span>
                     </div>
                     <div class="text item">
                       <el-row>
@@ -54,229 +54,45 @@
                   </el-card>
                   <!-- cloud -->
                 </el-col>
-                <el-col :span="6">
-                  <!-- k8s & server -->
+                <el-col :span="12">
+                  <!-- cloud -->
                   <el-card class="cloud-card">
                     <div slot="header" class="clearfix">
-                      <span>{{ $t('commons.k8s_scan') }} & {{ $t('dashboard.server_scan') }}</span>
+                      <span>{{ $t('commons.cloud_scan') }}</span>
                     </div>
                     <div class="text item">
-                      <el-row>
-                        <el-col :span="8">
-                          <h1 class="cloud-h4">{{ k8sInfo.clouds }}</h1>
+                      <el-row style="margin: 10px;">
+                        <el-col :span="16">
+                          {{ $t('resource.status') }}
                         </el-col>
                         <el-col :span="8">
-                          <h1 class="cloud-h3">{{ k8sInfo.accounts }}</h1>
-                        </el-col>
-                        <el-col :span="8">
-                          <h1 class="cloud-h1">{{ k8sInfo.resources }}</h1>
+                          {{ $t('commons.cloud_scan') }}
                         </el-col>
                       </el-row>
-                      <el-row>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_platform') }}</h5>
+
+                      <el-row style="margin: 10px;" v-for="data in tableData" :key="data.id">
+                        <el-col :span="16">
+                          <el-button plain size="mini" type="primary" class="el-btn" v-if="data.status === 'APPROVED'">
+                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                          </el-button>
+                          <el-button plain size="mini" type="success" class="el-btn" v-if="data.status === 'FINISHED'">
+                            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                          </el-button>
+                          <el-button plain size="mini" type="danger" class="el-btn" v-if="data.status === 'ERROR'">
+                            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                          </el-button>
+                          <el-button plain size="mini" type="warning" class="el-btn" v-if="data.status === 'WARNING'">
+                            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                          </el-button>
                         </el-col>
                         <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_account') }}</h5>
-                        </el-col>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('commons.k8s_resource') }}</h5>
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(item, index) in k8sInfo.plugins" :key="index" style="margin-top: 8px;">
-                          <img v-if="item.exist" :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 25px; height: 25px; vertical-align:middle" alt=""/>
-                          <img v-if="!item.exist" :src="require(`@/assets/img/platform/dark/${item.icon}`)" style="width: 25px; height: 25px; vertical-align:middle" alt=""/>
-                        </el-col>
-                      </el-row>
-                    </div>
-                    <div class="cs-scan">
-                      <span></span>
-                    </div>
-                    <div class="text item">
-                      <el-row>
-                        <el-col :span="8">
-                          <h1 class="cloud-h5">{{ serverInfo.param1 }}</h1>
-                        </el-col>
-                        <el-col :span="8">
-                          <h1 class="cloud-h4">{{ serverInfo.param2 }}</h1>
-                        </el-col>
-                        <el-col :span="8">
-                          <h1 class="cloud-h4">{{ serverInfo.param3 }}</h1>
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('server.server_1') }}{{ $t('server.public_key') }}</h5>
-                        </el-col>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ 'Linux' }}</h5>
-                        </el-col>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ 'Windows' }}</h5>
+                          <span v-if="data.status === 'APPROVED'" class="scan-span">{{ data.cloud }}</span>
+                          <span v-else class="scan-span-ing">{{ data.cloud }}</span>
                         </el-col>
                       </el-row>
                     </div>
                   </el-card>
-                  <!-- k8s -->
-                </el-col>
-                <el-col :span="6">
-                  <!-- image & config -->
-                  <el-card class="cloud-card">
-                    <div slot="header" class="clearfix">
-                      <span>{{ $t('dashboard.image_scan') }} & {{ $t('dashboard.config_scan') }}</span>
-                    </div>
-                    <div class="text item">
-                      <el-row>
-                        <el-col :span="8">
-                          <h1 class="cloud-h5">{{ imageInfo.param1 }}</h1>
-                        </el-col>
-                        <el-col :span="8">
-                          <h1 class="cloud-h1">{{ imageInfo.param2 }}</h1>
-                        </el-col>
-                        <el-col :span="8">
-                          <h1 class="cloud-h3">{{ imageInfo.param3 }}</h1>
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('image.image_repo') }}</h5>
-                        </el-col>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('k8s.image') }}</h5>
-                        </el-col>
-                        <el-col :span="8">
-                          <h5 class="cloud-h2">{{ $t('dashboard.image_scan') }}</h5>
-                        </el-col>
-                      </el-row>
-                      <el-row style="margin-top: 4px;">
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                      </el-row>
-                    </div>
-                    <div class="cs-scan">
-                      <span></span>
-                    </div>
-                    <div class="text item">
-                      <el-row>
-                        <el-col :span="12">
-                          <h1 class="cloud-h1">{{ configInfo.param1 }}</h1>
-                        </el-col>
-                        <el-col :span="12">
-                          <h1 class="cloud-h3">{{ configInfo.param2 }}</h1>
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :span="12">
-                          <h5 class="cloud-h2">{{ $t('config.config_settings') }}</h5>
-                        </el-col>
-                        <el-col :span="12">
-                          <h5 class="cloud-h2">{{ $t('dashboard.config_scan') }}</h5>
-                        </el-col>
-                      </el-row>
-                      <el-row style="margin-top: 4px;">
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                      </el-row>
-                    </div>
-                  </el-card>
-                  <!-- image & config -->
-                </el-col>
-                <el-col :span="6">
-                  <!-- code & fs -->
-                  <el-card class="cloud-card">
-                    <div slot="header" class="clearfix">
-                      <span>{{ $t('dashboard.code_scan') }} & {{ $t('dashboard.fs_scan') }}</span>
-                    </div>
-                    <div class="text item">
-                      <el-row>
-                        <el-col :span="12">
-                          <h1 class="cloud-h1">{{ codeInfo.param1 }}</h1>
-                        </el-col>
-                        <el-col :span="12">
-                          <h1 class="cloud-h3">{{ codeInfo.param2 }}</h1>
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :span="12">
-                          <h5 class="cloud-h2">{{ $t('code.code') }}</h5>
-                        </el-col>
-                        <el-col :span="12">
-                          <h5 class="cloud-h2">{{ $t('dashboard.code_scan') }}</h5>
-                        </el-col>
-                      </el-row>
-                      <el-row style="margin-top: 4px;">
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                      </el-row>
-                    </div>
-                    <div class="cs-scan">
-                      <span></span>
-                    </div>
-                    <div class="text item">
-                      <el-row>
-                        <el-col :span="12">
-                          <h1 class="cloud-h1">{{ fsInfo.param1 }}</h1>
-                        </el-col>
-                        <el-col :span="12">
-                          <h1 class="cloud-h3">{{ fsInfo.param2 }}</h1>
-                        </el-col>
-                      </el-row>
-                      <el-row>
-                        <el-col :span="12">
-                          <h5 class="cloud-h2">{{ $t('oss.object_file') }}</h5>
-                        </el-col>
-                        <el-col :span="12">
-                          <h5 class="cloud-h2">{{ $t('dashboard.fs_scan') }}</h5>
-                        </el-col>
-                      </el-row>
-                      <el-row style="margin-top: 4px;">
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #8B0000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF4D4D;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #FF8000;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                        <el-col :span="6">
-                          <div style="height: 8px;background-color: #336D9F;margin: 1px;border-radius: 1px;"></div>
-                        </el-col>
-                      </el-row>
-                    </div>
-                  </el-card>
-                  <!-- code & fs -->
+                  <!-- cloud -->
                 </el-col>
               </el-row>
             </el-col>
@@ -289,29 +105,21 @@
 
 <script>
 import Container from "../.././common/components/Container";
-import {
-  cloudInfoUrl, codeInfoUrl,
-  configInfoUrl, fsInfoUrl,
-  imageInfoUrl,
-  k8sInfoUrl,
-  serverInfoUrl,
-} from "@/api/cloud/dashboard/dashboard";
+import BottomInfo from "@/business/components/dashboard/home/BottomInfo";
+import { cloudInfoUrl } from "@/api/cloud/dashboard/dashboard";
+import { topScanInfoUrl } from "@/api/cloud/dashboard/dashboard";
 
 /* eslint-disable */
 export default {
   components: {
     Container,
+    BottomInfo,
   },
   data() {
     return {
       result: {},
       cloudInfo: {},
-      k8sInfo: {},
-      serverInfo: {},
-      imageInfo: {},
-      configInfo: {},
-      codeInfo: {},
-      fsInfo: {},
+      tableData: [],
     }
   },
   methods: {
@@ -320,29 +128,9 @@ export default {
         let data = response.data;
         this.cloudInfo = data;
       });
-      this.result = this.$post(k8sInfoUrl, {}, response => {
+      this.result = this.$get(topScanInfoUrl, response => {
         let data = response.data;
-        this.k8sInfo = data;
-      });
-      this.result = this.$post(serverInfoUrl, {}, response => {
-        let data = response.data;
-        this.serverInfo = data;
-      });
-      this.result = this.$post(imageInfoUrl, {}, response => {
-        let data = response.data;
-        this.imageInfo = data;
-      });
-      this.result = this.$post(configInfoUrl, {}, response => {
-        let data = response.data;
-        this.configInfo = data;
-      });
-      this.result = this.$post(codeInfoUrl, {}, response => {
-        let data = response.data;
-        this.codeInfo = data;
-      });
-      this.result = this.$post(fsInfoUrl, {}, response => {
-        let data = response.data;
-        this.fsInfo = data;
+        this.tableData = data;
       });
     },
   },

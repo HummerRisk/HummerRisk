@@ -19,9 +19,9 @@
     <el-col :span="8" style="padding-left: 0;">
       <el-card class="table-card">
         <template v-slot:header>
-          <span class="title">{{ $t('dashboard.server_top10_risk') }}</span>
+          <span class="title">{{ $t('rule.rule') + $t('resource.i18n_not_compliance') }}</span>
         </template>
-        <server-risk-chart/>
+        <rule-risk-chart/>
       </el-card>
     </el-col>
   </container>
@@ -31,13 +31,13 @@
 import CloudResourceChart from "@/business/components/dashboard/head/CloudResourceChart";
 import CloudRiskChart from "@/business/components/dashboard/head/CloudRiskChart";
 import Container from "@/business/components/common/components/Container";
-import ServerRiskChart from "@/business/components/dashboard/head/ServerRiskChart";
+import RuleRiskChart from "@/business/components/dashboard/head/RuleRiskChart.vue";
 
 /* eslint-disable */
 export default {
   components: {
     CloudResourceChart,
-    ServerRiskChart,
+    RuleRiskChart,
     Container,
     CloudRiskChart,
   },
