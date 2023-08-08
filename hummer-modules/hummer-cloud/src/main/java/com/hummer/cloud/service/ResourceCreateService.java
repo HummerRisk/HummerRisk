@@ -284,11 +284,7 @@ public class ResourceCreateService {
     private void createResource(CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask) throws Exception {
         switch (cloudTask.getScanType()) {
             case "custodian":
-                if (systemProviderService.license()) {
-                    createScannerResource(taskItem, cloudTask);
-                    break;
-                }
-                createCustodianResource(taskItem, cloudTask);
+                createScannerResource(taskItem, cloudTask);
                 break;
             case "prowler":
                 prowlerService.createProwlerResource(taskItem, cloudTask, null);//云账号检测
