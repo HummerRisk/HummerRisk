@@ -2,14 +2,14 @@
 export default {
   path: "/rule",
   name: "Rule",
-  redirect: "/rule/rule",
+  redirect: "/rule/ruleGroup",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ "@/business/components/rule/base")
   },
   children: [
     {
       path: "rule",
-      name: "rule",
+      name: "cloudRule",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),
     },
     {
@@ -19,8 +19,8 @@ export default {
     },
     {
       path: "ruleGroup",
-      name: "ruleGroup",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleGroup"),
+      name: "CloudRuleGroup",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/RuleGroup"),
     },
     {
       path: "regulation",

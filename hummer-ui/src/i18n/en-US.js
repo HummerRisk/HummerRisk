@@ -813,6 +813,8 @@ export default {
     scan_vuln_search: 'Log in to the national information security vulnerability database and query the detected vulnerabilities',
     cloud_resource_detail_result: 'Resource details list',
     cloud_resource_detail: 'Resource Details',
+    cloud_resource_statistics: 'Cloud resource compliance analysis',
+    cloud_report_statistics: 'Cloud resource integration report',
   },
   account: {
     cloud_account_setting:'Cloud account settings',

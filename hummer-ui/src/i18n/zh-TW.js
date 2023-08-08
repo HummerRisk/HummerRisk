@@ -813,6 +813,8 @@ export default {
     scan_vuln_search: '登錄國家信息安全漏洞庫，查詢檢測出的漏洞',
     cloud_resource_detail_result: '資源詳情列表',
     cloud_resource_detail: '資源詳情',
+    cloud_resource_statistics: '雲資源合規分析',
+    cloud_report_statistics: '雲資源整合報告',
   },
   account: {
     cloud_account_setting: '雲賬號設置',

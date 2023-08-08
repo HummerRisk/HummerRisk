@@ -13,11 +13,6 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/report/home/List"),
     },
     {
-      path: "cloudHistory",
-      name: "cloudHistory",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/History"),
-    },
-    {
       path: 'accountOverview',
       name: 'cloudOverview',
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),

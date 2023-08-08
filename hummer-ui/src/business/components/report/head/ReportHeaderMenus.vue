@@ -8,10 +8,6 @@
             {{ $t("resource.cloud_statistics") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/report/cloudHistory'">
-            {{ $t("account.history") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/report/accountOverview'">
             {{ $t("account.statistical_analysis") }}
           </el-menu-item>

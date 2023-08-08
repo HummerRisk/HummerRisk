@@ -813,6 +813,8 @@ export default {
     scan_vuln_search: '登录国家信息安全漏洞库，查询检测出的漏洞',
     cloud_resource_detail_result: '资源详情列表',
     cloud_resource_detail: '资源详情',
+    cloud_resource_statistics: '云资源合规分析',
+    cloud_report_statistics: '云资源整合报告',
   },
   account: {
     cloud_account_setting: '云账号设置',

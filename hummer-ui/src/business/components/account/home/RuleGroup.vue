@@ -835,7 +835,7 @@ const columnOptions2 = [
           this.scanVisible = false;
           this.$success(this.$t('account.i18n_hr_create_success'));
           this.$router.push({
-            path: '/account/result',
+            path: '/resource/result',
           }).catch(error => error);
         });
       },

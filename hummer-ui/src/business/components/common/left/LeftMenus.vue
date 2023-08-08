@@ -22,7 +22,7 @@
           <i class="iconfont icon-taishifenxi_0"></i>
           <span slot="title">{{ $t('commons.resource_situation') }}</span>
         </el-menu-item>
-        <el-menu-item index="/account" onselectstart="return false">
+        <el-menu-item index="/rule" onselectstart="return false">
           <i class="iconfont icon-guizeyinqing"></i>
           <span slot="title">{{ $t('commons.cloud_scan') }}</span>
         </el-menu-item>

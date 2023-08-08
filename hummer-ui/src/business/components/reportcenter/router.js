@@ -2,7 +2,7 @@
 export default {
   name: "ReportCenter",
   path: "/reportcenter",
-  redirect: "/reportcenter/list",
+  redirect: "/reportcenter/cloudReport",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/reportcenter/base')
   },
@@ -11,6 +11,11 @@ export default {
       path: "list",
       name: "ReportCenterList",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/reportcenter/home/List'),
+    },
+    {
+      path: "cloudReport",
+      name: "cloudReport",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/report/home/List"),
     },
   ]
 }
