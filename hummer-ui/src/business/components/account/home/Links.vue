@@ -5,7 +5,7 @@
       placement="top-start"
       width="900"
       trigger="hover"
-      v-if="ossList.length > 0 || cloudEventSyncLogList.length > 0 || imageRepoList.length > 0">
+      v-if="ossList.length > 0 || cloudEventSyncLogList.length > 0">
       <div>
         <el-row v-if="ossList.length > 0"><h3>{{ $t('oss.oss_setting') }}</h3></el-row>
         <el-table v-if="ossList.length > 0" :border="true" :stripe="true" :data="ossList" class="adjust-table table-content">
@@ -112,40 +112,12 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-row v-if="imageRepoList.length > 0" ><h3>{{ $t('image.image_repo') }}</h3></el-row>
-        <el-table v-if="imageRepoList.length > 0" :border="true" :stripe="true" :data="imageRepoList" class="adjust-table table-content">
-          <el-table-column type="index" min-width="50"/>
-          <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="160">
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/repo/${scope.row.pluginIcon}`)" style="width: 24px; height: 24px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.name }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="220" v-slot:default="scope">
-            {{ scope.row.repo?scope.row.repo:"--" }}
-          </el-table-column>
-          <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="110" v-slot:default="scope">
-            {{ scope.row.userName?scope.row.userName:"--" }}
-          </el-table-column>
-          <el-table-column prop="status" min-width="130" :label="$t('image.image_repo_status')">
-            <template v-slot:default="{row}">
-              <image-status :row="row"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="160">
-            <template v-slot:default="scope">
-              <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
       </div>
-      <el-button v-if="ossList.length > 0 || cloudEventSyncLogList.length > 0 || imageRepoList.length > 0" slot="reference" size="mini" type="primary" plain @click="showLinks">
+      <el-button v-if="ossList.length > 0 || cloudEventSyncLogList.length > 0" slot="reference" size="mini" type="primary" plain @click="showLinks">
         {{ $t('vis.linked') }}
       </el-button>
     </el-popover>
-    <el-button v-if="ossList.length == 0 && cloudEventSyncLogList.length == 0 && imageRepoList.length == 0" slot="reference" size="mini" type="info" plain>
+    <el-button v-if="ossList.length == 0 && cloudEventSyncLogList.length == 0" slot="reference" size="mini" type="info" plain>
       {{ $t('vis.not_linked') }}
     </el-button>
 
@@ -267,34 +239,6 @@
           </el-button>
         </el-table-column>
       </el-table>
-      <el-row v-if="imageRepoList.length > 0"><h3>{{ $t('image.image_repo') }}</h3></el-row>
-      <el-table v-if="imageRepoList.length > 0" :border="true" :stripe="true" :data="imageRepoList" class="adjust-table table-content">
-        <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="name" :label="$t('image.image_repo_name')" min-width="160">
-          <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/repo/${scope.row.pluginIcon}`)" style="width: 24px; height: 24px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.name }}
-              </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="repo" :label="$t('image.image_repo_url')" min-width="220" v-slot:default="scope">
-          {{ scope.row.repo?scope.row.repo:"--" }}
-        </el-table-column>
-        <el-table-column prop="userName" :label="$t('image.image_repo_user_name')" min-width="110" v-slot:default="scope">
-          {{ scope.row.userName?scope.row.userName:"--" }}
-        </el-table-column>
-        <el-table-column prop="createTime" :label="$t('commons.create_time')" min-width="160">
-          <template v-slot:default="scope">
-            <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="120" :label="$t('commons.fast_entry')" fixed="right">
-          <el-button plain size="mini" type="success" @click="goRepo()">
-            <i class="el-icon-right"></i> {{ $t('image.image_repo') }}
-          </el-button>
-        </el-table-column>
-      </el-table>
     </el-drawer>
     <!--links-->
   </div>
@@ -320,7 +264,6 @@
         accountId: '',
         ossList: [],
         cloudEventSyncLogList: [],
-        imageRepoList: [],
         linksVisible: false,
         direction: 'rtl',
       }
@@ -332,7 +275,6 @@
       init() {
         this.ossList = this.row.ossList;
         this.cloudEventSyncLogList = this.row.cloudEventSyncLogList;
-        this.imageRepoList = this.row.imageRepoList;
       },
       showLinks() {
         this.linksVisible =  true;
@@ -348,11 +290,6 @@
       goEvent() {
         this.$router.push({
           path: '/event/sync'
-        }).catch(error => error);
-      },
-      goRepo() {
-        this.$router.push({
-          path: '/image/imageRepo'
         }).catch(error => error);
       },
     },
