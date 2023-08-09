@@ -10,8 +10,8 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.SystemParameterService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,12 +43,6 @@ public class SystemParameterController {
     @PostMapping("/edit/dingding")
     public void editDingding(@RequestBody List<SystemParameter> systemParameter) {
         systemParameterService.editDingding(systemParameter);
-    }
-
-    @Operation(summary = "编辑检测参数设置")
-    @PostMapping("/edit/scanSetting")
-    public void editScanSetting(@RequestBody List<SystemParameter> systemParameter) {
-        systemParameterService.edit(systemParameter);
     }
 
     @Operation(summary = "测试连接")
@@ -87,13 +81,6 @@ public class SystemParameterController {
     @GetMapping("/dingding/info")
     public List<SystemParameter> dingdingInfo() {
         return systemParameterService.dingdingInfo(ParamConstants.Classify.DINGDING.getValue());
-    }
-
-    @I18n
-    @Operation(summary = "检测参数设置")
-    @GetMapping("/scanSetting/info")
-    public List<SystemParameter> scanSettingInfo() {
-        return systemParameterService.scanSettingInfo(ParamConstants.Classify.SCAN.getValue());
     }
 
     @I18n

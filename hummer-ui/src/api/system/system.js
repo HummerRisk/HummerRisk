@@ -49,14 +49,6 @@ export const noticeSaveMessageTaskUrl = "/system/notice/save/message/task";
 
 export const noticeDeleteMessageUrl = "/system/notice/delete/message/";
 
-export const scanSettingInfoUrl = "/system/system/scanSetting/info";
-
-export const scanSettingEditUrl = "/system/system/edit/scanSetting";
-
-export const updateVulnDbUrl = "/system/system/updateVulnDb";
-
-export const updateVulnDbOfflineUrl = "/system/system/updateVulnDbOffline";
-
 export const searchSystemUrl = "/system/system/searchSystem";
 
 export const updateSystemUrl = "/system/system/updateSystem";
