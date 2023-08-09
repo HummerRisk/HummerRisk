@@ -414,39 +414,6 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
-    //社区版调用
-    private void createCustodianResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
-                                          CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource,
-                                          String operation, LoginUser loginUser) {
-        try {
-            String dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + resourceWithBLOBs.getId(), "policy.yml", false);
-            String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-            if (!resultStr.isEmpty() && !resultStr.contains("INFO")) {
-                HRException.throwException(Translator.get("i18n_compliance_rule_error") + ": " + resultStr);
-            }
-            CommandUtils.commonExecCmdWithResult(command, dirPath);//第一次执行action会修复资源，但是会返回修复之前的数据回来。所以此处再执行一次
-            String custodianRun = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
-            String metadata = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.METADATA_RESULT_FILE);
-            String resources = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
-
-            resourceWithBLOBs.setCustodianRunLog(custodianRun);
-            resourceWithBLOBs.setMetadata(metadata);
-            resourceWithBLOBs.setResources(resources);
-
-            JSONArray jsonArray = parseArray(resourceWithBLOBs.getResources());
-            resourceWithBLOBs.setReturnSum((long) jsonArray.size());
-            resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
     //企业版调用
     private void createScannerResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
                                           CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource,
