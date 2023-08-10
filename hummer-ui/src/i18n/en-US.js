@@ -631,6 +631,7 @@ export default {
   },
   rule: {
     rule:'Scan Rule',
+    rule_manage: 'Rule management',
     cloud_rule: 'Cloud resource scanning rule',
     rule_detail:'Rule information',
     rule_name:'Rule name',

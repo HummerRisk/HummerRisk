@@ -622,13 +622,13 @@ import FakeProgress from "fake-progress";
                         }, 1000);
                         this.timer = setInterval(this.getStatus, 5000);
 
-                      }, Math.round(Math.random() * 9000 ) + 90000);
+                      }, Math.round(Math.random() * 9000 ) + 30000);
 
-                    }, Math.round(Math.random() * 9000 ) + 60000);
+                    }, Math.round(Math.random() * 9000 ) + 30000);
 
-                  }, Math.round(Math.random() * 9000 ) + 40000);
+                  }, Math.round(Math.random() * 9000 ) + 20000);
 
-                }, Math.round(Math.random() * 9000 ) + 20000);
+                }, Math.round(Math.random() * 9000 ) + 10000);
 
               }, Math.round(Math.random() * 9000 ) + 1000);
 

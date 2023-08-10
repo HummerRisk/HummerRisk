@@ -631,6 +631,7 @@ export default {
   },
   rule: {
     rule: '檢測規則',
+    rule_manage: '規則管理',
     cloud_rule: '雲資源檢測規則',
     rule_detail: '規則信息',
     rule_name: '規則名稱',

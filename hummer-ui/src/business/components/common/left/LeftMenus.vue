@@ -24,7 +24,7 @@
         </el-menu-item>
         <el-menu-item index="/rule" onselectstart="return false">
           <i class="iconfont icon-guizeyinqing"></i>
-          <span slot="title">{{ $t('commons.cloud_scan') }}</span>
+          <span slot="title">{{ $t('rule.rule_manage') }}</span>
         </el-menu-item>
         <el-menu-item index="/resource" onselectstart="return false">
           <i class="iconfont icon-jishufuwu"></i>
