@@ -112,42 +112,6 @@ public class PdfReport {
         cloudImage.setAlignment(Image.ALIGN_CENTER);
         cloudImage.scalePercent(21); //依照比例缩放
 
-        // 添加K8s检测图片
-        InputStream k8sIn = this.getClass().getResourceAsStream("/image/k8s.png");
-        Image k8sImage = Image.getInstance(k8sIn.readAllBytes());
-        k8sImage.setAlignment(Image.ALIGN_CENTER);
-        k8sImage.scalePercent(21); //依照比例缩放
-
-        // 添加部署检测图片
-        InputStream configIn = this.getClass().getResourceAsStream("/image/config.png");
-        Image configImage = Image.getInstance(configIn.readAllBytes());
-        configImage.setAlignment(Image.ALIGN_CENTER);
-        configImage.scalePercent(21); //依照比例缩放
-
-        // 添加主机检测图片
-        InputStream serverIn = this.getClass().getResourceAsStream("/image/server.png");
-        Image serverImage = Image.getInstance(serverIn.readAllBytes());
-        serverImage.setAlignment(Image.ALIGN_CENTER);
-        serverImage.scalePercent(21); //依照比例缩放
-
-        // 添加镜像检测图片
-        InputStream imageIn = this.getClass().getResourceAsStream("/image/image.png");
-        Image imageImage = Image.getInstance(imageIn.readAllBytes());
-        imageImage.setAlignment(Image.ALIGN_CENTER);
-        imageImage.scalePercent(21); //依照比例缩放
-
-        // 添加源码检测图片
-        InputStream codeIn = this.getClass().getResourceAsStream("/image/code.png");
-        Image codeImage = Image.getInstance(codeIn.readAllBytes());
-        codeImage.setAlignment(Image.ALIGN_CENTER);
-        codeImage.scalePercent(21); //依照比例缩放
-
-        // 添加文件检测图片
-        InputStream filesystemIn = this.getClass().getResourceAsStream("/image/filesystem.png");
-        Image fsImage = Image.getInstance(filesystemIn.readAllBytes());
-        fsImage.setAlignment(Image.ALIGN_CENTER);
-        fsImage.scalePercent(21); //依照比例缩放
-
         document.add(cover);//封页
         document.add(paragraph);//第一页 Title
 

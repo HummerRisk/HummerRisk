@@ -65,42 +65,6 @@ export default {
         return this.$t("task.task_cloud");
       }
     },
-    serverAccount: {
-      type: String,
-      default() {
-        return this.$t("task.task_server");
-      }
-    },
-    k8sAccount: {
-      type: String,
-      default() {
-        return this.$t("task.task_k8s");
-      }
-    },
-    configAccount: {
-      type: String,
-      default() {
-        return this.$t("task.task_config");
-      }
-    },
-    imageAccount: {
-      type: String,
-      default() {
-        return this.$t("task.task_image");
-      }
-    },
-    codeAccount: {
-      type: String,
-      default() {
-        return this.$t("task.task_code");
-      }
-    },
-    fsAccount: {
-      type: String,
-      default() {
-        return this.$t("task.task_fs");
-      }
-    },
     selectAccounts: [],
     checkedKeys: [],
   },
@@ -127,12 +91,6 @@ export default {
         "level": 0,
         "children": [
           {name: this.cloudAccount, level: 1, type: 'cloudAccount', children: this.treeNodes.cloudAccount},
-          {name: this.serverAccount, level: 1, type: 'serverAccount', children: this.treeNodes.serverAccount},
-          {name: this.k8sAccount, level: 1, type: 'k8sAccount', children: this.treeNodes.k8sAccount},
-          {name: this.configAccount, level: 1, type: 'configAccount', children: this.treeNodes.configAccount},
-          {name: this.imageAccount, level: 1, type: 'imageAccount', children: this.treeNodes.imageAccount},
-          {name: this.codeAccount, level: 1, type: 'codeAccount', children: this.treeNodes.codeAccount},
-          {name: this.fsAccount, level: 1, type: 'fsAccount', children: this.treeNodes.fsAccount},
         ],
       });
       if (this.expandedNode.length === 0) {
