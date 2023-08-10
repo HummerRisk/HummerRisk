@@ -123,7 +123,6 @@
                 <el-form-item>
                   <el-checkbox v-model="form.createLog" v-if="createLogArr.includes(form.pluginId)">{{ $t('scaning.create_log') }}</el-checkbox>
                   <el-checkbox v-model="form.createOss" v-if="createOssArr.includes(form.pluginId)">{{ $t('scaning.create_oss') }}</el-checkbox>
-                  <el-checkbox v-model="form.createImage" v-if="createImageArr.includes(form.pluginId)">{{ $t('scaning.create_image') }}</el-checkbox>
                 </el-form-item>
               </el-tooltip>
               <el-form-item v-if="form.script && iamStrategyNotSupport.indexOf(form.pluginId) === -1">
@@ -509,7 +508,6 @@ const columnOptions = [
         tokenSwitch: false,
         createLogArr: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-huawei-plugin', 'hummer-qcloud-plugin', 'hummer-huoshan-plugin', 'hummer-baidu-plugin', 'hummer-ksyun-plugin'],
         createOssArr: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-huawei-plugin', 'hummer-qcloud-plugin', 'hummer-baidu-plugin', 'hummer-qingcloud-plugin', 'hummer-jdcloud-plugin', 'hummer-qiniu-plugin'],
-        createImageArr: ['hummer-aws-plugin', 'hummer-aliyun-plugin', 'hummer-qcloud-plugin'],
       }
     },
     watch: {
