@@ -266,18 +266,18 @@ public class ResourceService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
             JSONObject jsonObject = PlatformUtils.fixedScanner(resultFile, map, resourceWithBLOBs.getPluginId());
-            LogUtil.warn(uuid + " {scanner}[api body]: " + jsonObject.toJSONString());
+            LogUtil.info(uuid + " {scanner}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
             JSONObject resultJson = JSONObject.parseObject(result);
-            String resultCode = resultJson.getString("code").toString();
-            String resultMsg = resultJson.getString("msg").toString();
+            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
+            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
             if (!com.hummer.common.core.utils.StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
-            String resultStr = resultJson.getString("data").toString();
+            String resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
 
             if(PlatformUtils.isUserForbidden(resultStr)){
                 resultStr = Translator.get("i18n_create_resource_region_failed");
@@ -299,6 +299,7 @@ public class ResourceService {
             }
 
         } catch (Exception e) {
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return resourceWithBLOBs;
