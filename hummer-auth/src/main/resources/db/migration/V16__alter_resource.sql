@@ -274,3 +274,5 @@ Alter table `cloud_resource_item` modify COLUMN `hummer_id` varchar(1024) DEFAUL
 ALTER TABLE `cloud_resource_item` modify COLUMN `hummer_name` varchar(1024) DEFAULT NULL COMMENT '资源别名';
 
 ALTER TABLE `resource_item` modify COLUMN `hummer_name` varchar(1024) DEFAULT NULL COMMENT '资源别名';
+
+ALTER TABLE `rule_group` ADD `server_type` varchar(50) DEFAULT NULL;
