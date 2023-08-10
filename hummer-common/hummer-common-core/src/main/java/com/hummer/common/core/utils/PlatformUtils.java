@@ -58,8 +58,6 @@ import com.hummer.common.core.proxy.huawei.HuaweiCloudCredential;
 import com.hummer.common.core.proxy.huoshan.HuoshanCredential;
 import com.hummer.common.core.proxy.jdcloud.JDCloudCredential;
 import com.hummer.common.core.proxy.jdcloud.JDRequest;
-import com.hummer.common.core.proxy.k8s.K8sCredential;
-import com.hummer.common.core.proxy.k8s.K8sRequest;
 import com.hummer.common.core.proxy.ksyun.KsyunCredential;
 import com.hummer.common.core.proxy.ksyun.KsyunRequest;
 import com.hummer.common.core.proxy.openstack.OpenStackCredential;
@@ -89,11 +87,6 @@ import com.volcengine.model.request.iam.ListUsersRequest;
 import com.volcengine.model.response.iam.ListUsersResponse;
 import com.volcengine.service.iam.IIamService;
 import com.volcengine.service.iam.impl.IamServiceImpl;
-import io.fabric8.kubernetes.api.model.NamespaceList;
-import io.fabric8.openshift.client.OpenShiftClient;
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.models.V1NodeList;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openstack4j.api.OSClient;
@@ -127,13 +120,6 @@ public class PlatformUtils {
     public final static String ucloud = "hummer-ucloud-plugin";
     public final static String jdcloud = "hummer-jdcloud-plugin";
     public final static String ksyun = "hummer-ksyun-plugin";
-    //主机插件
-    public final static String server = "hummer-server-plugin";
-    //云原生检测插件
-    public final static String k8s = "hummer-k8s-plugin";
-    public final static String openshift = "hummer-openshift-plugin";
-    public final static String rancher = "hummer-rancher-plugin";
-    public final static String kubesphere = "hummer-kubesphere-plugin";
     public final static String[] userForbiddenArr = {"The IAM user is forbidden"};
     // 插件类型: 混合云、云原生
     public final static String cloud_ = "cloud";
@@ -146,7 +132,7 @@ public class PlatformUtils {
      */
     public final static List<String> getPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud,
-                k8s, openshift, rancher, kubesphere, jdcloud, ksyun);
+                jdcloud, ksyun);
     }
 
     /**
@@ -154,13 +140,6 @@ public class PlatformUtils {
      */
     public final static List<String> getCloudPlugin() {
         return Arrays.asList(aws, azure, aliyun, huawei, tencent, vsphere, openstack, gcp, huoshan, baidu, qiniu, qingcloud, ucloud, jdcloud, ksyun);
-    }
-
-    /**
-     * 支持云原生插件
-     */
-    public final static List<String> getK8sPlugin() {
-        return Arrays.asList(k8s);
     }
 
     /**
@@ -174,26 +153,6 @@ public class PlatformUtils {
         return tempList.contains(source);
     }
 
-    /**
-     * 是否支持云原生检测插件
-     */
-    public static boolean isSupportNative(String source) {
-        // 云原生检测插件
-        List<String> tempList = Arrays.asList(k8s, openshift, rancher, kubesphere);
-
-        // 利用list的包含方法,进行判断
-        return tempList.contains(source);
-    }
-
-    /**
-     * 是否同步资源
-     * @param source
-     * @return
-     */
-    public static boolean isSyncResource(String source){
-        List<String> notSyncResource = Arrays.asList(k8s);
-        return !notSyncResource.contains(source);
-    }
 
     /**
      * 需要执行的custodian命令
@@ -332,21 +291,6 @@ public class PlatformUtils {
                 }
                 pre = "GOOGLE_CLOUD_PROJECT=" + region + " ";
                 break;
-            case k8s:
-                String url = params.get("url");
-                String token = params.get("token");
-                pre = "K8S_HOST=" + url + " K8S_TOKEN=" + token + " ";
-                break;
-            case rancher:
-                String url2 = params.get("url");
-                String token2 = params.get("token");
-                pre = "RANCHER_HOST=" + url2 + " RANCHER_TOKEN=" + token2 + " ";
-                break;
-            case kubesphere:
-                String url3 = params.get("url");
-                String token3 = params.get("token");
-                pre = "KUBESPHERE_HOST=" + url3 + " KUBESPHERE_TOKEN=" + token3 + " ";
-                break;
             case huoshan:
                 String AccessKeyId = params.get("AccessKeyId");
                 String SecretAccessKey = params.get("SecretAccessKey");
@@ -434,7 +378,7 @@ public class PlatformUtils {
         String proxyPassword = params.get("proxyPassword");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("policies", policy);
-        jsonObject.put("plugin", plugin);
+        jsonObject.put("plugin", com.hummer.common.core.utils.StringUtils.isEmpty(plugin)?params.get("plugin"):plugin);
         if (StringUtils.isNotEmpty(proxyType)) {
             if (StringUtils.equalsIgnoreCase(proxyType, CloudAccountConstants.ProxyType.Http.toString())) {
                 if (StringUtils.isNotEmpty(proxyName)) {
@@ -536,24 +480,6 @@ public class PlatformUtils {
                 jsonObject.put("GOOGLE_APPLICATION_CREDENTIALS", credential);
                 jsonObject.put("region", region);
                 break;
-            case k8s:
-                String url = params.get("url");
-                String token = params.get("token");
-                jsonObject.put("K8S_HOST", url);
-                jsonObject.put("K8S_TOKEN", token);
-                break;
-            case rancher:
-                String url2 = params.get("url");
-                String token2 = params.get("token");
-                jsonObject.put("RANCHER_HOST", url2);
-                jsonObject.put("RANCHER_TOKEN", token2);
-                break;
-            case kubesphere:
-                String url3 = params.get("url");
-                String token3 = params.get("token");
-                jsonObject.put("KUBESPHERE_HOST", url3);
-                jsonObject.put("KUBESPHERE_TOKEN", token3);
-                break;
             case huoshan:
                 String AccessKeyId = params.get("AccessKeyId");
                 String SecretAccessKey = params.get("SecretAccessKey");
@@ -622,6 +548,7 @@ public class PlatformUtils {
      */
     public final static Map<String, String> getAccount(AccountWithBLOBs account, String region, Proxy proxy) {
         Map<String, String> map = new HashMap<>();
+        map.put("plugin", account.getPluginId());
         switch (account.getPluginId()) {
             case aws:
                 map.put("type", aws);
@@ -737,25 +664,6 @@ public class PlatformUtils {
                 KsyunCredential ksyunCredential = new Gson().fromJson(account.getCredential(), KsyunCredential.class);
                 map.put("AccessKey", ksyunCredential.getAccessKey());
                 map.put("SecretAccessKey", ksyunCredential.getSecretAccessKey());
-                map.put("region", region);
-                break;
-            case k8s:
-                map.put("type", k8s);
-                K8sCredential k8sCredential = new Gson().fromJson(account.getCredential(), K8sCredential.class);
-                map.put("url", k8sCredential.getUrl());
-                map.put("token", k8sCredential.getToken());
-                map.put("region", region);
-            case rancher:
-                map.put("type", rancher);
-                K8sCredential k8sCredential2 = new Gson().fromJson(account.getCredential(), K8sCredential.class);
-                map.put("url", k8sCredential2.getUrl());
-                map.put("token", k8sCredential2.getToken());
-                map.put("region", region);
-            case kubesphere:
-                map.put("type", kubesphere);
-                K8sCredential k8sCredential3 = new Gson().fromJson(account.getCredential(), K8sCredential.class);
-                map.put("url", k8sCredential3.getUrl());
-                map.put("token", k8sCredential3.getToken());
                 map.put("region", region);
                 break;
             default:
@@ -1083,12 +991,6 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
                     }
                     break;
-                case k8s,rancher,kubesphere:
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("regionId","all-namespaces");
-                    jsonObject.put("regionName","all-namespaces");
-                    jsonArray.add(jsonObject);
-                    break;
                 default:
                     throw new IllegalStateException("Unexpected regions value{}: " + account.getPluginName());
             }
@@ -1306,21 +1208,6 @@ public class PlatformUtils {
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
-            case k8s,rancher,kubesphere:
-                /**创建默认 Api 客户端**/
-                // 定义连接集群的 Token
-                try {
-                    K8sRequest k8sRequest = new K8sRequest();
-                    k8sRequest.setCredential(account.getCredential());
-                    ApiClient apiClient = k8sRequest.getK8sClient(proxy);
-                    String pretty = "true";
-                    CoreV1Api apiInstance = new CoreV1Api(apiClient);
-                    V1NodeList result = apiInstance.listNode(pretty, true, null,
-                            null, null, null, null, null, null, null);
-                    return result != null;
-                } catch (Exception e) {
-                    throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
-                }
             default:
                 throw new IllegalStateException("Unexpected value: " + account.getPluginId());
         }
@@ -1373,15 +1260,6 @@ public class PlatformUtils {
                 break;
             case ksyun:
                 strCn = RegionsConstants.KsyunMap.get(strEn);
-                break;
-            case k8s:
-                strCn = strEn;
-                break;
-            case rancher:
-                strCn = strEn;
-                break;
-            case kubesphere:
-                strCn = strEn;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + pluginId);
@@ -1533,12 +1411,6 @@ public class PlatformUtils {
                     return !tempList.contains(region);
                 }
                 break;
-            case k8s:
-                break;
-            case rancher:
-                break;
-            case kubesphere:
-                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + pluginId);
         }
@@ -1574,12 +1446,6 @@ public class PlatformUtils {
                 return CloudTaskConstants.QINGCLOUD_RESOURCE_TYPE;
             case ucloud:
                 return CloudTaskConstants.UCLOUD_RESOURCE_TYPE;
-            case k8s:
-                return null;
-            case rancher:
-                return null;
-            case kubesphere:
-                return null;
             case jdcloud:
                 return CloudTaskConstants.JDCLOUD_RESOURCE_TYPE;
             case ksyun:
