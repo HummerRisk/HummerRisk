@@ -176,7 +176,7 @@ public class AccountService {
                 accountMapper.insertSelective(account);
                 updateRegionsThrows(account);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
-                if (validate.isFlag() && PlatformUtils.isSyncResource(account.getPluginId()))
+                if (validate.isFlag())
                     cloudSyncService.sync(account.getId(), loginUser);
 
                 if (request.isCreateLog()) {

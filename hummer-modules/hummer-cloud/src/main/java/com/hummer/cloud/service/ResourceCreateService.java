@@ -89,7 +89,7 @@ public class ResourceCreateService {
         //云规则检测
         final CloudTaskExample cloudTaskExample = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = cloudTaskExample.createCriteria();
-        criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdNotIn(PlatformUtils.getK8sPlugin());
+        criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
