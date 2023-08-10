@@ -526,7 +526,7 @@ const columnOptions = [
         this.checkAll = val;
       },
       create() {
-        this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [], "createLog": false, "createOss": false, "createImage": false } ];
+        this.addAccountForm = [ { "name":"", "pluginId": "", "isProxy": false, "proxyId": "", "script": "", "tmpList": [], "createLog": false, "createOss": false } ];
         this.createVisible = true;
         this.tokenSwitch = false;
         this.activePlugin();
@@ -667,7 +667,6 @@ const columnOptions = [
       async changePluginForAdd (form){
         form.createLog = false;
         form.createOss = false;
-        form.createImage = false;
         this.$get(iamStrategyUrl + form.pluginId,res => {
           form.script = res.data;
           this.script = res.data;
