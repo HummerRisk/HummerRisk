@@ -279,7 +279,7 @@ public class ResourceService {
                 JSONObject resultJson = JSONObject.parseObject(result);
                 String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
                 String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
-                if (!com.hummer.common.core.utils.StringUtils.equals(resultCode, "200")) {
+                if (!StringUtils.equals(resultCode, "200")) {
                     HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
                 }
 
@@ -502,7 +502,7 @@ public class ResourceService {
             JSONObject resultJson = JSONObject.parseObject(result);
             String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
             String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
-            if (!com.hummer.common.core.utils.StringUtils.equals(resultCode, "200")) {
+            if (!StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
