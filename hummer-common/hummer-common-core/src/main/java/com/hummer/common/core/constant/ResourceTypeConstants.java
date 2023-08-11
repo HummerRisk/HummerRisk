@@ -6,6 +6,7 @@ public enum ResourceTypeConstants {
     ORGANIZATION,
     WORKSPACE,
     CLOUD_ACCOUNT,
+    CLOUD_PROJECT,
     CLOUD_NATIVE,
     CLOUD_NATIVE_CONFIG,
     RULE,
