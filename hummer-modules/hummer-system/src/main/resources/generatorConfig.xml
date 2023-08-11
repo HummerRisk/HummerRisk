@@ -59,7 +59,7 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
         <!--要生成的数据库表 -->
-        <table tableName="user"/>
+<!--        <table tableName="user"/>-->
 <!--        <table tableName="plugin"/>-->
 <!--        <table tableName="proxy"/>-->
 <!--        <table tableName="cloud_account" domainObjectName="Account"/>-->
