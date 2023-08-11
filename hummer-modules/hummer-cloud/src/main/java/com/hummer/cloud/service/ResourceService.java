@@ -274,7 +274,7 @@ public class ResourceService {
             JSONObject resultJson = JSONObject.parseObject(result);
             String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
             String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
-            if (!com.hummer.common.core.utils.StringUtils.equals(resultCode, "200")) {
+            if (!StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
@@ -430,14 +430,15 @@ public class ResourceService {
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            LogUtil.info(taskItem.getId() + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
-            String resultCode = resultJson.getString("code").toString();
-            String resultMsg = resultJson.getString("msg").toString();
-            if (!com.hummer.common.core.utils.StringUtils.equals(resultCode, "200")) {
+            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
+            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
+            if (!StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
-            String resultStr = resultJson.getString("data").toString();
+            String resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
 
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
             if(PlatformUtils.isUserForbidden(resultStr)){
@@ -467,6 +468,7 @@ public class ResourceService {
                             + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
                     true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
         } catch (Exception e) {
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
     }
