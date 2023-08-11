@@ -48,8 +48,14 @@ public class CloudProjectService {
     }
 
     public CloudProjectDTO projectById(String projectId) {
-        CloudProjectDTO cloudProjectDTO = extCloudProjectMapper.projectById(projectId);
-        return cloudProjectDTO;
+        CloudProject cloudProject = new CloudProject();
+        cloudProject.setId(projectId);
+        List<CloudProjectDTO> list = extCloudProjectMapper.getCloudProjectDTOs(cloudProject);
+        if (list.size() > 0) {
+            return list.get(0);
+        } else {
+            return new CloudProjectDTO();
+        }
     }
 
     public void deleteProject(String projectId, LoginUser loginUser) {
