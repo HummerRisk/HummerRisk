@@ -139,7 +139,7 @@
         p.proxy_name,
         p.proxy_password,
         user.name as userName,
-        IF(p.proxy_ip, true, false) as isProxy,
+        IF(p.proxy_ip is not null, true, false) as isProxy,
         CASE
         WHEN t.status = 'INVALID' and t.operator_status = 'INVALID' and t.kubench_status = 'INVALID' THEN 'ERROR'
         WHEN t.status = 'INVALID' or t.operator_status = 'INVALID' or t.kubench_status = 'INVALID' THEN 'WARNING'
