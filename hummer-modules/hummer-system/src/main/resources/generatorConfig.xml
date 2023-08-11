@@ -108,5 +108,11 @@
 <!--        <table tableName="hummer_license" domainObjectName="HummerLicense"/>-->
 <!--        <table tableName="cloud_resource_rela" domainObjectName="CloudResourceRela"/>-->
 <!--        <table tableName="cloud_resource_rela_link" domainObjectName="CloudResourceRelaLink"/>-->
+<!--        <table tableName="cloud_project" domainObjectName="CloudProject"/>-->
+<!--        <table tableName="cloud_project_log" domainObjectName="CloudProjectLog"/>-->
+<!--        <table tableName="cloud_group" domainObjectName="CloudGroup"/>-->
+<!--        <table tableName="cloud_group_log" domainObjectName="CloudGroupLog"/>-->
+<!--        <table tableName="cloud_process" domainObjectName="CloudProcess"/>-->
+<!--        <table tableName="cloud_process_log" domainObjectName="CloudProcessLog"/>-->
     </context>
 </generatorConfiguration>
