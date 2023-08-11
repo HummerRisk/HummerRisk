@@ -27,7 +27,7 @@ ALTER TABLE `history_image_task` DROP `scan_type`;
 
 CREATE TABLE IF NOT EXISTS `cloud_native_rule` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
-    `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
+    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '规则名称',
     `status`                     tinyint             DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `description`                varchar(1024)       DEFAULT NULL COMMENT '`描述',
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `cloud_native_rule` (
 
 CREATE TABLE IF NOT EXISTS `cloud_native_config_rule` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
-    `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '规则名称',
+    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '规则名称',
     `status`                     tinyint             DEFAULT 1 COMMENT '规则状态(启用1，停用0)',
     `severity`                   varchar(32)         DEFAULT NULL COMMENT '风险等级',
     `description`                varchar(1024)       DEFAULT NULL COMMENT '`描述',
