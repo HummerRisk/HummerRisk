@@ -19,7 +19,7 @@
 
 ## HummerRisk 是什么
 
-> HummerRisk 是由长亭科技自研，牧云团队孵化，开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和云原生安全检测。
+> HummerRisk 是由开源的云原生安全平台，以非侵入的方式解决云原生的安全和治理问题。核心能力包括混合云的安全治理和云原生安全检测。
 
 HummerRisk is self-developed by chaitin technology, cloudwalker team incubation, an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include CSPM and KSPM.
 
