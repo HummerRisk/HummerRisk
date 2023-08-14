@@ -869,4 +869,29 @@
         group by t.source_namespace
     </select>
 
+    <resultMap id="BaseCloudNativeSource2YamlListResultMap" type="com.hummer.common.core.domain.request.CloudNativeSourceVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="cloud_native_id" jdbcType="VARCHAR" property="cloudNativeId" />
+        <result column="cloud_native_name" jdbcType="VARCHAR" property="cloudNativeName" />
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName" />
+        <result column="source_namespace" jdbcType="VARCHAR" property="sourceNamespace" />
+        <result column="source_type" jdbcType="VARCHAR" property="sourceType" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    </resultMap>
+
+    <select id="allCloudNativeSource2YamlList" resultMap="BaseCloudNativeSource2YamlListResultMap">
+        select
+            t.id,
+            t.cloud_native_id,
+            t.source_name,
+            t.source_namespace,
+            t.source_type,
+            t.create_time,
+            t1.name as cloud_native_name
+        from cloud_native_source t
+        left join cloud_native t1 on t.cloud_native_id = t.id
+        where t.source_namespace is not null and t.source_namespace != '' and t.source_type != 'Version'
+        order by t.create_time desc
+    </select>
+
 </mapper>

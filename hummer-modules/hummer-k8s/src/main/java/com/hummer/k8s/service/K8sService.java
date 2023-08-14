@@ -1282,10 +1282,12 @@ public class K8sService {
         return cloudNativeResultWithBLOBs;
     }
 
-    public List<CloudNativeSourceWithBLOBs> allCloudNativeSource2YamlList() {
-        CloudNativeSourceExample example = new CloudNativeSourceExample();
-        example.createCriteria().andSourceTypeNotEqualTo("Version").andSourceYamlIsNotNull();
-        return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
+    public List<CloudNativeSourceVo> allCloudNativeSource2YamlList() {
+        return extCloudNativeSourceMapper.allCloudNativeSource2YamlList();
+    }
+
+    public CloudNativeSourceWithBLOBs cloudNativeSource2Yaml(String id) {
+        return cloudNativeSourceMapper.selectByPrimaryKey(id);
     }
 
     public List<CloudNativeSourceSyncLogWithBLOBsDTO> syncList(CloudNativeSyncLogRequest request) {
