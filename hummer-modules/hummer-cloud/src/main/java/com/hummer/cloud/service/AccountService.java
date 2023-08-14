@@ -76,8 +76,7 @@ public class AccountService {
     public List<Account> listByGroup(String pluginId) {
         AccountExample example = new AccountExample();
         example.createCriteria().andPluginIdEqualTo(pluginId).andStatusEqualTo("VALID");
-        List<Account> accounts = accountMapper.selectByExample(example);
-        return accounts;
+        return accountMapper.selectByExample(example);
     }
 
     public AccountWithBLOBs getAccount(String id) {
@@ -182,8 +181,8 @@ public class AccountService {
                 if (request.isCreateLog()) {
                     try {
                         JSONArray arr = JSONArray.parseArray(account.getCheckRegions());
-                        if (arr.size() == 0) arr = JSONArray.parseArray(account.getRegions());
-                        if (arr.size() > 0) {
+                        if (arr.isEmpty()) arr = JSONArray.parseArray(account.getRegions());
+                        if (!arr.isEmpty()) {
                             String[] regions = new String[arr.size()];
                             int i = 0;
                             for (Object o : arr) {
@@ -224,7 +223,7 @@ public class AccountService {
                 return getCloudAccountById(account.getId());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return null;
@@ -285,7 +284,7 @@ public class AccountService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return null;

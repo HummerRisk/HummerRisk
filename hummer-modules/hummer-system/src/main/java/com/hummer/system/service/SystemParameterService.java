@@ -157,7 +157,7 @@ public class SystemParameterService {
         params.put("corpid", cropId);
         params.put("corpsecret", secret);
         ResponseEntity<String> responseEntity = restTemplate.getForEntity("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}", String.class, params);
-        if (responseEntity.getStatusCodeValue() != 200) {
+        if (responseEntity.getStatusCode().value() != 200) {
             HRException.throwException("request failed.");
         }
         String body = responseEntity.getBody();
