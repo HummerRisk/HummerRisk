@@ -32,7 +32,7 @@
 		<el-form-item>
 			<el-radio :label="5" v-model='radioValue'>
 				指定
-				<el-select clearable v-model="checkboxList" :placeholder="$t('schedule.cron.multi_select')" multiple>
+				<el-select clearable v-model="checkboxList" filterable :clearable="true" :placeholder="$t('schedule.cron.multi_select')" multiple>
 					<el-option v-for="item in 9" :key="item" :value="item - 1 + fullYear" :label="item -1 + fullYear" />
 				</el-select>
 			</el-radio>

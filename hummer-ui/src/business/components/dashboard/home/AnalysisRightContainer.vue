@@ -49,7 +49,7 @@
             <el-input style="width: 80%;" type="number" max="31" min="1" v-model="sizeForm.cycle" clearable :placeholder="$t('dashboard.analysis_cycle_placeholder')"></el-input>
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_users')">
-            <el-select v-model="sizeForm.users" :placeholder="$t('dashboard.scan_users')" multiple>
+            <el-select filterable :clearable="true" v-model="sizeForm.users" :placeholder="$t('dashboard.scan_users')" multiple>
               <el-option
                 v-for="item in users"
                 :key="item.id"
@@ -60,7 +60,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('dashboard.scan_types')">
-            <el-select v-model="sizeForm.types" :placeholder="$t('dashboard.scan_types')" multiple>
+            <el-select v-model="sizeForm.types" :placeholder="$t('dashboard.scan_types')" multiple filterable :clearable="true" >
               <el-option :label="$t('dashboard.cloud_scan')" :value="'cloudAccount'" :key="'cloudAccount'"></el-option>
               <el-option :label="$t('dashboard.vuln_scan')" :value="'vulnAccount'" :key="'vulnAccount'"></el-option>
               <el-option :label="$t('dashboard.server_scan')" :value="'serverAccount'" :key="'serverAccount'"></el-option>

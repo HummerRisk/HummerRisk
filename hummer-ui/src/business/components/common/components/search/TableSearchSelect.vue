@@ -1,7 +1,7 @@
 <template>
   <table-search-component v-model="component.operator.value" :component="component">
     <template v-slot="scope">
-      <el-select v-model="scope.component.value" :placeholder="$t('commons.please_select')" size="small"
+      <el-select v-model="scope.component.value" :clearable="true" :placeholder="$t('commons.please_select')" size="small"
                  filterable v-bind="scope.component.props" class="search-select">
         <el-option v-for="op in options" :key="op.value" :label="label(op)" :value="op.value"></el-option>
       </el-select>

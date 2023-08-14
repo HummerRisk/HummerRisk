@@ -201,7 +201,7 @@
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('account.input_name')"/>
           </el-form-item>
           <el-form-item :label="$t('account.cloud_platform')" :rules="{required: true, message: $t('account.cloud_platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
+            <el-select style="width: 100%;" disabled filterable :clearable="true" v-model="form.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(form.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -227,7 +227,7 @@
             </el-form-item>
           </div>
           <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
                 :key="item.id"
@@ -263,7 +263,7 @@
                 :visible.sync="innerDrawerProxy">
                 <el-form :model="proxyForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateProxyForm">
                   <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-                    <el-select style="width: 100%;" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
+                    <el-select style="width: 100%;" filterable :clearable="true" v-model="proxyForm.proxyType" :placeholder="$t('commons.proxy_type')">
                       <el-option
                         v-for="item in proxyType"
                         :key="item.id"

@@ -143,7 +143,7 @@
                  :destroy-on-close="true" v-loading="viewResult.loading">
         <el-form :model="createForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="createForm">
           <el-form-item :label="$t('rule.group_type')" :rules="{required: true, message: $t('rule.group_type'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="createForm.type" :placeholder="$t('rule.group_type')" @change="changeType(createForm)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="createForm.type" :placeholder="$t('rule.group_type')" @change="changeType(createForm)">
               <el-option
                 v-for="item in groupTypes"
                 :key="item.id"
@@ -161,7 +161,7 @@
           </el-form-item>
           <div v-if="createForm.type === 'k8s'">
             <el-form-item :label="$t('k8s.platform')" prop="pluginId" :rules="{required: true, message: $t('k8s.platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(createForm.pluginId)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="createForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(createForm.pluginId)">
                 <el-option
                   v-for="item in plugins"
                   :key="item.id"
@@ -173,7 +173,7 @@
               </el-select>
             </el-form-item>
             <el-form-item v-show="createForm.pluginId" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
                 <el-option
                   v-for="item in checkPlugins"
                   :key="item.value"
@@ -187,7 +187,7 @@
           </div>
           <div v-if="createForm.type === 'cloud'">
             <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="createForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(createForm.pluginId)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="createForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(createForm.pluginId)">
                 <el-option
                   v-for="item in plugins"
                   :key="item.id"
@@ -199,7 +199,7 @@
               </el-select>
             </el-form-item>
             <el-form-item v-show="createForm.pluginId" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
                 <el-option
                   v-for="item in checkPlugins"
                   :key="item.value"
@@ -213,7 +213,7 @@
           </div>
           <div v-if="createForm.type === 'server'">
             <el-form-item :label="$t('server.server_type')" prop="serverType" :rules="{required: true, message: $t('server.server_type') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="createForm.serverType" :placeholder="$t('server.server_type')" @change="changeServerPlugin('hummer-server-plugin', createForm.serverType)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="createForm.serverType" :placeholder="$t('server.server_type')" @change="changeServerPlugin('hummer-server-plugin', createForm.serverType)">
                 <el-option
                   v-for="item in serverTypes"
                   :key="item.id"
@@ -224,7 +224,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="createForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(createForm)">
                 <el-option
                   v-for="item in checkPlugins"
                   :key="item.value"
@@ -257,7 +257,7 @@
             <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
           <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(infoForm.pluginId)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(infoForm.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -269,7 +269,7 @@
             </el-select>
           </el-form-item>
           <el-form-item v-show="infoForm.pluginId" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
               <el-option
                 v-for="item in checkPlugins"
                 :key="item.value"
@@ -295,7 +295,7 @@
             <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
           <el-form-item :label="$t('k8s.platform')" prop="pluginId" :rules="{required: true, message: $t('k8s.platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(infoForm.pluginId)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(infoForm.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -307,7 +307,7 @@
             </el-select>
           </el-form-item>
           <el-form-item v-show="infoForm.pluginId" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
               <el-option
                 v-for="item in checkPlugins"
                 :key="item.value"
@@ -333,7 +333,7 @@
             <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
           </el-form-item>
           <el-form-item :label="$t('server.server_type')" prop="serverType" :rules="{required: true, message: $t('server.server_type') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.serverType" :placeholder="$t('server.server_type')" @change="changeServerPlugin('hummer-server-plugin', infoForm.serverType)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.serverType" :placeholder="$t('server.server_type')" @change="changeServerPlugin('hummer-server-plugin', infoForm.serverType)">
               <el-option
                 v-for="item in serverTypes"
                 :key="item.id"
@@ -344,7 +344,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
               <el-option
                 v-for="item in checkPlugins"
                 :key="item.value"

@@ -33,7 +33,7 @@
           <el-table-column type="index" min-width="40"/>
           <el-table-column :label="$t('schedule.event')" min-width="100" prop="events">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.event" :placeholder="$t('system_parameter_setting.message.select_events')"
+              <el-select v-model="scope.row.event" filterable :clearable="true" :placeholder="$t('system_parameter_setting.message.select_events')"
                          size="mini" prop="events" :disabled="!scope.row.isSet">
                 <el-option v-for="item in eventOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
@@ -41,7 +41,7 @@
           </el-table-column>
           <el-table-column :label="$t('schedule.receiver')" prop="userIds" min-width="150">
             <template v-slot:default="{row}">
-              <el-select v-model="row.userIds" filterable multiple size="mini"
+              <el-select v-model="row.userIds" filterable :clearable="true" multiple size="mini"
                          :placeholder="$t('commons.please_select')" :disabled="!row.isSet">
                 <el-option v-for="item in receiverOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
@@ -49,7 +49,7 @@
           </el-table-column>
           <el-table-column :label="$t('schedule.receiving_mode')" min-width="120" prop="type" fixed="right">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.type" :placeholder="$t('system_parameter_setting.message.select_receiving_method')"
+              <el-select v-model="scope.row.type" filterable :clearable="true" :placeholder="$t('system_parameter_setting.message.select_receiving_method')"
                          size="mini" :disabled="!scope.row.isSet" @change="handleEdit(scope.$index, scope.row)">
                 <el-option v-for="item in receiveTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>

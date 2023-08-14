@@ -26,7 +26,7 @@
           </el-tab-pane>
           <el-tab-pane :label="$t('schedule.task_notification')" name="second">
             <template>
-              <el-select v-model="value" :placeholder="$t('commons.please_select')">
+              <el-select filterable :clearable="true" v-model="value" :placeholder="$t('commons.please_select')">
                 <el-option
                   v-for="item in options"
                   :key="item.value"

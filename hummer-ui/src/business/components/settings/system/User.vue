@@ -92,7 +92,7 @@
           <el-form-item :label="$t('commons.role')"
                         :prop="'roles.' + index + '.id'"
                         :rules="{required: true, message: $t('role.please_choose_role'), trigger: 'change'}">
-            <el-select v-model="role.id" :placeholder="$t('role.please_choose_role')">
+            <el-select v-model="role.id" filterable :clearable="true" :placeholder="$t('role.please_choose_role')">
               <el-option
                 v-for="item in activeRole(role)"
                 :key="item.id"
@@ -133,7 +133,7 @@
           <el-form-item :label="$t('commons.role')"
                         :prop="'roles.' + index + '.id'"
                         :rules="{required: true, message: $t('role.please_choose_role'), trigger: 'change'}">
-            <el-select v-model="role.id" :placeholder="$t('role.please_choose_role')" :disabled="!!role.id">
+            <el-select v-model="role.id" filterable :clearable="true" :placeholder="$t('role.please_choose_role')" :disabled="!!role.id">
               <el-option
                 v-for="item in activeRole(role)"
                 :key="item.id"

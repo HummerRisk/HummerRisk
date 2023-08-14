@@ -204,7 +204,7 @@
           <el-input v-model="ruleForm.description" autocomplete="off" :placeholder="$t('rule.rule_description')"/>
         </el-form-item>
         <el-form-item :label="$t('account.cloud_platform')">
-          <el-select style="width: 100%;" v-model="ruleForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="ruleForm.pluginId" :placeholder="$t('account.please_choose_plugin')">
             <el-option
               v-for="item in plugins"
               :key="item.id"
@@ -216,7 +216,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.rule_tag')">
-          <el-select style="width: 100%;" multiple v-model="ruleForm.tags" :placeholder="$t('rule.please_choose_tag')">
+          <el-select style="width: 100%;" multiple filterable :clearable="true" v-model="ruleForm.tags" :placeholder="$t('rule.please_choose_tag')">
             <el-option
               v-for="item in tags"
               :key="item.tagKey"
@@ -226,7 +226,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.severity')">
-          <el-select style="width: 100%;" v-model="ruleForm.severity" :placeholder="$t('rule.please_choose_severity')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="ruleForm.severity" :placeholder="$t('rule.please_choose_severity')">
             <el-option
               v-for="item in severityOptions"
               :key="item.value"
@@ -236,7 +236,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.rule_set')">
-          <el-select style="width: 100%;" multiple filterable v-model="ruleForm.ruleSets">
+          <el-select style="width: 100%;" multiple filterable :clearable="true" v-model="ruleForm.ruleSets">
             <el-option
               v-for="item in ruleSetOptions"
               :key="item.id"
@@ -246,7 +246,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('rule.inspection_report')">
-          <el-select style="width: 100%;" multiple filterable collapse-tags v-model="ruleForm.inspectionSeports">
+          <el-select style="width: 100%;" multiple filterable :clearable="true" collapse-tags v-model="ruleForm.inspectionSeports">
             <el-option
               v-for="item in inspectionSeportOptions"
               :key="item.id"

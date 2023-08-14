@@ -50,7 +50,7 @@
         </el-form-item>
         <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')"
                       :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
               :key="item.id"
@@ -85,7 +85,7 @@
         </el-form-item>
         <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')"
                       :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
               :key="item.id"

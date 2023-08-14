@@ -51,7 +51,7 @@
                :destroy-on-close="true">
       <el-form :model="form" label-position="right" label-width="120px" size="small" :rules="rule" ref="createProxyForm">
         <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyType" :placeholder="$t('commons.proxy_type')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyType" :placeholder="$t('commons.proxy_type')">
             <el-option
               v-for="item in proxyType"
               :key="item.id"
@@ -85,7 +85,7 @@
                :validate-on-rule-change="true" v-loading="result.loading">
       <el-form :model="form" label-position="right" label-width="120px" size="small" :rules="rule" ref="updateProxyForm">
         <el-form-item :label="$t('commons.proxy_type')" :rules="{required: true, message: $t('commons.proxy_type') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyType" :placeholder="$t('commons.proxy_type')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyType" :placeholder="$t('commons.proxy_type')">
             <el-option
               v-for="item in proxyType"
               :key="item.id"

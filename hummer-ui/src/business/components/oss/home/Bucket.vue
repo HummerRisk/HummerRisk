@@ -170,7 +170,7 @@
             <el-input type="text" v-model="form.bucketName" @input="change($event)" autocomplete="off" :placeholder="$t('oss.bucket_name')"/>
           </el-form-item>
           <el-form-item :label="$t('oss.oss_account')" :rules="{required: true, message: $t('oss.oss_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.ossId" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.ossId)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.ossId" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.ossId)">
               <el-option
                 v-for="item in accounts"
                 :key="item.id"
@@ -182,7 +182,7 @@
             </el-select>
           </el-form-item>
           <el-form-item v-if="bucketParams.showLocation" :label="$t('account.regions')" :rules="{required: true, message: $t('account.regions') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.location" :placeholder="$t('account.please_choose_region')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.location" :placeholder="$t('account.please_choose_region')">
               <el-option
                 v-for="item in bucketParams.locationList"
                 :key="item.regionId"
@@ -193,7 +193,7 @@
             </el-select>
           </el-form-item>
           <el-form-item v-if="bucketParams.showStorageClass" :label="$t('oss.storage_class')" :rules="{required: true, message: $t('oss.storage_class') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.storageClass" :placeholder="$t('oss.storage_class')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.storageClass" :placeholder="$t('oss.storage_class')">
               <el-option
                 v-for="item in bucketParams.storageList"
                 :key="item.value"
@@ -204,7 +204,7 @@
             </el-select>
           </el-form-item>
           <el-form-item v-if="bucketParams.showCannedAcl" :label="$t('oss.read_acl')" :rules="{required: true, message: $t('oss.read_acl') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.cannedAcl" :placeholder="$t('oss.read_acl')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.cannedAcl" :placeholder="$t('oss.read_acl')">
               <el-option
                 v-for="item in bucketParams.cannedAclList"
                 :key="item.value"

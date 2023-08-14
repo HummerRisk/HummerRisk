@@ -6,7 +6,7 @@
               v-bind:class="{ 'input-with-select search': showCreate,
               'input-with-select search search2': !showCreate,
                'input-with-select search search3': showGroup }">
-      <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
+      <el-select v-model="select" slot="prepend" filterable :clearable="true" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
         <el-option
           v-for="item in items"
           :key="item.id" style="width:100%"

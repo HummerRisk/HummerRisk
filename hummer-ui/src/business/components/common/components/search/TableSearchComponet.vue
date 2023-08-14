@@ -2,7 +2,7 @@
   <div>
     <div class="search-label">{{ $t(component.label) }}</div>
 
-    <el-select class="search-operator" v-model="component.operator.value" :placeholder="$t('commons.please_select')"
+    <el-select class="search-operator" filterable :clearable="true" v-model="component.operator.value" :placeholder="$t('commons.please_select')"
                size="small"
                @change="change" @input="input" v-bind="component.operator.props">
       <el-option v-for="o in operators" :key="o.value" :label="$t(o.label)" :value="o.value"/>

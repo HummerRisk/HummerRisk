@@ -25,7 +25,7 @@
     <el-form-item>
       <el-radio v-model='radioValue' :label="4">
         {{ $t('schedule.cron.specify') }}
-        <el-select clearable v-model="checkboxList" :placeholder="$t('schedule.cron.multi_select')" multiple style="width:100%">
+        <el-select clearable v-model="checkboxList" filterable :clearable="true" :placeholder="$t('schedule.cron.multi_select')" multiple style="width:100%">
           <el-option v-for="item in 60" :key="item" :value="item-1">{{ item-1 }}</el-option>
         </el-select>
       </el-radio>

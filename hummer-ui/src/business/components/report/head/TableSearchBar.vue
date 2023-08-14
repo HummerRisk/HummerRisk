@@ -2,7 +2,7 @@
   <span class="adv-search-bar">
     <el-input size="small" :placeholder="$t('commons.search_by') + $t(selectName) + $t('commons.search')"
               v-model="filterText" class="input-with-select search" maxlength="60" @change="search" clearable>
-      <el-select v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
+      <el-select filterable :clearable="true" v-model="select" slot="prepend" :placeholder="$t('commons.please_select')" @change="changeName" style="width:100%">
         <el-option
           v-for="item in items"
           :key="item.id" style="width:100%"
