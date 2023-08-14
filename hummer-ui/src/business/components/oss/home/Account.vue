@@ -110,7 +110,7 @@
       <div>
         <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="form">
           <el-form-item :label="$t('account.cloud_account')" :rules="{required: true, message: $t('account.cloud_account') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" :disabled="ossTitle!=$t('oss.create')" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
+            <el-select style="width: 100%;" :disabled="ossTitle!=$t('oss.create')" filterable :clearable="true" v-model="form.id" :placeholder="$t('account.please_choose_account')" @change="changeAccount(form.id)">
               <el-option
                 v-for="item in accounts"
                 :key="item.id"
@@ -136,7 +136,7 @@
             </el-form-item>
           </div>
           <el-form-item v-if="form.isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
                 :key="item.id"
