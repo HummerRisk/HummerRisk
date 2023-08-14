@@ -31,6 +31,43 @@
         <result column="result" jdbcType="TINYINT" property="result" />
     </resultMap>
 
+    <resultMap id="BaseGroupResultMap" type="com.hummer.common.core.dto.CloudGroupDTO"
+               extends="com.hummer.cloud.mapper.CloudGroupMapper.BaseResultMap">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="group_id" jdbcType="INTEGER" property="groupId" />
+        <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+        <result column="group_desc" jdbcType="VARCHAR" property="groupDesc" />
+        <result column="group_level" jdbcType="VARCHAR" property="groupLevel" />
+        <result column="group_flag" jdbcType="TINYINT" property="groupFlag" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="job_type" jdbcType="VARCHAR" property="jobType" />
+        <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <collection property="cloudGroupLogList" ofType="com.hummer.common.core.domain.CloudGroupLog" javaType="list"
+                    select="selectCloudGroupLogList" column="{id=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudGroupLogMap" type="com.hummer.common.core.domain.CloudGroupLog">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+        <result column="init_time" jdbcType="VARCHAR" property="initTime" />
+        <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="result" jdbcType="TINYINT" property="result" />
+    </resultMap>
+
     <sql id="condition">
         <choose>
             <when test='${object}.operator == "like"'>
@@ -73,10 +110,10 @@
     </sql>
 
     <sql id="combine">
-        <if test='${condition}.name != null and (${name} == null or ${name} == "")'>
-            and t.name
+        <if test='${condition}.name != null'>
+            and t.account_name
             <include refid="condition">
-                <property name="object" value="${condition}.name"/>
+                <property name="object" value="${condition}.accountName"/>
             </include>
         </if>
         <if test="${condition}.createTime != null">
@@ -86,7 +123,7 @@
             </include>
         </if>
         <if test="${condition}.pluginId != null">
-            and p1.id
+            and t.pluginId
             <include refid="condition">
                 <property name="object" value="${condition}.pluginId"/>
             </include>
@@ -98,7 +135,7 @@
             </include>
         </if>
         <if test="${condition}.creator != null">
-            and user.id
+            and t.creator
             <include refid="condition">
                 <property name="object" value="${condition}.creator"/>
             </include>
@@ -123,7 +160,7 @@
             <if test="request.accountName != null and request.accountName != ''">
                 and LOWER(t.account_name) like CONCAT('%', LOWER(#{request.accountName}),'%')
             </if>
-            <if test="request.userName != null and request.userName != ''">
+            <if test="request.creator != null and request.creator != ''">
                 and LOWER(creator) like CONCAT('%', LOWER(#{creator}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
@@ -138,6 +175,42 @@
             t.*
         FROM cloud_project_log t
         where t.project_id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="getCloudGroupDTOs" resultMap="BaseGroupResultMap">
+        select
+        t.*
+        from cloud_group as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.accountName != null and request.accountName != ''">
+                and LOWER(t.account_name) like CONCAT('%', LOWER(#{request.accountName}),'%')
+            </if>
+            <if test="request.creator != null and request.creator != ''">
+                and LOWER(creator) like CONCAT('%', LOWER(#{creator}),'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
+    <select id="selectCloudProjectLogList" resultMap="CloudProjectLogMap">
+        SELECT
+            t.*
+        FROM cloud_group_log t
+        where t.group_id = #{id}
         ORDER BY t.create_time DESC
     </select>
 
