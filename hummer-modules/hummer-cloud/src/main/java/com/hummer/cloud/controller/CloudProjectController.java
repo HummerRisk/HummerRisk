@@ -4,8 +4,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudProjectService;
 import com.hummer.common.core.domain.CloudGroup;
-import com.hummer.common.core.domain.CloudProject;
+import com.hummer.common.core.domain.CloudProcess;
+import com.hummer.common.core.domain.request.project.CloudGroupRequest;
 import com.hummer.common.core.dto.CloudGroupDTO;
+import com.hummer.common.core.dto.CloudProcessDTO;
 import com.hummer.common.core.dto.CloudProjectDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
@@ -31,9 +33,9 @@ public class CloudProjectController {
     @Operation(summary = "项目列表")
     @I18n
     @PostMapping("list/{goPage}/{pageSize}")
-    public Pager<List<CloudProjectDTO>> getCloudProjectDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudProject cloudProject) {
+    public Pager<List<CloudProjectDTO>> getCloudProjectDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudGroupRequest cloudGroupRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudProjectService.getCloudProjectDTOs(cloudProject));
+        return PageUtils.setPageInfo(page, cloudProjectService.getCloudProjectDTOs(cloudGroupRequest));
     }
 
     @Operation(summary = "项目详情")
@@ -58,9 +60,9 @@ public class CloudProjectController {
     @Operation(summary = "项目规则组列表")
     @I18n
     @PostMapping("groupList/{goPage}/{pageSize}")
-    public Pager<List<CloudGroupDTO>> getCloudGroupDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudGroup cloudGroup) {
+    public Pager<List<CloudGroupDTO>> getCloudGroupDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudGroupRequest cloudGroupRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudProjectService.getCloudGroupDTOs(cloudGroup));
+        return PageUtils.setPageInfo(page, cloudProjectService.getCloudGroupDTOs(cloudGroupRequest));
     }
 
     @Operation(summary = "项目规则组详情")
@@ -80,6 +82,21 @@ public class CloudProjectController {
     @PostMapping("deleteGroups")
     public void deleteGroups(@RequestBody List<String> selectIds) throws Exception {
         cloudProjectService.deleteGroups(selectIds, tokenService.getLoginUser());
+    }
+
+    @Operation(summary = "项目执行过程列表")
+    @I18n
+    @PostMapping("processList/{goPage}/{pageSize}")
+    public Pager<List<CloudProcessDTO>> getCloudProcessDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudProcess cloudProcess) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, cloudProjectService.getCloudProcessDTOs(cloudProcess));
+    }
+
+    @Operation(summary = "项目执行过程详情")
+    @I18n
+    @GetMapping("processById/{groupId}")
+    public CloudProcessDTO processById(@PathVariable String processId) {
+        return cloudProjectService.processById(processId);
     }
 
 }

@@ -15,6 +15,7 @@ import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.account.CloudAccountRequest;
 import com.hummer.common.core.domain.request.account.CreateCloudAccountRequest;
 import com.hummer.common.core.domain.request.account.UpdateCloudAccountRequest;
+import com.hummer.common.core.domain.request.project.CloudGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
@@ -63,12 +64,12 @@ public class CloudProjectService {
     @DubboReference
     private IOperationLogService operationLogService;
 
-    public List<CloudProjectDTO> getCloudProjectDTOs(CloudProject cloudProject) {
-        return extCloudProjectMapper.getCloudProjectDTOs(cloudProject);
+    public List<CloudProjectDTO> getCloudProjectDTOs(CloudGroupRequest cloudGroupRequest) {
+        return extCloudProjectMapper.getCloudProjectDTOs(cloudGroupRequest);
     }
 
     public CloudProjectDTO projectById(String projectId) {
-        CloudProject cloudProject = new CloudProject();
+        CloudGroupRequest cloudProject = new CloudGroupRequest();
         cloudProject.setId(projectId);
         List<CloudProjectDTO> list = extCloudProjectMapper.getCloudProjectDTOs(cloudProject);
         if (!list.isEmpty()) {
@@ -116,12 +117,12 @@ public class CloudProjectService {
         operationLogService.log(loginUser, projectId, cloudProject.getAccountName(), ResourceTypeConstants.CLOUD_PROJECT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_project");
     }
 
-    public List<CloudGroupDTO> getCloudGroupDTOs(CloudGroup cloudGroup) {
+    public List<CloudGroupDTO> getCloudGroupDTOs(CloudGroupRequest cloudGroup) {
         return extCloudProjectMapper.getCloudGroupDTOs(cloudGroup);
     }
 
     public CloudGroupDTO groupById(String groupId) {
-        CloudGroup cloudGroup = new CloudGroup();
+        CloudGroupRequest cloudGroup = new CloudGroupRequest();
         cloudGroup.setId(groupId);
         List<CloudGroupDTO> list = extCloudProjectMapper.getCloudGroupDTOs(cloudGroup);
         if (!list.isEmpty()) {
@@ -151,6 +152,21 @@ public class CloudProjectService {
         cloudGroupLogMapper.deleteByExample(cloudGroupLogExample);
 
         operationLogService.log(loginUser, groupId, cloudGroup.getAccountName(), ResourceTypeConstants.CLOUD_GROUP.name(), ResourceOperation.DELETE, "i18n_delete_cloud_project");
+    }
+
+    public List<CloudProcessDTO> getCloudProcessDTOs(CloudProcess cloudProcess) {
+        return extCloudProjectMapper.getCloudProcessDTOs(cloudProcess);
+    }
+
+    public CloudProcessDTO processById(String processId) {
+        CloudProcess cloudProcess = new CloudProcess();
+        cloudProcess.setId(processId);
+        List<CloudProcessDTO> list = extCloudProjectMapper.getCloudProcessDTOs(cloudProcess);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return new CloudProcessDTO();
+        }
     }
 
 }

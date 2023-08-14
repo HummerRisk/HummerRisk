@@ -68,6 +68,29 @@
         <result column="result" jdbcType="TINYINT" property="result" />
     </resultMap>
 
+    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.dto.CloudProcessDTO"
+               extends="com.hummer.cloud.mapper.CloudProcessMapper.BaseResultMap">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="process_step" jdbcType="INTEGER" property="processStep" />
+        <result column="process_rate" jdbcType="INTEGER" property="processRate" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+        <collection property="cloudProcessLogList" ofType="com.hummer.common.core.domain.CloudProcessLog" javaType="list"
+                    select="selectCloudProcessLogList" column="{id=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudProcessLogMap" type="com.hummer.common.core.domain.CloudProcessLog">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="process_id" jdbcType="VARCHAR" property="processId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="result" jdbcType="TINYINT" property="result" />
+    </resultMap>
+
     <sql id="condition">
         <choose>
             <when test='${object}.operator == "like"'>
@@ -211,6 +234,29 @@
             t.*
         FROM cloud_group_log t
         where t.group_id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="getCloudProcessDTOs" resultMap="BaseProcessResultMap">
+        select
+        t.*
+        from cloud_process as t
+        <where>
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.projectId != null and request.projectId != ''">
+                and t.project_id = #{request.projectId}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
+    <select id="selectCloudProcessLogList" resultMap="CloudProcessLogMap">
+        SELECT
+            t.*
+        FROM cloud_process_log t
+        where t.process_id = #{id}
         ORDER BY t.create_time DESC
     </select>
 
