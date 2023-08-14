@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudProjectService;
 import com.hummer.common.core.domain.CloudProcess;
 import com.hummer.common.core.domain.request.project.CloudGroupRequest;
+import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.CloudGroupDTO;
 import com.hummer.common.core.dto.CloudProcessDTO;
 import com.hummer.common.core.dto.CloudProjectDTO;
@@ -96,6 +97,12 @@ public class CloudProjectController {
     @GetMapping("processById/{groupId}")
     public CloudProcessDTO processById(@PathVariable String processId) {
         return cloudProjectService.processById(processId);
+    }
+
+    @Operation(summary = "执行项目检测")
+    @PostMapping("scan")
+    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
+        cloudProjectService.scan(request, tokenService.getLoginUser());
     }
 
 }

@@ -295,7 +295,7 @@ public class FileSystemService {
 
     public void scan(String id, LoginUser loginUser) throws Exception {
         FileSystem fileSystem = fileSystemMapper.selectByPrimaryKey(id);
-        Integer scanId = systemProviderService.insertScanHistory(fileSystem);
+        Integer scanId = systemProviderService.insertScanHistory(fileSystem, loginUser);
         if(StringUtils.equalsIgnoreCase(fileSystem.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<FsRuleDTO> ruleList = ruleList(null);
             FileSystemResult result = new FileSystemResult();

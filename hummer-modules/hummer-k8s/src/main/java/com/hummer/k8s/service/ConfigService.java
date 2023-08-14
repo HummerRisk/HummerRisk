@@ -207,7 +207,7 @@ public class ConfigService {
 
     public void scan(String id, LoginUser loginUser) throws Exception {
         CloudNativeConfig cloudNativeConfig = cloudNativeConfigMapper.selectByPrimaryKey(id);
-        Integer scanId = systemProviderService.insertScanHistory(cloudNativeConfig);
+        Integer scanId = systemProviderService.insertScanHistory(cloudNativeConfig, loginUser);
         if(StringUtils.equalsIgnoreCase(cloudNativeConfig.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<CloudNativeConfigRule> ruleList = cloudNativeConfigRuleMapper.selectByExample(null);
             CloudNativeConfigResult result = new CloudNativeConfigResult();

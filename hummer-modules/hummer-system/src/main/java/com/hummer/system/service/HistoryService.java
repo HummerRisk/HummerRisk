@@ -16,6 +16,7 @@ import com.hummer.common.core.domain.request.server.ServerResultRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.k8s.api.IK8sProviderService;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.system.mapper.ext.ExtResourceMapper;
@@ -68,15 +69,14 @@ public class HistoryService {
     @DubboReference
     private IK8sProviderService k8sProviderService;
 
-    public Integer insertScanHistory(Object obj) throws Exception {
+    public Integer insertScanHistory(Object obj, LoginUser loginUser) throws Exception {
 
         Map map = obj2Account(obj);
         String accountId = map.get("accountId").toString();
         String accountType = map.get("accountType").toString();
 
         HistoryScan history = new HistoryScan();
-        //TODO dubbo 调用没有http请求获取不到用户信息
-//        history.setOperator(tokenService.getLoginUser().getUserId());
+        history.setOperator(loginUser.getUserName());
         history.setAccountId(accountId);
         history.setAccountType(accountType);
         history.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());

@@ -64,7 +64,7 @@ public class CloudGroup implements Serializable {
      *
      * @mbg.generated Fri Aug 11 15:18:52 CST 2023
      */
-    private Byte groupFlag;
+    private Boolean groupFlag;
 
     /**
      *
@@ -334,7 +334,7 @@ public class CloudGroup implements Serializable {
      *
      * @mbg.generated Fri Aug 11 15:18:52 CST 2023
      */
-    public Byte getGroupFlag() {
+    public Boolean getGroupFlag() {
         return groupFlag;
     }
 
@@ -346,7 +346,7 @@ public class CloudGroup implements Serializable {
      *
      * @mbg.generated Fri Aug 11 15:18:52 CST 2023
      */
-    public void setGroupFlag(Byte groupFlag) {
+    public void setGroupFlag(Boolean groupFlag) {
         this.groupFlag = groupFlag;
     }
 

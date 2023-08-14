@@ -299,6 +299,28 @@ public class SystemParameterService {
         return paramList;
     }
 
+    public List<SystemParameter> scanSettingInfo(String type) {
+        List<SystemParameter> paramList = this.getParamList(type);
+        if (!StringUtils.equalsIgnoreCase(type, ParamConstants.Classify.SCAN.getValue())) return paramList;
+        if (CollectionUtils.isEmpty(paramList)) {
+            paramList = new ArrayList<>();
+            ParamConstants.SCAN[] values = ParamConstants.SCAN.values();
+            for (ParamConstants.SCAN value : values) {
+                SystemParameter systemParameter = new SystemParameter();
+                if (value.equals(ParamConstants.SCAN.SkipDbUpdate) || value.equals(ParamConstants.SCAN.IgnoreUnfixed)) {
+                    systemParameter.setType(ParamConstants.Type.BOOLEAN.getValue());
+                } else {
+                    systemParameter.setType(ParamConstants.Type.TEXT.getValue());
+                }
+                systemParameter.setParamKey(value.getKey());
+                systemParameter.setSort(value.getValue());
+                paramList.add(systemParameter);
+            }
+        }
+        paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
+        return paramList;
+    }
+
     public String getValue(String key) {
         SystemParameter param = systemParameterMapper.selectByPrimaryKey(key);
         if (param == null) {
