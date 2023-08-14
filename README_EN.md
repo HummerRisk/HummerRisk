@@ -19,8 +19,7 @@
 
 ## Introduction
 
-> HummerRisk is self-developed by chaitin technology, cloudwalker team incubation, an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include CSPM and KSPM.
-
+> HummerRisk is an opensource cloud-native security platform. It resolve the  cloud-native security and governance issues in agentless way. Core capabilities include hybrid-cloud security and K8S container cloud detection.
 
 ![架构](./hummer-ui/src/assets/img/readme/architecturev-en.png)
 
