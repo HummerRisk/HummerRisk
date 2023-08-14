@@ -123,7 +123,7 @@ public class ServerService {
 
     public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
         Server server = serverMapper.selectByPrimaryKey(request.getAccountId());
-        Integer scanId = systemProviderService.insertScanHistory(server);
+        Integer scanId = systemProviderService.insertScanHistory(server, loginUser);
         for (Integer groupId : request.getGroups()) {
             this.scanGroups(server, scanId, groupId.toString(), loginUser);
         }
@@ -139,7 +139,7 @@ public class ServerService {
             BeanUtils.copyBean(server, validateAccount(server).getServer());
             serverMapper.updateByPrimaryKeySelective(server);
         }
-        Integer scanId = systemProviderService.insertScanHistory(server);
+        Integer scanId = systemProviderService.insertScanHistory(server, loginUser);
         this.messageOrderId = systemProviderService.createServerMessageOrder(server);
         if (StringUtils.equalsIgnoreCase(server.getStatus(), CloudAccountConstants.Status.VALID.name())) {
 
@@ -1071,7 +1071,7 @@ public class ServerService {
 
     public void scanByGroup(String groupId, String serverId, LoginUser loginUser) throws Exception {
         Server server = serverMapper.selectByPrimaryKey(serverId);
-        Integer scanId = systemProviderService.insertScanHistory(server);
+        Integer scanId = systemProviderService.insertScanHistory(server, loginUser);
         this.scanGroups(server, scanId, groupId, loginUser);
     }
 

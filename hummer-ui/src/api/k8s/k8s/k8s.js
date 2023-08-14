@@ -1,6 +1,8 @@
 
 export const allCloudNativeSource2YamlListUrl = "/k8s/k8s/allCloudNativeSource2YamlList";
 
+export const cloudNativeSource2YamlUrl = "/k8s/k8s/cloudNativeSource2Yaml/";
+
 export const k8sChartUrl = "/k8s/k8s/k8sChart";
 
 export const k8sSeverityChartUrl = "/k8s/k8s/severityChart";

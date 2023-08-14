@@ -63,8 +63,8 @@ public class SystemProviderService implements ISystemProviderService {
 
 
     @Override
-    public Integer insertScanHistory(Object obj) throws Exception {
-        return historyService.insertScanHistory(obj);
+    public Integer insertScanHistory(Object obj, LoginUser loginUser) throws Exception {
+        return historyService.insertScanHistory(obj, loginUser);
     }
 
     @Override

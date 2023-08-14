@@ -240,8 +240,15 @@ public class K8sController {
     @I18n
     @Operation(summary = "所有带有 YAML 的云原生资源信息")
     @GetMapping("allCloudNativeSource2YamlList")
-    public List<CloudNativeSourceWithBLOBs> allCloudNativeSource2YamlList() {
+    public List<CloudNativeSourceVo> allCloudNativeSource2YamlList() {
         return k8sService.allCloudNativeSource2YamlList();
+    }
+
+    @I18n
+    @Operation(summary = "云原生资源信息")
+    @GetMapping("cloudNativeSource2Yaml/{id}")
+    public CloudNativeSourceWithBLOBs cloudNativeSource2Yaml(@PathVariable String id) {
+        return k8sService.cloudNativeSource2Yaml(id);
     }
 
     @I18n

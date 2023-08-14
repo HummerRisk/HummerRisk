@@ -74,7 +74,6 @@ public class UserService {
 
     }
 
-    @SuppressWarnings("unchecked")
     private void insertUserRole(List<Map<String, Object>> roles, String userId) {
         for (Map<String, Object> map : roles) {
             String role = (String) map.get("id");
@@ -162,21 +161,12 @@ public class UserService {
         return userDTO;
     }
 
-    public UserDTO getLoginUser(String userId, List<String> list) throws Exception {
-        UserExample example = new UserExample();
-        example.createCriteria().andIdEqualTo(userId).andSourceIn(list);
-        if (userMapper.countByExample(example) == 0) {
-            return null;
-        }
-        return getUserDTO(userId);
-    }
-
     public LoginUser getLoginUserByName(String userName) throws Exception {
         LoginUser loginUser = new LoginUser();
         UserExample example = new UserExample();
         example.createCriteria().andNameEqualTo(userName);
         List<User> users = userMapper.selectByExample(example);
-        if (users.size() == 0) {
+        if (users.isEmpty()) {
             return new LoginUser();
         }
         User exuser = users.get(0);
@@ -188,24 +178,6 @@ public class UserService {
 
         loginUser.setUser(userDTO);
         return loginUser;
-    }
-
-    public UserDTO getUserDTOByEmail(String email, String... source) throws Exception {
-        UserExample example = new UserExample();
-        UserExample.Criteria criteria = example.createCriteria();
-        criteria.andEmailEqualTo(email);
-
-        if (!CollectionUtils.isEmpty(Arrays.asList(source))) {
-            criteria.andSourceIn(Arrays.asList(source));
-        }
-
-        List<User> users = userMapper.selectByExample(example);
-
-        if (users.isEmpty()) {
-            return null;
-        }
-
-        return getUserDTO(users.get(0).getId());
     }
 
     public UserRoleDTO getUserRole(String userId) {
@@ -245,7 +217,6 @@ public class UserService {
     public void deleteUser(String userId, LoginUser loginUser) throws Exception {
         User user = new User();
         BeanUtils.copyBean(user, loginUser);
-        if (user == null) return;
         if (StringUtils.equals(user.getId(), userId)) {
             HRException.throwException(Translator.get("cannot_delete_current_user"));
         }
@@ -288,28 +259,6 @@ public class UserService {
 
     public UserDTO getUserInfo(String userId) throws Exception {
         return getUserDTO(userId);
-    }
-
-    public boolean checkUserPassword(String userId, String password) throws Exception {
-        if (StringUtils.isBlank(userId)) {
-            HRException.throwException(Translator.get("user_name_is_null"));
-        }
-        if (StringUtils.isBlank(password)) {
-            HRException.throwException(Translator.get("password_is_null"));
-        }
-        UserExample example = new UserExample();
-        example.createCriteria().andIdEqualTo(userId).andPasswordEqualTo(CodingUtil.md5(password));
-        return userMapper.countByExample(example) > 0;
-    }
-
-    public void setLanguage(String lang, LoginUser loginUser) {
-        if (loginUser != null) {
-            User user = new User();
-            user.setId(loginUser.getUserId());
-            user.setLanguage(lang);
-            updateUser(user);
-            loginUser.getUser().setLanguage(lang);
-        }
     }
 
     /*修改当前用户用户密码*/
@@ -366,10 +315,6 @@ public class UserService {
 
     public List<User> searchUser(String condition) {
         return extUserMapper.searchUser(condition);
-    }
-
-    public User getUserById(String userId) {
-        return userMapper.selectByPrimaryKey(userId);
     }
 
     public List<UserDetail> queryTypeByIds(List<String> userIds) {

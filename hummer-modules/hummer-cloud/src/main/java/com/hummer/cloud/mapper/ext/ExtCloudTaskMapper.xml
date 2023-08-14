@@ -77,7 +77,27 @@
 
     <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudTaskDTO"
                extends="com.hummer.cloud.mapper.CloudTaskMapper.BaseResultMap">
-        <result column="account_name" property="accountName"/>
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="trigger_id" jdbcType="VARCHAR" property="triggerId" />
+        <result column="prev_fire_time" jdbcType="BIGINT" property="prevFireTime" />
+        <result column="last_fire_time" jdbcType="BIGINT" property="lastFireTime" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_tags" jdbcType="VARCHAR" property="ruleTags" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion" />
     </resultMap>
 
     <select id="getTopTasksForEmail" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
@@ -173,7 +193,7 @@
     </select>
 
     <select id="selectByHummerId" resultMap="BaseResultMap" parameterType="String">
-        select distinct a.id, a.task_name as taskName, a.severity as severity, a.rule_tags as ruleTags, a.type, a.resource_types as resourceTypes
+        select distinct a.id, a.task_name, a.severity, a.rule_tags, a.type, a.resource_types
         FROM cloud_task a
         join cloud_task_item b on a.id = b.task_id
         join cloud_task_item_resource c on b.id = c.task_item_id

@@ -827,7 +827,7 @@ public class ImageService {
 
     public void scan(String id, LoginUser loginUser) throws Exception {
         Image image = imageMapper.selectByPrimaryKey(id);
-        Integer scanId = systemProviderService.insertScanHistory(image);
+        Integer scanId = systemProviderService.insertScanHistory(image, loginUser);
         if (StringUtils.equalsIgnoreCase(image.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<ImageRuleDTO> ruleList = ruleList(null);
             ImageResultWithBLOBs result = new ImageResultWithBLOBs();

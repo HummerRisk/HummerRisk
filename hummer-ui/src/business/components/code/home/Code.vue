@@ -97,7 +97,7 @@
       <div v-for="(form, index) in addAccountForm" :key="index">
         <el-form :model="form" label-position="right" label-width="150px" size="medium" :rules="rule" :ref="'addAccountForm' + index">
           <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
               <el-option
                 v-for="item in sboms"
                 :key="item.id"
@@ -109,7 +109,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
               <el-option
                 v-for="item in versions"
                 :key="item.id"
@@ -124,7 +124,7 @@
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
           </el-form-item>
           <el-form-item :label="$t('code.platform')" :rules="{required: true, message: $t('code.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.pluginIcon" :placeholder="$t('code.platform')" @change="changePluginForAdd(form)">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginIcon" :placeholder="$t('code.platform')" @change="changePluginForAdd(form)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"
@@ -144,7 +144,7 @@
             </el-form-item>
           </div>
           <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+            <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
               <el-option
                 v-for="item in proxys"
                 :key="item.id"
@@ -183,7 +183,7 @@
                :destroy-on-close="true" v-loading="viewResult.loading">
       <el-form :model="form" label-position="right" label-width="150px" size="small" :rules="rule" ref="accountForm">
         <el-form-item :label="$t('sbom.sbom_project')" :rules="{required: true, message: $t('sbom.sbom_project') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomId" :placeholder="$t('sbom.sbom_project')" @change="changeSbom(form)">
             <el-option
               v-for="item in sboms"
               :key="item.id"
@@ -195,7 +195,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('sbom.sbom_project_version')" :rules="{required: true, message: $t('sbom.sbom_project_version') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
+          <el-select style="width: 100%;" filterable :clearable="true" v-model="form.sbomVersionId" :placeholder="$t('sbom.sbom_project_version')">
             <el-option
               v-for="item in versions"
               :key="item.id"
@@ -210,7 +210,7 @@
           <el-input v-model="form.name" autocomplete="off" :placeholder="$t('code.name')"/>
         </el-form-item>
         <el-form-item :label="$t('code.platform')" :rules="{required: true, message: $t('code.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" disabled v-model="form.pluginIcon" :placeholder="$t('code.platform')">
+          <el-select style="width: 100%;" disabled filterable :clearable="true" v-model="form.pluginIcon" :placeholder="$t('code.platform')">
             <el-option
               v-for="item in plugins"
               :key="item.id"

@@ -698,7 +698,7 @@ public class K8sService {
             if (scans.size() > 0) {
                 if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
 
-                    Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+                    Integer scanId = systemProviderService.insertScanHistory(cloudNative, loginUser);
                     List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
                     CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
@@ -744,7 +744,7 @@ public class K8sService {
                 if (ruleGroups.size() > 0) {
                     if (StringUtils.equalsIgnoreCase(cloudNative.getStatus(), CloudAccountConstants.Status.VALID.name())) {
 
-                        Integer scanId = systemProviderService.insertScanHistory(cloudNative);
+                        Integer scanId = systemProviderService.insertScanHistory(cloudNative, loginUser);
                         List<CloudNativeRule> ruleList = cloudNativeRuleMapper.selectByExample(null);
                         CloudNativeResultWithBLOBs result = new CloudNativeResultWithBLOBs();
 
@@ -1282,10 +1282,12 @@ public class K8sService {
         return cloudNativeResultWithBLOBs;
     }
 
-    public List<CloudNativeSourceWithBLOBs> allCloudNativeSource2YamlList() {
-        CloudNativeSourceExample example = new CloudNativeSourceExample();
-        example.createCriteria().andSourceTypeNotEqualTo("Version").andSourceYamlIsNotNull();
-        return cloudNativeSourceMapper.selectByExampleWithBLOBs(example);
+    public List<CloudNativeSourceVo> allCloudNativeSource2YamlList() {
+        return extCloudNativeSourceMapper.allCloudNativeSource2YamlList();
+    }
+
+    public CloudNativeSourceWithBLOBs cloudNativeSource2Yaml(String id) {
+        return cloudNativeSourceMapper.selectByPrimaryKey(id);
     }
 
     public List<CloudNativeSourceSyncLogWithBLOBsDTO> syncList(CloudNativeSyncLogRequest request) {

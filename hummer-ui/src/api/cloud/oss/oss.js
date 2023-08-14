@@ -29,7 +29,7 @@ export const ossBucketListUrl = "/cloud/oss/bucketList/";
 
 export const ossObjectsUrl = "/cloud/oss/objects/";
 
-export const ossValidateUrl = "/cloud/oss/validate";
+export const ossValidateUrl = "/cloud/oss/validate/";
 
 export const ossGroupsUrl = "/cloud/oss/groups/";
 

@@ -440,13 +440,14 @@ public class ResourceCreateService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
             JSONObject jsonObject = PlatformUtils.fixedScanner(taskItem.getDetails(), map, accountWithBLOBs.getPluginId());
-            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
+            LogUtil.info(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            LogUtil.info(cloudTask.getId() + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
-            String resultCode = resultJson.getString("code").toString();
-            String resultMsg = resultJson.getString("msg").toString();
+            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
+            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
             if (!StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }

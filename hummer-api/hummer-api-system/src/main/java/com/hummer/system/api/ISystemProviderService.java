@@ -15,7 +15,7 @@ import java.util.Map;
 
 public interface ISystemProviderService {
 
-    Integer insertScanHistory(Object obj) throws Exception;
+    Integer insertScanHistory(Object obj, LoginUser loginUser) throws Exception;
 
     String createMessageOrder(AccountWithBLOBs account) throws Exception;
 

@@ -248,7 +248,7 @@ public class CodeService {
 
     public void scan(String id, LoginUser loginUser) throws Exception {
         Code code = codeMapper.selectByPrimaryKey(id);
-        Integer scanId = systemProviderService.insertScanHistory(code);
+        Integer scanId = systemProviderService.insertScanHistory(code, loginUser);
         if(StringUtils.equalsIgnoreCase(code.getStatus(), CloudAccountConstants.Status.VALID.name())) {
             List<CodeRuleDTO> ruleList = ruleList(null);
             CodeResult result = new CodeResult();

@@ -67,7 +67,7 @@ ALTER TABLE `history_image_task` ADD `serverty` varchar(255) DEFAULT '["CRITICAL
 
 CREATE TABLE IF NOT EXISTS `server_certificate` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
-    `name`                       varchar(50)         DEFAULT NULL UNIQUE COMMENT '名称',
+    `name`                       varchar(128)        DEFAULT NULL UNIQUE COMMENT '名称',
     `description`                varchar(1024)       DEFAULT NULL COMMENT '描述',
     `is_public_key`              varchar(32)         DEFAULT NULL COMMENT '密钥类型: no无密钥，file密钥文件，str密钥串',
     `password`                   varchar(256)        COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Password',

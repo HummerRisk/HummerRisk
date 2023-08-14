@@ -136,7 +136,7 @@
               <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
             </el-form-item>
             <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePluginForAdd(form)">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePluginForAdd(form)">
                 <el-option
                   v-for="item in plugins"
                   :key="item.id"
@@ -157,7 +157,7 @@
               </el-form-item>
             </div>
             <el-form-item v-if="form.isProxy && form.pluginId" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-              <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+              <el-select style="width: 100%;" filterable :clearable="true" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
                 <el-option
                   v-for="item in proxys"
                   :key="item.id"
@@ -201,7 +201,7 @@
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('k8s.name')"/>
           </el-form-item>
           <el-form-item :label="$t('k8s.platform')" :rules="{required: true, message: $t('k8s.platform') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" disabled v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePlugin(form.pluginId)">
+            <el-select style="width: 100%;" disabled filterable :clearable="true" v-model="form.pluginId" :placeholder="$t('k8s.platform')" @change="changePlugin(form.pluginId)">
               <el-option
                 v-for="item in plugins"
                 :key="item.id"

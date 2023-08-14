@@ -126,13 +126,13 @@
           <el-radio v-model="configType" label="upload" @change="changeYaml">{{ $t('config.upload_config') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')">
-          <el-select style="width: 100%;" v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
+          <el-select style="width: 100%;" filterable v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
             <el-option
               v-for="item in k8s"
               :key="item.id"
               :label="item.sourceName"
-              :value="item.sourceYaml">
-              &nbsp;&nbsp; {{ '(namespace)' +  item.sourceNamespace + ':(source)' + item.sourceName }}
+              :value="item.id">
+              &nbsp;&nbsp; {{ '[K8s]' + item.cloudNativeName + '|{namespace}' +  item.sourceNamespace + '(type)' + item.sourceType + ':(source)' + item.sourceName }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -165,7 +165,7 @@
           <el-switch v-model="isProxy"></el-switch>
         </el-form-item>
         <el-form-item v-if="isProxy" :label="$t('commons.proxy')" :rules="{required: true, message: $t('commons.proxy') + $t('commons.cannot_be_empty'), trigger: 'change'}">
-          <el-select style="width: 100%;" v-model="form.proxyId" :placeholder="$t('commons.proxy')">
+          <el-select style="width: 100%;" filterable v-model="form.proxyId" :placeholder="$t('commons.proxy')">
             <el-option
               v-for="item in proxys"
               :key="item.id"
@@ -181,13 +181,13 @@
           <el-radio v-model="configType" label="upload" @change="changeYaml">{{ $t('config.upload_config') }}</el-radio>
         </el-form-item>
         <el-form-item v-if="configType==='k8s'" :label="$t('k8s.k8s_setting')">
-          <el-select style="width: 100%;" v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
+          <el-select style="width: 100%;" filterable v-model="sourceId" :placeholder="$t('k8s.k8s_setting')" @change="changeSearch">
             <el-option
               v-for="item in k8s"
               :key="item.id"
               :label="item.sourceName"
-              :value="item.sourceYaml">
-              &nbsp;&nbsp; {{ '(namespace)' +  item.sourceNamespace + ':(source)' + item.sourceName }}
+              :value="item.id">
+              &nbsp;&nbsp; {{ '[K8s]' + item.cloudNativeName + '|{namespace}' +  item.sourceNamespace + '(type)' + item.sourceType + ':(source)' + item.sourceName }}
             </el-option>
           </el-select>
         </el-form-item>
@@ -289,8 +289,10 @@ import {allCloudNativeSource2YamlListUrl} from "@/api/k8s/k8s/k8s";
 import {
   addConfigUrl,
   configDownloadUrl,
-  configListUrl, deleteConfigsUrl,
+  configListUrl,
+  deleteConfigsUrl,
   deleteConfigUrl,
+  cloudNativeSource2YamlUrl,
   getCloudNativeConfigResultUrl,
   logConfigUrl,
   scanConfigUrl,
@@ -546,7 +548,9 @@ export default {
       return row.status === value;
     },
     changeSearch(value){
-      this.form.configYaml = value;
+      this.$get(cloudNativeSource2YamlUrl + value, res => {
+        this.form.configYaml = res.data.sourceYaml;
+      });
     },
     appendYaml(yaml) {
       this.form.configYaml = yaml;

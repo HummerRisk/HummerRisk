@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.cloud.mapper.ext.ExtCloudProjectMapper">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudProjectDTO"
+               extends="com.hummer.cloud.mapper.CloudProjectMapper.BaseResultMap">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="job_type" jdbcType="VARCHAR" property="jobType" />
+        <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <collection property="cloudProjectLogList" ofType="com.hummer.common.core.domain.CloudProjectLog" javaType="list"
+                    select="selectCloudProjectLogList" column="{id=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudProjectLogMap" type="com.hummer.common.core.domain.CloudProjectLog">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="init_time" jdbcType="VARCHAR" property="initTime" />
+        <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="result" jdbcType="TINYINT" property="result" />
+    </resultMap>
+
+    <resultMap id="BaseGroupResultMap" type="com.hummer.common.core.dto.CloudGroupDTO"
+               extends="com.hummer.cloud.mapper.CloudGroupMapper.BaseResultMap">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="group_id" jdbcType="INTEGER" property="groupId" />
+        <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+        <result column="group_desc" jdbcType="VARCHAR" property="groupDesc" />
+        <result column="group_level" jdbcType="VARCHAR" property="groupLevel" />
+        <result column="group_flag" jdbcType="TINYINT" property="groupFlag" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="job_type" jdbcType="VARCHAR" property="jobType" />
+        <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <collection property="cloudGroupLogList" ofType="com.hummer.common.core.domain.CloudGroupLog" javaType="list"
+                    select="selectCloudGroupLogList" column="{id=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudGroupLogMap" type="com.hummer.common.core.domain.CloudGroupLog">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="group_id" jdbcType="VARCHAR" property="groupId" />
+        <result column="init_time" jdbcType="VARCHAR" property="initTime" />
+        <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="result" jdbcType="TINYINT" property="result" />
+    </resultMap>
+
+    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.dto.CloudProcessDTO"
+               extends="com.hummer.cloud.mapper.CloudProcessMapper.BaseResultMap">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="process_step" jdbcType="INTEGER" property="processStep" />
+        <result column="process_rate" jdbcType="INTEGER" property="processRate" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+        <collection property="cloudProcessLogList" ofType="com.hummer.common.core.domain.CloudProcessLog" javaType="list"
+                    select="selectCloudProcessLogList" column="{id=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudProcessLogMap" type="com.hummer.common.core.domain.CloudProcessLog">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="process_id" jdbcType="VARCHAR" property="processId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
+        <result column="result" jdbcType="TINYINT" property="result" />
+    </resultMap>
+
+    <sql id="condition">
+        <choose>
+            <when test='${object}.operator == "like"'>
+                like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "not like"'>
+                not like CONCAT('%', #{${object}.value},'%')
+            </when>
+            <when test='${object}.operator == "in"'>
+                in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "not in"'>
+                not in
+                <foreach collection="${object}.value" item="v" separator="," open="(" close=")">
+                    #{v}
+                </foreach>
+            </when>
+            <when test='${object}.operator == "between"'>
+                between #{${object}.value[0]} and #{${object}.value[1]}
+            </when>
+            <when test='${object}.operator == "gt"'>
+                &gt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "lt"'>
+                &lt; #{${object}.value}
+            </when>
+            <when test='${object}.operator == "ge"'>
+                &gt;= #{${object}.value}
+            </when>
+            <when test='${object}.operator == "le"'>
+                &lt;= #{${object}.value}
+            </when>
+            <otherwise>
+                = #{${object}.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="combine">
+        <if test='${condition}.name != null'>
+            and t.account_name
+            <include refid="condition">
+                <property name="object" value="${condition}.accountName"/>
+            </include>
+        </if>
+        <if test="${condition}.createTime != null">
+            and t.create_time
+            <include refid="condition">
+                <property name="object" value="${condition}.createTime"/>
+            </include>
+        </if>
+        <if test="${condition}.pluginId != null">
+            and t.pluginId
+            <include refid="condition">
+                <property name="object" value="${condition}.pluginId"/>
+            </include>
+        </if>
+        <if test="${condition}.status != null">
+            and t.status
+            <include refid="condition">
+                <property name="object" value="${condition}.status"/>
+            </include>
+        </if>
+        <if test="${condition}.creator != null">
+            and t.creator
+            <include refid="condition">
+                <property name="object" value="${condition}.creator"/>
+            </include>
+        </if>
+    </sql>
+
+    <select id="getCloudProjectDTOs" resultMap="BaseResultMap">
+        select
+        t.*
+        from cloud_project as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.accountName != null and request.accountName != ''">
+                and LOWER(t.account_name) like CONCAT('%', LOWER(#{request.accountName}),'%')
+            </if>
+            <if test="request.creator != null and request.creator != ''">
+                and LOWER(creator) like CONCAT('%', LOWER(#{creator}),'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
+    <select id="selectCloudProjectLogList" resultMap="CloudProjectLogMap">
+        SELECT
+            t.*
+        FROM cloud_project_log t
+        where t.project_id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="getCloudGroupDTOs" resultMap="BaseGroupResultMap">
+        select
+        t.*
+        from cloud_group as t
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine">
+                    <property name="condition" value="request.combine"/>
+                    <property name="name" value="request.name"/>
+                </include>
+            </if>
+
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.accountName != null and request.accountName != ''">
+                and LOWER(t.account_name) like CONCAT('%', LOWER(#{request.accountName}),'%')
+            </if>
+            <if test="request.creator != null and request.creator != ''">
+                and LOWER(creator) like CONCAT('%', LOWER(#{creator}),'%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                and t.status = #{request.status}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
+    <select id="selectCloudProjectLogList" resultMap="CloudProjectLogMap">
+        SELECT
+            t.*
+        FROM cloud_group_log t
+        where t.group_id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="getCloudProcessDTOs" resultMap="BaseProcessResultMap">
+        select
+        t.*
+        from cloud_process as t
+        <where>
+            <if test="request.id != null and request.id != ''">
+                and t.id = #{request.id}
+            </if>
+            <if test="request.projectId != null and request.projectId != ''">
+                and t.project_id = #{request.projectId}
+            </if>
+        </where>
+        order by t.create_time desc
+    </select>
+
+    <select id="selectCloudProcessLogList" resultMap="CloudProcessLogMap">
+        SELECT
+            t.*
+        FROM cloud_process_log t
+        where t.process_id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+
+</mapper>

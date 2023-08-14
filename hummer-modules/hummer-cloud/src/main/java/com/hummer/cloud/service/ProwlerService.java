@@ -69,6 +69,95 @@ public class ProwlerService {
     @DubboReference
     private IOperationLogService operationLogService;
 
+    public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, LoginUser loginUser) throws Exception {
+        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, loginUser);
+        String taskId = cloudTask.getId();
+
+        String script = quartzTaskDTO.getScript();
+        JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
+        String groupName = "check11";
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = (JSONObject) o;
+            groupName = jsonObject.getString("defaultValue");
+        }
+
+        this.deleteTaskItems(taskId);
+        List<String> resourceTypes = new ArrayList();
+        resourceTypes.add(groupName);
+        for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
+            for (String regionId : selectTag.getRegions()) {
+                CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
+                String uuid = UUIDUtil.newUUID();
+                taskItemWithBLOBs.setId(uuid);
+                taskItemWithBLOBs.setTaskId(taskId);
+                taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
+                taskItemWithBLOBs.setCustomData(script);
+                taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
+                taskItemWithBLOBs.setSeverity(quartzTaskDTO.getSeverity());
+                taskItemWithBLOBs.setCreateTime(cloudTask.getCreateTime());
+                taskItemWithBLOBs.setAccountId(selectTag.getAccountId());
+                AccountWithBLOBs account = accountMapper.selectByPrimaryKey(selectTag.getAccountId());
+                taskItemWithBLOBs.setAccountUrl(account.getPluginIcon());
+                taskItemWithBLOBs.setAccountLabel(account.getName());
+                taskItemWithBLOBs.setRegionId(regionId);
+                taskItemWithBLOBs.setRegionName(PlatformUtils.tranforRegionId2RegionName(regionId, cloudTask.getPluginId()));
+                taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
+                cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
+
+                systemProviderService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+
+                final String finalScript = script;
+                final String finalDirName = groupName;
+                commonThreadPool.addTask(() -> {
+                    String resourceType = finalDirName;
+
+                    CloudTaskItemResourceWithBLOBs taskItemResource = new CloudTaskItemResourceWithBLOBs();
+                    taskItemResource.setTaskId(taskId);
+                    taskItemResource.setTaskItemId(taskItemWithBLOBs.getId());
+                    taskItemResource.setDirName(finalDirName);
+                    taskItemResource.setResourceType(resourceType);
+                    taskItemResource.setResourceName(finalDirName);
+
+                    //包含actions
+                    taskItemResource.setResourceCommandAction(finalScript);
+
+                    //不包含actions
+                    taskItemResource.setResourceCommand(finalScript);
+                    cloudTaskItemResourceMapper.insertSelective(taskItemResource);
+
+                    try {
+                        HistoryCloudTaskResourceWithBLOBs historyCloudTaskResourceWithBLOBs = new HistoryCloudTaskResourceWithBLOBs();
+                        BeanUtils.copyBean(historyCloudTaskResourceWithBLOBs, taskItemResource);
+                        systemProviderService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    taskItemWithBLOBs.setDetails(finalScript);
+                    cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
+
+                    try {
+                        systemProviderService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
+                    cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+                    try {
+                        systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        }
+        //向首页活动添加操作信息
+        operationLogService.log(loginUser, taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        return cloudTask;
+    }
+
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId, loginUser);
         String taskId = cloudTask.getId();
@@ -155,6 +244,50 @@ public class ProwlerService {
         }
         //向首页活动添加操作信息
         operationLogService.log(loginUser, taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        return cloudTask;
+    }
+
+    private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, LoginUser loginUser) throws Exception {
+        CloudTask cloudTask = new CloudTask();
+        cloudTask.setTaskName(quartzTaskDTO.getTaskName() != null ?quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
+        cloudTask.setRuleId(quartzTaskDTO.getId());
+        cloudTask.setSeverity(quartzTaskDTO.getSeverity());
+        cloudTask.setType(quartzTaskDTO.getType());
+        cloudTask.setPluginId(quartzTaskDTO.getPluginId());
+        cloudTask.setPluginIcon(quartzTaskDTO.getPluginIcon());
+        cloudTask.setPluginName(quartzTaskDTO.getPluginName());
+        cloudTask.setRuleTags(quartzTaskDTO.getTags().toString());
+        cloudTask.setDescription(quartzTaskDTO.getDescription());
+        cloudTask.setAccountId(quartzTaskDTO.getAccountId());
+        cloudTask.setApplyUser(Objects.requireNonNull(loginUser).getUserId());
+        cloudTask.setStatus(status);
+        cloudTask.setScanType(ScanTypeConstants.prowler.name());
+
+        CloudTaskExample example = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria = example.createCriteria();
+        criteria.andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andTaskNameEqualTo(quartzTaskDTO.getTaskName());
+        List<CloudTask> queryCloudTasks = cloudTaskMapper.selectByExample(example);
+        if (!queryCloudTasks.isEmpty()) {
+            cloudTask.setId(queryCloudTasks.get(0).getId());
+            cloudTask.setCreateTime(System.currentTimeMillis());
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+            HistoryCloudTask historyCloudTask = systemProviderService.historyCloudTask(queryCloudTasks.get(0).getId());
+            if (historyCloudTask != null) {
+                systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            } else {
+                systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            }
+
+        } else {
+            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, loginUser.getUserId());
+            cloudTask.setId(taskId);
+            cloudTask.setCreateTime(System.currentTimeMillis());
+            cloudTaskMapper.insertSelective(cloudTask);
+
+            systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+        }
+
         return cloudTask;
     }
 
