@@ -19,8 +19,9 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,12 +30,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.io.BufferedOutputStream;
 import java.io.FilterInputStream;
 import java.net.URLEncoder;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -165,13 +165,9 @@ public class OssController {
         while ((L = in.read(car)) != -1) {
             out.write(car, 0, L);
         }
-        if (out != null) {
-            out.flush();
-            out.close();
-        }
-        if (in != null) {
-            in.close();
-        }
+        out.flush();
+        out.close();
+        in.close();
     }
 
     @I18n
@@ -192,7 +188,7 @@ public class OssController {
     @Operation(summary = "删除存储桶")
     @GetMapping("deleteBucket/{bucketId}")
     public ResultHolder deleteBucket(@PathVariable String bucketId) {
-        return ossService.delete(Arrays.asList(bucketId), tokenService.getLoginUser());
+        return ossService.delete(Collections.singletonList(bucketId), tokenService.getLoginUser());
     }
 
     @I18n

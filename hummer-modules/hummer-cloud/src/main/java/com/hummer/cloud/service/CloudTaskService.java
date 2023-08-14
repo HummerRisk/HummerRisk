@@ -76,15 +76,6 @@ public class CloudTaskService {
         }
     }
 
-    public CloudTask saveK8sManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId, LoginUser loginUser) {
-        try {
-            this.validateYaml(quartzTaskDTO);
-            return orderService.createK8sTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId, loginUser);
-        } catch (Exception e) {
-            throw new HRException(e.getMessage());
-        }
-    }
-
     public boolean morelTask(String taskId) {
         try {
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskId);
@@ -210,11 +201,11 @@ public class CloudTaskService {
             Proxy proxy = new Proxy();
             if (account.getProxyId() != null) proxy = proxyMapper.selectByPrimaryKey(account.getProxyId());
             // 校验云账号是否有效
-            Optional.ofNullable(accountService.validate(account.getId()).isFlag()).filter(Boolean::booleanValue).orElseGet(() -> {
+            Optional.of(accountService.validate(account.getId()).isFlag()).filter(Boolean::booleanValue).orElseGet(() -> {
                 HRException.throwException(Translator.get("i18n_ex_plugin_validate"));
                 return null;
             });
-            JSONObject regionObj = Optional.ofNullable(PlatformUtils._getRegions(account, proxy, true)).filter(s -> {
+            JSONObject regionObj = Optional.of(PlatformUtils._getRegions(account, proxy, true)).filter(s -> {
                 return !s.isEmpty();
             }).map(jsonArr -> {
                 return (JSONObject) jsonArr.get(0);
@@ -309,8 +300,7 @@ public class CloudTaskService {
         final CloudTaskExample cloudTaskExample = new CloudTaskExample();
         cloudTaskExample.createCriteria().andAccountIdEqualTo(accountId).andStatusNotIn(Arrays.asList(CloudTaskConstants.TASK_STATUS.FINISHED.toString(),
                 CloudTaskConstants.TASK_STATUS.ERROR.toString(), CloudTaskConstants.TASK_STATUS.WARNING.toString()));
-        long countK8sScan = cloudTaskMapper.countByExample(cloudTaskExample);
-        return countK8sScan;
+        return cloudTaskMapper.countByExample(cloudTaskExample);
     }
 
     public long getResourceSum(String accountId) {

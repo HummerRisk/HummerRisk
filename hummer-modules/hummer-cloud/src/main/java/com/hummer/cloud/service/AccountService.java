@@ -21,7 +21,6 @@ import com.hummer.common.core.dto.ValidateDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
-import com.hummer.k8s.api.IK8sProviderService;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
@@ -69,8 +68,6 @@ public class AccountService {
     private OssService ossService;
     @DubboReference
     private IOperationLogService operationLogService;
-    @DubboReference
-    private IK8sProviderService ik8sProviderService;
 
     public List<AccountDTO> getCloudAccountList(CloudAccountRequest request) {
         return extAccountMapper.getCloudAccountList(request);
@@ -79,8 +76,7 @@ public class AccountService {
     public List<Account> listByGroup(String pluginId) {
         AccountExample example = new AccountExample();
         example.createCriteria().andPluginIdEqualTo(pluginId).andStatusEqualTo("VALID");
-        List<Account> accounts = accountMapper.selectByExample(example);
-        return accounts;
+        return accountMapper.selectByExample(example);
     }
 
     public AccountWithBLOBs getAccount(String id) {
@@ -179,14 +175,14 @@ public class AccountService {
                 accountMapper.insertSelective(account);
                 updateRegionsThrows(account);
                 operationLogService.log(loginUser, account.getId(), account.getName(), ResourceTypeConstants.CLOUD_ACCOUNT.name(), ResourceOperation.CREATE, "i18n_create_cloud_account");
-                if (validate.isFlag() && PlatformUtils.isSyncResource(account.getPluginId()))
+                if (validate.isFlag())
                     cloudSyncService.sync(account.getId(), loginUser);
 
                 if (request.isCreateLog()) {
                     try {
                         JSONArray arr = JSONArray.parseArray(account.getCheckRegions());
-                        if (arr.size() == 0) arr = JSONArray.parseArray(account.getRegions());
-                        if (arr.size() > 0) {
+                        if (arr.isEmpty()) arr = JSONArray.parseArray(account.getRegions());
+                        if (!arr.isEmpty()) {
                             String[] regions = new String[arr.size()];
                             int i = 0;
                             for (Object o : arr) {
@@ -222,24 +218,12 @@ public class AccountService {
                         }
                     }
 
-                    if (request.isCreateImage()) {
-                        try {
-                            ImageRepo imageRepo = new ImageRepo();
-                            imageRepo.setIsBindAccount(true);
-                            imageRepo.setAccountId(account.getId());
-                            imageRepo.setName(account.getName());
-                            imageRepo.setPluginIcon(account.getPluginIcon());
-                            ik8sProviderService.addImageRepo(imageRepo, account, loginUser);
-                        } catch (Exception e1) {
-                            LogUtil.error(e1.getMessage());
-                        }
-                    }
                 }
 
                 return getCloudAccountById(account.getId());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return null;
@@ -300,7 +284,7 @@ public class AccountService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
         }
         return null;

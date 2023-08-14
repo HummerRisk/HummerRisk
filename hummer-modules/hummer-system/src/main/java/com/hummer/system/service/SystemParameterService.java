@@ -157,7 +157,7 @@ public class SystemParameterService {
         params.put("corpid", cropId);
         params.put("corpsecret", secret);
         ResponseEntity<String> responseEntity = restTemplate.getForEntity("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}", String.class, params);
-        if (responseEntity.getStatusCodeValue() != 200) {
+        if (responseEntity.getStatusCode().value() != 200) {
             HRException.throwException("request failed.");
         }
         String body = responseEntity.getBody();
@@ -287,28 +287,6 @@ public class SystemParameterService {
                 SystemParameter systemParameter = new SystemParameter();
                 if (value.equals(ParamConstants.DINGDING.APPSECRET)) {
                     systemParameter.setType(ParamConstants.Type.PASSWORD.getValue());
-                } else {
-                    systemParameter.setType(ParamConstants.Type.TEXT.getValue());
-                }
-                systemParameter.setParamKey(value.getKey());
-                systemParameter.setSort(value.getValue());
-                paramList.add(systemParameter);
-            }
-        }
-        paramList.sort(Comparator.comparingInt(SystemParameter::getSort));
-        return paramList;
-    }
-
-    public List<SystemParameter> scanSettingInfo(String type) {
-        List<SystemParameter> paramList = this.getParamList(type);
-        if (!StringUtils.equalsIgnoreCase(type, ParamConstants.Classify.SCAN.getValue())) return paramList;
-        if (CollectionUtils.isEmpty(paramList)) {
-            paramList = new ArrayList<>();
-            ParamConstants.SCAN[] values = ParamConstants.SCAN.values();
-            for (ParamConstants.SCAN value : values) {
-                SystemParameter systemParameter = new SystemParameter();
-                if (value.equals(ParamConstants.SCAN.SkipDbUpdate) || value.equals(ParamConstants.SCAN.IgnoreUnfixed)) {
-                    systemParameter.setType(ParamConstants.Type.BOOLEAN.getValue());
                 } else {
                     systemParameter.setType(ParamConstants.Type.TEXT.getValue());
                 }

@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class ProjectUtil {
 
-    private static final Set<String> noPermissionRegions = new HashSet(){{add("MOS");}};
+    private static final HashSet noPermissionRegions = new HashSet(){{add("MOS");}};
 
     public static List<ProjectResult> listProjects(IamClient iamClient, String userId){
         KeystoneListProjectsForUserRequest request = new KeystoneListProjectsForUserRequest().withUserId(userId);
@@ -31,8 +30,7 @@ public class ProjectUtil {
 
     public static ProjectResult project(IamClient iamClient, String projectId){
         KeystoneShowProjectResponse response = iamClient.keystoneShowProject(new KeystoneShowProjectRequest().withProjectId(projectId));
-        ProjectResult project = response.getProject();
-        return project;
+        return response.getProject();
     }
 
     public static List<ProjectResult> filterWithRequest(List<ProjectResult> projects, IamRequest request){
