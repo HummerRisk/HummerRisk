@@ -72,6 +72,130 @@ public class OrderService {
     @DubboReference
     private IOperationLogService operationLogService;
 
+    public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, LoginUser loginUser) throws Exception {
+        CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, loginUser);
+        String taskId = cloudTask.getId();
+
+        String script = quartzTaskDTO.getScript();
+        JSONArray jsonArray = JSON.parseArray(quartzTaskDTO.getParameter());
+        for (Object o : jsonArray) {
+            JSONObject jsonObject = (JSONObject) o;
+            String key = "${{" + jsonObject.getString("key") + "}}";
+            if (script.contains(key)) {
+                script = script.replace(key, jsonObject.getString("defaultValue"));
+            }
+        }
+
+        this.deleteTaskItems(taskId);
+        List<String> resourceTypes = new ArrayList();
+        for (SelectTag selectTag : quartzTaskDTO.getSelectTags()) {
+            for (String regionId : selectTag.getRegions()) {
+                CloudTaskItemWithBLOBs taskItemWithBLOBs = new CloudTaskItemWithBLOBs();
+                String uuid = UUIDUtil.newUUID();
+                taskItemWithBLOBs.setId(uuid);
+                taskItemWithBLOBs.setTaskId(taskId);
+                taskItemWithBLOBs.setRuleId(quartzTaskDTO.getId());
+                taskItemWithBLOBs.setCustomData(script);
+                taskItemWithBLOBs.setStatus(CloudTaskConstants.TASK_STATUS.UNCHECKED.name());
+                taskItemWithBLOBs.setSeverity(quartzTaskDTO.getSeverity());
+                taskItemWithBLOBs.setCreateTime(cloudTask.getCreateTime());
+                taskItemWithBLOBs.setAccountId(selectTag.getAccountId());
+                AccountWithBLOBs account = accountMapper.selectByPrimaryKey(selectTag.getAccountId());
+                taskItemWithBLOBs.setAccountUrl(account.getPluginIcon());
+                taskItemWithBLOBs.setAccountLabel(account.getName());
+                taskItemWithBLOBs.setRegionId(regionId);
+                taskItemWithBLOBs.setRegionName(PlatformUtils.tranforRegionId2RegionName(regionId, cloudTask.getPluginId()));
+                taskItemWithBLOBs.setTags(cloudTask.getRuleTags());
+                cloudTaskItemMapper.insertSelective(taskItemWithBLOBs);
+
+                systemProviderService.insertHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+
+                final String finalScript = script;
+                commonThreadPool.addTask(() -> {
+                    String sc = "";
+                    String dirPath = "";
+                    try {
+                        dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + taskId + "/" + regionId, "policy.yml", false);
+                    } catch (Exception e) {
+                        LogUtil.error("[{}] Generate policy.yml file，and custodian run failed:{}", taskId + "/" + regionId, e.getMessage());
+                    }
+                    Yaml yaml = new Yaml();
+                    Map map = null;
+                    try {
+                        map = (Map) yaml.load(new FileInputStream(dirPath + "/policy.yml"));
+                    } catch (FileNotFoundException e) {
+                        LogUtil.error(e.getMessage());
+                    }
+                    if (map != null) {
+                        List<Map> list = (List) map.get("policies");
+                        for (Map m : list) {
+                            String dirName = m.get("name").toString();
+                            String resourceType = m.get("resource").toString();
+
+                            if (!PlatformUtils.checkAvailableRegion(account.getPluginId(), resourceType, regionId)) {
+                                continue;
+                            }
+
+                            CloudTaskItemResourceWithBLOBs taskItemResource = new CloudTaskItemResourceWithBLOBs();
+                            taskItemResource.setTaskId(taskId);
+                            taskItemResource.setTaskItemId(taskItemWithBLOBs.getId());
+                            taskItemResource.setDirName(dirName);
+                            taskItemResource.setResourceType(resourceType);
+                            taskItemResource.setResourceName(dirName);
+
+                            //包含actions
+                            Map<String, Object> paramMap = new HashMap<>();
+                            paramMap.put("policies", Collections.singletonList(m));
+                            taskItemResource.setResourceCommandAction(yaml.dump(paramMap));
+
+                            //不包含actions
+                            m.remove("actions");
+                            paramMap.put("policies", Collections.singletonList(m));
+                            taskItemResource.setResourceCommand(yaml.dump(paramMap));
+                            cloudTaskItemResourceMapper.insertSelective(taskItemResource);
+
+                            try {
+                                HistoryCloudTaskResourceWithBLOBs historyCloudTaskResourceWithBLOBs = new HistoryCloudTaskResourceWithBLOBs();
+                                BeanUtils.copyBean(historyCloudTaskResourceWithBLOBs, taskItemResource);
+                                systemProviderService.insertHistoryCloudTaskResource(historyCloudTaskResourceWithBLOBs);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            resourceTypes.add(resourceType);
+                        }
+
+                        map.put("policies", list);
+                        sc = yaml.dump(map);
+                        taskItemWithBLOBs.setDetails(sc);
+                        cloudTaskItemMapper.updateByPrimaryKeySelective(taskItemWithBLOBs);
+
+                        try {
+                            systemProviderService.updateHistoryCloudTaskItem(BeanUtils.copyBean(new HistoryCloudTaskItemWithBLOBs(), taskItemWithBLOBs));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        CloudResourceItemExample cloudResourceItemExample = new CloudResourceItemExample();
+                        cloudResourceItemExample.createCriteria().andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andResourceTypeIn(resourceTypes);
+                        long resourceSum = cloudResourceItemMapper.countByExample(cloudResourceItemExample);
+                        cloudTask.setResourcesSum(resourceSum);
+                        cloudTask.setResourceTypes(new HashSet<>(resourceTypes).toString());
+                        cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+                        try {
+                            systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+        }
+        //向首页活动添加操作信息
+        operationLogService.log(loginUser, taskId, cloudTask.getTaskName(), ResourceTypeConstants.TASK.name(), ResourceOperation.SCAN, "i18n_create_scan_task");
+        return cloudTask;
+    }
+
     public CloudTask createTask(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {
         CloudTask cloudTask = createTaskOrder(quartzTaskDTO, status, messageOrderId, loginUser);
         String taskId = cloudTask.getId();
@@ -216,6 +340,50 @@ public class OrderService {
             cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
         }
         cloudTaskItemMapper.deleteByExample(cloudTaskItemExample);
+    }
+
+    private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, LoginUser loginUser) throws Exception {
+        CloudTask cloudTask = new CloudTask();
+        cloudTask.setTaskName(quartzTaskDTO.getTaskName() != null ?quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
+        cloudTask.setRuleId(quartzTaskDTO.getId());
+        cloudTask.setSeverity(quartzTaskDTO.getSeverity());
+        cloudTask.setType(quartzTaskDTO.getType());
+        cloudTask.setPluginId(quartzTaskDTO.getPluginId());
+        cloudTask.setPluginIcon(quartzTaskDTO.getPluginIcon());
+        cloudTask.setPluginName(quartzTaskDTO.getPluginName());
+        cloudTask.setRuleTags(quartzTaskDTO.getTags().toString());
+        cloudTask.setDescription(quartzTaskDTO.getDescription());
+        cloudTask.setAccountId(quartzTaskDTO.getAccountId());
+        cloudTask.setApplyUser(Objects.requireNonNull(loginUser).getUserId());
+        cloudTask.setStatus(status);
+        cloudTask.setScanType(ScanTypeConstants.custodian.name());
+
+        CloudTaskExample example = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria = example.createCriteria();
+        criteria.andAccountIdEqualTo(quartzTaskDTO.getAccountId()).andTaskNameEqualTo(quartzTaskDTO.getTaskName());
+        List<CloudTask> queryCloudTasks = cloudTaskMapper.selectByExample(example);
+        if (!queryCloudTasks.isEmpty()) {
+            cloudTask.setId(queryCloudTasks.get(0).getId());
+            cloudTask.setCreateTime(System.currentTimeMillis());
+            cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
+
+            HistoryCloudTask historyCloudTask = systemProviderService.historyCloudTask(queryCloudTasks.get(0).getId());
+            if (historyCloudTask != null) {
+                systemProviderService.updateHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            } else {
+                systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+            }
+
+        } else {
+            String taskId = IDGenerator.newBusinessId(CloudTaskConstants.TASK_ID_PREFIX, loginUser.getUserId());
+            cloudTask.setId(taskId);
+            cloudTask.setCreateTime(System.currentTimeMillis());
+            cloudTaskMapper.insertSelective(cloudTask);
+
+            systemProviderService.insertHistoryCloudTask(BeanUtils.copyBean(new HistoryCloudTask(), cloudTask));//插入历史数据
+        }
+
+        return cloudTask;
     }
 
     private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, String messageOrderId, LoginUser loginUser) throws Exception {

@@ -556,7 +556,7 @@ public class RuleService {
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
-        Integer scanId = systemProviderService.insertScanHistory(account);
+        Integer scanId = systemProviderService.insertScanHistory(account, loginUser);
         for (Integer groupId : request.getGroups()) {
             this.scanGroups(request.getAccountId(), scanId, groupId.toString(), loginUser);
         }
@@ -594,7 +594,7 @@ public class RuleService {
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
         RuleDTO rule = getRuleDtoById(cloudTaskItems.get(0).getRuleId(), accountId);
         if (!rule.getStatus()) HRException.throwException(Translator.get("i18n_disabled_rules_not_scanning"));
-        Integer scanId = systemProviderService.insertScanHistory(account);
+        Integer scanId = systemProviderService.insertScanHistory(account, loginUser);
         return this.dealTask(rule, account, scanId, null, loginUser);
     }
 
@@ -613,7 +613,7 @@ public class RuleService {
     }
 
     private void scan(AccountWithBLOBs account, LoginUser loginUser) throws Exception {
-        Integer scanId = systemProviderService.insertScanHistory(account);
+        Integer scanId = systemProviderService.insertScanHistory(account, loginUser);
 
         String messageOrderId = systemProviderService.createMessageOrder(account);
 

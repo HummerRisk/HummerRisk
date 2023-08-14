@@ -9,6 +9,7 @@ import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.CloudTaskDTO;
 import com.hummer.common.core.utils.UUIDUtil;
+import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.mapper.*;
 import com.hummer.system.mapper.ext.ExtHistoryScanMapper;
 import com.hummer.system.mapper.ext.ExtResourceMapper;
@@ -47,15 +48,14 @@ public class HistoryService {
     @DubboReference
     private ICloudProviderService cloudProviderService;
 
-    public Integer insertScanHistory(Object obj) throws Exception {
+    public Integer insertScanHistory(Object obj, LoginUser loginUser) throws Exception {
 
         Map map = obj2Account(obj);
         String accountId = map.get("accountId").toString();
         String accountType = map.get("accountType").toString();
 
         HistoryScan history = new HistoryScan();
-        //TODO dubbo 调用没有http请求获取不到用户信息
-//        history.setOperator(tokenService.getLoginUser().getUserId());
+        history.setOperator(loginUser.getUserName());
         history.setAccountId(accountId);
         history.setAccountType(accountType);
         history.setStatus(TaskConstants.TASK_STATUS.APPROVED.name());

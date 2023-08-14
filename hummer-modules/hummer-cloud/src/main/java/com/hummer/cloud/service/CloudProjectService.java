@@ -8,25 +8,27 @@ import com.aliyuncs.exceptions.ClientException;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtAccountMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudProjectMapper;
-import com.hummer.common.core.constant.CloudAccountConstants;
-import com.hummer.common.core.constant.ResourceOperation;
-import com.hummer.common.core.constant.ResourceTypeConstants;
+import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.account.CloudAccountRequest;
 import com.hummer.common.core.domain.request.account.CreateCloudAccountRequest;
 import com.hummer.common.core.domain.request.account.UpdateCloudAccountRequest;
 import com.hummer.common.core.domain.request.project.CloudGroupRequest;
+import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.IOperationLogService;
+import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -61,8 +63,20 @@ public class CloudProjectService {
     private CloudTaskMapper cloudTaskMapper;
     @Autowired
     private CloudTaskItemMapper cloudTaskItemMapper;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private RuleGroupMapper ruleGroupMapper;
+    @Autowired @Lazy
+    private AccountService accountService;
+    @Autowired @Lazy
+    private CloudTaskService cloudTaskService;
+    @Autowired
+    private CommonThreadPool commonThreadPool;
     @DubboReference
     private IOperationLogService operationLogService;
+    @DubboReference
+    private ISystemProviderService systemProviderService;
 
     public List<CloudProjectDTO> getCloudProjectDTOs(CloudGroupRequest cloudGroupRequest) {
         return extCloudProjectMapper.getCloudProjectDTOs(cloudGroupRequest);
@@ -167,6 +181,103 @@ public class CloudProjectService {
         } else {
             return new CloudProcessDTO();
         }
+    }
+
+    public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
+
+        commonThreadPool.addTask(() -> {
+            try {
+                AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
+
+                Integer scanId = systemProviderService.insertScanHistory(account, loginUser);
+
+                CloudProject cloudProject = new CloudProject();
+                String projectId = UUIDUtil.newUUID();
+                cloudProject.setId(projectId);
+                cloudProject.setAccountId(account.getId());
+                cloudProject.setAccountName(account.getName());
+                cloudProject.setCreator(loginUser.getUserName());
+                cloudProject.setPluginId(account.getPluginId());
+                cloudProject.setPluginIcon(account.getPluginIcon());
+                cloudProject.setPluginName(account.getPluginName());
+                cloudProject.setCreateTime(System.currentTimeMillis());
+                cloudProject.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+
+                cloudProjectMapper.insertSelective(cloudProject);
+
+                for (Integer groupId : request.getGroups()) {
+                    RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(groupId);
+                    CloudGroup cloudGroup = new CloudGroup();
+                    cloudGroup.setProjectId(projectId);
+                    cloudGroup.setAccountId(account.getId());
+                    cloudGroup.setAccountName(account.getName());
+                    cloudGroup.setPluginIcon(account.getPluginIcon());
+                    cloudGroup.setPluginName(account.getPluginName());
+                    cloudGroup.setCreateTime(System.currentTimeMillis());
+                    cloudGroup.setCreator(loginUser.getUserName());
+                    cloudGroup.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+                    cloudGroup.setGroupId(groupId);
+                    cloudGroup.setGroupDesc(ruleGroup.getDescription());
+                    cloudGroup.setGroupName(ruleGroup.getName());
+                    cloudGroup.setGroupFlag(ruleGroup.getFlag());
+                    cloudGroup.setGroupLevel(cloudGroup.getGroupLevel());
+
+                    cloudGroupMapper.insertSelective(cloudGroup);
+
+                    QuartzTaskDTO dto = new QuartzTaskDTO();
+                    dto.setAccountId(account.getId());
+                    dto.setPluginId(account.getPluginId());
+                    dto.setStatus(true);
+                    List<RuleDTO> ruleDTOS = accountService.getRules(dto);
+                    for (RuleDTO rule : ruleDTOS) {
+                        this.dealTask(rule, scanId, account, loginUser);
+                    }
+                }
+            } catch (Exception e) {
+                LogUtil.error("{project scan}" + e.getMessage());
+            }
+        });
+
+    }
+
+    private String dealTask(RuleDTO rule, Integer scanId, AccountWithBLOBs account, LoginUser loginUser) {
+        try {
+            if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(), rule.getId(),
+                    new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})) {
+                QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
+                BeanUtils.copyBean(quartzTaskDTO, rule);
+                List<SelectTag> selectTags = new LinkedList<>();
+                SelectTag s = new SelectTag();
+                s.setAccountId(account.getId());
+                JSONArray array = parseArray(rule.getRegions() != null ? rule.getRegions() : account.getCheckRegions());
+                JSONObject object;
+                List<String> regions = new ArrayList<>();
+                for (int i = 0; i < array.size(); i++) {
+                    try {
+                        object = array.getJSONObject(i);
+                        String value = object.getString("regionId");
+                        regions.add(value);
+                    } catch (Exception e) {
+                        String value = array.get(0).toString();
+                        regions.add(value);
+                    }
+                }
+                s.setRegions(regions);
+                selectTags.add(s);
+                quartzTaskDTO.setSelectTags(selectTags);
+                quartzTaskDTO.setType("manual");
+                quartzTaskDTO.setAccountId(account.getId());
+                quartzTaskDTO.setTaskName(rule.getName());
+                CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, loginUser);
+                if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
+                    systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                }
+                return cloudTask.getId();
+            }
+        } catch (Exception e) {
+            HRException.throwException(e.getMessage());
+        }
+        return "";
     }
 
 }
