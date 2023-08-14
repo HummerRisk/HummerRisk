@@ -5,6 +5,7 @@ import com.hummer.cloud.mapper.ext.ExtCloudProjectMapper;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.domain.*;
+import com.hummer.common.core.dto.CloudGroupDTO;
 import com.hummer.common.core.dto.CloudProjectDTO;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.model.LoginUser;
@@ -51,11 +52,21 @@ public class CloudProjectService {
         CloudProject cloudProject = new CloudProject();
         cloudProject.setId(projectId);
         List<CloudProjectDTO> list = extCloudProjectMapper.getCloudProjectDTOs(cloudProject);
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             return list.get(0);
         } else {
             return new CloudProjectDTO();
         }
+    }
+
+    public void deletes(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteProject(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
     }
 
     public void deleteProject(String projectId, LoginUser loginUser) {
@@ -84,6 +95,43 @@ public class CloudProjectService {
         cloudProcessLogMapper.deleteByExample(cloudProcessLogExample);
 
         operationLogService.log(loginUser, projectId, cloudProject.getAccountName(), ResourceTypeConstants.CLOUD_PROJECT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_project");
+    }
+
+    public List<CloudGroupDTO> getCloudGroupDTOs(CloudGroup cloudGroup) {
+        return extCloudProjectMapper.getCloudGroupDTOs(cloudGroup);
+    }
+
+    public CloudGroupDTO groupById(String groupId) {
+        CloudGroup cloudGroup = new CloudGroup();
+        cloudGroup.setId(groupId);
+        List<CloudGroupDTO> list = extCloudProjectMapper.getCloudGroupDTOs(cloudGroup);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return new CloudGroupDTO();
+        }
+    }
+
+    public void deleteGroups(List<String> ids, LoginUser loginUser) throws Exception {
+        ids.forEach(id -> {
+            try {
+                deleteGroup(id, loginUser);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
+    public void deleteGroup(String groupId, LoginUser loginUser) {
+
+        CloudGroup cloudGroup = cloudGroupMapper.selectByPrimaryKey(groupId);
+        cloudGroupMapper.deleteByPrimaryKey(groupId);
+
+        CloudGroupLogExample cloudGroupLogExample = new CloudGroupLogExample();
+        cloudGroupLogExample.createCriteria().andGroupIdEqualTo(groupId);
+        cloudGroupLogMapper.deleteByExample(cloudGroupLogExample);
+
+        operationLogService.log(loginUser, groupId, cloudGroup.getAccountName(), ResourceTypeConstants.CLOUD_GROUP.name(), ResourceOperation.DELETE, "i18n_delete_cloud_project");
     }
 
 }
