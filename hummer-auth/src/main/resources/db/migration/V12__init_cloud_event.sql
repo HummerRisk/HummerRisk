@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `cloud_event_sync_log` (
 -- ----------------
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Qingcloud 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-qingcloud-plugin', '1');
-SELECT @groupId1 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId1;
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`) VALUES ('13b6dfef-b003-4a9f-9eee-6eb30f78cd21', 'Qingcloud MySQL 实例网络类型检测', 1, 'HighRisk', 'Qingcloud 账号下 MySQL 实例已关联到 VPC；若您配置阈值，则关联的VpcId需存在您列出的阈值中，视为“合规”，否则视为“不合规”', 'policies:\n    # 账号下RDS实例已关联到VPC；若您配置阈值，则关联的VpcId需存在您列出的阈值中，视为“合规”。\n    - name: qingcloud-mysql-instance-network-type\n      resource: qingcloud.mysql\n      filters:\n        - type: network-type', '[]', 'hummer-qingcloud-plugin', '青云', 'qingcloud.png', concat(unix_timestamp(now()), '003'), 1, 'custodian');
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`) VALUES ('4223f09d-b455-4b35-9e9a-07953df5f290', 'Qingcloud ECS VPC 检测', 1, 'HighRisk', 'Qingcloud 账号下的 Ecs 实例指定属于哪些 VPC, 属于则合规，不属于则“不合规“', 'policies:\n  # 检测您账号下的Ecs实例指定属于哪些VPC, 属于则合规，不属于则“不合规“。\n  - name: qingcloud-ecs-vpc-type\n    resource: qingcloud.ecs\n    filters:\n      - type: vpc-type\n        vpcIds: [${{value1}}, ${{value2}}]', '[{\"key\":\"value1\",\"name\":\"vpcId1\",\"defaultValue\":\"\\\"vpc-1\\\"\",\"required\":true},{\"key\":\"value2\",\"name\":\"vpcId2\",\"defaultValue\":\"\\\"vpc-2\\\"\",\"required\":true}]', 'hummer-qingcloud-plugin', '青云', 'qingcloud.png', concat(unix_timestamp(now()), '003'), 1, 'custodian');
@@ -129,7 +129,7 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('1
 -- ucloud规则
 -- --------------
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('UCloud 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-ucloud-plugin', '1');
-SELECT @groupId2 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId2;
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`) VALUES ('001400f0-0a52-43c5-945e-d9e28c6a74f9', 'UCloud uhost 实例公网IP检测', 1, 'HighRisk', 'UCloud uhost 实例未直接绑定公网 IP，视为“合规”，否则属于“不合规”。该规则仅适用于 IPv4 协议', 'policies:\n    # UCloud uhost 实例未直接绑定公网 IP，视为“合规”，否则属于“不合规”。该规则仅适用于 IPv4 协议。\n    - name: ucloud-uhost-public-ipaddress\n      resource: ucloud.uhost\n      filters:\n        - type: public-ip-address', '[]', 'hummer-ucloud-plugin', 'UCloud 优刻得', 'ucloud.png', concat(unix_timestamp(now()), '004'), 1, 'custodian');
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`) VALUES ('155f44ef-b0c6-4881-b2c2-ac1daffa04da', 'UCloud uhost VPC 检测', 1, 'HighRisk', 'UCloud 账号下的 uhost 实例指定属于哪些 VPC, 属于则合规，不属于则“不合规“', 'policies:\n  # UCloud 账号下的 uhost 实例指定属于哪些 VPC, 属于则合规，不属于则“不合规“。\n  - name: ucloud-uhost-vpc-type\n    resource: ucloud.uhost\n    filters:\n      - type: vpc-type\n        vpcIds: [${{value1}}, ${{value2}}]', '[{\"key\":\"value1\",\"name\":\"vpcId1\",\"defaultValue\":\"\\\"vpc-1\\\"\",\"required\":true},{\"key\":\"value2\",\"name\":\"vpcId2\",\"defaultValue\":\"\\\"vpc-2\\\"\",\"required\":true}]', 'hummer-ucloud-plugin', 'UCloud 优刻得', 'ucloud.png', concat(unix_timestamp(now()), '004'), 1, 'custodian');
@@ -301,11 +301,11 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b85e5722-fd4a-
 -- ----------------------------
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun RAM 最佳安全实践', '阿里云 RAM 最佳安全实践，RAM 为所有阿里云服务提供简单一致的集中式访问控制能力，管理所有阿里云资源。RAM 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('70c1e701-b87a-4e4d-8648-3db7ecc2c066', @groupId);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun OSS 最佳安全实践', 'Aliyun OSS 最佳安全实践，对象存储 OSS 主要围绕数据迁移、数据备份和容灾、数据直传OSS、数据处理与分析、管理 OSS等操作。OSS 检测提供全方位的最佳实践功能，帮助您更加高效地使用OSS，满足您的业务需求。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId2 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId2;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('429f8396-e04b-49d9-8b38-80647ac87e66', @groupId2);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8c635fda-7f89-4d5c-b0f4-2116f1b65554', @groupId2);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('9d94781e-922d-48c3-90a1-393dc79f2442', @groupId2);
@@ -315,7 +315,7 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('fdef013f-ce14-
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun NAS 最佳安全实践', 'Aliyun NAS 最佳安全实践，文件存储 NAS 是一个可大规模共享访问，弹性扩展的高性能云原生分布式文件系统。NAS 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun SLB 最佳安全实践', 'Aliyun SLB 最佳安全实践，负载均衡 SLB 是将访问流量根据转发策略分发到后端多台云服务器的流量分发控制服务。SLB 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId3 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId3;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('1299a29b-e19d-4186-93fd-a18ed1b2584a', @groupId3);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('2274a926-ea5e-4cdc-915e-09fa6d803bff', @groupId3);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('339cf3fc-f9d9-457e-ac72-40d37c402bdf', @groupId3);
@@ -327,7 +327,7 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e2d51fc6-2ec2-
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun PostgreSQL 最佳安全实践', 'Aliyun PostgreSQL 最佳安全实践，PostgreSQL 被业界誉为“最先进的开源数据库”，主要面向企业复杂查询SQL的OLTP业务场景， 支持NoSQL数据类型。PostgreSQL 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun RDS 最佳安全实践', 'Aliyun RDS 最佳安全实践，RDS 是一种稳定可靠、可弹性伸缩的在线数据库服务。基于分布式文件系统和 SSD 盘高性能存储，提供容灾、备份、恢复、监控、迁移等解决方案。RDS 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId4 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId4;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('028b8362-08f2-404c-8e15-935426bb8545', @groupId4);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('ae65e90c-124c-4a81-8081-746d47f44e8f', @groupId4);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('beda16d0-93fd-4366-9ebf-f5ce1360cd60', @groupId4);
@@ -345,12 +345,12 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('7d323895-f07b-
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun ACK 最佳安全实践', 'Aliyun ACK 最佳安全实践，容器服务 Kubernetes 版（简称 ACK）提供高性能可伸缩的容器应用管理能力，支持企业级容器化应用的全生命周期管理。ACK 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun Redis 最佳安全实践', 'Aliyun Redis 最佳安全实践，数据库 Redis 提供内存加硬盘混合存储的数据库服务，基于高可靠双机热备架构及可平滑扩展的集群架构，可充分满足高吞吐、低延迟及弹性变配的业务需求。Redis 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId5 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId5;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('29763f5e-ef4c-431d-b44f-39cd1b5b5363', @groupId5);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('ff153eea-2628-440b-b054-186d6f5a7708', @groupId5);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun PolarDB 最佳安全实践', 'Aliyun PolarDB 最佳安全实践，PolarDB 是阿里自研的新一代云原生关系型数据库，在存储计算分离架构下，利用了软硬件结合的优势，为用户提供具备极致弹性、高性能、海量存储、安全可靠的数据库服务。PolarDB 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId6 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId6;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('2adbae64-6403-4dfb-92ab-637354da49f8', @groupId6);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('4f8fa101-171a-4491-9485-e5aa091a88a4', @groupId6);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('c57f055e-fd84-4af3-ba97-892a8fdc1fed', @groupId6);
@@ -360,13 +360,13 @@ INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) V
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun Event 最佳安全实践', 'Aliyun Event 最佳安全实践，操作审计帮助您监控并记录阿里云账号的活动，包括通过阿里云控制台、OpenAPI、开发者工具对云上产品和服务的访问和使用行为。您可以进行行为分析、安全分析、资源变更行为追踪和行为合规性审计等操作。操作审计检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun ECS 最佳安全实践', 'Aliyun ECS 最佳安全实践，云服务器 ECS（Elastic Compute Service）是一种安全可靠、弹性可伸缩的云计算服务。ECS 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId7 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId7;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('3e5d47ac-86b6-40d1-a191-1b2ff2496118', @groupId7);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('6fd132c0-b4df-4685-b132-5441d1aef2f8', @groupId7);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('f4ebb59b-c93a-4f34-9e66-660b03943d7d', @groupId7);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Aliyun MongoDB 最佳安全实践', 'Aliyun MongoDB 最佳安全实践，云数据库 MongoDB 版（ApsaraDB for MongoDB）基于飞天分布式系统和高可靠存储引擎，提供多节点高可用架构、弹性扩容、容灾、备份恢复、性能优化等功能。MongoDB 检测为您提供全方位的最佳安全实践功能。', '最佳实践', 'hummer-aliyun-plugin', 1);
-SELECT @groupId8 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId8;
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('44343a84-39e2-4fbc-b8c5-d3ac06186501', @groupId8);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('7d323895-f07b-4845-8b3d-01c78180f270', @groupId8);
 

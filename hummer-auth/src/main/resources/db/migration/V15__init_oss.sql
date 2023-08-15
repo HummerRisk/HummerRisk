@@ -136,8 +136,6 @@ UPDATE `rule` SET `script` = 'policies:\n    - name: qiniu-bucket-private\n     
 
 UPDATE `rule_type` SET `resource_type` = 'qiniu.kodo' WHERE id = 'c0cd80bf-259f-4a46-a1a8-9ce7edc5e592';
 
-
-
 CREATE TABLE IF NOT EXISTS `webhook`
 (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
@@ -158,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `webhook`
 INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-jdcloud-plugin', '京东云', 'jdcloud.png', concat(unix_timestamp(now()), '003'), 'custodian', 14, 'cloud');
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('JDCloud 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-jdcloud-plugin', 1);
-SELECT @groupId3 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId3;
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('33f795ca-40e4-4b6b-874c-bb0d716e3812', 'JDCloud VM VPC 检测', 1, 'HighRisk', 'JDCloud 账号下的 VM 实例指定属于哪些 VPC, 属于则合规，不属于则“不合规“', 'policies:\n  # 账号下的 vm 实例指定属于哪些 VPC, 属于则合规，不属于则“不合规“。\n  - name: jdcloud-vm-vpc-type\n    resource: jdcloud.vm\n    filters:\n      - type: vpc-type\n        vpcIds: [${{value1}}, ${{value2}}]', '[{\"key\":\"value1\",\"name\":\"vpcId1\",\"defaultValue\":\"\\\"vpc-1\\\"\",\"required\":true},{\"key\":\"value2\",\"name\":\"vpcId2\",\"defaultValue\":\"\\\"vpc-2\\\"\",\"required\":true}]', 'hummer-jdcloud-plugin', '京东云', 'jdcloud.png', concat(unix_timestamp(now()), '003'), 1, 'custodian', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('3d5dec2b-42b6-4059-b9ef-24ba86e0d9f3', 'JDCloud SecurityGroup 安全组端口访问检测', 1, 'HighRisk', 'JDCloud 账号下安全组配置允许所有端口访问视为”不合规“，否则为”合规“', 'policies:\n  # 账号下安全组配置允许所有端口访问视为”不合规“，否则为”合规“。\n  - name: jdcloud-sg-ports\n    resource: jdcloud.securitygroup\n    filters:\n      - type: source-ports\n        SourceCidrIp: ${{SourceCidrIp}}\n        PortRange: ${{PortRange}}', '[{\"key\":\"SourceCidrIp\",\"name\":\"目标IP地址段\",\"defaultValue\":\"\\\"0.0.0.0/0\\\"\",\"required\":true},{\"key\":\"PortRange\",\"name\":\"端口号\",\"defaultValue\":\"\\\"-1/-1\\\"\",\"required\":true}]', 'hummer-jdcloud-plugin', '京东云', 'jdcloud.png', concat(unix_timestamp(now()), '003'), 1, 'custodian', NULL);
@@ -266,7 +264,7 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('b
 INSERT INTO `plugin` (`id`, `name`, `icon`, `update_time`, `scan_type`, `order_`, `type`) VALUES ('hummer-ksyun-plugin', '金山云', 'ksyun.png', concat(unix_timestamp(now()), '003'), 'custodian', 15, 'cloud');
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Ksyun 等保预检', '等保合规检查（全称为等级保护合规检查）为您提供了全面覆盖通信网络、区域边界、计算环境和管理中心的网络安全检查。', '等保三级', 'hummer-ksyun-plugin', 1);
-SELECT @groupId3 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId3;
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('bf9cdcc9-0bb0-43e8-8881-70d9f65143c8', 'Ksyun EIP 带宽峰值检测', 1, 'HighRisk', 'Ksyun 检测您账号下的弹性 IP 实例是否达到最低带宽要求，符合视为“合规”，否则视为“不合规”', 'policies:\n    # 检测您账号下的弹性IP实例是否达到最低带宽要求\n    - name: ksyun-eip-bandwidth\n      resource: ksyun.eip\n      filters:\n        - type: bandwidth\n          value: ${{value}}', '[{\"key\":\"value\",\"name\":\"按带宽计费的公网型实例的带宽峰值\",\"defaultValue\":\"10\",\"required\":true}]', 'hummer-ksyun-plugin', '金山云', 'ksyun.png', concat(unix_timestamp(now()), '003'), 1, 'custodian', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('792b3d7c-c8be-4e5f-b806-8397ce65fcb2', 'Ksyun KEC VPC 检测', 1, 'HighRisk', 'Ksyun 账号下的 KEC 实例指定属于哪些 VPC, 属于则合规，不属于则“不合规“', 'policies:\n  # 账号下的 kec 实例指定属于哪些 VPC, 属于则合规，不属于则“不合规“。\n  - name: ksyun-kec-vpc-type\n    resource: ksyun.kec\n    filters:\n      - type: vpc-type\n        vpcIds: [${{value1}}, ${{value2}}]', '[{\"key\":\"value1\",\"name\":\"vpcId1\",\"defaultValue\":\"\\\"vpc-1\\\"\",\"required\":true},{\"key\":\"value2\",\"name\":\"vpcId2\",\"defaultValue\":\"\\\"vpc-2\\\"\",\"required\":true}]', 'hummer-ksyun-plugin', '金山云', 'ksyun.png', concat(unix_timestamp(now()), '003'), 1, 'custodian', NULL);
@@ -316,13 +314,13 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('5
 -- JDCloud rule
 -- -----------------
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('JDCloud OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-jdcloud-plugin', 1);
-SELECT @groupIdJdOss := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupIdJdOss;
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('QingCloud OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-qingcloud-plugin', 1);
-SELECT @groupIdQingOss := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupIdQingOss;
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Qiniu OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-qiniu-plugin', 1);
-SELECT @groupIdQiniuOss := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupIdQiniuOss;
 
 SELECT id INTO @groupIdJd FROM rule_group WHERE name = 'JDCloud 等保预检';
 
