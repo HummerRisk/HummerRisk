@@ -70,13 +70,13 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('c0f065e4-f205-4b1
 -- JDCloud rule
 -- -----------------
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('JDCloud OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-jdcloud-plugin', 1);
-SELECT @groupIdJdOss := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupIdJdOss;
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('QingCloud OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-qingcloud-plugin', 1);
-SELECT @groupIdQingOss := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupIdQingOss;
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`) VALUES ('Qiniu OSS 合规基线', 'OSS 合规检查为您提供全方位的对象存储资源检查功能。', '对象存储', 'hummer-qiniu-plugin', 1);
-SELECT @groupIdQiniuOss := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupIdQiniuOss;
 
 SELECT id INTO @groupIdJd FROM rule_group WHERE name = 'JDCloud 等保预检';
 

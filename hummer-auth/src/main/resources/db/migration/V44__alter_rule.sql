@@ -11,11 +11,11 @@ ALTER TABLE `cloud_task_item` modify `command` mediumtext DEFAULT NULL COMMENT '
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 内存限制检测', '检测 K8s 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-k8s-plugin', 1, 'k8s');
 
-SELECT @groupId := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId;
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('K8s 容器的文件系统检测', '检测 K8s 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-k8s-plugin', 1, 'k8s');
 
-SELECT @groupId1 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId1;
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('2d08f728-f869-4b69-8772-41a8d58b5c34', 'K8s StatefulSet 内存限制检测', 1, 'MediumRisk', '检测 K8s StatefulSet 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。', 'policies:\n    # 检测 K8s StatefulSet 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。\n    - name: k8s-stateful-set\n      resource: k8s.stateful-set\n      filters:\n        - type: memory-limit\n          limit_min: ${{value1}}\n          limit_max: ${{value2}}', '[{\"defaultValue\":\"64\",\"name\":\"最小内存限制\",\"key\":\"value1\",\"required\":true},{\"defaultValue\":\"1024\",\"name\":\"最大内存限制\",\"key\":\"value2\",\"required\":true}]', 'hummer-k8s-plugin', 'Kubernetes', 'k8s.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('c3959d6f-d5c1-49d9-9f16-bd7f8e359667', 'K8s Pod 内存大小限制检测', 1, 'MediumRisk', '检测 K8s Pod 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。', 'policies:\n    # 检测 K8s Pod 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。\n    - name: k8s-pod-memory\n      resource: k8s.pod\n      filters:\n        - type: memory-limit\n          limit_min: ${{value1}}\n          limit_max: ${{value2}}', '[{\"key\":\"value1\",\"name\":\"最小内存限制\",\"defaultValue\":\"64\",\"required\":true},{\"key\":\"value2\",\"name\":\"最大内存限制\",\"defaultValue\":\"1024\",\"required\":true}]', 'hummer-k8s-plugin', 'Kubernetes', 'k8s.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
@@ -65,7 +65,7 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('8d00a470-0a17-
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Linux 认证相关的配置检测', '用于 Linux 认证相关的配置检测，通过认证检测可以帮助您针对 Linux 系统用户认证、应用服务认证、密码策略等进行多维度的认证安全检测。', '认证检测', 'hummer-server-plugin', 1, 'server');
 
-SELECT @groupId2 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId2;
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0487f316-9cd8-46f7-86e9-31f1ab8b504a', @groupId2);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('a9c11f7e-ba44-416e-bbfa-cd4d96f8165f', @groupId2);
@@ -84,7 +84,7 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('1fc49851-3f00-
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Linux 网络的配置检测', '用于 Linux 网络的配置检测，包括 DNS 、Hosts、IP 伪装、防火墙配置等进行多维度的网络安全检测，通过网络配置检测提升您主机网络的安全性。', '网络检测', 'hummer-server-plugin', 1, 'server');
 
-SELECT @groupId3 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId3;
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('e0ba707c-4a08-490e-93fb-1e98b1db0b3b', @groupId3);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('c43ab09e-0c6c-4b2e-866d-3426477a6f3c', @groupId3);
@@ -94,7 +94,7 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('10e326fb-8a12-
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Linux 服务相关配置的检测', '用于 Linux 服务相关配置的检测，您可以使用该检测功能对一些常见服务进行端口、配置的检测，以降低系统风险。', '服务检测', 'hummer-server-plugin', 1, 'server');
 
-SELECT @groupId4 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId4;
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('27558ffd-a826-4b5c-bc4d-d725ec8dad58', @groupId4);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('842b70d6-255d-46f3-a6da-58234f6df63f', @groupId4);
@@ -102,7 +102,7 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('0f91f89e-d39b-
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Linux 系统配置的检测', '用于 Linux 系统配置的检测，通过针对系统运行状态、系统参数配置、日志、进程等进行多纬度的配置，从而提升您的系统安全性。', '系统检测', 'hummer-server-plugin', 1, 'server');
 
-SELECT @groupId5 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId5;
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('73fdb432-62c4-4b08-9682-44dae7e6c312', @groupId5);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('a1c9a8d3-97d2-4556-abdb-5d77ea46bad5', @groupId5);
@@ -152,13 +152,13 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('10e326fb-8a12-
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Windows 认证相关的配置检测', '用于 Windows 认证相关的配置检测，针对 Windows 系统用户认证、应用服务认证、密码策略等进行多维度的认证安全检测。', '认证检测', 'hummer-server-plugin', 1, 'server');
 
-SELECT @groupId6 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId6;
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('b38f7d87-b59b-416c-9dba-dddd799c8c57', @groupId6);
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Windows 系统配置的检测', '用于 Windows 系统配置的检测，通过针对系统运行状态、系统参数配置、日志、进程等进行多纬度的配置，从而提升您主机的网络安全性。', '系统检测', 'hummer-server-plugin', 1, 'server');
 
-SELECT @groupId7 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId7;
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('512c3f52-afe6-4bfe-b857-430dcb1c70de', @groupId7);
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('733432f2-bc91-4801-8d80-fb92a4449857', @groupId7);
@@ -172,6 +172,6 @@ INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('4a29c864-ca1c-
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Windows 服务相关配置的检测', '用于 Windows 服务相关配置的检测，对于一些常见服务进行端口、配置的检测，以降低系统风险，从而提升您主机的网络安全性。', '服务检测', 'hummer-server-plugin', 1, 'server');
 
-SELECT @groupId8 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId8;
 
 INSERT INTO `rule_group_mapping` (`rule_id`, `group_id`) VALUES ('6793a321-ef5b-4868-b8a6-d901fe4237c8', @groupId8);
