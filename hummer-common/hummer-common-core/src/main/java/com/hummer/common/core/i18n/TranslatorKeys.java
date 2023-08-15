@@ -55,7 +55,13 @@ public class TranslatorKeys {
                     "i18n_namespace",
                     "i18n_start_k8s_rule_result",
                     "i18n_end_k8s_rule_result",
-                    "i18n_delete_delete_rule_group"
+                    "i18n_delete_delete_rule_group",
+                    "i18n_create_cloud_project",
+                    "i18n_create_cloud_group",
+                    "i18n_operation_process",
+                    "i18n_operation_init",
+                    "i18n_operation_scan",
+                    "i18n_operation_step"
             ));
 
 }

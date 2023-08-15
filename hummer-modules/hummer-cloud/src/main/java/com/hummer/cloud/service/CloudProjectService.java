@@ -22,7 +22,6 @@ import com.hummer.common.core.utils.*;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -186,13 +185,14 @@ public class CloudProjectService {
     public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
 
         commonThreadPool.addTask(() -> {
+            String operation = "i18n_create_cloud_project";
+            String projectId = UUIDUtil.newUUID();
             try {
                 AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
 
                 Integer scanId = systemProviderService.insertScanHistory(account, loginUser);
 
                 CloudProject cloudProject = new CloudProject();
-                String projectId = UUIDUtil.newUUID();
                 cloudProject.setId(projectId);
                 cloudProject.setAccountId(account.getId());
                 cloudProject.setAccountName(account.getName());
@@ -205,38 +205,66 @@ public class CloudProjectService {
 
                 cloudProjectMapper.insertSelective(cloudProject);
 
+                saveCloudProjectLog(projectId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
+
                 for (Integer groupId : request.getGroups()) {
-                    RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(groupId);
-                    CloudGroup cloudGroup = new CloudGroup();
-                    cloudGroup.setProjectId(projectId);
-                    cloudGroup.setAccountId(account.getId());
-                    cloudGroup.setAccountName(account.getName());
-                    cloudGroup.setPluginIcon(account.getPluginIcon());
-                    cloudGroup.setPluginName(account.getPluginName());
-                    cloudGroup.setCreateTime(System.currentTimeMillis());
-                    cloudGroup.setCreator(loginUser.getUserName());
-                    cloudGroup.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
-                    cloudGroup.setGroupId(groupId);
-                    cloudGroup.setGroupDesc(ruleGroup.getDescription());
-                    cloudGroup.setGroupName(ruleGroup.getName());
-                    cloudGroup.setGroupFlag(ruleGroup.getFlag());
-                    cloudGroup.setGroupLevel(cloudGroup.getGroupLevel());
-
-                    cloudGroupMapper.insertSelective(cloudGroup);
-
-                    QuartzTaskDTO dto = new QuartzTaskDTO();
-                    dto.setAccountId(account.getId());
-                    dto.setPluginId(account.getPluginId());
-                    dto.setStatus(true);
-                    List<RuleDTO> ruleDTOS = accountService.getRules(dto);
-                    for (RuleDTO rule : ruleDTOS) {
-                        this.dealTask(rule, scanId, account, loginUser);
-                    }
+                    dealGroup(projectId, groupId, account, loginUser, scanId);
                 }
+
+                saveCloudProjectLog(projectId, "i18n_operation_end" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             } catch (Exception e) {
-                LogUtil.error("{project scan}" + e.getMessage());
+                try {
+                    saveCloudProjectLog(projectId, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                LogUtil.error("{project scan}" + projectId + ", " + e.getMessage());
             }
         });
+
+    }
+
+    private void dealGroup(String projectId, Integer groupId, AccountWithBLOBs account, LoginUser loginUser, Integer scanId) throws Exception {
+        String operationGroup = "i18n_create_cloud_group";
+        String cloudGroupId = UUIDUtil.newUUID();
+        try {
+            RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(groupId);
+            CloudGroup cloudGroup = new CloudGroup();
+            cloudGroup.setId(cloudGroupId);
+            cloudGroup.setProjectId(projectId);
+            cloudGroup.setAccountId(account.getId());
+            cloudGroup.setAccountName(account.getName());
+            cloudGroup.setPluginIcon(account.getPluginIcon());
+            cloudGroup.setPluginName(account.getPluginName());
+            cloudGroup.setCreateTime(System.currentTimeMillis());
+            cloudGroup.setCreator(loginUser.getUserName());
+            cloudGroup.setStatus(CloudTaskConstants.TASK_STATUS.APPROVED.name());
+            cloudGroup.setGroupId(groupId);
+            cloudGroup.setGroupDesc(ruleGroup.getDescription());
+            cloudGroup.setGroupName(ruleGroup.getName());
+            cloudGroup.setGroupFlag(ruleGroup.getFlag());
+            cloudGroup.setGroupLevel(cloudGroup.getGroupLevel());
+
+            cloudGroupMapper.insertSelective(cloudGroup);
+
+            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_begin" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            saveCloudProjectLog(projectId, "i18n_operation_begin" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+
+            QuartzTaskDTO dto = new QuartzTaskDTO();
+            dto.setAccountId(account.getId());
+            dto.setPluginId(account.getPluginId());
+            dto.setStatus(true);
+            List<RuleDTO> ruleDTOS = accountService.getRules(dto);
+            for (RuleDTO rule : ruleDTOS) {
+                this.dealTask(rule, scanId, account, loginUser);
+            }
+
+            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_end" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            saveCloudProjectLog(projectId, "i18n_operation_end" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+        } catch (Exception e) {
+            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
+            LogUtil.error("{group scan}" + cloudGroupId + ", " + e.getMessage());
+        }
 
     }
 
@@ -279,5 +307,65 @@ public class CloudProjectService {
         }
         return "";
     }
+
+    public void saveCloudProjectLog(String projectId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        CloudProjectLogWithBLOBs cloudProjectLogWithBLOBs = new CloudProjectLogWithBLOBs();
+        String operator = "system";
+        try {
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        cloudProjectLogWithBLOBs.setOperator(operator);
+        cloudProjectLogWithBLOBs.setProjectId(projectId);
+        cloudProjectLogWithBLOBs.setCreateTime(System.currentTimeMillis());
+        cloudProjectLogWithBLOBs.setOperation(operation);
+        cloudProjectLogWithBLOBs.setOutput(output);
+        cloudProjectLogWithBLOBs.setResult(result);
+        cloudProjectLogMapper.insertSelective(cloudProjectLogWithBLOBs);
+    }
+
+    public void saveCloudGroupLog(String projectId, String groupId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        CloudGroupLogWithBLOBs cloudGroupLogWithBLOBs = new CloudGroupLogWithBLOBs();
+        String operator = "system";
+        try {
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        cloudGroupLogWithBLOBs.setOperator(operator);
+        cloudGroupLogWithBLOBs.setProjectId(projectId);
+        cloudGroupLogWithBLOBs.setGroupId(groupId);
+        cloudGroupLogWithBLOBs.setCreateTime(System.currentTimeMillis());
+        cloudGroupLogWithBLOBs.setOperation(operation);
+        cloudGroupLogWithBLOBs.setOutput(output);
+        cloudGroupLogWithBLOBs.setResult(result);
+        cloudGroupLogMapper.insertSelective(cloudGroupLogWithBLOBs);
+    }
+
+    public void saveCloudProcessLog(String projectId, String processId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
+        CloudProcessLogWithBLOBs cloudProcessLogWithBLOBs = new CloudProcessLogWithBLOBs();
+        String operator = "system";
+        try {
+            if (loginUser != null) {
+                operator = loginUser.getUserId();
+            }
+        } catch (Exception e) {
+            //防止单元测试无session
+        }
+        cloudProcessLogWithBLOBs.setOperator(operator);
+        cloudProcessLogWithBLOBs.setProjectId(projectId);
+        cloudProcessLogWithBLOBs.setProcessId(processId);
+        cloudProcessLogWithBLOBs.setCreateTime(System.currentTimeMillis());
+        cloudProcessLogWithBLOBs.setOperation(operation);
+        cloudProcessLogWithBLOBs.setOutput(output);
+        cloudProcessLogWithBLOBs.setResult(result);
+        cloudProcessLogMapper.insertSelective(cloudProcessLogWithBLOBs);
+    }
+
 
 }
