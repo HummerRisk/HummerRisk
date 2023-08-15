@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS `cloud_process` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
     `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
     `process_step`               int                 DEFAULT 0 COMMENT '执行过程步骤',
+    `process_order`              int                 DEFAULT 0 COMMENT '执行过程排序',
+    `process_name`               varchar(256)        DEFAULT NULL COMMENT '执行步骤名称',
     `process_rate`               int                 DEFAULT 0 COMMENT '执行进度',
     `status`                     varchar(20)         DEFAULT NULL COMMENT '状态',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
