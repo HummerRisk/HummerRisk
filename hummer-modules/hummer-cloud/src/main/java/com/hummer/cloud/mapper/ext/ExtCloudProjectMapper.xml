@@ -73,10 +73,10 @@
         <result column="activeStep" jdbcType="INTEGER" property="activeStep" />
         <result column="resultStatus" jdbcType="INTEGER" property="resultStatus" />
         <collection property="cloudProcessList" ofType="com.hummer.common.core.domain.CloudProcess" javaType="list"
-                    select="selectCloudProcessList" column="{projectId=id}">
+                    select="selectCloudProcessList" column="{projectId=projectId}">
         </collection>
         <collection property="cloudProcessLogList" ofType="com.hummer.common.core.domain.CloudProcessLog" javaType="list"
-                    select="selectCloudProcessLogList" column="{projectId=id}">
+                    select="selectCloudProcessLogList" column="{projectId=projectId}">
         </collection>
     </resultMap>
 
@@ -92,13 +92,15 @@
         <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
     </resultMap>
 
-    <resultMap id="CloudProcessLogMap" type="com.hummer.common.core.domain.CloudProcessLog">
+    <resultMap id="CloudProcessLogMap" type="com.hummer.common.core.domain.CloudProcessLogWithBLOBs">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="process_id" jdbcType="VARCHAR" property="processId" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="operator" jdbcType="VARCHAR" property="operator" />
         <result column="result" jdbcType="TINYINT" property="result" />
+        <result column="operation" jdbcType="LONGVARCHAR" property="operation" />
+        <result column="output" jdbcType="LONGVARCHAR" property="output" />
     </resultMap>
 
     <sql id="condition">
@@ -262,16 +264,16 @@
         SELECT
             t.*
         FROM cloud_process t
-        where t.project_id = #{id}
-        ORDER BY t.create_time DESC
+        where t.project_id = #{projectId}
+        order by t.process_order, t.process_step, t.create_time desc
     </select>
 
     <select id="selectCloudProcessLogList" resultMap="CloudProcessLogMap">
         SELECT
             t.*
         FROM cloud_process_log t
-        where t.project_id = #{id}
-        order by t.process_order, t.process_step, t.create_time desc
+        where t.project_id = #{projectId}
+        order by t.create_time
     </select>
 
 </mapper>

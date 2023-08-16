@@ -425,7 +425,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
               this.$post(projectScanUrl, params, res => {
                 let data = res.data;
                 this.projectId = data;
-                this.timer = setInterval(this.getStatus, 5000);
+                this.timer = setInterval(this.getStatus, 2000);
               });
             }
           }
