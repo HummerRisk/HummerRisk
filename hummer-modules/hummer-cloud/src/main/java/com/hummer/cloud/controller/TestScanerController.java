@@ -1,6 +1,5 @@
 package com.hummer.cloud.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @Hidden
-@RequestMapping("testScaner")
+@RequestMapping("test/scaner")
 public class TestScanerController {
     @Autowired
     @Qualifier("loadBalanced")
