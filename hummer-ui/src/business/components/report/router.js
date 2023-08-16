@@ -14,7 +14,7 @@ export default {
     },
     {
       path: 'accountOverview',
-      name: 'cloudOverview',
+      name: 'cloudAccountOverview',
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
     },
   ]

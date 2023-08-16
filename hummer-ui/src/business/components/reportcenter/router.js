@@ -14,7 +14,7 @@ export default {
     },
     {
       path: "cloudReport",
-      name: "cloudReport",
+      name: "cloudReportCenter",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/report/home/List"),
     },
   ]
