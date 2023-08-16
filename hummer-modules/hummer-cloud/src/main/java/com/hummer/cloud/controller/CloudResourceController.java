@@ -18,7 +18,7 @@ import java.util.List;
 
 @Hidden
 @RestController
-@RequestMapping(value = "cloudResource")
+@RequestMapping(value = "resources")
 public class CloudResourceController {
 
     @Autowired
