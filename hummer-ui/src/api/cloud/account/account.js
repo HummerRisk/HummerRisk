@@ -7,7 +7,7 @@ export const saveParameterUrl = "/cloud/account/save/parameter";
 
 export const saveRegionsUrl = "/cloud/account/save/regions";
 
-export const createManualTaskUrl = "/cloud/cloud/task/manual/create";
+export const createManualTaskUrl = "/cloud/task/manual/create";
 
 export const ruleListUrl = "/cloud/account/rule/list/";
 
@@ -41,13 +41,13 @@ export const accountHistoryDiffListUrl = "/cloud/account/historyDiffList/";
 
 export const allListUrl = "/cloud/account/allList";
 
-export const cloudTaskLogByIdUrl = "/cloud/cloud/task/log/taskId/";
+export const cloudTaskLogByIdUrl = "/cloud/task/log/taskId/";
 
-export const cloudTaskLogByAccountIdUrl = "/cloud/cloud/task/log/accountId/";
+export const cloudTaskLogByAccountIdUrl = "/cloud/task/log/accountId/";
 
-export const cloudTaskDetailUrl = "/cloud/cloud/task/detail/";
+export const cloudTaskDetailUrl = "/cloud/task/detail/";
 
-export const cloudTaskManualListUrl = "/cloud/cloud/task/manual/list/";
+export const cloudTaskManualListUrl = "/cloud/task/manual/list/";
 
 export const cloudTagRuleListUrl = "/cloud/tag/rule/list";
 
@@ -59,17 +59,17 @@ export const cloudTagRuleUpdateUrl = "/cloud/tag/rule/update";
 
 export const cloudListByGroupUrl = "/cloud/account/listByGroup/";
 
-export const cloudResourceListUrl = "/cloud/cloudResource/list/";
+export const cloudResourceListUrl = "/cloud/resources/list/";
 
-export const cloudResourceByIdUrl = "/cloud/cloudResource/resources/";
+export const cloudResourceByIdUrl = "/cloud/resources/resources/";
 
-export const resourceSummaryReport = "/cloud/cloudResource/summary/";
+export const resourceSummaryReport = "/cloud/resources/summary/";
 
-export const resourceSummaryToReport = "/cloud/cloudResource/summary";
+export const resourceSummaryToReport = "/cloud/resources/summary";
 
-export const resourceTaskCountUrl = "/cloud/cloudResource/task/count/";
+export const resourceTaskCountUrl = "/cloud/resources/task/count/";
 
-export const resourceRiskListUrl = "/cloud/cloudResource/risk/list/";
+export const resourceRiskListUrl = "/cloud/resources/risk/list/";
 
 export const deleteAccountsUrl = "/cloud/account/deletes";
 
