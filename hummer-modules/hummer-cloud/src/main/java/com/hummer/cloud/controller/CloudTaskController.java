@@ -24,7 +24,7 @@ import java.util.List;
 
 @Hidden
 @RestController
-@RequestMapping(value = "cloud/task")
+@RequestMapping(value = "task")
 public class CloudTaskController {
     @Autowired
     private CloudTaskService cloudTaskService;

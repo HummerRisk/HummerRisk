@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @Hidden
-@RequestMapping("testScaner")
+@RequestMapping("test/scaner")
 public class TestScanerController {
     @Autowired
     @Qualifier("loadBalanced")

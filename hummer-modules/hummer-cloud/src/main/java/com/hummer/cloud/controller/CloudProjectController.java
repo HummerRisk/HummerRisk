@@ -23,7 +23,7 @@ import java.util.List;
 
 @Tag(name = "云资源检测历史")
 @RestController
-@RequestMapping(value = "cloud/project")
+@RequestMapping(value = "project")
 public class CloudProjectController {
 
     @Autowired
@@ -87,23 +87,15 @@ public class CloudProjectController {
 
     @Operation(summary = "项目执行过程列表")
     @I18n
-    @PostMapping("processList/{goPage}/{pageSize}")
-    public Pager<List<CloudProcessDTO>> getCloudProcessDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudProcess cloudProcess) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudProjectService.getCloudProcessDTOs(cloudProcess));
-    }
-
-    @Operation(summary = "项目执行过程详情")
-    @I18n
-    @GetMapping("processById/{groupId}")
-    public CloudProcessDTO processById(@PathVariable String processId) {
-        return cloudProjectService.processById(processId);
+    @PostMapping("processList")
+    public CloudProcessDTO getCloudProcessDTO(@RequestBody CloudProcess cloudProcess) {
+        return cloudProjectService.getCloudProcessDTO(cloudProcess);
     }
 
     @Operation(summary = "执行项目检测")
     @PostMapping("scan")
-    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
-        cloudProjectService.scan(request, tokenService.getLoginUser());
+    public String scan(@RequestBody ScanGroupRequest request) throws Exception {
+        return cloudProjectService.scan(request, tokenService.getLoginUser());
     }
 
 }
