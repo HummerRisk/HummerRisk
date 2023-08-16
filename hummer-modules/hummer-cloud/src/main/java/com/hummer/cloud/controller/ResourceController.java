@@ -15,15 +15,15 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -160,7 +160,7 @@ public class ResourceController {
     }
 
     @I18n
-    @Operation(summary = "规则条例信息")
+    @Operation(summary = "风险安全策略信息")
     @GetMapping("report/iso/{accountId}/{groupId}")
     public Map<String, String> reportIso(@PathVariable String accountId, @PathVariable String groupId) {
         return resourceService.reportIso(accountId, groupId);
@@ -209,7 +209,7 @@ public class ResourceController {
     }
 
     @I18n
-    @Operation(summary = "风险条例")
+    @Operation(summary = "风险安全策略")
     @GetMapping("regulation/{ruleId}")
     public List<RuleInspectionReport> regulation(@PathVariable String ruleId) {
         return resourceService.regulation(ruleId);

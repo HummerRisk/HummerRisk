@@ -13,11 +13,11 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -180,7 +180,7 @@ public class RuleController {
     }
 
     @I18n
-    @Operation(summary = "规则条例")
+    @Operation(summary = "风险安全策略")
     @PostMapping(value = "ruleInspectionReports/{goPage}/{pageSize}")
     public Pager<List<RuleInspectionReport>> getRuleInspectionReports(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleInspectionReportRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
