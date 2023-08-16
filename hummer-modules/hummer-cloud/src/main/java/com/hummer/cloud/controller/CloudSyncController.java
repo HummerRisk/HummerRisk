@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Tag(name = "资源态势")
 @RestController
-@RequestMapping(value = "cloud/sync")
+@RequestMapping(value = "sync")
 public class CloudSyncController {
     @Autowired
     private CloudSyncService cloudSyncService;
