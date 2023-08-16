@@ -1,7 +1,7 @@
 package com.hummer.common.core.dto;
 
 import com.hummer.common.core.domain.CloudProcess;
-import com.hummer.common.core.domain.CloudProcessLog;
+import com.hummer.common.core.domain.CloudProcessLogWithBLOBs;
 
 import java.util.List;
 
@@ -13,15 +13,7 @@ public class CloudProcessDTO {
 
     private List<CloudProcess> cloudProcessList;
 
-    private List<CloudProcessLog> cloudProcessLogList;
-
-    public List<CloudProcessLog> getCloudProcessLogList() {
-        return cloudProcessLogList;
-    }
-
-    public void setCloudProcessLogList(List<CloudProcessLog> cloudProcessLogList) {
-        this.cloudProcessLogList = cloudProcessLogList;
-    }
+    private List<CloudProcessLogWithBLOBs> cloudProcessLogList;
 
     public Integer getActiveStep() {
         return activeStep;
@@ -45,5 +37,13 @@ public class CloudProcessDTO {
 
     public void setCloudProcessList(List<CloudProcess> cloudProcessList) {
         this.cloudProcessList = cloudProcessList;
+    }
+
+    public List<CloudProcessLogWithBLOBs> getCloudProcessLogList() {
+        return cloudProcessLogList;
+    }
+
+    public void setCloudProcessLogList(List<CloudProcessLogWithBLOBs> cloudProcessLogList) {
+        this.cloudProcessLogList = cloudProcessLogList;
     }
 }

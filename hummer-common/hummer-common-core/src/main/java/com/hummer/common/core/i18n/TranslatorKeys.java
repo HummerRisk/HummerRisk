@@ -61,7 +61,19 @@ public class TranslatorKeys {
                     "i18n_operation_process",
                     "i18n_operation_init",
                     "i18n_operation_scan",
-                    "i18n_operation_step"
+                    "i18n_operation_step",
+                    "init_cloud_account_info",
+                    "init_cloud_region_info",
+                    "init_cloud_group_info",
+                    "init_cloud_rule_info",
+                    "init_env_info",
+                    "create_scan_info",
+                    "create_scan_group",
+                    "create_scan_task",
+                    "start_scan_task",
+                    "hour_title",
+                    "minute_title",
+                    "second_title"
             ));
 
 }
