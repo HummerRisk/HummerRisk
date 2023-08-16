@@ -152,7 +152,7 @@ public class ResourceController {
     }
 
     @I18n
-    @Operation(summary = "规则条例信息")
+    @Operation(summary = "风险安全策略信息")
     @GetMapping("report/iso/{accountId}/{groupId}")
     public Map<String, String> reportIso(@PathVariable String accountId, @PathVariable String groupId) {
         return resourceService.reportIso(accountId, groupId);
@@ -201,7 +201,7 @@ public class ResourceController {
     }
 
     @I18n
-    @Operation(summary = "风险条例")
+    @Operation(summary = "风险安全策略")
     @GetMapping("regulation/{ruleId}")
     public List<RuleInspectionReport> regulation(@PathVariable String ruleId) {
         return resourceService.regulation(ruleId);

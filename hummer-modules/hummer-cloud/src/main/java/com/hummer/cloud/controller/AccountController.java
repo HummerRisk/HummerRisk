@@ -165,7 +165,7 @@ public class AccountController {
     }
 
     @I18n
-    @Operation(summary = "等保条例列表")
+    @Operation(summary = "风险安全策略列表")
     @PostMapping("report/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> reportList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);

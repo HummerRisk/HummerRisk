@@ -363,7 +363,7 @@ public class RuleService {
         ruleGroupMappings.forEach(obj -> ruleSets.add(Integer.valueOf(obj.getGroupId())));
         ruleDTO.setRuleSets(ruleSets);
 
-        //规则条例
+        //风险安全策略
         List<Integer> inspectionSeports = new ArrayList<>();
         RuleInspectionReportMappingExample ruleInspectionReportMappingExample = new RuleInspectionReportMappingExample();
         ruleInspectionReportMappingExample.createCriteria().andRuleIdEqualTo(id);
@@ -393,7 +393,7 @@ public class RuleService {
         ruleGroupMappings.forEach(obj -> ruleSets.add(Integer.valueOf(obj.getGroupId())));
         ruleDTO.setRuleSets(ruleSets);
 
-        //规则条例
+        //风险安全策略
         List<Integer> inspectionSeports = new ArrayList<>();
         RuleInspectionReportMappingExample ruleInspectionReportMappingExample = new RuleInspectionReportMappingExample();
         ruleInspectionReportMappingExample.createCriteria().andRuleIdEqualTo(ruleId);
@@ -429,7 +429,7 @@ public class RuleService {
         ruleGroupMappings.forEach(obj -> ruleSets.add(Integer.valueOf(obj.getGroupId())));
         ruleDTO.setRuleSets(ruleSets);
 
-        //规则条例
+        //风险安全策略
         List<Integer> inspectionSeports = new ArrayList<>();
         RuleInspectionReportMappingExample ruleInspectionReportMappingExample = new RuleInspectionReportMappingExample();
         ruleInspectionReportMappingExample.createCriteria().andRuleIdEqualTo(id);

@@ -180,7 +180,7 @@ public class RuleController {
     }
 
     @I18n
-    @Operation(summary = "规则条例")
+    @Operation(summary = "风险安全策略")
     @PostMapping(value = "ruleInspectionReports/{goPage}/{pageSize}")
     public Pager<List<RuleInspectionReport>> getRuleInspectionReports(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleInspectionReportRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
