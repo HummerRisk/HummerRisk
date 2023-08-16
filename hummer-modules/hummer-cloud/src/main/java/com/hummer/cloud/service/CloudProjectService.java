@@ -167,26 +167,16 @@ public class CloudProjectService {
         operationLogService.log(loginUser, groupId, cloudGroup.getAccountName(), ResourceTypeConstants.CLOUD_GROUP.name(), ResourceOperation.DELETE, "i18n_delete_cloud_project");
     }
 
-    public List<CloudProcessDTO> getCloudProcessDTOs(CloudProcess cloudProcess) {
-        return extCloudProjectMapper.getCloudProcessDTOs(cloudProcess);
+    public CloudProcessDTO getCloudProcessDTO(CloudProcess cloudProcess) {
+        return extCloudProjectMapper.getCloudProcessDTO(cloudProcess);
     }
 
-    public CloudProcessDTO processById(String processId) {
-        CloudProcess cloudProcess = new CloudProcess();
-        cloudProcess.setId(processId);
-        List<CloudProcessDTO> list = extCloudProjectMapper.getCloudProcessDTOs(cloudProcess);
-        if (!list.isEmpty()) {
-            return list.get(0);
-        } else {
-            return new CloudProcessDTO();
-        }
-    }
-
-    public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
+    public String scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
+        String projectId = UUIDUtil.newUUID();
 
         commonThreadPool.addTask(() -> {
             String operation = "i18n_create_cloud_project";
-            String projectId = UUIDUtil.newUUID();
+
             try {
                 AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
 
@@ -249,6 +239,7 @@ public class CloudProjectService {
             }
         });
 
+        return projectId;
     }
 
     private void dealProcessStep1(String projectId, LoginUser loginUser) throws Exception {

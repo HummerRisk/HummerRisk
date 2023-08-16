@@ -68,18 +68,28 @@
         <result column="result" jdbcType="TINYINT" property="result" />
     </resultMap>
 
-    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.dto.CloudProcessDTO"
-               extends="com.hummer.cloud.mapper.CloudProcessMapper.BaseResultMap">
+    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.dto.CloudProcessDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="activeStep" jdbcType="INTEGER" property="activeStep" />
+        <result column="resultStatus" jdbcType="INTEGER" property="resultStatus" />
+        <collection property="cloudProcessList" ofType="com.hummer.common.core.domain.CloudProcess" javaType="list"
+                    select="selectCloudProcessList" column="{projectId=id}">
+        </collection>
+        <collection property="cloudProcessLogList" ofType="com.hummer.common.core.domain.CloudProcessLog" javaType="list"
+                    select="selectCloudProcessLogList" column="{projectId=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.domain.CloudProcess">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="process_step" jdbcType="INTEGER" property="processStep" />
+        <result column="process_order" jdbcType="INTEGER" property="processOrder" />
+        <result column="process_name" jdbcType="VARCHAR" property="processName" />
         <result column="process_rate" jdbcType="INTEGER" property="processRate" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
-        <collection property="cloudProcessLogList" ofType="com.hummer.common.core.domain.CloudProcessLog" javaType="list"
-                    select="selectCloudProcessLogList" column="{id=id}">
-        </collection>
     </resultMap>
 
     <resultMap id="CloudProcessLogMap" type="com.hummer.common.core.domain.CloudProcessLog">
@@ -237,27 +247,31 @@
         ORDER BY t.create_time DESC
     </select>
 
-    <select id="getCloudProcessDTOs" resultMap="BaseProcessResultMap">
+    <select id="getCloudProcessDTO" resultMap="BaseProcessResultMap">
         select
-        t.*
-        from cloud_process as t
-        <where>
-            <if test="request.id != null and request.id != ''">
-                and t.id = #{request.id}
-            </if>
-            <if test="request.projectId != null and request.projectId != ''">
-                and t.project_id = #{request.projectId}
-            </if>
-        </where>
-        order by t.create_time desc
+        #{request.projectId} as projectId,
+        (SELECT IF(t1.process_step is not null, t1.process_step, 1) as activeStep FROM cloud_process t1 WHERE t1.project_id = #{request.projectId} and t1.process_rate = 100 order by t1.process_order desc limit 1) as activeStep,
+        CASE
+        WHEN (SELECT t1.process_step FROM cloud_process t1 WHERE t1.project_id = #{request.projectId} and t1.process_rate = 100 order by t1.process_order desc limit 1) is null THEN 0
+        WHEN (SELECT t1.process_step FROM cloud_process t1 WHERE t1.project_id = #{request.projectId} and t1.process_rate = 100 order by t1.process_order desc limit 1) &gt; 9 THEN 1
+        ELSE 2
+        END AS resultStatus
+    </select>
+
+    <select id="selectCloudProcessList" resultMap="CloudProcessMap">
+        SELECT
+            t.*
+        FROM cloud_process t
+        where t.project_id = #{id}
+        ORDER BY t.create_time DESC
     </select>
 
     <select id="selectCloudProcessLogList" resultMap="CloudProcessLogMap">
         SELECT
             t.*
         FROM cloud_process_log t
-        where t.process_id = #{id}
-        ORDER BY t.create_time DESC
+        where t.project_id = #{id}
+        order by t.process_order, t.process_step, t.create_time desc
     </select>
 
 </mapper>
