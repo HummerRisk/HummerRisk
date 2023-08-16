@@ -489,7 +489,7 @@ export default {
   history: {
     rule: '檢測規則',
     rule_set: '規則組別',
-    inspection_report: '等保策略',
+    inspection_report: '風險安全策略',
     rule_tag: '規則標籤',
     regions: '檢測區域',
     cloud_account: '雲賬號名稱',
