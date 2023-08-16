@@ -80,7 +80,7 @@
         </collection>
     </resultMap>
 
-    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.domain.CloudProcess">
+    <resultMap id="BaseProcessMap" type="com.hummer.common.core.domain.CloudProcess">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="process_step" jdbcType="INTEGER" property="processStep" />
@@ -239,7 +239,7 @@
         order by t.create_time desc
     </select>
 
-    <select id="selectCloudProjectLogList" resultMap="CloudProjectLogMap">
+    <select id="selectCloudGroupLogList" resultMap="CloudProjectLogMap">
         SELECT
             t.*
         FROM cloud_group_log t
