@@ -59,7 +59,7 @@
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="groupTotal"/>
       </el-tab-pane>
       <!-- 规则组别 end-->
-      <!-- 等保条例 start-->
+      <!-- 风险安全策略 start-->
       <el-tab-pane :label="$t('history.inspection_report')">
         <el-table border :data="reportData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
                   @filter-change="filter" @select-all="select" @select="select" >
@@ -99,7 +99,7 @@
         </el-table>
         <table-pagination :change="search" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="reportTotal"/>
       </el-tab-pane>
-      <!-- 等保条例 end-->
+      <!-- 风险安全策略 end-->
       <!-- 规则标签 start-->
       <el-tab-pane :label="$t('history.rule_tag')">
         <el-table border :data="tagData" class="adjust-table table-content" @sort-change="sort" :row-class-name="tableRowClassName"
