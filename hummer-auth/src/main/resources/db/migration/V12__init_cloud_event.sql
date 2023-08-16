@@ -402,8 +402,8 @@ CREATE TABLE IF NOT EXISTS `cloud_resource_sync_item` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `cloud_resource_sync_item_log` (
-                                                              `id`                           int                 NOT NULL AUTO_INCREMENT,
-                                                              `sync_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
+    `id`                           int                 NOT NULL AUTO_INCREMENT,
+    `sync_item_id`                 varchar(50)         DEFAULT NULL COMMENT '任务项ID',
     `account_id`                   varchar(50)         DEFAULT NULL COMMENT '云账号ID',
     `create_time`                  bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                     varchar(100)        DEFAULT NULL COMMENT '操作人',
