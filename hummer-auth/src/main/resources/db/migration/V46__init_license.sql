@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS `hummer_license` (
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Rancher 内存限制检测', '检测 Rancher 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-rancher-plugin', 1, 'k8s');
 
-SELECT @groupId := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId;
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('Rancher 容器的文件系统检测', '检测 Rancher 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-rancher-plugin', 1, 'k8s');
 
-SELECT @groupId1 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId1;
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('2d08f729-f869-4b69-8772-41a8d58b5c34', 'Rancher StatefulSet 内存限制检测', 1, 'HighRisk', '检测 Rancher StatefulSet 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。', 'policies:\n    # 检测 Rancher StatefulSet 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。\n    - name: rancher-stateful-set\n      resource: rancher.stateful-set\n      filters:\n        - type: memory-limit\n          limit_min: ${{value1}}\n          limit_max: ${{value2}}', '[{\"defaultValue\":\"64\",\"name\":\"最小内存限制\",\"key\":\"value1\",\"required\":true},{\"defaultValue\":\"1024\",\"name\":\"最大内存限制\",\"key\":\"value2\",\"required\":true}]', 'hummer-rancher-plugin', 'Rancher', 'rancher.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('c3959d6f-d6c1-49d9-9f16-bd7f8e359667', 'Rancher Pod 内存大小限制检测', 1, 'HighRisk', '检测 Rancher Pod 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。', 'policies:\n    # 检测 Rancher Pod 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。\n    - name: rancher-pod-memory\n      resource: rancher.pod\n      filters:\n        - type: memory-limit\n          limit_min: ${{value1}}\n          limit_max: ${{value2}}', '[{\"key\":\"value1\",\"name\":\"最小内存限制\",\"defaultValue\":\"64\",\"required\":true},{\"key\":\"value2\",\"name\":\"最大内存限制\",\"defaultValue\":\"1024\",\"required\":true}]', 'hummer-rancher-plugin', 'Rancher', 'rancher.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
@@ -108,11 +108,11 @@ INSERT INTO `rule_inspection_report_mapping` (`rule_id`, `report_id`) VALUES ('8
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('KubeSphere 内存限制检测', '检测 KubeSphere 资源是否限制内存大小，资源内存限额更有利于资源进行分配，保障集群运行安全。', '安全合规', 'hummer-kubesphere-plugin', 1, 'k8s');
 
-SELECT @groupId := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId;
 
 INSERT INTO `rule_group` (`name`, `description`, `level`, `plugin_id`, `flag`, `type`) VALUES ('KubeSphere 容器的文件系统检测', '检测 KubeSphere 容器的文件系统是否为只读，如果容器应用程序需要写入文件系统，建议为应用程序需要写访问权限的特定目录挂载辅助文件系统。', '合规检测', 'hummer-kubesphere-plugin', 1, 'k8s');
 
-SELECT @groupId1 := LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO @groupId1;
 
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('1d18f729-f869-4b69-8772-41a8d58b5c34', 'KubeSphere StatefulSet 内存限制检测', 1, 'HighRisk', '检测 KubeSphere StatefulSet 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。', 'policies:\n    # 检测 KubeSphere StatefulSet 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。\n    - name: kubesphere-stateful-set\n      resource: kubesphere.stateful-set\n      filters:\n        - type: memory-limit\n          limit_min: ${{value1}}\n          limit_max: ${{value2}}', '[{\"defaultValue\":\"64\",\"name\":\"最小内存限制\",\"key\":\"value1\",\"required\":true},{\"defaultValue\":\"1024\",\"name\":\"最大内存限制\",\"key\":\"value2\",\"required\":true}]', 'hummer-kubesphere-plugin', 'KubeSphere', 'kubesphere.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);
 INSERT INTO `rule` (`id`, `name`, `status`, `severity`, `description`, `script`, `parameter`, `plugin_id`, `plugin_name`, `plugin_icon`, `last_modified`, `flag`, `scan_type`, `suggestion`) VALUES ('c1659d6f-d6c1-49d9-9f16-bd7f8e359667', 'KubeSphere Pod 内存大小限制检测', 1, 'HighRisk', '检测 KubeSphere Pod 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。', 'policies:\n    # 检测 KubeSphere Pod 限制内存大小在64-1024MB，在限制大小范围内视为“合规”，否则视为“不合规”。\n    - name: kubesphere-pod-memory\n      resource: kubesphere.pod\n      filters:\n        - type: memory-limit\n          limit_min: ${{value1}}\n          limit_max: ${{value2}}', '[{\"key\":\"value1\",\"name\":\"最小内存限制\",\"defaultValue\":\"64\",\"required\":true},{\"key\":\"value2\",\"name\":\"最大内存限制\",\"defaultValue\":\"1024\",\"required\":true}]', 'hummer-kubesphere-plugin', 'KubeSphere', 'kubesphere.png', concat(unix_timestamp(now()), '004'), 1, 'custodian', NULL);

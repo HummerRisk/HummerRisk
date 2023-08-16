@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS `cloud_project` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `cloud_project_log` (
-                                                   `id`                         int                 NOT NULL AUTO_INCREMENT,
-                                                   `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
+    `id`                         varchar(50)         NOT NULL COMMENT 'ID',
+    `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
     `init_time`                  varchar(50)         DEFAULT NULL COMMENT '初始化时间',
     `exec_time`                  varchar(50)         DEFAULT NULL COMMENT '执行完成时间',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS `cloud_group` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `cloud_group_log` (
-                                                 `id`                         int                 NOT NULL AUTO_INCREMENT,
-                                                 `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
+    `id`                         varchar(50)         NOT NULL COMMENT 'ID',
+    `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
     `group_id`                   varchar(128)        DEFAULT NULL COMMENT 'cloud group 标识',
     `init_time`                  varchar(50)         DEFAULT NULL COMMENT '初始化时间',
     `exec_time`                  varchar(50)         DEFAULT NULL COMMENT '执行完成时间',
@@ -78,8 +78,8 @@ CREATE TABLE IF NOT EXISTS `cloud_process` (
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS `cloud_process_log` (
-                                                   `id`                         int                 NOT NULL AUTO_INCREMENT,
-                                                   `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
+    `id`                         varchar(50)         NOT NULL COMMENT 'ID',
+    `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
     `process_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud process 标识',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
     `operator`                   varchar(100)        DEFAULT NULL COMMENT '操作人',
