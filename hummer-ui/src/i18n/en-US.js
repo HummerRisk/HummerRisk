@@ -489,7 +489,7 @@ export default {
   history: {
     rule:'Scan rule',
     rule_set:'Rule set',
-    inspection_report: 'Equal insurance policy',
+    inspection_report: 'Risk Security Policy',
     rule_tag:'Rule tag',
     regions:'Scan regions',
     cloud_account:'Cloud account name',

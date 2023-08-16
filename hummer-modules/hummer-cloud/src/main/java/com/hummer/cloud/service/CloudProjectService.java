@@ -252,7 +252,6 @@ public class CloudProjectService {
             saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             Random random = new Random();
             int randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            Thread.sleep(randomNumber*1000);
             saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_account_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
             saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             order++;
@@ -263,7 +262,6 @@ public class CloudProjectService {
             saveCloudProcess(processId, projectId, 0, step, order, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
             saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            Thread.sleep(randomNumber*1000);
             saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
             saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             order++;
@@ -274,7 +272,6 @@ public class CloudProjectService {
             saveCloudProcess(processId, projectId, 0, step, order, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
             saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            Thread.sleep(randomNumber*1000);
             saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
             saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             order++;
@@ -285,7 +282,6 @@ public class CloudProjectService {
             saveCloudProcess(processId, projectId, 0, step, order, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
             saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            Thread.sleep(randomNumber*1000);
             saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
             saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             order++;step++;
@@ -296,7 +292,6 @@ public class CloudProjectService {
             saveCloudProcess(processId, projectId, 0, step, order, "init_env_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
             saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             randomNumber = random.nextInt(5) + 1; // 生成1-5之间的随机整数
-            Thread.sleep(randomNumber*1000);
             saveCloudProcess(processId, projectId, 100, step, order, "init_env_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
             saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             order++;
@@ -307,7 +302,6 @@ public class CloudProjectService {
             saveCloudProcess(processId, projectId, 0, step, order, "create_scan_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
             saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             randomNumber = random.nextInt(5) + 1; // 生成1-5之间的随机整数
-            Thread.sleep(randomNumber*1000);
             saveCloudProcess(processId, projectId, 100, step, order, "create_scan_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
             saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             order++;
@@ -318,7 +312,6 @@ public class CloudProjectService {
             saveCloudProcess(processId, projectId, 0, step, order, "create_scan_group", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
             saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             randomNumber = random.nextInt(10) + 1; // 生成1-10之间的随机整数
-            Thread.sleep(randomNumber*1000);
             saveCloudProcess(processId, projectId, 100, step, order, "create_scan_group", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
             saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
             order++;

@@ -211,7 +211,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 3000,
               autoStart : true
             }),
           },
@@ -222,7 +222,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 3000,
               autoStart : true
             }),
           },
@@ -233,7 +233,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 3000,
               autoStart : true
             }),
           },
@@ -244,7 +244,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 3000,
               autoStart : true
             }),
           },
@@ -255,7 +255,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 5000,
               autoStart : true
             }),
           },
@@ -266,7 +266,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 5000,
               autoStart : true
             }),
           },
@@ -277,7 +277,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 10000,
               autoStart : true
             }),
           },
@@ -288,7 +288,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 10000,
               autoStart : true
             }),
           },
@@ -299,7 +299,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processRate: 0,
             execTime: '0',
             fake: new FakeProgress({
-              timeConstant : 2000,
+              timeConstant : 10000,
               autoStart : true
             }),
           },
@@ -425,7 +425,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
               this.$post(projectScanUrl, params, res => {
                 let data = res.data;
                 this.projectId = data;
-                this.timer = setInterval(this.getStatus, 2000);
+                this.timer = setInterval(this.getStatus, 1000);
               });
             }
           }

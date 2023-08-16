@@ -489,7 +489,7 @@ export default {
   history: {
     rule: '检测规则',
     rule_set: '规则组别',
-    inspection_report: '等保策略',
+    inspection_report: '风险安全策略',
     rule_tag: '规则标签',
     regions: '检测区域',
     cloud_account: '云账号名称',
