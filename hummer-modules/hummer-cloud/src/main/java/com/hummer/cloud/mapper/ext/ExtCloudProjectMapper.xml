@@ -80,7 +80,7 @@
         </collection>
     </resultMap>
 
-    <resultMap id="BaseProcessMap" type="com.hummer.common.core.domain.CloudProcess">
+    <resultMap id="CloudProcessMap" type="com.hummer.common.core.domain.CloudProcess">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="process_step" jdbcType="INTEGER" property="processStep" />
