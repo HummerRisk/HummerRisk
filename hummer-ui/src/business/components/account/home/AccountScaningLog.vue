@@ -42,36 +42,40 @@
           </el-col>
           <el-col :span="20">
             <div style="height: 221px;margin: 54px 0;">
-              <el-row :id="'row' + cloudProcess.processOrder" v-for="(cloudProcess, index) in cloudProcessList" :key="cloudProcess.processOrder" style="margin: 15px 0;">
-                <el-col :span="22" v-if="cloudProcess.processOrder < 5">
-                  <h5 v-bind:class="{
+              <div v-for="(cloudProcess, index) in cloudProcessList" :key="cloudProcess.processOrder">
+                <el-row :id="'row' + cloudProcess.processOrder" v-if="cloudProcess.processOrder < 5" style="margin: 15px 0;">
+                  <el-col :span="22">
+                    <h5 v-bind:class="{
                                   'font-ing': cloudProcess.processRate > 0 && cloudProcess.processRate < 100,
                                   'font-end': cloudProcess.processRate === 0 || cloudProcess.processRate === 100 }">
-                    <i v-if="cloudProcess.processRate > 0 && cloudProcess.processRate < 100" class="el-icon-loading"></i>
-                    <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
-                    <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
-                    {{ cloudProcess.processName }}
-                    <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
-                  </h5>
-                  <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
-                </el-col>
-              </el-row>
+                      <i v-if="cloudProcess.processRate > 0 && cloudProcess.processRate < 100" class="el-icon-loading"></i>
+                      <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
+                      <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
+                      {{ cloudProcess.processName }}
+                      <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
+                    </h5>
+                    <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
             <div style="height: 231px;margin: 50px 0;">
-              <el-row :id="'row' + cloudProcess.processOrder" v-for="(cloudProcess, index) in cloudProcessList" :key="cloudProcess.processOrder" style="margin: 15px 0;">
-                <el-col :span="22" v-if="cloudProcess.processOrder < 9 && cloudProcess.processOrder > 4">
-                  <h5 v-bind:class="{
+              <div v-for="(cloudProcess, index) in cloudProcessList" :key="cloudProcess.processOrder">
+                <el-row :id="'row' + cloudProcess.processOrder" v-if="cloudProcess.processOrder > 4" style="margin: 15px 0;">
+                  <el-col :span="22">
+                    <h5 v-bind:class="{
                                   'font-ing': cloudProcess.processRate > 0 && cloudProcess.processRate < 100,
                                   'font-end': cloudProcess.processRate === 0 || cloudProcess.processRate === 100 }">
-                    <i v-if="cloudProcess.processRate > 0 && cloudProcess.processRate < 100" class="el-icon-loading"></i>
-                    <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
-                    <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
-                    {{ cloudProcess.processName }}
-                    <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
-                  </h5>
-                  <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
-                </el-col>
-              </el-row>
+                      <i v-if="cloudProcess.processRate > 0 && cloudProcess.processRate < 100" class="el-icon-loading"></i>
+                      <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
+                      <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
+                      {{ cloudProcess.processName }}
+                      <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
+                    </h5>
+                    <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
             <div style="height: 300px;margin: 50px 0;">
               <el-row>
@@ -359,7 +363,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
         let params = {
           projectId: this.projectId
         };
-        this.$post(processListUrl + "1/10", params, res => {
+        this.$post(processListUrl, params, res => {
           let data = res.data;
           let cloudProcessList = data.cloudProcessList;//数据库返回数据
           this.cloudProcessLogList = data.cloudProcessLogList;
