@@ -256,10 +256,13 @@ public class CloudSyncService {
                             cloudResourceItem.setRegionId(region);
                             cloudResourceItem.setRegionName(cloudResourceSyncItem.getRegionName());
                             cloudResourceItem.setResourceId(cloudResourceWithBLOBs.getId());
-                            cloudResourceItem.setResourceType(resourceType);
                             cloudResourceItem.setHummerId(hummerId);
                             cloudResourceItem.setHummerName(hummerName);
                             cloudResourceItem.setCreateTime(nowDate);
+                            cloudResourceItem.setResourceType(resourceType);
+                            cloudResourceItem.setResourceTypeName(PlatformUtils.tranforResourceType2Name(resourceType));
+                            cloudResourceItem.setResourceTypeIcon(PlatformUtils.tranforResourceType2Icon(resourceType, "icon"));
+                            cloudResourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType2Icon(resourceType, "belong"));
                             cloudResourceItem.setResource(jsonObject.toJSONString());
 
                             //云资源同步资源详情表
