@@ -101,3 +101,17 @@ ALTER TABLE `cloud_resource_item` modify COLUMN `hummer_name` varchar(1024) DEFA
 
 ALTER TABLE `resource_item` modify COLUMN `hummer_name` varchar(1024) DEFAULT NULL COMMENT '资源别名';
 
+ALTER TABLE `cloud_task` add `project_id` varchar(128) DEFAULT NULL COMMENT 'cloud project 标识';
+
+ALTER TABLE `cloud_resource_item` add `resource_type_name` varchar(128) DEFAULT NULL COMMENT '资源类型中文名称';
+
+ALTER TABLE `cloud_resource_item` add `resource_type_belong` varchar(128) DEFAULT NULL COMMENT '资源类型所属大类';
+
+ALTER TABLE `cloud_resource_item` add `resource_type_icon` varchar(50) DEFAULT NULL COMMENT '资源类型所属图标';
+
+ALTER TABLE `resource_item` add `resource_type_name` varchar(128) DEFAULT NULL COMMENT '资源类型中文名称';
+
+ALTER TABLE `resource_item` add `resource_type_belong` varchar(128) DEFAULT NULL COMMENT '资源类型所属大类';
+
+ALTER TABLE `resource_item` add `resource_type_icon` varchar(50) DEFAULT NULL COMMENT '资源类型所属图标';
+
