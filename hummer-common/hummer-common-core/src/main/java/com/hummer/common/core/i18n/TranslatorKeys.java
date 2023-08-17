@@ -73,7 +73,10 @@ public class TranslatorKeys {
                     "start_scan_task",
                     "hour_title",
                     "minute_title",
-                    "second_title"
+                    "second_title",
+                    "start_init",
+                    "start_init_finish",
+                    "i18n_init_task"
             ));
 
 }

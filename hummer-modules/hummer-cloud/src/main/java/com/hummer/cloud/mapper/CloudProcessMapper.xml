@@ -15,7 +15,7 @@
     <result column="process_rate" jdbcType="INTEGER" property="processRate" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
-    <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+    <result column="exec_time" jdbcType="INTEGER" property="execTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -156,7 +156,7 @@
       )
     values (#{id,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR}, #{processStep,jdbcType=INTEGER}, 
       #{processOrder,jdbcType=INTEGER}, #{processName,jdbcType=VARCHAR}, #{processRate,jdbcType=INTEGER}, 
-      #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{execTime,jdbcType=VARCHAR}
+      #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{execTime,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.hummer.common.core.domain.CloudProcess">
@@ -221,7 +221,7 @@
         #{createTime,jdbcType=BIGINT},
       </if>
       <if test="execTime != null">
-        #{execTime,jdbcType=VARCHAR},
+        #{execTime,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -269,7 +269,7 @@
         create_time = #{record.createTime,jdbcType=BIGINT},
       </if>
       <if test="record.execTime != null">
-        exec_time = #{record.execTime,jdbcType=VARCHAR},
+        exec_time = #{record.execTime,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null">
@@ -291,7 +291,7 @@
       process_rate = #{record.processRate,jdbcType=INTEGER},
       `status` = #{record.status,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
-      exec_time = #{record.execTime,jdbcType=VARCHAR}
+      exec_time = #{record.execTime,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -326,7 +326,7 @@
         create_time = #{createTime,jdbcType=BIGINT},
       </if>
       <if test="execTime != null">
-        exec_time = #{execTime,jdbcType=VARCHAR},
+        exec_time = #{execTime,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -345,7 +345,7 @@
       process_rate = #{processRate,jdbcType=INTEGER},
       `status` = #{status,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
-      exec_time = #{execTime,jdbcType=VARCHAR}
+      exec_time = #{execTime,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

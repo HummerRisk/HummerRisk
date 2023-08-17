@@ -725,62 +725,62 @@ public class CloudProcessExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeEqualTo(String value) {
+        public Criteria andExecTimeEqualTo(Integer value) {
             addCriterion("exec_time =", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeNotEqualTo(String value) {
+        public Criteria andExecTimeNotEqualTo(Integer value) {
             addCriterion("exec_time <>", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeGreaterThan(String value) {
+        public Criteria andExecTimeGreaterThan(Integer value) {
             addCriterion("exec_time >", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeGreaterThanOrEqualTo(String value) {
+        public Criteria andExecTimeGreaterThanOrEqualTo(Integer value) {
             addCriterion("exec_time >=", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeLessThan(String value) {
+        public Criteria andExecTimeLessThan(Integer value) {
             addCriterion("exec_time <", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeLessThanOrEqualTo(String value) {
+        public Criteria andExecTimeLessThanOrEqualTo(Integer value) {
             addCriterion("exec_time <=", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeLike(String value) {
+        public Criteria andExecTimeLike(Integer value) {
             addCriterion("exec_time like", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeNotLike(String value) {
+        public Criteria andExecTimeNotLike(Integer value) {
             addCriterion("exec_time not like", value, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeIn(List<String> values) {
+        public Criteria andExecTimeIn(List<Integer> values) {
             addCriterion("exec_time in", values, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeNotIn(List<String> values) {
+        public Criteria andExecTimeNotIn(List<Integer> values) {
             addCriterion("exec_time not in", values, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeBetween(String value1, String value2) {
+        public Criteria andExecTimeBetween(Integer value1, Integer value2) {
             addCriterion("exec_time between", value1, value2, "execTime");
             return (Criteria) this;
         }
 
-        public Criteria andExecTimeNotBetween(String value1, String value2) {
+        public Criteria andExecTimeNotBetween(Integer value1, Integer value2) {
             addCriterion("exec_time not between", value1, value2, "execTime");
             return (Criteria) this;
         }
