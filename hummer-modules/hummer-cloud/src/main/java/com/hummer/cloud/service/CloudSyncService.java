@@ -9,7 +9,6 @@ import com.hummer.cloud.mapper.ext.ExtCloudResourceRelaMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncItemMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudResourceSyncMapper;
 import com.hummer.common.core.constant.CloudTaskConstants;
-import com.hummer.common.core.constant.CommandEnum;
 import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.domain.*;
@@ -20,7 +19,9 @@ import com.hummer.common.core.dto.CloudResourceSyncItemDTO;
 import com.hummer.common.core.dto.TopoChartDTO;
 import com.hummer.common.core.exception.HRException;
 import com.hummer.common.core.i18n.Translator;
-import com.hummer.common.core.utils.*;
+import com.hummer.common.core.utils.LogUtil;
+import com.hummer.common.core.utils.PlatformUtils;
+import com.hummer.common.core.utils.UUIDUtil;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
 import com.hummer.system.api.model.LoginUser;
@@ -190,60 +191,36 @@ public class CloudSyncService {
 
                         Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
 
-                        if (systemProviderService.license()) {
-                            HttpHeaders headers = new HttpHeaders();
-                            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-                            JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, account.getPluginId());
-                            LogUtil.info("sync all resource {scanner}[api body]: " + jsonObject.toJSONString());
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+                        JSONObject jsonObj = PlatformUtils.fixedScanner(finalScript, map, account.getPluginId());
+                        LogUtil.warn("sync all resource {scanner}[api body]: " + jsonObj.toJSONString());
 
-                            HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-                            String result = restTemplate.postForObject("http://hummer-scaner/run", httpEntity, String.class);
-                            JSONObject resultJson = JSONObject.parseObject(result);
-                            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
-                            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
-                            if (!StringUtils.equals(resultCode, "200")) {
-                                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
-                            }
-
-                            resultStr = resultJson.getString("data").toString();
-
-                            if (PlatformUtils.isUserForbidden(resultStr)) {
-                                resultStr = Translator.get("i18n_create_resource_region_failed");
-                                readResource = false;
-                            }
-                            if (resultStr.contains("ERROR"))
-                                HRException.throwException(Translator.get("i18n_create_resource_failed") + " 「api server」: " + resultStr);
-
-                            custodianRun = jsonObject.toJSONString();
-                            metadata = jsonObject.toJSONString();
-
-                            if (readResource) {
-                                resources = resultStr;
-                            }
-
-                        } else {
-                            dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid + "/" + region;
-                            CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml", false);
-                            String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
-                            LogUtil.warn(account.getId() + " {}[command]: " + command);
-                            resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-                            if (LogUtil.getLogger().isDebugEnabled()) {
-                                LogUtil.getLogger().debug("resource created: {}", resultStr);
-                            }
-                            if (PlatformUtils.isUserForbidden(resultStr)) {
-                                resultStr = Translator.get("i18n_create_resource_region_failed");
-                                readResource = false;
-                            }
-                            if (resultStr.contains("ERROR"))
-                                HRException.throwException(Translator.get("i18n_create_resource_failed") + "「cloud」: " + resultStr);
-
-                            custodianRun = ReadFileUtils.readToBuffer(dirPath + "/all-resources/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
-                            metadata = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.METADATA_RESULT_FILE);
-
-                            if (readResource) {
-                                resources = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.RESOURCES_RESULT_FILE);
-                            }
+                        HttpEntity<?> httpEntity = new HttpEntity<>(jsonObj, headers);
+                        String result = restTemplate.postForObject("http://hummer-scaner/run", httpEntity, String.class);
+                        JSONObject resultJson = JSONObject.parseObject(result);
+                        String resultCode = resultJson.getString("code").toString();
+                        String resultMsg = resultJson.getString("msg").toString();
+                        if (!StringUtils.equals(resultCode, "200")) {
+                            HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
                         }
+
+                        resultStr = resultJson.getString("data").toString();
+
+                        if (PlatformUtils.isUserForbidden(resultStr)) {
+                            resultStr = Translator.get("i18n_create_resource_region_failed");
+                            readResource = false;
+                        }
+                        if (resultStr.contains("ERROR"))
+                            HRException.throwException(Translator.get("i18n_create_resource_failed") + " 「api server」: " + resultStr);
+
+                        custodianRun = jsonObj.toJSONString();
+                        metadata = jsonObj.toJSONString();
+
+                        if (readResource) {
+                            resources = resultStr;
+                        }
+
 
                         CloudResourceWithBLOBs cloudResourceWithBLOBs = new CloudResourceWithBLOBs();
                         cloudResourceWithBLOBs.setId(UUIDUtil.newUUID());
@@ -280,10 +257,13 @@ public class CloudSyncService {
                             cloudResourceItem.setRegionId(region);
                             cloudResourceItem.setRegionName(cloudResourceSyncItem.getRegionName());
                             cloudResourceItem.setResourceId(cloudResourceWithBLOBs.getId());
-                            cloudResourceItem.setResourceType(resourceType);
                             cloudResourceItem.setHummerId(hummerId);
                             cloudResourceItem.setHummerName(hummerName);
                             cloudResourceItem.setCreateTime(nowDate);
+                            cloudResourceItem.setResourceType(resourceType);
+                            cloudResourceItem.setResourceTypeName(PlatformUtils.tranforResourceType2Name(resourceType));
+                            cloudResourceItem.setResourceTypeIcon(PlatformUtils.tranforResourceType2Icon(resourceType, "icon"));
+                            cloudResourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType2Icon(resourceType, "belong"));
                             cloudResourceItem.setResource(jsonObject.toJSONString());
 
                             //云资源同步资源详情表

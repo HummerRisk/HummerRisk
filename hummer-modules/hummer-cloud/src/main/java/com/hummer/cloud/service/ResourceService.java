@@ -129,10 +129,6 @@ public class ResourceService {
         return extResourceMapper.getComplianceResult(resourceRequest);
     }
 
-    public List<ResourceDTO> getK8sComplianceResult(ResourceRequest resourceRequest) {
-        return extResourceMapper.getK8sComplianceResult(resourceRequest);
-    }
-
     public ResourceWithBLOBs saveResource(ResourceWithBLOBs resourceWithBLOBs, CloudTaskItemWithBLOBs taskItem, CloudTask cloudTask, CloudTaskItemResourceWithBLOBs taskItemResource) {
         try {
             //保存创建的资源
@@ -206,6 +202,9 @@ public class ResourceService {
             resourceItem.setResourceId(resourceWithBLOBs.getId());
             resourceItem.setSeverity(resourceWithBLOBs.getSeverity());
             resourceItem.setResourceType(resourceWithBLOBs.getResourceType());
+            resourceItem.setResourceTypeName(PlatformUtils.tranforResourceType2Name(resourceWithBLOBs.getResourceType()));
+            resourceItem.setResourceTypeIcon(PlatformUtils.tranforResourceType2Icon(resourceWithBLOBs.getResourceType(), "icon"));
+            resourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType2Icon(resourceWithBLOBs.getResourceType(), "belong"));
             resourceItem.setHummerId(hummerId);
             resourceItem.setHummerName(hummerName);
             resourceItem.setResource(jsonObject.toJSONString());
@@ -263,73 +262,46 @@ public class ResourceService {
             resultFile = resultFile.replace("{resource_type}", resourceWithBLOBs.getResourceType());
 
             //企业版
-            if (systemProviderService.license()) {
-                AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
-                Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-                boolean readResource = true;
+            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
+            Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
+            boolean readResource = true;
 
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-                JSONObject jsonObject = PlatformUtils.fixedScanner(resultFile, map, resourceWithBLOBs.getPluginId());
-                LogUtil.info(uuid + " {scanner}[api body]: " + jsonObject.toJSONString());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            JSONObject jsonObject = PlatformUtils.fixedScanner(resultFile, map, resourceWithBLOBs.getPluginId());
+            LogUtil.info(uuid + " {scanner}[api body]: " + jsonObject.toJSONString());
 
-                HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-                String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
-                LogUtil.info(uuid + " {scanner}[api result]: " + result);
-                JSONObject resultJson = JSONObject.parseObject(result);
-                String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
-                String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
-                if (!StringUtils.equals(resultCode, "200")) {
-                    HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
-                }
-
-                String resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
-
-                if(PlatformUtils.isUserForbidden(resultStr)){
-                    resultStr = Translator.get("i18n_create_resource_region_failed");
-                    readResource = false;
-                }
-
-                String resources = "[]";
-                if(readResource){
-                    resources = resultStr;
-                }
-                if (LogUtil.getLogger().isDebugEnabled()) {
-                    LogUtil.getLogger().debug("resource created: {}", resultStr);
-                }
-                JSONArray jsonArray = parseArray(resources);
-                if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
-                    resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());
-                } else {
-                    resourceWithBLOBs.setResourcesSum((long) jsonArray.size());
-                }
-
-            //社区版
-            } else {
-                dirPath = CommandUtils.saveAsFile(resultFile, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid, "policy.yml", false);
-                AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(resourceWithBLOBs.getAccountId());
-                Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, resourceWithBLOBs.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
-                String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
-                String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-                String resources = "[]";
-                if(PlatformUtils.isUserForbidden(resultStr)){
-                    resultStr = Translator.get("i18n_create_resource_region_failed");
-                }else{
-                    resources = ReadFileUtils.readJsonFile(dirPath + "/" + resourceWithBLOBs.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
-                }
-                if (LogUtil.getLogger().isDebugEnabled()) {
-                    LogUtil.getLogger().debug("resource created: {}", resultStr);
-                }
-                JSONArray jsonArray = parseArray(resources);
-                if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
-                    resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());
-                } else {
-                    resourceWithBLOBs.setResourcesSum((long) jsonArray.size());
-                }
-                //执行完删除返回目录文件，以便于下一次操作覆盖
-                String deleteResourceDir = "rm -rf " + dirPath;
-                CommandUtils.commonExecCmdWithResult(deleteResourceDir, dirPath);
+            HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
+            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            LogUtil.info(uuid + " {scanner}[api result]: " + result);
+            JSONObject resultJson = JSONObject.parseObject(result);
+            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
+            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
+            if (!StringUtils.equals(resultCode, "200")) {
+                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
+
+            String resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
+
+            if(PlatformUtils.isUserForbidden(resultStr)){
+                resultStr = Translator.get("i18n_create_resource_region_failed");
+                readResource = false;
+            }
+
+            String resources = "[]";
+            if(readResource){
+                resources = resultStr;
+            }
+            if (LogUtil.getLogger().isDebugEnabled()) {
+                LogUtil.getLogger().debug("resource created: {}", resultStr);
+            }
+            JSONArray jsonArray = parseArray(resources);
+            if ((long) jsonArray.size() < resourceWithBLOBs.getReturnSum()) {
+                resourceWithBLOBs.setResourcesSum(resourceWithBLOBs.getReturnSum());
+            } else {
+                resourceWithBLOBs.setResourcesSum((long) jsonArray.size());
+            }
+
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
             HRException.throwException(e.getMessage());
@@ -432,11 +404,7 @@ public class ResourceService {
             CloudTask cloudTask = cloudTaskMapper.selectByPrimaryKey(taskItem.getTaskId());
             switch (cloudTask.getScanType()) {
                 case "custodian":
-                    if (systemProviderService.license()) {
-                        createScannerResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation, loginUser);
-                        break;
-                    }
-                    createCustodianResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation, loginUser);
+                    createScannerResource(finalScript, resourceWithBLOBs, map, taskItem, cloudTaskItemResource, operation, loginUser);
                     break;
                 case "prowler":
                     createProwlerResource(resourceWithBLOBs, taskItem, cloudTask, operation, loginUser);
@@ -451,39 +419,6 @@ public class ResourceService {
         return resourceWithBLOBs;
     }
 
-    //社区版调用
-    private void createCustodianResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
-                                          CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource,
-                                          String operation, LoginUser loginUser) {
-        try {
-            String dirPath = CommandUtils.saveAsFile(finalScript, CloudTaskConstants.RESULT_FILE_PATH_PREFIX + resourceWithBLOBs.getId(), "policy.yml", false);
-            String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, "policy.yml", map);
-            String resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
-            if (!resultStr.isEmpty() && !resultStr.contains("INFO")) {
-                HRException.throwException(Translator.get("i18n_compliance_rule_error") + ": " + resultStr);
-            }
-            CommandUtils.commonExecCmdWithResult(command, dirPath);//第一次执行action会修复资源，但是会返回修复之前的数据回来。所以此处再执行一次
-            String custodianRun = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
-            String metadata = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.METADATA_RESULT_FILE);
-            String resources = ReadFileUtils.readJsonFile(dirPath + "/" + cloudTaskItemResource.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
-
-            resourceWithBLOBs.setCustodianRunLog(custodianRun);
-            resourceWithBLOBs.setMetadata(metadata);
-            resourceWithBLOBs.setResources(resources);
-
-            JSONArray jsonArray = parseArray(resourceWithBLOBs.getResources());
-            resourceWithBLOBs.setReturnSum((long) jsonArray.size());
-            resourceWithBLOBs = calculateTotal(resourceWithBLOBs);
-
-            orderService.saveTaskItemLog(taskItem.getId(), resourceWithBLOBs.getId(), "i18n_operation_end" + ": " + operation, "i18n_cloud_account" + ": " + resourceWithBLOBs.getPluginName() + "，"
-                    + "i18n_region" + ": " + resourceWithBLOBs.getRegionName() + "，" + "i18n_rule_type" + ": " + resourceWithBLOBs.getResourceType() + "，" + "i18n_resource_manage" + ": "
-                    + resourceWithBLOBs.getResourceName() + "，" + "i18n_resource_manage" + ": " + resourceWithBLOBs.getReturnSum() + "/" + resourceWithBLOBs.getResourcesSum(),
-                    true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), loginUser);
-        } catch (Exception e) {
-            HRException.throwException(e.getMessage());
-        }
-    }
-
     //企业版调用
     private void createScannerResource (String finalScript, ResourceWithBLOBs resourceWithBLOBs, Map<String, String> map,
                                           CloudTaskItemWithBLOBs taskItem, CloudTaskItemResource cloudTaskItemResource,
@@ -494,7 +429,7 @@ public class ResourceService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
             JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, resourceWithBLOBs.getPluginId());
-            LogUtil.info(taskItem.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
+            LogUtil.warn(taskItem.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
