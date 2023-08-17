@@ -21,12 +21,13 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import static com.alibaba.fastjson.JSON.parseArray;
 
@@ -59,9 +60,11 @@ public class CloudProjectService {
     private AccountMapper accountMapper;
     @Autowired
     private RuleGroupMapper ruleGroupMapper;
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     private AccountService accountService;
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     private CloudTaskService cloudTaskService;
     @Autowired
     private CommonThreadPool commonThreadPool;
@@ -138,7 +141,7 @@ public class CloudProjectService {
         }
     }
 
-    public void deleteGroups(List<String> ids, LoginUser loginUser) throws Exception {
+    public void deleteGroups(List<String> ids, LoginUser loginUser) {
         ids.forEach(id -> {
             try {
                 deleteGroup(id, loginUser);
@@ -164,12 +167,18 @@ public class CloudProjectService {
         return extCloudProjectMapper.getCloudProcessDTO(cloudProcess);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public String scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
         String projectId = UUIDUtil.newUUID();
 
-        commonThreadPool.addTask(() -> {
-            String operation = "i18n_create_cloud_project";
+        //初始化云账号信息...
+        String processId = UUIDUtil.newUUID();
+        saveCloudProcess(processId, projectId, 0, 1, 1, "init_cloud_account_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+        saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + " : " + "start_init", StringUtils.EMPTY, true, loginUser);
 
+        String operation = "i18n_create_cloud_project";
+
+        commonThreadPool.addTask(() -> {
             try {
                 AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
 
@@ -187,44 +196,29 @@ public class CloudProjectService {
 
                 cloudProjectMapper.insertSelective(cloudProject);
 
-                dealProcessStep1(projectId, loginUser);
-
-                saveCloudProjectLog(projectId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
+                saveCloudProjectLog(projectId, "i18n_operation_begin" + " : " + operation, StringUtils.EMPTY, true, loginUser);
 
                 //开始执行检测...
-                //计算规则组执行过程日志（所有组时间）
+                //计算规则组执行初始化日志（所有组时间）
                 long startTime = System.currentTimeMillis();
-                String processScanId = UUIDUtil.newUUID();
-                String operationScan = "start_scan_task";
-                saveCloudProcess(processScanId, projectId, 0, 3, 9, "start_scan_task", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-                saveCloudProcessLog(projectId, processScanId, "i18n_operation_begin" + ": " + operationScan, StringUtils.EMPTY, true, loginUser);
+                saveCloudProcessLog(projectId, "", "i18n_operation_init" + " : " + "i18n_init_task", StringUtils.EMPTY, true, loginUser);
 
                 for (Integer groupId : request.getGroups()) {
-                    //检测任务构建...
-                    //计算规则组执行过程日志（每个规则组时间）
+                    //计算规则组执行初始化日志（每个规则组时间）
                     RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(groupId);
-                    String processGroupId = UUIDUtil.newUUID();
-                    String operationGroup = "create_scan_task";
-                    long startTimeGroup = System.currentTimeMillis();
-                    saveCloudProcess(processGroupId, projectId, 0, 2, 8, "create_scan_task", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-                    saveCloudProcessLog(projectId, processGroupId, "i18n_operation_begin" + ": " + operationGroup + ruleGroup.getName(), StringUtils.EMPTY, true, loginUser);
                     dealGroup(projectId, ruleGroup, account, loginUser, scanId);
-                    long endTimeGroup = System.currentTimeMillis();
-                    long executionTimeGroup = endTimeGroup - startTimeGroup;//执行时间：毫秒
-                    saveCloudProcess(processGroupId, projectId, 100, 2, 8, "create_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds((int)(executionTimeGroup/1000)));
-                    saveCloudProcessLog(projectId, processGroupId, "i18n_operation_init" + ": " + operation + ruleGroup.getName(), StringUtils.EMPTY, true, loginUser);
                 }
 
-                //计算规则组执行过程日志（所有组结束时间）
+                //计算规则组执行初始化日志（所有组结束时间）
                 long endTime = System.currentTimeMillis();
                 long executionTime = endTime - startTime;//执行时间：毫秒
-                saveCloudProcess(processScanId, projectId, 100, 3, 9, "start_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds((int)(executionTime/1000)));
-                saveCloudProcessLog(projectId, processScanId, "i18n_operation_end" + ": " + operationScan, StringUtils.EMPTY, true, loginUser);
+                saveCloudProcessLastStep(projectId, Integer.valueOf(executionTime / 1000 + ""));
+                saveCloudProcessLog(projectId, "", "i18n_operation_end" + " : " + "start_init_finish", StringUtils.EMPTY, true, loginUser);
 
-                saveCloudProjectLog(projectId, "i18n_operation_end" + ": " + operation, StringUtils.EMPTY, true, loginUser);
+                saveCloudProjectLog(projectId, "i18n_operation_end" + " : " + operation, StringUtils.EMPTY, true, loginUser);
             } catch (Exception e) {
                 try {
-                    saveCloudProjectLog(projectId, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
+                    saveCloudProjectLog(projectId, "i18n_operation_ex" + " : " + e.getMessage(), e.getMessage(), false, loginUser);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -233,85 +227,6 @@ public class CloudProjectService {
         });
 
         return projectId;
-    }
-
-    private void dealProcessStep1(String projectId, LoginUser loginUser) throws Exception {
-        String operation = "init_cloud_account_info";
-        String processId = UUIDUtil.newUUID();
-        int step = 1, order = 1;
-        try {
-            //初始化云账号信息...
-            saveCloudProcess(processId, projectId, 0, step, order, "init_cloud_account_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            Random random = new Random();
-            int randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_account_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            order++;
-
-            //初始化区域信息...
-            processId = UUIDUtil.newUUID();
-            operation = "init_cloud_region_info";
-            saveCloudProcess(processId, projectId, 0, step, order, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            order++;
-
-            //初始化规则组信息...
-            processId = UUIDUtil.newUUID();
-            operation = "init_cloud_group_info";
-            saveCloudProcess(processId, projectId, 0, step, order, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            order++;
-
-            //初始化规则信息...
-            processId = UUIDUtil.newUUID();
-            operation = "init_cloud_rule_info";
-            saveCloudProcess(processId, projectId, 0, step, order, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            randomNumber = random.nextInt(3) + 1; // 生成1-3之间的随机整数
-            saveCloudProcess(processId, projectId, 100, step, order, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            order++;step++;
-
-            //初始化检测环境...
-            processId = UUIDUtil.newUUID();
-            operation = "init_env_info";
-            saveCloudProcess(processId, projectId, 0, step, order, "init_env_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            randomNumber = random.nextInt(5) + 1; // 生成1-5之间的随机整数
-            saveCloudProcess(processId, projectId, 100, step, order, "init_env_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            order++;
-
-            //创建检测任务...
-            processId = UUIDUtil.newUUID();
-            operation = "create_scan_info";
-            saveCloudProcess(processId, projectId, 0, step, order, "create_scan_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            randomNumber = random.nextInt(5) + 1; // 生成1-5之间的随机整数
-            saveCloudProcess(processId, projectId, 100, step, order, "create_scan_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            order++;
-
-            //创建检测规则组...
-            processId = UUIDUtil.newUUID();
-            operation = "create_scan_group";
-            saveCloudProcess(processId, projectId, 0, step, order, "create_scan_group", CloudTaskConstants.TASK_STATUS.APPROVED.name(), remainingSeconds(0));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            randomNumber = random.nextInt(10) + 1; // 生成1-10之间的随机整数
-            saveCloudProcess(processId, projectId, 100, step, order, "create_scan_group", CloudTaskConstants.TASK_STATUS.FINISHED.name(), remainingSeconds(randomNumber));
-            saveCloudProcessLog(projectId, processId, "i18n_operation_init" + ": " + operation, StringUtils.EMPTY, true, loginUser);
-            order++;
-
-        } catch (Exception e) {
-            LogUtil.error("[process scan]" + "{step: " + step + ", order: " + order + "}, " + e.getMessage());
-        }
     }
 
     private void dealGroup(String projectId, RuleGroup ruleGroup, AccountWithBLOBs account, LoginUser loginUser, Integer scanId) throws Exception {
@@ -336,8 +251,9 @@ public class CloudProjectService {
 
             cloudGroupMapper.insertSelective(cloudGroup);
 
-            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_begin" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
-            saveCloudProjectLog(projectId, "i18n_operation_begin" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            saveCloudProcessLog(projectId, "", "i18n_operation_init" + " : " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_begin" + " : " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            saveCloudProjectLog(projectId, "i18n_operation_begin" + " : " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
 
             QuartzTaskDTO dto = new QuartzTaskDTO();
             dto.setAccountId(account.getId());
@@ -345,19 +261,19 @@ public class CloudProjectService {
             dto.setStatus(true);
             List<RuleDTO> ruleDTOS = accountService.getRules(dto);
             for (RuleDTO rule : ruleDTOS) {
-                this.dealTask(rule, scanId, account, loginUser);
+                this.dealTask(rule, scanId, projectId, account, loginUser);
             }
 
-            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_end" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
-            saveCloudProjectLog(projectId, "i18n_operation_end" + ": " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_end" + " : " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            saveCloudProjectLog(projectId, "i18n_operation_end" + " : " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
         } catch (Exception e) {
-            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, loginUser);
+            saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_ex" + " : " + e.getMessage(), e.getMessage(), false, loginUser);
             LogUtil.error("{group scan}" + cloudGroupId + ", " + e.getMessage());
         }
 
     }
 
-    private String dealTask(RuleDTO rule, Integer scanId, AccountWithBLOBs account, LoginUser loginUser) {
+    private void dealTask(RuleDTO rule, Integer scanId, String projectId, AccountWithBLOBs account, LoginUser loginUser) {
         try {
             if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(), rule.getId(),
                     new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})) {
@@ -385,16 +301,20 @@ public class CloudProjectService {
                 quartzTaskDTO.setType("manual");
                 quartzTaskDTO.setAccountId(account.getId());
                 quartzTaskDTO.setTaskName(rule.getName());
+                saveCloudProcessLog(projectId, "", "i18n_operation_process" + " : " + "i18n_init_task" + "[" + rule.getName() + "]", StringUtils.EMPTY, true, loginUser);
+
                 CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, loginUser);
                 if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
-                    systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                    try {
+                        systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-                return cloudTask.getId();
             }
         } catch (Exception e) {
             HRException.throwException(e.getMessage());
         }
-        return "";
     }
 
     public void saveCloudProjectLog(String projectId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {
@@ -436,7 +356,93 @@ public class CloudProjectService {
         cloudGroupLogMapper.insertSelective(cloudGroupLogWithBLOBs);
     }
 
-    public void saveCloudProcess(String id, String projectId, int processRate, int processStep, int processOrder, String processName, String status, String execTime) throws Exception {
+    public CloudProcess createProcess(CloudProcess cloudProcess) throws Exception {
+        updateProcess(cloudProcess);
+
+        String id = UUIDUtil.newUUID();
+        switch (cloudProcess.getProcessOrder()) {
+            case 1 ->
+                //初始化区域信息...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 1, 2, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+            case 2 ->
+                //初始化规则组信息...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 1, 3, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+            case 3 ->
+                //初始化规则信息...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 1, 4, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+            case 4 ->
+                //初始化检测环境...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 2, 5, "init_env_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+            case 5 ->
+                //创建检测任务...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 2, 6, "create_scan_info", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+            case 6 ->
+                //创建检测规则组...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 2, 7, "create_scan_group", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+            case 7 ->
+                //检测任务构建...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 2, 8, "create_scan_task", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+            case 8 ->
+                //开始执行检测...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 0, 3, 9, "start_scan_task", CloudTaskConstants.TASK_STATUS.APPROVED.name(), 0);
+        }
+        return cloudProcess;
+    }
+
+    public CloudProcess updateProcess(CloudProcess cloudProcess) throws Exception {
+
+        switch (cloudProcess.getProcessOrder()) {
+            case 1 ->
+                //初始化云账号信息...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 1, "init_cloud_account_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 2 ->
+                //初始化区域信息...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 2, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 3 ->
+                //初始化规则组信息...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 3, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 4 ->
+                //初始化规则信息...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 4, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 5 ->
+                //初始化检测环境...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 5, "init_env_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 6 ->
+                //创建检测任务...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 6, "create_scan_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 7 ->
+                //创建检测规则组...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 7, "create_scan_group", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 8 ->
+                //检测任务构建...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 8, "create_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+            case 9 ->
+                //开始执行检测...
+                saveCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 3, 9, "start_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+        }
+        return cloudProcess;
+    }
+
+    public CloudProcess saveCloudProcessLastStep(String projectId, Integer execTime) throws Exception {
+
+        CloudProcessExample cloudProcessExample = new CloudProcessExample();
+        cloudProcessExample.createCriteria().andProjectIdEqualTo(projectId).andProcessOrderEqualTo(9).andProcessStepEqualTo(3);
+        List<CloudProcess> cloudProcessList = cloudProcessMapper.selectByExample(cloudProcessExample);
+
+        CloudProcess cloudProcess = new CloudProcess();
+        if (!cloudProcessList.isEmpty()) {
+            cloudProcess = cloudProcessList.get(0);
+            cloudProcess.setExecTime(execTime);
+            updateProcess(cloudProcess);
+        } else {
+            Thread.sleep(5000);
+            saveCloudProcessLastStep(projectId, execTime);
+        }
+        return cloudProcess;
+    }
+
+
+    public void saveCloudProcess(String id, String projectId, int processRate, int processStep, int processOrder, String processName, String status, Integer execTime) throws Exception {
 
         CloudProcess cloudProcess = cloudProcessMapper.selectByPrimaryKey(id);
         if (cloudProcess == null) {
@@ -455,9 +461,8 @@ public class CloudProjectService {
             cloudProcess.setId(id);
             cloudProcess.setProjectId(projectId);
             cloudProcess.setProcessRate(processRate);
-            cloudProcess.setCreateTime(System.currentTimeMillis());
             cloudProcess.setProcessStep(processStep);
-            cloudProcess.setStatus(status);
+            cloudProcess.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
             cloudProcess.setExecTime(execTime);
             cloudProcessMapper.updateByPrimaryKey(cloudProcess);
         }
@@ -481,16 +486,6 @@ public class CloudProjectService {
         cloudProcessLogWithBLOBs.setOutput(output);
         cloudProcessLogWithBLOBs.setResult(result);
         cloudProcessLogMapper.insertSelective(cloudProcessLogWithBLOBs);
-    }
-
-    private String remainingSeconds(int seconds) {
-        if (seconds > 60) {
-            int minutes = seconds / 60; // 计算分钟数
-            int remainingSeconds = seconds % 60; // 计算剩余的秒数
-            return minutes + "minute_title" + remainingSeconds + "second_title";
-        } else {
-            return seconds + "second_title";
-        }
     }
 
 }

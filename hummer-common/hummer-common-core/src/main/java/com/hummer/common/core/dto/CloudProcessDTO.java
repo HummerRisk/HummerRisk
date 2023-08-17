@@ -7,27 +7,87 @@ import java.util.List;
 
 public class CloudProcessDTO {
 
-    private Integer activeStep = 3;
+    private String id;//当前步骤的id
 
-    private Integer resultStatus = 2;
+    private Integer processStep = 3;
+
+    private String resultStatus;
+
+    private Integer processOrder = 1;
+
+    private String processName;
+
+    private Integer processRate;
+
+    private String projectId;
+
+    private String execTime;
 
     private List<CloudProcess> cloudProcessList;
 
     private List<CloudProcessLogWithBLOBs> cloudProcessLogList;
 
-    public Integer getActiveStep() {
-        return activeStep;
+    public String getId() {
+        return id;
     }
 
-    public void setActiveStep(Integer activeStep) {
-        this.activeStep = activeStep;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public Integer getResultStatus() {
+    public Integer getProcessStep() {
+        return processStep;
+    }
+
+    public void setProcessStep(Integer processStep) {
+        this.processStep = processStep;
+    }
+
+    public Integer getProcessOrder() {
+        return processOrder;
+    }
+
+    public void setProcessOrder(Integer processOrder) {
+        this.processOrder = processOrder;
+    }
+
+    public String getProcessName() {
+        return processName;
+    }
+
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
+
+    public Integer getProcessRate() {
+        return processRate;
+    }
+
+    public void setProcessRate(Integer processRate) {
+        this.processRate = processRate;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getExecTime() {
+        return execTime;
+    }
+
+    public void setExecTime(String execTime) {
+        this.execTime = execTime;
+    }
+
+    public String getResultStatus() {
         return resultStatus;
     }
 
-    public void setResultStatus(Integer resultStatus) {
+    public void setResultStatus(String resultStatus) {
         this.resultStatus = resultStatus;
     }
 

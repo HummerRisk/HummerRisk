@@ -30,7 +30,7 @@
         <el-row>
           <el-col :span="4">
             <div style="height: 600px;margin: 25px;">
-              <el-steps direction="vertical" :active="cloudProject.activeStep">
+              <el-steps direction="vertical" :active="cloudProject.processStep">
                 <el-step :title="$t('scaning.initial_configuration')" :description="$t('scaning.waiting_configuration')">
                 </el-step>
                 <el-step :title="$t('scaning.perform_detection')" :description="$t('scaning.waiting_perform')">
@@ -52,7 +52,8 @@
                       <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
                       <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
                       {{ cloudProcess.processName }}
-                      <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
+                      <I v-if="cloudProcess.processRate > 0 && cloudProcess.processRate !== 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime + $t('second.title') }}</I>
+                      <I v-if="cloudProcess.processRate === 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
                     </h5>
                     <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
                   </el-col>
@@ -70,7 +71,8 @@
                       <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
                       <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
                       {{ cloudProcess.processName }}
-                      <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
+                      <I v-if="cloudProcess.processRate > 0 && cloudProcess.processRate !== 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime + $t('second.title') }}</I>
+                      <I v-if="cloudProcess.processRate === 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
                     </h5>
                     <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
                   </el-col>
@@ -84,17 +86,17 @@
                 </el-col>
                 <el-col :span="6">
                   <el-card class="box-card">
-                    <el-result v-if="cloudProject.resultStatus == 0" icon="info" :title="$t('scaning.no_scan')" :subTitle="$t('scaning.no_scan_ing')">
+                    <el-result v-if="!cloudProject.resultStatus" icon="info" :title="$t('scaning.no_scan')" :subTitle="$t('scaning.no_scan_ing')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.no_scan') }}</el-button>
                       </template>
                     </el-result>
-                    <el-result v-if="cloudProject.resultStatus == 1" icon="warning" :title="$t('scaning.start_scan')" :subTitle="$t('scaning.start_scan_ing')">
+                    <el-result v-if="cloudProject.resultStatus === 'APPROVED'" icon="warning" :title="$t('scaning.start_scan')" :subTitle="$t('scaning.start_scan_ing')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.start_scan') }}</el-button>
                       </template>
                     </el-result>
-                    <el-result v-if="cloudProject.resultStatus == 2" icon="success" :title="$t('scaning.create_end')" :subTitle="$t('scaning.go_scan_result')">
+                    <el-result v-if="cloudProject.resultStatus === 'FINISHED'" icon="success" :title="$t('scaning.create_end')" :subTitle="$t('scaning.go_scan_result')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.go_result') }}</el-button>
                       </template>
@@ -127,7 +129,7 @@ import {
 } from "@/api/cloud/account/account";
 import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
-import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
+import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/project/project";
 
 /* eslint-disable */
   export default {
@@ -199,8 +201,8 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
         timer: '',
         script: '',
         cloudProject: {
-          resultStatus: 0,
-          activeStep: 1,
+          resultStatus: null,
+          processStep: 1,
         },
         projectId: '',
         cloudProcessList: [
@@ -209,7 +211,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 1,
             processName: this.$t('scaning.init_cloud_account_info'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 3000,
               autoStart : true
@@ -220,7 +222,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 2,
             processName: this.$t('scaning.init_cloud_region_info'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 3000,
               autoStart : true
@@ -231,7 +233,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 3,
             processName: this.$t('scaning.init_cloud_group_info'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 3000,
               autoStart : true
@@ -242,7 +244,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 4,
             processName: this.$t('scaning.init_cloud_rule_info'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 3000,
               autoStart : true
@@ -253,7 +255,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 5,
             processName: this.$t('scaning.init_env_info'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 5000,
               autoStart : true
@@ -264,7 +266,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 6,
             processName: this.$t('scaning.create_scan_info'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 5000,
               autoStart : true
@@ -273,9 +275,9 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
           {
             processStep: 2,
             processOrder: 7,
-            processName: this.$t('scaning.create_scan_rule'),
+            processName: this.$t('scaning.create_scan_group'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 10000,
               autoStart : true
@@ -286,7 +288,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 8,
             processName: this.$t('scaning.create_scan_task'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 10000,
               autoStart : true
@@ -297,7 +299,7 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
             processOrder: 9,
             processName: this.$t('scaning.start_scan_task'),
             processRate: 0,
-            execTime: '0',
+            execTime: 0,
             fake: new FakeProgress({
               timeConstant : 10000,
               autoStart : true
@@ -337,13 +339,13 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
         }).catch(error => error);
       },
       goResult() {
-        if (this.cloudProject.resultStatus === 0) {
+        if (!this.cloudProject.resultStatus) {
           this.$warning(this.$t('scaning.no_scan_ing'));
           return;
-        } else if (this.cloudProject.resultStatus === 1) {
+        } else if (this.cloudProject.resultStatus === 'APPROVED') {
           this.$warning(this.$t('scaning.start_scan_ing'));
           return;
-        } else {
+        } else if (this.cloudProject.resultStatus === 'FINISHED') {
           this.$router.push({
             name: 'cloudResult',
             params: {id: this.accountWithGroup.id},
@@ -365,40 +367,55 @@ import {processListUrl, projectScanUrl} from "@/api/cloud/project/project";
         };
         this.$post(processListUrl, params, res => {
           let data = res.data;
-          let cloudProcessList = data.cloudProcessList;//数据库返回数据
-          this.cloudProcessLogList = data.cloudProcessLogList;
-          for (let cloudProcessLog of this.cloudProcessLogList) {
-            let row = this.timestampFormatDate(cloudProcessLog.createTime) + ' ' + cloudProcessLog.operator + ' ' + cloudProcessLog.operation + ' ' + cloudProcessLog.output;
-            if (!this.script.includes(row)) {
-              this.showScript(row);
-            }
-          }
-          for (let cloudProcess of this.cloudProcessList) {//静态模拟数据
-            for (let cloudProcessData of cloudProcessList) {//数据库返回数据
-              if (cloudProcess.processOrder === cloudProcessData.processOrder && cloudProcess.processStep === cloudProcessData.processStep) {
-                cloudProcess.id = cloudProcessData.id;
-                cloudProcess.projectId = cloudProcessData.projectId;
-                cloudProcess.processName = cloudProcessData.processName;
-                cloudProcess.processRate = cloudProcessData.processRate;
-                cloudProcess.status = cloudProcessData.status;
-                cloudProcess.createTime = cloudProcessData.createTime;
-                cloudProcess.execTime = cloudProcessData.execTime;
-                if (cloudProcess.processRate === 100) {
-                  cloudProcess.fake.end();
-                } else {
-                  //进度条前端一直转不会到100%
-                  cloudProcess.processRate = parseInt(cloudProcess.fake.progress * 100);
-                }
-              }
-            }
-          }
+          console.log(data.processOrder, data.resultStatus, data)
           this.cloudProject = {
-            activeStep: data.activeStep,
+            id: data.id,
+            projectId: data.projectId,
+            processStep: data.processStep,
+            processName: data.processName,
+            processRate: data.processRate,
+            processOrder: data.processOrder,
+            execTime: data.execTime,
             resultStatus: data.resultStatus
           };
-          if (data.activeStep == 3 && data.resultStatus == 2) {
+          console.log(data.processStep === 3 && data.processOrder === 9 && data.resultStatus === 'FINISHED')
+          if (data.processStep === 3 && data.processOrder === 9 && data.resultStatus === 'FINISHED') {
             this.goAnchor("row9");
             clearInterval(this.timer);
+          } else {
+            this.cloudProcessLogList = data.cloudProcessLogList;//日志
+            for (let cloudProcessLog of this.cloudProcessLogList) {
+              let row = this.timestampFormatDate(cloudProcessLog.createTime) + ' ' + cloudProcessLog.operator + ' ' + cloudProcessLog.operation + ' ' + cloudProcessLog.output;
+              if (!this.script.includes(row)) {
+                this.showScript(row);
+              }
+            }
+            for (let cloudProcess of this.cloudProcessList) {//静态模拟数据
+              if (cloudProcess.processOrder === data.processOrder && cloudProcess.processStep === data.processStep) {
+                cloudProcess.id = data.id;
+                cloudProcess.projectId = data.projectId;
+                cloudProcess.processName = data.processName;
+                cloudProcess.processRate = data.processRate;
+                cloudProcess.status = data.resultStatus;
+
+                //进度条前端一直转不会到100%
+                cloudProcess.processRate = parseInt(cloudProcess.fake.progress * 100);
+                let randomNumber = Math.round(Math.random() * 4000 ) + 1000;//毫秒
+                cloudProcess.execTime = parseInt(cloudProcess.execTime);
+                setTimeout(() => {
+                  cloudProcess.execTime++;
+                }, randomNumber);
+                cloudProcess.processRate = 100;
+                cloudProcess.fake.end();
+
+                console.log("cloudProcess", cloudProcess)
+                this.$post(processCreateUrl, cloudProcess, response => {
+                  console.log(response.data)
+                  cloudProcess.id = response.data.id;
+                  // cloudProcess = response.data;
+                });
+              }
+            }
           }
         });
       },

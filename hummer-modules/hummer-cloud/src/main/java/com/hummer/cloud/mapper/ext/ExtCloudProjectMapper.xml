@@ -70,8 +70,13 @@
 
     <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.dto.CloudProcessDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
-        <result column="activeStep" jdbcType="INTEGER" property="activeStep" />
-        <result column="resultStatus" jdbcType="INTEGER" property="resultStatus" />
+        <result column="projectId" jdbcType="VARCHAR" property="projectId" />
+        <result column="process_step" jdbcType="INTEGER" property="processStep" />
+        <result column="process_order" jdbcType="INTEGER" property="processOrder" />
+        <result column="process_name" jdbcType="VARCHAR" property="processName" />
+        <result column="process_rate" jdbcType="INTEGER" property="processRate" />
+        <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+        <result column="resultStatus" jdbcType="VARCHAR" property="resultStatus" />
         <collection property="cloudProcessList" ofType="com.hummer.common.core.domain.CloudProcess" javaType="list"
                     select="selectCloudProcessList" column="{projectId=projectId}">
         </collection>
@@ -251,13 +256,18 @@
 
     <select id="getCloudProcessDTO" resultMap="BaseProcessResultMap">
         select
-        #{request.projectId} as projectId,
-        (SELECT IF(t1.process_step is not null, t1.process_step, 1) as activeStep FROM cloud_process t1 WHERE t1.project_id = #{request.projectId} and t1.process_rate = 100 order by t1.process_order desc limit 1) as activeStep,
-        CASE
-        WHEN (SELECT t1.process_step FROM cloud_process t1 WHERE t1.project_id = #{request.projectId} and t1.process_rate = 100 order by t1.process_order desc limit 1) is null THEN 0
-        WHEN (SELECT t1.process_step FROM cloud_process t1 WHERE t1.project_id = #{request.projectId} and t1.process_rate = 100 order by t1.process_order desc limit 1) &gt; 9 THEN 1
-        ELSE 2
-        END AS resultStatus
+        t.id,
+        t.project_id as projectId,
+        t.process_step,
+        t.process_order,
+        t.process_name,
+        t.process_rate,
+        t.`status` as resultStatus,
+        t.exec_time
+        FROM cloud_process t
+        WHERE t.project_id = #{request.projectId}
+        ORDER BY t.process_order desc
+        LIMIT 1
     </select>
 
     <select id="selectCloudProcessList" resultMap="CloudProcessMap">

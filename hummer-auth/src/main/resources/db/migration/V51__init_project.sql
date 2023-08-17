@@ -69,13 +69,13 @@ CREATE TABLE IF NOT EXISTS `cloud_group_log` (
 CREATE TABLE IF NOT EXISTS `cloud_process` (
     `id`                         varchar(50)         NOT NULL COMMENT 'ID',
     `project_id`                 varchar(128)        DEFAULT NULL COMMENT 'cloud project 标识',
-    `process_step`               int                 DEFAULT 0 COMMENT '执行过程步骤',
-    `process_order`              int                 DEFAULT 0 COMMENT '执行过程排序',
+    `process_step`               int                 DEFAULT 0 COMMENT '执行初始化步骤',
+    `process_order`              int                 DEFAULT 0 COMMENT '执行初始化排序',
     `process_name`               varchar(256)        DEFAULT NULL COMMENT '执行步骤名称',
     `process_rate`               int                 DEFAULT 0 COMMENT '执行进度',
     `status`                     varchar(20)         DEFAULT NULL COMMENT '状态',
     `create_time`                bigint              DEFAULT NULL COMMENT '创建时间',
-    `exec_time`                  varchar(50)         DEFAULT NULL COMMENT '执行完成时间',
+    `exec_time`                  int                 DEFAULT NULL COMMENT '执行完成时间(秒)',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
@@ -100,3 +100,4 @@ Alter table `cloud_resource_item` modify COLUMN `hummer_id` varchar(1024) DEFAUL
 ALTER TABLE `cloud_resource_item` modify COLUMN `hummer_name` varchar(1024) DEFAULT NULL COMMENT '资源别名';
 
 ALTER TABLE `resource_item` modify COLUMN `hummer_name` varchar(1024) DEFAULT NULL COMMENT '资源别名';
+

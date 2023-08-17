@@ -84,7 +84,14 @@ public class CloudProjectController {
         cloudProjectService.deleteGroups(selectIds, tokenService.getLoginUser());
     }
 
-    @Operation(summary = "项目执行过程列表")
+    @Operation(summary = "创建新执行初始化")
+    @I18n
+    @PostMapping("process/create")
+    public CloudProcess createProcess(@RequestBody CloudProcess cloudProcess) throws Exception {
+        return cloudProjectService.createProcess(cloudProcess);
+    }
+
+    @Operation(summary = "项目执行初始化列表")
     @I18n
     @PostMapping("processList")
     public CloudProcessDTO getCloudProcessDTO(@RequestBody CloudProcess cloudProcess) {
