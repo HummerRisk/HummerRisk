@@ -66,12 +66,12 @@
                   </span>
                   <span>
                     <el-button size="mini" type="danger" class="round el-btn" round v-if="data.flag === true">
-                        {{ $t('rule.tag_flag_true') }}
-                      </el-button>
-                      <el-button size="mini" type="success" class="round el-btn" round v-else-if="data.flag === false">
-                        {{ $t('rule.tag_flag_false') }}
-                      </el-button>
-                      <span class="round">{{ data.createTime | timestampFormatDate }}</span>
+                      {{ $t('rule.tag_flag_true') }}
+                    </el-button>
+                    <el-button size="mini" type="success" class="round el-btn" round v-else-if="data.flag === false">
+                      {{ $t('rule.tag_flag_false') }}
+                    </el-button>
+                    <span class="round">{{ data.createTime | timestampFormatDate }}</span>
                   </span>
                 </el-row>
                 <span class="button time pa-na">
