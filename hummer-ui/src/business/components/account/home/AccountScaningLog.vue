@@ -52,8 +52,7 @@
                       <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
                       <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
                       {{ cloudProcess.processName }}
-                      <I v-if="cloudProcess.processRate > 0 && cloudProcess.processRate !== 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime + $t('second.title') }}</I>
-                      <I v-if="cloudProcess.processRate === 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
+                      <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime + $t('second.title') }}</I>
                     </h5>
                     <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
                   </el-col>
@@ -71,8 +70,7 @@
                       <i v-if="cloudProcess.processRate === 0" class="el-icon-video-pause"></i>
                       <i v-if="cloudProcess.processRate === 100" class="el-icon-circle-check"></i>
                       {{ cloudProcess.processName }}
-                      <I v-if="cloudProcess.processRate > 0 && cloudProcess.processRate !== 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime + $t('second.title') }}</I>
-                      <I v-if="cloudProcess.processRate === 100" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime }}</I>
+                      <I v-if="cloudProcess.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcess.execTime + $t('second.title') }}</I>
                     </h5>
                     <el-progress :percentage="cloudProcess.processRate" :color="customColorMethod"></el-progress>
                   </el-col>
@@ -129,7 +127,7 @@ import {
 } from "@/api/cloud/account/account";
 import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
-import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/project/project";
+import {processCreateUrl, processListUrl, processUpdateUrl, projectScanUrl} from "@/api/cloud/project/project";
 
 /* eslint-disable */
   export default {
@@ -199,10 +197,12 @@ import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/proj
           {color: '#6f7ad3', percentage: 100}
         ],
         timer: '',
+        timer2: '',
         script: '',
         cloudProject: {
           resultStatus: null,
           processStep: 1,
+          processOrder: 1,
         },
         projectId: '',
         cloudProcessList: [
@@ -297,7 +297,7 @@ import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/proj
           {
             processStep: 3,
             processOrder: 9,
-            processName: this.$t('scaning.start_scan_task'),
+            processName: this.$t('scaning.init_cloud_region_info'),
             processRate: 0,
             execTime: 0,
             fake: new FakeProgress({
@@ -307,6 +307,7 @@ import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/proj
           },
         ],
         cloudProcessLogList: [],
+        timeDifferenceInSeconds: 0,
       }
     },
     created() {
@@ -363,11 +364,13 @@ import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/proj
       },
       getStatus() {
         let params = {
-          projectId: this.projectId
+          projectId: this.projectId,
+          processStep: this.cloudProject.processStep,
+          processOrder: this.cloudProject.processOrder
         };
         this.$post(processListUrl, params, res => {
           let data = res.data;
-          console.log(data.processOrder, data.resultStatus, data)
+          if(!data) return;
           this.cloudProject = {
             id: data.id,
             projectId: data.projectId,
@@ -378,10 +381,10 @@ import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/proj
             execTime: data.execTime,
             resultStatus: data.resultStatus
           };
-          console.log(data.processStep === 3 && data.processOrder === 9 && data.resultStatus === 'FINISHED')
           if (data.processStep === 3 && data.processOrder === 9 && data.resultStatus === 'FINISHED') {
             this.goAnchor("row9");
             clearInterval(this.timer);
+            clearInterval(this.timer2);
           } else {
             this.cloudProcessLogList = data.cloudProcessLogList;//日志
             for (let cloudProcessLog of this.cloudProcessLogList) {
@@ -390,34 +393,44 @@ import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/proj
                 this.showScript(row);
               }
             }
-            for (let cloudProcess of this.cloudProcessList) {//静态模拟数据
-              if (cloudProcess.processOrder === data.processOrder && cloudProcess.processStep === data.processStep) {
-                cloudProcess.id = data.id;
-                cloudProcess.projectId = data.projectId;
-                cloudProcess.processName = data.processName;
-                cloudProcess.processRate = data.processRate;
-                cloudProcess.status = data.resultStatus;
-
-                //进度条前端一直转不会到100%
-                cloudProcess.processRate = parseInt(cloudProcess.fake.progress * 100);
-                let randomNumber = Math.round(Math.random() * 4000 ) + 1000;//毫秒
-                cloudProcess.execTime = parseInt(cloudProcess.execTime);
-                setTimeout(() => {
-                  cloudProcess.execTime++;
-                }, randomNumber);
-                cloudProcess.processRate = 100;
-                cloudProcess.fake.end();
-
-                console.log("cloudProcess", cloudProcess)
-                this.$post(processCreateUrl, cloudProcess, response => {
-                  console.log(response.data)
-                  cloudProcess.id = response.data.id;
-                  // cloudProcess = response.data;
-                });
-              }
-            }
           }
         });
+      },
+      changeProcessOrder(cloudProcess) {
+        switch (cloudProcess.processOrder) {
+          case 1:
+            cloudProcess.processOrder = 2;
+            cloudProcess.processStep = 1;
+            break;
+          case 2:
+            cloudProcess.processOrder = 3;
+            cloudProcess.processStep = 1;
+            break;
+          case 3:
+            cloudProcess.processOrder = 4;
+            cloudProcess.processStep = 1;
+            break;
+          case 4:
+            cloudProcess.processOrder = 5;
+            cloudProcess.processStep = 2;
+            break;
+          case 5:
+            cloudProcess.processOrder = 6;
+            cloudProcess.processStep = 2;
+            break;
+          case 6:
+            cloudProcess.processOrder = 7;
+            cloudProcess.processStep = 2;
+            break;
+          case 7:
+            cloudProcess.processOrder = 8;
+            cloudProcess.processStep = 2;
+            break;
+          case 8:
+            cloudProcess.processOrder = 9;
+            cloudProcess.processStep = 3;
+            break;
+        }
       },
       initGroups(pluginId) {
         this.result = this.$get(groupsByAccountId + pluginId,response => {
@@ -439,11 +452,47 @@ import {processCreateUrl, processListUrl, projectScanUrl} from "@/api/cloud/proj
                 accountId: this.accountWithGroup.id,
                 groups: this.checkedGroups
               }
+
               this.$post(projectScanUrl, params, res => {
                 let data = res.data;
                 this.projectId = data;
+
                 this.timer = setInterval(this.getStatus, 1000);
+                this.timer2 = setInterval(this.setCloudProject, 5000);
               });
+            }
+          }
+        });
+      },
+      setCloudProject() {
+        let params = {
+          projectId: this.projectId,
+          processStep: this.cloudProject.processStep,
+          processOrder: this.cloudProject.processOrder
+        };
+        this.$post(processListUrl, params, res => {
+          let data = res.data;
+          if(!data) return;
+          for (let cloudProcess of this.cloudProcessList) {//静态模拟数据
+            if (cloudProcess.processOrder === data.processOrder && cloudProcess.processStep === data.processStep) {
+              cloudProcess.id = data.id;
+              if (cloudProcess.status !== 'FINISHED') {
+                //进度条前端一直转不会到100%
+                let randomNumber = Math.round(Math.random() * 5000 ) + 1000;//毫秒
+                if(cloudProcess.processOrder === 9) randomNumber = Math.round(Math.random() * 20000 ) + 1000;//毫秒
+                setTimeout(() => {
+                  cloudProcess.processRate = 100;
+                  cloudProcess.fake.end();
+                  cloudProcess.status = 'FINISHED';
+                  cloudProcess.execTime = parseInt(randomNumber/1000);
+                  this.$post(processUpdateUrl, cloudProcess, response => {
+                    cloudProcess.processName = response.data.processName;
+                    this.changeProcessOrder(this.cloudProject);
+                  });
+                }, randomNumber);
+              } else {
+                this.changeProcessOrder(this.cloudProject);
+              }
             }
           }
         });

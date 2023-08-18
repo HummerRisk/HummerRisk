@@ -22,6 +22,8 @@ public class QuartzTaskDTO extends Rule {
 
     private String regions;
 
+    private String projectId;
+
     public String getType() {
         return type;
     }
@@ -68,5 +70,13 @@ public class QuartzTaskDTO extends Rule {
 
     public void setRegions(String regions) {
         this.regions = regions;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 }
