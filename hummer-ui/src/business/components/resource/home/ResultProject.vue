@@ -11,8 +11,7 @@
         </template>
 
         <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
-          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData"
-                  :key="index" class="el-col el-col-su">
+          <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData" :key="index" class="el-col el-col-su">
             <el-card :body-style="{ padding: '15px' }">
               <div style="height: 130px;">
                 <el-row :gutter="20">
@@ -48,7 +47,7 @@
                       </span>
                     </el-row>
                     <el-row style="margin: 10px 0;">
-                      <el-carousel>
+                      <el-carousel :autoplay="false">
                         <el-carousel-item v-for="item in data.cloudGroupList" :key="item.id">
 <!--                          <h3 class="medium">{{ item }}</h3>-->
                           <el-card class="medium medium-card" :body-style="{ padding: '15px', margin: '10px' }">
@@ -57,7 +56,9 @@
                             </div>
                             <div class="text item">
                               <el-row>
-                                <div class="text-container">{{ item.groupDesc }}</div>
+                                <el-tooltip class="item" effect="dark" :content="item.groupDesc" placement="top">
+                                  <div class="text-container">{{ item.groupDesc }}</div>
+                                </el-tooltip>
                               </el-row>
                               <el-row>
                                 <el-col :span="24">
@@ -136,9 +137,8 @@
                       <i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" v-if="!data.flag">
-                      <el-dropdown-item command="handleInfo">{{ $t('commons.edit') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleDetail">{{ $t('commons.detail') }}</el-dropdown-item>
+                      <el-dropdown-item command="handleLog">{{ $t('commons.log') }}</el-dropdown-item>
                       <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -188,8 +188,7 @@
           <el-table-column prop="level" v-if="checkedColumnNames.includes('level')" :label="$t('resource.equal_guarantee_level')" min-width="140" show-overflow-tooltip></el-table-column>
           <el-table-column min-width="170" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
-              <table-operators v-if="!!scope.row.flag" :buttons="buttonsN" :row="scope.row"/>
-              <table-operators v-if="!scope.row.flag" :buttons="buttons" :row="scope.row"/>
+              <table-operators :buttons="buttons" :row="scope.row"/>
             </template>
           </el-table-column>
         </hide-table>
@@ -197,371 +196,8 @@
 
       </el-card>
 
-      <!--Update group-->
-      <el-drawer v-if="infoForm.type === 'cloud'" class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.group_type')" prop="type">
-            <el-input v-model="infoForm.type" :disabled="true" autocomplete="off" :placeholder="$t('rule.group_type')"/>
-          </el-form-item>
-          <el-form-item :label="$t('rule.rule_set')" prop="name">
-            <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-          </el-form-item>
-          <el-form-item :label="$t('commons.description')" prop="description">
-            <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginId" :rules="{required: true, message: $t('account.cloud_platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.pluginId" :placeholder="$t('account.please_choose_plugin')" @change="changePlugin(infoForm.pluginId)">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-show="infoForm.pluginId" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
-              <el-option
-                v-for="item in checkPlugins"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value">
-                <img :src="require(`@/assets/img/mod/${item.value}`)" style="width: 50px; height: 32px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <dialog-footer
-          @cancel="updateVisible = false"
-          @confirm="save(infoForm, 'infoForm')"/>
-      </el-drawer>
-      <el-drawer v-if="infoForm.type === 'k8s'" class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.rule_set')" prop="name">
-            <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-          </el-form-item>
-          <el-form-item :label="$t('commons.description')" prop="description">
-            <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-          </el-form-item>
-          <el-form-item :label="$t('k8s.platform')" prop="pluginId" :rules="{required: true, message: $t('k8s.platform') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.pluginId" :placeholder="$t('k8s.please_choose_plugin')" @change="changePlugin(infoForm.pluginId)">
-              <el-option
-                v-for="item in plugins"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                <img :src="require(`@/assets/img/platform/${item.icon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-show="infoForm.pluginId" :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
-              <el-option
-                v-for="item in checkPlugins"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value">
-                <img :src="require(`@/assets/img/mod/${item.value}`)" style="width: 50px; height: 32px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <dialog-footer
-            @cancel="updateVisible = false"
-            @confirm="save(infoForm, 'infoForm')"/>
-      </el-drawer>
-      <el-drawer v-if="infoForm.type === 'server'" class="rtl" :title="$t('rule.update_group')" :visible.sync="updateVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.rule_set')" prop="name">
-            <el-input v-model="infoForm.name" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-          </el-form-item>
-          <el-form-item :label="$t('commons.description')" prop="description">
-            <el-input type="textarea" :rows="5" v-model="infoForm.description" :disabled="infoForm.flag" autocomplete="off" :placeholder="$t('commons.please_input')"/>
-          </el-form-item>
-          <el-form-item :label="$t('server.server_type')" prop="serverType" :rules="{required: true, message: $t('server.server_type') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.serverType" :placeholder="$t('server.server_type')" @change="changeServerPlugin('hummer-server-plugin', infoForm.serverType)">
-              <el-option
-                v-for="item in serverTypes"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item :label="$t('resource.equal_guarantee_level')" prop="level" :rules="{required: true, message: $t('resource.equal_guarantee_level') + this.$t('commons.cannot_be_empty'), trigger: 'change'}">
-            <el-select style="width: 100%;" filterable :clearable="true" v-model="infoForm.imageUrl" :placeholder="$t('resource.equal_guarantee_level')" @change="changeImage(infoForm)">
-              <el-option
-                v-for="item in checkPlugins"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value">
-                <img :src="require(`@/assets/img/mod/${item.value}`)" style="width: 50px; height: 32px; vertical-align:middle" alt=""/>
-                &nbsp;&nbsp; {{ item.name }}
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <dialog-footer
-            @cancel="updateVisible = false"
-            @confirm="save(infoForm, 'infoForm')"/>
-      </el-drawer>
-      <!--Update group-->
-
-      <!--Info group-->
-      <el-drawer v-if="infoForm.type === 'cloud'" class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.group_type')" prop="type">
-            {{ infoForm.type }}
-          </el-form-item>
-          <el-form-item :label="$t('rule.rule_set')" prop="name">
-            {{ infoForm.name }}
-          </el-form-item>
-          <el-form-item :label="$t('commons.description')" prop="description">
-            {{ infoForm.description }}
-          </el-form-item>
-          <el-form-item :label="$t('account.cloud_platform')" prop="pluginName">
-           {{ infoForm.pluginName }}
-          </el-form-item>
-          <el-form-item v-if="infoForm.imageUrl" :label="$t('resource.equal_guarantee_level')" prop="imageUrl">
-            <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${infoForm.imageUrl}`)">
-              <div slot="error" class="image-slot">
-                <i class="el-icon-picture-outline"></i>
-              </div>
-            </el-image>
-            {{ infoForm.level }}
-          </el-form-item>
-        </el-form>
-      </el-drawer>
-      <el-drawer v-if="infoForm.type === 'k8s'" class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.rule_set')" prop="name">
-            {{ infoForm.name }}
-          </el-form-item>
-          <el-form-item :label="$t('commons.description')" prop="description">
-            {{ infoForm.description }}
-          </el-form-item>
-          <el-form-item :label="$t('k8s.platform')">
-            {{ infoForm.pluginName }}
-          </el-form-item>
-          <el-form-item v-if="infoForm.imageUrl" :label="$t('resource.equal_guarantee_level')" prop="imageUrl">
-            <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${infoForm.imageUrl}`)">
-              <div slot="error" class="image-slot">
-                <i class="el-icon-picture-outline"></i>
-              </div>
-            </el-image>
-            {{ infoForm.level }}
-          </el-form-item>
-        </el-form>
-      </el-drawer>
-      <el-drawer v-if="infoForm.type === 'server'" class="rtl" :title="$t('rule.rule_set')" :visible.sync="infoVisible" size="45%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-form :model="infoForm" label-position="right" label-width="120px" size="small" :rules="rule" ref="infoForm">
-          <el-form-item :label="$t('rule.rule_set')" prop="name">
-            {{ infoForm.name }}
-          </el-form-item>
-          <el-form-item :label="$t('commons.description')" prop="description">
-            {{ infoForm.description }}
-          </el-form-item>
-          <el-form-item :label="$t('dashboard.scan_types')">
-            {{ infoForm.pluginName }}
-          </el-form-item>
-          <el-form-item :label="$t('server.server_type')">
-            <span v-if="infoForm.serverType === 'linux'">Linux</span>
-            <span v-if="infoForm.serverType === 'windows'">Windows</span>
-            <span v-if="!infoForm.type">N/A</span>
-          </el-form-item>
-          <el-form-item v-if="infoForm.imageUrl" :label="$t('resource.equal_guarantee_level')" prop="imageUrl">
-            <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${infoForm.imageUrl}`)">
-              <div slot="error" class="image-slot">
-                <i class="el-icon-picture-outline"></i>
-              </div>
-            </el-image>
-            {{ infoForm.level }}
-          </el-form-item>
-        </el-form>
-      </el-drawer>
-      <!--Info group-->
-
-      <!--rule list-->
-      <el-drawer v-if="infoForm.type === 'cloud'" class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" v-loading="viewResult.loading">
-        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_list')"
-                      :items="items2" :columnNames="columnNames2"
-                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
-        <hide-table
-          :table-data="ruleForm"
-          @sort-change="sort"
-          @filter-change="filter"
-          @select-all="select"
-          @select="select"
-        >
-          <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
-            <template v-slot:default="{row}">
-              <severity-type :row="row"></severity-type>
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
-            <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('commons.is_xpack')" v-if="checkedColumnNames2.includes('isXpack')" min-width="120" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-if="scope.row.xpackTag">{{ $t('commons.yes') }}</span>
-              <span v-if="!scope.row.xpackTag">{{ $t('commons.no') }}</span>
-            </template>
-          </el-table-column>
-        </hide-table>
-        <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
-      </el-drawer>
-      <el-drawer v-if="infoForm.type === 'k8s'" class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
-        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_list')"
-                      :items="items2" :columnNames="columnNames2"
-                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
-        <hide-table
-            :table-data="ruleForm"
-            @sort-change="sort"
-            @filter-change="filter"
-            @select-all="select"
-            @select="select"
-        >
-          <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('rule.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.resource_type')" v-if="checkedColumnNames2.includes('resourceType')" min-width="80" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-for="(resourceType, index) in scope.row.types" :key="index">[{{ resourceType }}] </span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('k8s.platform')" v-if="checkedColumnNames2.includes('pluginName')" min-width="110" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="80" :label="$t('rule.severity')" v-if="checkedColumnNames2.includes('severity')" column-key="severity">
-            <template v-slot:default="{row}">
-              <severity-type :row="row"></severity-type>
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" :label="$t('rule.description')" v-if="checkedColumnNames2.includes('description')" min-width="220" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('rule.status')" min-width="70" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="lastModified" min-width="150" v-if="checkedColumnNames2.includes('lastModified')" :label="$t('rule.last_modified')" sortable>
-            <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.lastModified | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('commons.is_xpack')" v-if="checkedColumnNames2.includes('isXpack')" min-width="120" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-if="scope.row.xpackTag">{{ $t('commons.yes') }}</span>
-              <span v-if="!scope.row.xpackTag">{{ $t('commons.no') }}</span>
-            </template>
-          </el-table-column>
-        </hide-table>
-        <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
-      </el-drawer>
-      <el-drawer v-if="infoForm.type === 'server'" class="rtl" :visible.sync="listVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" v-loading="viewResult.loading">
-        <table-header :condition.sync="ruleCondition" @search="handleListSearch"
-                      :title="$t('rule.rule_list')"
-                      :items="items2" :columnNames="columnNames2"
-                      :checkedColumnNames="checkedColumnNames2" :checkAll="checkAll2" :isIndeterminate="isIndeterminate2"
-                      @handleCheckedColumnNamesChange="handleCheckedColumnNamesChange2" @handleCheckAllChange="handleCheckAllChange2"/>
-        <hide-table
-            :table-data="ruleForm"
-            @sort-change="sort"
-            @filter-change="filter"
-            @select-all="select"
-            @select="select"
-        >
-          <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="name" v-if="checkedColumnNames2.includes('name')" :label="$t('package.rule_name')" min-width="150" show-overflow-tooltip></el-table-column>
-          <el-table-column min-width="70" v-if="checkedColumnNames2.includes('severity')" :label="$t('package.severity')" column-key="severity">
-            <template v-slot:default="{row}">
-              <rule-type :row="row"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" v-if="checkedColumnNames2.includes('description')" :label="$t('package.description')" min-width="250" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="type" v-if="checkedColumnNames2.includes('type')" :label="$t('commons.type')" min-width="70" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-if="scope.row.type === 'linux'">Linux</span>
-              <span v-if="scope.row.type === 'windows'">Windows</span>
-              <span v-if="!scope.row.type">N/A</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('package.status')" v-if="checkedColumnNames2.includes('status')" min-width="70" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <el-switch @change="changeStatus(scope.row)" v-model="scope.row.status"/>
-            </template>
-          </el-table-column>
-          <el-table-column prop="lastModified" v-if="checkedColumnNames2.includes('lastModified')" min-width="160" :label="$t('package.last_modified')" sortable>
-            <template v-slot:default="scope">
-              <span>{{ scope.row.lastModified | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-        </hide-table>
-        <table-pagination :change="handleListSearch" :current-page.sync="ruleListPage" :page-size.sync="ruleListPageSize" :total="ruleListTotal"/>
-      </el-drawer>
-      <!--rule list-->
-
-      <!--rule bind-->
-      <el-drawer class="rtl edit-dev-drawer" :title="$t('rule.rule_list_bind')" :visible.sync="bindVisible" size="85%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true">
-        <el-card class="table-card edit_dev" style="">
-          <div style="text-align: center; margin: 25px;">
-            <p style="text-align: center; padding: 10px;margin: 25px;color: red;background-color: aliceblue;">{{ $t('rule.rule_list_bind') }}</p>
-            <el-transfer :titles="[$t('rule.source_rule'), $t('rule.target_rule')]" :filter-method="filterMethod" class="el-trans"
-                         :filter-placeholder="$t('commons.search_by_name')" filterable v-model="cloudValue" :data="cloudData">
-            </el-transfer>
-          </div>
-        </el-card>
-        <dialog-footer
-          @cancel="bindVisible = false"
-          @confirm="bind()"/>
-      </el-drawer>
-      <!--rule bind-->
+      <!--Project log-->
+      <!--Project log-->
 
     </main-container>
 </template>
@@ -580,20 +216,9 @@ import {_filter, _sort} from "@/common/js/utils";
 import SeverityType from "@/business/components/common/components/SeverityType";
 import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
-import {
-  bindRuleUrl,
-  deleteGroupsUrl,
-  ruleAllBindListUrl,
-  ruleGroupDeleteUrl,
-  ruleGroupListUrl,
-  ruleGroupSaveUrl,
-  ruleGroupUpdateUrl,
-  ruleListUrl,
-  ruleUnBindListUrl,
-} from "@/api/cloud/rule/rule";
 import {cloudPluginUrl} from "@/api/system/system";
 import {RULE_GROUP_IMG} from "@/common/js/constants";
-import {projectListUrl} from "@/api/cloud/project/project";
+import {projectDeleteByIdUrl, projectDeletesUrl, projectListUrl} from "@/api/cloud/project/project";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -730,32 +355,14 @@ const columnOptions2 = [
             }
           ]
         },
-        buttonsN: [
-          {
-            tip: this.$t('commons.detail'), icon: "el-icon-edit-outline", type: "primary",
-            exec: this.handleInfo
-          },
-          {
-            tip: this.$t('rule.bind'), icon: "el-icon-plus", type: "warning",
-            exec: this.handleBind
-          },
-          {
-            tip: this.$t('rule.rule_list'), icon: "el-icon-tickets", type: "success",
-            exec: this.handleList
-          },
-        ],
         buttons: [
           {
-            tip: this.$t('commons.edit'), icon: "el-icon-edit", type: "primary",
-            exec: this.handleEdit
+            tip: this.$t('commons.detail'), icon: "el-icon-edit-outline", type: "primary",
+            exec: this.handleDetail
           },
           {
-            tip: this.$t('rule.bind'), icon: "el-icon-plus", type: "warning",
-            exec: this.handleBind
-          },
-          {
-            tip: this.$t('rule.rule_list'), icon: "el-icon-tickets", type: "success",
-            exec: this.handleList
+            tip: this.$t('commons.log'), icon: "el-icon-tickets", type: "success",
+            exec: this.handleLog
           },
           {
             tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
@@ -844,11 +451,6 @@ const columnOptions2 = [
         this.isIndeterminate2 = false;
         this.checkAll2 = val;
       },
-      handleEdit(item) {
-        this.infoForm = item;
-        this.changePlugin(item.pluginId);
-        this.updateVisible = true;
-      },
       handleList(item) {
         this.ruleListPage = 1;
         this.ruleListPageSize = 10;
@@ -858,17 +460,6 @@ const columnOptions2 = [
         this.infoForm = item;
         this.handleListSearch(item);
         this.listVisible = true;
-      },
-      handleListSearch (item) {
-        if(item.type === 'cloud') {
-          this.ruleCondition.combine = {group: {operator: 'in', value: this.itemId }};
-          let url = ruleListUrl + this.ruleListPage + "/" + this.ruleListPageSize;
-          this.viewResult = this.$post(url, this.ruleCondition, response => {
-            let data = response.data;
-            this.ruleListTotal = data.itemCount;
-            this.ruleForm = data.listObject;
-          });
-        }
       },
       handleInfo(item) {
         this.infoForm = item;
@@ -890,7 +481,7 @@ const columnOptions2 = [
           confirmButtonText: this.$t('commons.confirm'),
           callback: (action) => {
             if (action === 'confirm') {
-              this.result = this.$get(ruleGroupDeleteUrl + item.id, () => {
+              this.result = this.$get(projectDeleteByIdUrl + item.id, () => {
                 this.$success(this.$t('commons.delete_success'));
                 this.search();
               });
@@ -915,7 +506,6 @@ const columnOptions2 = [
           let url = projectListUrl + this.currentPage + "/" + this.pageSize;
           this.result = this.$post(url, this.condition, response => {
             let data = response.data;
-            console.log(data)
             this.total = data.itemCount;
             this.tableData = data.listObject;
           });
@@ -940,20 +530,6 @@ const columnOptions2 = [
         _filter(filters, this.condition);
         this.init();
       },
-      save(item, type) {
-        this.$refs[type].validate(valid => {
-            if (valid) {
-              let params = item;
-              params.flag = item.flag ? item.flag : false;
-              let url = type == "createForm" ? ruleGroupSaveUrl : ruleGroupUpdateUrl;
-              this.viewResult = this.$post(url, params, response => {
-                this.search();
-                this.updateVisible =  false;
-                this.$success(this.$t('commons.opt_success'));
-              });
-            }
-        });
-      },
       more() {
         this.listStatus = 1;
         this.search();
@@ -964,17 +540,11 @@ const columnOptions2 = [
       },
       handleCommand(command, data) {
         switch (command) {
-          case "handleInfo":
-            this.handleInfo(data);
+          case "handleDetail":
+            this.handleDetail(data);
             break;
-          case "handleEdit":
-            this.handleEdit(data);
-            break;
-          case "handleBind":
-            this.handleBind(data);
-            break;
-          case "handleList":
-            this.handleList(data);
+          case "handleLog":
+            this.handleLog(data);
             break;
           case "handleDelete":
             this.handleDelete(data);
@@ -983,38 +553,13 @@ const columnOptions2 = [
             break;
         }
       },
-      handleBind(item) {
-        this.groupId = item.id;
-        if(item.type === 'cloud') {
-          this.viewResult = this.$get(ruleUnBindListUrl + item.id,response => {
-            this.cloudData = [];
-            for(let data of response.data) {
-              this.cloudData.push({
-                key: data.id,
-                label: data.name
-              });
-            }
-            this.bindVisible = true;
-          });
-          this.viewResult = this.$get(ruleAllBindListUrl + item.id,response => {
-            this.cloudValue = [];
-            for(let data of response.data) {
-              this.cloudValue.push(data.id);
-            }
-          });
-        }
+      handleLog(item) {
 
       },
-      bind() {
-        let params = {
-          cloudValue: this.cloudValue,
-          groupId: this.groupId,
-        };
-        this.viewResult = this.$post(bindRuleUrl, params,response => {
-          this.$success(this.$t('organization.integration.successful_operation'));
-          this.bindVisible = false;
-          this.search();
-        });
+      handleDetail(item) {
+        this.$router.push({
+          path: '/resource/resultdetails/' + item.id,
+        }).catch(error => error);
       },
       filterMethod(query, item) {
         return item.label.indexOf(query) > -1;
@@ -1030,7 +575,7 @@ const columnOptions2 = [
             if (action === 'confirm') {
               this.result = this.$request({
                 method: 'POST',
-                url: deleteGroupsUrl,
+                url: projectDeletesUrl,
                 data: Array.from(this.selectIds),
                 headers: {
                   'Content-Type': undefined
@@ -1042,11 +587,6 @@ const columnOptions2 = [
             }
           }
         });
-      },
-      changeType (form){
-        if(form.type === 'cloud') {
-          this.getPlugins();
-        }
       },
       changePlugin (pluginId){
         let plugins = RULE_GROUP_IMG;

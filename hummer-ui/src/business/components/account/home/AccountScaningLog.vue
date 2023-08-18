@@ -348,8 +348,7 @@ import {processCreateUrl, processListUrl, processUpdateUrl, projectScanUrl} from
           return;
         } else if (this.cloudProject.resultStatus === 'FINISHED') {
           this.$router.push({
-            name: 'cloudResult',
-            params: {id: this.accountWithGroup.id},
+            path: '/resource/resultdetails/' + this.projectId,
           }).catch(error => error);
         }
       },
