@@ -260,6 +260,7 @@ export default {
     is_xpack: '是否为 XPACK',
     yes: '是',
     no: '否',
+    log: '日志',
   },
   workspace: {
     create: '创建工作空间',

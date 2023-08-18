@@ -750,6 +750,7 @@ export default {
         components: RESULT_CONFIGS
       },
       accountId: '',
+      projectId: '',
       direction: 'rtl',
       tagSelect: [],
       resourceTypes: [],

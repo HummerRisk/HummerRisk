@@ -260,6 +260,7 @@ export default {
     is_xpack: 'Whether it is XPACK',
     yes: 'Yes',
     no: 'No',
+    log: 'Log',
   },
   workspace: {
     create:'Create a workspace',
