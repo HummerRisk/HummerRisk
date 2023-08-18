@@ -10,12 +10,12 @@ export default {
     {
       path: "result",
       name: "CloudResourceResult",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Result"),
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/ResultProject"),
     },
     {
       path: "resultdetails/:id",
       name: "CloudResourceDetails",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/ResultDetails"),
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Result"),
     },
     {
       path: "ServerResult",

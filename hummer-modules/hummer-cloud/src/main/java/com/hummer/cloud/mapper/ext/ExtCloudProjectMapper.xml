@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtCloudProjectMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudProjectDTO"
-               extends="com.hummer.cloud.mapper.CloudProjectMapper.BaseResultMap">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudProjectDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="account_name" jdbcType="VARCHAR" property="accountName" />
@@ -19,6 +18,31 @@
         <collection property="cloudProjectLogList" ofType="com.hummer.common.core.domain.CloudProjectLog" javaType="list"
                     select="selectCloudProjectLogList" column="{id=id}">
         </collection>
+        <collection property="cloudGroupList" ofType="com.hummer.common.core.domain.CloudGroup" javaType="list"
+                    select="selectCloudGroupList" column="{id=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="BaseGroupMap" type="com.hummer.common.core.domain.CloudGroup">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="group_id" jdbcType="INTEGER" property="groupId" />
+        <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+        <result column="group_desc" jdbcType="VARCHAR" property="groupDesc" />
+        <result column="group_level" jdbcType="VARCHAR" property="groupLevel" />
+        <result column="group_flag" jdbcType="TINYINT" property="groupFlag" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="job_type" jdbcType="VARCHAR" property="jobType" />
+        <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
     </resultMap>
 
     <resultMap id="CloudProjectLogMap" type="com.hummer.common.core.domain.CloudProjectLog">
@@ -31,8 +55,7 @@
         <result column="result" jdbcType="TINYINT" property="result" />
     </resultMap>
 
-    <resultMap id="BaseGroupResultMap" type="com.hummer.common.core.dto.CloudGroupDTO"
-               extends="com.hummer.cloud.mapper.CloudGroupMapper.BaseResultMap">
+    <resultMap id="BaseGroupResultMap" type="com.hummer.common.core.dto.CloudGroupDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="group_id" jdbcType="INTEGER" property="groupId" />
@@ -208,6 +231,14 @@
             </if>
         </where>
         order by t.create_time desc
+    </select>
+
+    <select id="selectCloudGroupList" resultMap="BaseGroupMap">
+        SELECT
+            t.*
+        FROM cloud_group t
+        where t.project_id = #{id}
+        ORDER BY t.create_time DESC
     </select>
 
     <select id="selectCloudProjectLogList" resultMap="CloudProjectLogMap">
