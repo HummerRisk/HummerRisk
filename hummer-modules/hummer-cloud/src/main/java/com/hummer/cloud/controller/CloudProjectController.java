@@ -85,11 +85,11 @@ public class CloudProjectController {
         cloudProjectService.deleteGroups(selectIds, tokenService.getLoginUser());
     }
 
-    @Operation(summary = "创建新执行初始化")
+    @Operation(summary = "更新初始化流程")
     @I18n
-    @PostMapping("process/create")
-    public CloudProcess createProcess(@RequestBody CloudProcess cloudProcess) throws Exception {
-        return cloudProjectService.createProcess(cloudProcess);
+    @PostMapping("process/update")
+    public CloudProcess updateProcess(@RequestBody CloudProcess cloudProcess) throws Exception {
+        return cloudProjectService.updateProcess(cloudProcess);
     }
 
     @Operation(summary = "项目执行初始化列表")

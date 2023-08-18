@@ -265,7 +265,7 @@
         t.`status` as resultStatus,
         t.exec_time
         FROM cloud_process t
-        WHERE t.project_id = #{request.projectId}
+        WHERE t.project_id = #{request.projectId} AND t.process_order = #{request.processOrder} AND t.process_step = #{request.processStep}
         ORDER BY t.process_order desc
         LIMIT 1
     </select>

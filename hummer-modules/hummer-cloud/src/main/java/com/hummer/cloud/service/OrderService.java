@@ -357,6 +357,7 @@ public class OrderService {
         cloudTask.setApplyUser(Objects.requireNonNull(loginUser).getUserId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.custodian.name());
+        cloudTask.setProjectId(quartzTaskDTO.getProjectId());
 
         CloudTaskExample example = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = example.createCriteria();
