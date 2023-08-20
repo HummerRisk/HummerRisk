@@ -22,7 +22,6 @@
     <result column="hummer_name" jdbcType="VARCHAR" property="hummerName" />
     <result column="resource_type_name" jdbcType="VARCHAR" property="resourceTypeName" />
     <result column="resource_type_belong" jdbcType="VARCHAR" property="resourceTypeBelong" />
-    <result column="resource_type_icon" jdbcType="VARCHAR" property="resourceTypeIcon" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.hummer.common.core.domain.CloudResourceItem">
     <!--
@@ -108,7 +107,7 @@
     -->
     id, resource_id, hummer_id, resource_type, plugin_id, plugin_name, plugin_icon, account_id, 
     region_id, region_name, create_time, update_time, hummer_name, resource_type_name, 
-    resource_type_belong, resource_type_icon
+    resource_type_belong
   </sql>
   <sql id="Blob_Column_List">
     <!--
@@ -201,8 +200,7 @@
       resource_type, plugin_id, plugin_name, 
       plugin_icon, account_id, region_id, 
       region_name, create_time, update_time, 
-      hummer_name, resource_type_name, resource_type_belong, 
-      resource_type_icon, `resource`)
+      hummer_name, resource_type_name, resource_type_belong, `resource`)
     values (#{id,jdbcType=VARCHAR}, #{resourceId,jdbcType=VARCHAR}, #{hummerId,jdbcType=VARCHAR}, 
       #{resourceType,jdbcType=VARCHAR}, #{pluginId,jdbcType=VARCHAR}, #{pluginName,jdbcType=VARCHAR}, 
       #{pluginIcon,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, #{regionId,jdbcType=VARCHAR}, 
@@ -262,9 +260,6 @@
       </if>
       <if test="resourceTypeBelong != null">
         resource_type_belong,
-      </if>
-      <if test="resourceTypeIcon != null">
-        resource_type_icon,
       </if>
       <if test="resource != null">
         `resource`,
@@ -388,9 +383,6 @@
       <if test="record.resourceTypeBelong != null">
         resource_type_belong = #{record.resourceTypeBelong,jdbcType=VARCHAR},
       </if>
-      <if test="record.resourceTypeIcon != null">
-        resource_type_icon = #{record.resourceTypeIcon,jdbcType=VARCHAR},
-      </if>
       <if test="record.resource != null">
         `resource` = #{record.resource,jdbcType=LONGVARCHAR},
       </if>
@@ -421,7 +413,6 @@
       hummer_name = #{record.hummerName,jdbcType=VARCHAR},
       resource_type_name = #{record.resourceTypeName,jdbcType=VARCHAR},
       resource_type_belong = #{record.resourceTypeBelong,jdbcType=VARCHAR},
-      resource_type_icon = #{record.resourceTypeIcon,jdbcType=VARCHAR},
       `resource` = #{record.resource,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -448,8 +439,7 @@
       update_time = #{record.updateTime,jdbcType=BIGINT},
       hummer_name = #{record.hummerName,jdbcType=VARCHAR},
       resource_type_name = #{record.resourceTypeName,jdbcType=VARCHAR},
-      resource_type_belong = #{record.resourceTypeBelong,jdbcType=VARCHAR},
-      resource_type_icon = #{record.resourceTypeIcon,jdbcType=VARCHAR}
+      resource_type_belong = #{record.resourceTypeBelong,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -504,9 +494,6 @@
       <if test="resourceTypeBelong != null">
         resource_type_belong = #{resourceTypeBelong,jdbcType=VARCHAR},
       </if>
-      <if test="resourceTypeIcon != null">
-        resource_type_icon = #{resourceTypeIcon,jdbcType=VARCHAR},
-      </if>
       <if test="resource != null">
         `resource` = #{resource,jdbcType=LONGVARCHAR},
       </if>
@@ -534,7 +521,6 @@
       hummer_name = #{hummerName,jdbcType=VARCHAR},
       resource_type_name = #{resourceTypeName,jdbcType=VARCHAR},
       resource_type_belong = #{resourceTypeBelong,jdbcType=VARCHAR},
-      resource_type_icon = #{resourceTypeIcon,jdbcType=VARCHAR},
       `resource` = #{resource,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -558,8 +544,7 @@
       update_time = #{updateTime,jdbcType=BIGINT},
       hummer_name = #{hummerName,jdbcType=VARCHAR},
       resource_type_name = #{resourceTypeName,jdbcType=VARCHAR},
-      resource_type_belong = #{resourceTypeBelong,jdbcType=VARCHAR},
-      resource_type_icon = #{resourceTypeIcon,jdbcType=VARCHAR}
+      resource_type_belong = #{resourceTypeBelong,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

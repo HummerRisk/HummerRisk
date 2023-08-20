@@ -107,11 +107,6 @@ ALTER TABLE `cloud_resource_item` add `resource_type_name` varchar(128) DEFAULT 
 
 ALTER TABLE `cloud_resource_item` add `resource_type_belong` varchar(128) DEFAULT NULL COMMENT '资源类型所属大类';
 
-ALTER TABLE `cloud_resource_item` add `resource_type_icon` varchar(50) DEFAULT NULL COMMENT '资源类型所属图标';
-
 ALTER TABLE `resource_item` add `resource_type_name` varchar(128) DEFAULT NULL COMMENT '资源类型中文名称';
 
 ALTER TABLE `resource_item` add `resource_type_belong` varchar(128) DEFAULT NULL COMMENT '资源类型所属大类';
-
-ALTER TABLE `resource_item` add `resource_type_icon` varchar(50) DEFAULT NULL COMMENT '资源类型所属图标';
-
