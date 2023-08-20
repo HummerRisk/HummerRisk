@@ -203,8 +203,7 @@ public class ResourceService {
             resourceItem.setSeverity(resourceWithBLOBs.getSeverity());
             resourceItem.setResourceType(resourceWithBLOBs.getResourceType());
             resourceItem.setResourceTypeName(PlatformUtils.tranforResourceType2Name(resourceWithBLOBs.getResourceType()));
-            resourceItem.setResourceTypeIcon(PlatformUtils.tranforResourceType2Icon(resourceWithBLOBs.getResourceType(), "icon"));
-            resourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType2Icon(resourceWithBLOBs.getResourceType(), "belong"));
+            resourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType(resourceWithBLOBs.getResourceType()));
             resourceItem.setHummerId(hummerId);
             resourceItem.setHummerName(hummerName);
             resourceItem.setResource(jsonObject.toJSONString());

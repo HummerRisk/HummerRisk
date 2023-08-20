@@ -261,8 +261,7 @@ public class CloudSyncService {
                             cloudResourceItem.setCreateTime(nowDate);
                             cloudResourceItem.setResourceType(resourceType);
                             cloudResourceItem.setResourceTypeName(PlatformUtils.tranforResourceType2Name(resourceType));
-                            cloudResourceItem.setResourceTypeIcon(PlatformUtils.tranforResourceType2Icon(resourceType, "icon"));
-                            cloudResourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType2Icon(resourceType, "belong"));
+                            cloudResourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType(resourceType));
                             cloudResourceItem.setResource(jsonObject.toJSONString());
 
                             //云资源同步资源详情表

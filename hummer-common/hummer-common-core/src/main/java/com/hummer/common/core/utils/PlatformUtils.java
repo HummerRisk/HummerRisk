@@ -1470,136 +1470,67 @@ public class PlatformUtils {
         return false;
     }
 
-    public static String tranforResourceType2Icon(String resourceType, String type) {
+    public static String tranforResourceType(String resourceType) {
         List<String> ecsTypes = Arrays.stream(CloudTaskConstants.ECS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
-        if(!ecsTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "ecs.svg";
-                case "belong":
-                    return "ecs";
-            }
+        if (!ecsTypes.isEmpty()) {
+            return "ecs";
         }
         List<String> rdsTypes = Arrays.stream(CloudTaskConstants.RDS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!rdsTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "rds.svg";
-                case "belong":
-                    return "rds";
-            }
+            return "rds";
         }
         List<String> ossTypes = Arrays.stream(CloudTaskConstants.OSS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!ossTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "oss.svg";
-                case "belong":
-                    return "oss";
-            }
+            return "oss";
         }
         List<String> diskTypes = Arrays.stream(CloudTaskConstants.DISK_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!diskTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "disk.svg";
-                case "belong":
-                    return "disk";
-            }
+            return "disk";
         }
         List<String> iamTypes = Arrays.stream(CloudTaskConstants.IAM_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!iamTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "iam.svg";
-                case "belong":
-                    return "iam";
-            }
+            return "iam";
         }
         List<String> eipTypes = Arrays.stream(CloudTaskConstants.EIP_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!eipTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "eip.svg";
-                case "belong":
-                    return "eip";
-            }
+            return "eip";
         }
         List<String> elbTypes = Arrays.stream(CloudTaskConstants.ELB_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!elbTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "elb.svg";
-                case "belong":
-                    return "elb";
-            }
+            return "elb";
         }
         List<String> sgTypes = Arrays.stream(CloudTaskConstants.SG_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!sgTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "sg.svg";
-                case "belong":
-                    return "sg";
-            }
+            return "sg";
         }
         List<String> vpcTypes = Arrays.stream(CloudTaskConstants.VPC_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!vpcTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "vpc.svg";
-                case "belong":
-                    return "vpc";
-            }
+            return "vpc";
         }
         List<String> redisTypes = Arrays.stream(CloudTaskConstants.REDIS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!redisTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "redis.svg";
-                case "belong":
-                    return "redis";
-            }
+            return "redis";
         }
         List<String> mongodbTypes = Arrays.stream(CloudTaskConstants.MONGODB_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!mongodbTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "mongodb.svg";
-                case "belong":
-                    return "mongodb";
-            }
+            return "mongodb";
         }
         List<String> postgresqlTypes = Arrays.stream(CloudTaskConstants.POSTGRESQL_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!postgresqlTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "postgresql.svg";
-                case "belong":
-                    return "postgresql";
-            }
+            return "postgresql";
         }
         List<String> esTypes = Arrays.stream(CloudTaskConstants.ES_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!esTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "es.svg";
-                case "belong":
-                    return "es";
-            }
+            return "es";
         }
-        switch (type) {
-            case "icon":
-                return "other.svg";
-            case "belong":
-                return "other";
-            default:
-                return "other";
-        }
+        return "other";
     }
 
-    public static String tranforResourceType2Name(String resourceType) {
-        return resourceType;
+    public static String tranforResourceType2Name(String resourceType) throws Exception {
+        String resourceTypes = ReadFileUtils.readConfigFile("resource-type", "", ".json");
+        JSONObject jsonObject = JSONObject.parseObject(resourceTypes);
+        String resourceEn = jsonObject.getString(resourceType);
+        return !StringUtils.isEmpty(resourceEn) ? resourceEn : resourceType;
     }
 
 }
