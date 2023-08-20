@@ -1,0 +1,5 @@
+{
+  "aliyun.cdn": "ALIYUN_CDN",
+  "aliyun.disk": "ALIYUN_DISK",
+  "aliyun.ecs": "ALIYUN_ECS"
+}

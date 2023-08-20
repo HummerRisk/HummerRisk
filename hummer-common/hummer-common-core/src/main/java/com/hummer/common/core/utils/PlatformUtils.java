@@ -189,10 +189,11 @@ public class PlatformUtils {
 
     /**
      * 是否同步资源
+     *
      * @param source
      * @return
      */
-    public static boolean isSyncResource(String source){
+    public static boolean isSyncResource(String source) {
         List<String> notSyncResource = Arrays.asList(k8s);
         return !notSyncResource.contains(source);
     }
@@ -253,10 +254,10 @@ public class PlatformUtils {
                     return proxy + "./prowler -c " + (StringUtils.isNotEmpty(fileName) ? fileName : "check11") + " -f " + region + " -s -M text > result.txt";
                 }
                 pre = "AWS_ACCESS_KEY_ID=" + awsAccessKey + " " +
-                       "AWS_SECRET_ACCESS_KEY=" + awsSecretKey + " "
-                        +(
-                        StringUtils.isEmpty(sessionToken)?""
-                                :("AWS_SESSION_TOKEN=" + sessionToken+" ")) +
+                        "AWS_SECRET_ACCESS_KEY=" + awsSecretKey + " "
+                        + (
+                        StringUtils.isEmpty(sessionToken) ? ""
+                                : ("AWS_SESSION_TOKEN=" + sessionToken + " ")) +
                         "AWS_DEFAULT_REGION=" + region + " ";
                 break;
             case azure:
@@ -474,7 +475,7 @@ public class PlatformUtils {
                 String sessionToken = params.get("sessionToken");
                 jsonObject.put("AWS_ACCESS_KEY_ID", awsAccessKey);
                 jsonObject.put("AWS_SECRET_ACCESS_KEY", awsSecretKey);
-                if(StringUtils.isEmpty(sessionToken)) jsonObject.put("AWS_SESSION_TOKEN", sessionToken);
+                if (StringUtils.isEmpty(sessionToken)) jsonObject.put("AWS_SESSION_TOKEN", sessionToken);
                 jsonObject.put("region", region);
                 break;
             case azure:
@@ -630,7 +631,7 @@ public class PlatformUtils {
                 AWSCredential awsCredential = new Gson().fromJson(account.getCredential(), AWSCredential.class);
                 map.put("accessKey", awsCredential.getAccessKey());
                 map.put("secretKey", awsCredential.getSecretKey());
-                map.put("sessionToken",awsCredential.getAwsSessionToken());
+                map.put("sessionToken", awsCredential.getAwsSessionToken());
                 map.put("region", region);
                 break;
             case azure:
@@ -1085,10 +1086,10 @@ public class PlatformUtils {
                         if (!jsonArray.contains(jsonObject)) jsonArray.add(jsonObject);
                     }
                     break;
-                case k8s,rancher,kubesphere:
+                case k8s, rancher, kubesphere:
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("regionId","all-namespaces");
-                    jsonObject.put("regionName","all-namespaces");
+                    jsonObject.put("regionId", "all-namespaces");
+                    jsonObject.put("regionName", "all-namespaces");
                     jsonArray.add(jsonObject);
                     break;
                 default:
@@ -1272,7 +1273,7 @@ public class PlatformUtils {
                     InstanceService.DescribeInstancesInput input = new InstanceService.DescribeInstancesInput();
                     input.setLimit(1);
                     InstanceService.DescribeInstancesOutput output = service.describeInstances(input);
-                    return output.getRetCode() == 0 ;
+                    return output.getRetCode() == 0;
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
@@ -1280,7 +1281,7 @@ public class PlatformUtils {
                 UCloudCredential uCloudCredential = new Gson().fromJson(account.getCredential(), UCloudCredential.class);
 
                 try {
-                    cn.ucloud.common.credential.Credential credential = new cn.ucloud.common.credential.Credential(uCloudCredential.getUcloudPublicKey(),uCloudCredential.getUcloudPrivateKey());
+                    cn.ucloud.common.credential.Credential credential = new cn.ucloud.common.credential.Credential(uCloudCredential.getUcloudPublicKey(), uCloudCredential.getUcloudPrivateKey());
                     Config config = new Config();
                     config.setRegion("cn-bj2");
                     UHostClient uHostClient = new UHostClient(config, credential);
@@ -1308,7 +1309,7 @@ public class PlatformUtils {
                 } catch (Exception e) {
                     throw new Exception(String.format("HRException in verifying cloud account has an error, cloud account: [%s], plugin: [%s], error information:%s", account.getName(), account.getPluginName(), e.getMessage()));
                 }
-            case k8s,rancher,kubesphere:
+            case k8s, rancher, kubesphere:
                 /**创建默认 Api 客户端**/
                 // 定义连接集群的 Token
                 try {
@@ -1552,9 +1553,9 @@ public class PlatformUtils {
                 }
                 break;
             case tencent:
-                if(StringUtils.contains(resource,"tencent.mongodb")){
-                    stringArray = new String[]{"ap-jakarta","ap-shanghai-fsi", "ap-shenzhen-fsi"};
-                }else{
+                if (StringUtils.contains(resource, "tencent.mongodb")) {
+                    stringArray = new String[]{"ap-jakarta", "ap-shanghai-fsi", "ap-shenzhen-fsi"};
+                } else {
                     // 不支持资源的区域
                     stringArray = new String[]{"ap-shanghai-fsi", "ap-shenzhen-fsi"};
                     // 利用list的包含方法,进行判断
@@ -1691,136 +1692,67 @@ public class PlatformUtils {
         return map;
     }
 
-    public static String tranforResourceType2Icon(String resourceType, String type) {
+    public static String tranforResourceType(String resourceType) {
         List<String> ecsTypes = Arrays.stream(CloudTaskConstants.ECS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
-        if(!ecsTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "ecs.svg";
-                case "belong":
-                    return "ecs";
-            }
+        if (!ecsTypes.isEmpty()) {
+            return "ecs";
         }
         List<String> rdsTypes = Arrays.stream(CloudTaskConstants.RDS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!rdsTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "rds.svg";
-                case "belong":
-                    return "rds";
-            }
+            return "rds";
         }
         List<String> ossTypes = Arrays.stream(CloudTaskConstants.OSS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!ossTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "oss.svg";
-                case "belong":
-                    return "oss";
-            }
+            return "oss";
         }
         List<String> diskTypes = Arrays.stream(CloudTaskConstants.DISK_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!diskTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "disk.svg";
-                case "belong":
-                    return "disk";
-            }
+            return "disk";
         }
         List<String> iamTypes = Arrays.stream(CloudTaskConstants.IAM_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!iamTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "iam.svg";
-                case "belong":
-                    return "iam";
-            }
+            return "iam";
         }
         List<String> eipTypes = Arrays.stream(CloudTaskConstants.EIP_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!eipTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "eip.svg";
-                case "belong":
-                    return "eip";
-            }
+            return "eip";
         }
         List<String> elbTypes = Arrays.stream(CloudTaskConstants.ELB_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!elbTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "elb.svg";
-                case "belong":
-                    return "elb";
-            }
+            return "elb";
         }
         List<String> sgTypes = Arrays.stream(CloudTaskConstants.SG_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!sgTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "sg.svg";
-                case "belong":
-                    return "sg";
-            }
+            return "sg";
         }
         List<String> vpcTypes = Arrays.stream(CloudTaskConstants.VPC_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!vpcTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "vpc.svg";
-                case "belong":
-                    return "vpc";
-            }
+            return "vpc";
         }
         List<String> redisTypes = Arrays.stream(CloudTaskConstants.REDIS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!redisTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "redis.svg";
-                case "belong":
-                    return "redis";
-            }
+            return "redis";
         }
         List<String> mongodbTypes = Arrays.stream(CloudTaskConstants.MONGODB_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!mongodbTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "mongodb.svg";
-                case "belong":
-                    return "mongodb";
-            }
+            return "mongodb";
         }
         List<String> postgresqlTypes = Arrays.stream(CloudTaskConstants.POSTGRESQL_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!postgresqlTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "postgresql.svg";
-                case "belong":
-                    return "postgresql";
-            }
+            return "postgresql";
         }
         List<String> esTypes = Arrays.stream(CloudTaskConstants.ES_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!esTypes.isEmpty()) {
-            switch (type) {
-                case "icon":
-                    return "es.svg";
-                case "belong":
-                    return "es";
-            }
+            return "es";
         }
-        switch (type) {
-            case "icon":
-                return "other.svg";
-            case "belong":
-                return "other";
-            default:
-                return "other";
-        }
+        return "other";
     }
 
-    public static String tranforResourceType2Name(String resourceType) {
-        return resourceType;
+    public static String tranforResourceType2Name(String resourceType) throws Exception {
+        String resourceTypes = ReadFileUtils.readConfigFile("resource-type", "", ".json");
+        JSONObject jsonObject = JSONObject.parseObject(resourceTypes);
+        String resourceEn = jsonObject.getString(resourceType);
+        return !StringUtils.isEmpty(resourceEn) ? resourceEn : resourceType;
     }
 
 }
