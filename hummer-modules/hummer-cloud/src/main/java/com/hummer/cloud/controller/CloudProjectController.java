@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudProjectService;
 import com.hummer.common.core.domain.CloudProcess;
+import com.hummer.common.core.domain.CloudProcessLogWithBLOBs;
 import com.hummer.common.core.domain.request.project.CloudGroupRequest;
 import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.CloudGroupDTO;
@@ -96,6 +97,13 @@ public class CloudProjectController {
     @PostMapping("processList")
     public CloudProcessDTO getCloudProcessDTO(@RequestBody CloudProcess cloudProcess) {
         return cloudProjectService.getCloudProcessDTO(cloudProcess);
+    }
+
+    @Operation(summary = "项目执行初始化日志列表")
+    @I18n
+    @PostMapping("processLogList")
+    public List<CloudProcessLogWithBLOBs> getCloudProcessLogs(@RequestBody CloudProcess cloudProcess) {
+        return cloudProjectService.getCloudProcessLogs(cloudProcess);
     }
 
     @Operation(summary = "执行项目检测")

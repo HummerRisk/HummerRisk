@@ -167,6 +167,12 @@ public class CloudProjectService {
         return extCloudProjectMapper.getCloudProcessDTO(cloudProcess);
     }
 
+    public List<CloudProcessLogWithBLOBs> getCloudProcessLogs(CloudProcess cloudProcess) {
+        CloudProcessLogExample example = new CloudProcessLogExample();
+        example.createCriteria().andProjectIdEqualTo(cloudProcess.getProjectId());
+        return cloudProcessLogMapper.selectByExampleWithBLOBs(example);
+    }
+
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public String scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
         String projectId = UUIDUtil.newUUID();
@@ -375,31 +381,31 @@ public class CloudProjectService {
         switch (cloudProcess.getProcessOrder()) {
             case 1 ->
                 //初始化云账号信息...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 1, "init_cloud_account_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 1, "init_cloud_account_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 2 ->
                 //初始化区域信息...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 2, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 2, "init_cloud_region_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 3 ->
                 //初始化规则组信息...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 3, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess= updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 3, "init_cloud_group_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 4 ->
                 //初始化规则信息...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 4, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 1, 4, "init_cloud_rule_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 5 ->
                 //初始化检测环境...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 5, "init_env_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 5, "init_env_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 6 ->
                 //创建检测任务...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 6, "create_scan_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 6, "create_scan_info", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 7 ->
                 //创建检测规则组...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 7, "create_scan_group", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 7, "create_scan_group", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 8 ->
                 //检测任务构建...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 8, "create_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 2, 8, "create_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
             case 9 ->
                 //开始执行检测...
-                updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 3, 9, "start_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
+                    cloudProcess = updateCloudProcess(cloudProcess.getId(), cloudProcess.getProjectId(), 100, 3, 9, "start_scan_task", CloudTaskConstants.TASK_STATUS.FINISHED.name(), cloudProcess.getExecTime());
         }
         return cloudProcess;
     }
@@ -430,17 +436,21 @@ public class CloudProjectService {
         }
     }
 
-    public void updateCloudProcess(String id, String projectId, int processRate, int processStep, int processOrder, String processName, String status, Integer execTime) throws Exception {
+    public CloudProcess updateCloudProcess(String id, String projectId, int processRate, int processStep, int processOrder, String processName, String status, Integer execTime) throws Exception {
 
         CloudProcess cloudProcess = cloudProcessMapper.selectByPrimaryKey(id);
         if (cloudProcess == null) {
             CloudProcessExample example = new CloudProcessExample();
             example.createCriteria().andProcessStepEqualTo(processStep).andProcessOrderEqualTo(processOrder).andProjectIdEqualTo(projectId);
-            cloudProcess = new CloudProcess();
-            cloudProcess.setProcessRate(processRate);
-            cloudProcess.setStatus(status);
-            cloudProcess.setExecTime(execTime);
-            cloudProcessMapper.updateByExample(cloudProcess, example);
+            List<CloudProcess> cloudProcessList = cloudProcessMapper.selectByExample(example);
+            if(!cloudProcessList.isEmpty()) {
+                CloudProcess cloudProcess2 = BeanUtils.copyBean(new CloudProcess(), cloudProcessList.get(0));
+                cloudProcess2.setProcessRate(processRate);
+                cloudProcess2.setStatus(status);
+                cloudProcess2.setExecTime(execTime);
+                cloudProcessMapper.updateByPrimaryKeySelective(cloudProcess2);
+                return cloudProcess2;
+            }
         } else {
             cloudProcess.setId(id);
             cloudProcess.setProjectId(projectId);
@@ -448,8 +458,9 @@ public class CloudProjectService {
             cloudProcess.setProcessStep(processStep);
             cloudProcess.setStatus(CloudTaskConstants.TASK_STATUS.FINISHED.name());
             cloudProcess.setExecTime(execTime);
-            cloudProcessMapper.updateByPrimaryKey(cloudProcess);
+            cloudProcessMapper.updateByPrimaryKeySelective(cloudProcess);
         }
+        return cloudProcess;
     }
 
     public void saveCloudProcessLog(String projectId, String processId, String operation, String output, boolean result, LoginUser loginUser) throws Exception {

@@ -2018,7 +2018,7 @@ export default {
     perform_detection: 'Initialization detection',
     waiting_perform: 'Initialize detection information',
     output_log: 'Output log',
-    execute_output_log: 'Execute detection Log information',
+    execute_output_log: 'Initialize detection log information',
     select_scanning: '(Please check the following rule group and click the Execute Detection button )',
     init_cloud_account_info: 'Initialize cloud account information...',
     init_cloud_region_info: 'Initialize region information...',
