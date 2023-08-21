@@ -76,6 +76,14 @@ public class ResourceCreateService {
     private CommonThreadPool commonThreadPool;
     @Autowired
     private K8sCreateService k8sCreateService;
+    @Autowired
+    private CloudProjectMapper cloudProjectMapper;
+    @Autowired
+    private CloudProjectLogMapper cloudProjectLogMapper;
+    @Autowired
+    private CloudGroupMapper cloudGroupMapper;
+    @Autowired
+    private CloudGroupLogMapper cloudGroupLogMapper;
     @DubboReference
     private ISystemProviderService systemProviderService;
 
@@ -86,76 +94,75 @@ public class ResourceCreateService {
     //云资源检测
     @XxlJob("cloudTasksJobHandler")
     public void cloudTasksJobHandler() throws Exception {
-        //云规则检测
-        final CloudTaskExample cloudTaskExample = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria = cloudTaskExample.createCriteria();
-        criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdNotIn(PlatformUtils.getK8sPlugin());
+        //云资源检测
+        final CloudProjectExample cloudProjectExample = new CloudProjectExample();
+        CloudProjectExample.Criteria criteria = cloudProjectExample.createCriteria();
+        criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdIn(PlatformUtils.getCloudPlugin());;
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
-        cloudTaskExample.setOrderByClause("create_time limit 10");
-        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(cloudTaskExample);
-        if (CollectionUtils.isNotEmpty(cloudTaskList)) {
-            cloudTaskList.forEach(task -> {
-                LogUtil.info("handling cloudTask: {}", toJSONString(task));
-                final CloudTask cloudTaskToBeProceed;
+        cloudProjectExample.setOrderByClause("create_time limit 10");
+        List<CloudProject> cloudProjectList = cloudProjectMapper.selectByExample(cloudProjectExample);
+
+        if (CollectionUtils.isNotEmpty(cloudProjectList)) {
+            cloudProjectList.forEach(project -> {
+                LogUtil.info("handling cloudProject: {}", toJSONString(project));
+                final CloudProject cloudProjectToBeProceed;
                 try {
-                    cloudTaskToBeProceed = BeanUtils.copyBean(new CloudTask(), task);
+                    cloudProjectToBeProceed = BeanUtils.copyBean(new CloudProject(), project);
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
                 }
-                if (processingGroupIdMap.get(cloudTaskToBeProceed.getId()) != null) {
+                if (processingGroupIdMap.get(cloudProjectToBeProceed.getId()) != null) {
                     return;
                 }
-                processingGroupIdMap.put(cloudTaskToBeProceed.getId(), cloudTaskToBeProceed.getId());
+                processingGroupIdMap.put(cloudProjectToBeProceed.getId(), cloudProjectToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        handleTask(cloudTaskToBeProceed);
+                        handleProject(cloudProjectToBeProceed);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
-                        processingGroupIdMap.remove(cloudTaskToBeProceed.getId());
+                        processingGroupIdMap.remove(cloudProjectToBeProceed.getId());
                     }
                 });
             });
         }
 
-        //K8s 规则检测
-        final CloudTaskExample cloudTaskExample2 = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria2 = cloudTaskExample2.createCriteria();
-        criteria2.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdIn(PlatformUtils.getK8sPlugin());
+        //K8s 资源检测
+        final CloudProjectExample cloudProjectExampleK8s = new CloudProjectExample();
+        CloudProjectExample.Criteria criteriaK8s = cloudProjectExampleK8s.createCriteria();
+        criteriaK8s.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdIn(PlatformUtils.getCloudPlugin());;
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
-            criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
+            criteriaK8s.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
-        cloudTaskExample2.setOrderByClause("create_time limit 10");
-        List<CloudTask> cloudTaskList2 = cloudTaskMapper.selectByExample(cloudTaskExample2);
-        if (CollectionUtils.isNotEmpty(cloudTaskList2)) {
-            cloudTaskList2.forEach(task2 -> {
-                LogUtil.info("handling k8sRuleTask: {}", toJSONString(task2));
-                final CloudTask cloudTaskToBeProceed2;
+        cloudProjectExampleK8s.setOrderByClause("create_time limit 10");
+        List<CloudProject> cloudProjectK8sList = cloudProjectMapper.selectByExample(cloudProjectExampleK8s);
+
+        if (CollectionUtils.isNotEmpty(cloudProjectK8sList)) {
+            cloudProjectK8sList.forEach(project -> {
+                LogUtil.info("handling cloudProject: {}", toJSONString(project));
+                final CloudProject cloudProjectToBeProceedK8s;
                 try {
-                    cloudTaskToBeProceed2 = BeanUtils.copyBean(new CloudTask(), task2);
+                    cloudProjectToBeProceedK8s = BeanUtils.copyBean(new CloudProject(), project);
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
                 }
-                if (processingGroupIdMap.get(cloudTaskToBeProceed2.getId()) != null) {
+                if (processingGroupIdMap.get(cloudProjectToBeProceedK8s.getId()) != null) {
                     return;
                 }
-                processingGroupIdMap.put(cloudTaskToBeProceed2.getId(), cloudTaskToBeProceed2.getId());
+                processingGroupIdMap.put(cloudProjectToBeProceedK8s.getId(), cloudProjectToBeProceedK8s.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        k8sCreateService.handleTask(cloudTaskToBeProceed2);
+                        k8sCreateService.handleProject(cloudProjectToBeProceedK8s);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
-                        processingGroupIdMap.remove(cloudTaskToBeProceed2.getId());
+                        processingGroupIdMap.remove(cloudProjectToBeProceedK8s.getId());
                     }
                 });
             });
         }
-
     }
 
     //对象存储
@@ -186,7 +193,6 @@ public class ResourceCreateService {
                     try {
                         ossService.syncBatch(ossToBeProceed.getId(), null);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(ossToBeProceed.getId());
@@ -245,6 +251,55 @@ public class ResourceCreateService {
         });
     }
 
+    public void handleProject(CloudProject cloudProject) throws Exception {
+        String projectId = cloudProject.getId();
+        try {
+            CloudGroupExample cloudGroupExample = new CloudGroupExample();
+            cloudGroupExample.createCriteria().andProjectIdEqualTo(projectId);
+            List<CloudGroup> cloudGroupList = cloudGroupMapper.selectByExample(cloudGroupExample);
+            int successCount = 0;
+            for (CloudGroup cloudGroup : cloudGroupList) {
+                if (LogUtil.getLogger().isDebugEnabled()) {
+                    LogUtil.getLogger().debug("handling cloudGroup: {}", toJSONString(cloudGroup));
+                }
+                if (handleGroup(BeanUtils.copyBean(new CloudGroup(), cloudGroup), cloudProject)) {
+                    successCount++;
+                }
+            }
+            if (!cloudGroupList.isEmpty() && successCount == 0)
+                throw new Exception("Faild to handle all cloudGroups, projectId: " + projectId);
+            String status = CloudTaskConstants.TASK_STATUS.FINISHED.toString();
+            if (successCount != cloudGroupList.size()) {
+                status = CloudTaskConstants.TASK_STATUS.WARNING.toString();
+            }
+            orderService.updateProjectStatus(projectId, null, status);
+
+        } catch (Exception e) {
+            orderService.updateProjectStatus(projectId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
+            LogUtil.error("handleProject, projectId: " + projectId, e);
+        }
+    }
+
+    private boolean handleGroup(CloudGroup cloudGroup, CloudProject cloudProject) throws Exception {
+        orderService.updateGroupStatus(cloudGroup.getId(), CloudTaskConstants.TASK_STATUS.PROCESSING);
+        try {
+            CloudTaskExample example = new CloudTaskExample();
+            example.createCriteria().andProjectIdEqualTo(cloudProject.getId()).andGroupIdEqualTo(cloudGroup.getId());
+            List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(example);
+            for (CloudTask cloudTask : cloudTaskList) {
+                handleTask(cloudTask);
+            }
+            orderService.updateGroupStatus(cloudGroup.getId(), CloudTaskConstants.TASK_STATUS.FINISHED);
+
+            return true;
+        } catch (Exception e) {
+            orderService.updateGroupStatus(cloudGroup.getId(), CloudTaskConstants.TASK_STATUS.ERROR);
+
+            LogUtil.error("handleGroup, groupId: " + cloudGroup.getId(), e);
+            return false;
+        }
+    }
+
     public void handleTask(CloudTask cloudTask) throws Exception {
         String taskId = cloudTask.getId();
         int i = orderService.updateTaskStatus(taskId, CloudTaskConstants.TASK_STATUS.APPROVED.toString(), CloudTaskConstants.TASK_STATUS.PROCESSING.toString());
@@ -278,7 +333,6 @@ public class ResourceCreateService {
             systemProviderService.updateHistoryCloudTask(historyCloudTask);
 
         } catch (Exception e) {
-            e.printStackTrace();
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
 
             //更新历史数据状态
@@ -305,7 +359,6 @@ public class ResourceCreateService {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             orderService.updateTaskItemStatus(taskItem.getId(), CloudTaskConstants.TASK_STATUS.ERROR);
 
             //更新历史数据状态
@@ -440,7 +493,7 @@ public class ResourceCreateService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
             JSONObject jsonObject = PlatformUtils.fixedScanner(taskItem.getDetails(), map, accountWithBLOBs.getPluginId());
-            LogUtil.info(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
+            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
@@ -452,7 +505,7 @@ public class ResourceCreateService {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
-            resultStr = resultJson.getString("data").toString();
+            resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
 
             taskItem.setCommand("api scanner");
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
