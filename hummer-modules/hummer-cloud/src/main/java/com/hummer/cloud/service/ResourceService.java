@@ -106,7 +106,6 @@ public class ResourceService {
         try {
             resourceDTOListTmp = getComplianceResult(request);
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error(e.getMessage());
             throw new RuntimeException("查询失败");
         }
@@ -168,7 +167,6 @@ public class ResourceService {
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
         } catch (Exception e) {
-            e.printStackTrace();
             HRException.throwException(e.getMessage());
         }
 
@@ -246,7 +244,6 @@ public class ResourceService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error("[{}] Generate updateResourceSum policy.yml file，and custodian run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
         }

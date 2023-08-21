@@ -276,7 +276,6 @@ public class CloudSyncService {
                         saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:" + resourcesArr.size(), true, accountId, user.getUserId());
 
                     } catch (Exception e) {
-                        e.printStackTrace();
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
                         saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false, accountId, user.getUserId());

@@ -24,6 +24,8 @@ public class QuartzTaskDTO extends Rule {
 
     private String projectId;
 
+    private String groupId;
+
     public String getType() {
         return type;
     }
@@ -78,5 +80,13 @@ public class QuartzTaskDTO extends Rule {
 
     public void setProjectId(String projectId) {
         this.projectId = projectId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 }
