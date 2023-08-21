@@ -2018,7 +2018,7 @@ export default {
     perform_detection: '初始化检测',
     waiting_perform: '初始化检测信息',
     output_log: '输出日志',
-    execute_output_log: '执行检测Log信息',
+    execute_output_log: '初始化检测Log信息',
     select_scaning: '( 请勾选中下面的规则组，并点击执行检测按钮 )',
     init_cloud_account_info: '初始化云账号信息...',
     init_cloud_region_info: '初始化区域信息...',

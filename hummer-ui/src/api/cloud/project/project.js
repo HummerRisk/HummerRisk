@@ -19,4 +19,6 @@ export const groupDeletesUrl = "/cloud/project/deleteGroups";
 
 export const processListUrl = "/cloud/project/processList";
 
+export const processLogListUrl = "/cloud/project/processLogList";
+
 export const processUpdateUrl = "/cloud/project/process/update";

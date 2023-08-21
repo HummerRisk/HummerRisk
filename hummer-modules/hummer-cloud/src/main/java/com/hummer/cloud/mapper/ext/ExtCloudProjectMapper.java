@@ -1,8 +1,6 @@
 package com.hummer.cloud.mapper.ext;
 
-import com.hummer.common.core.domain.CloudGroup;
 import com.hummer.common.core.domain.CloudProcess;
-import com.hummer.common.core.domain.CloudProject;
 import com.hummer.common.core.domain.request.project.CloudGroupRequest;
 import com.hummer.common.core.dto.CloudGroupDTO;
 import com.hummer.common.core.dto.CloudProcessDTO;

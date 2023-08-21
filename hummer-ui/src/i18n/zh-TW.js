@@ -2018,7 +2018,7 @@ export default {
     perform_detection: '初始化檢測',
     waiting_perform: '初始化檢測信息',
     output_log: '輸出日誌',
-    execute_output_log: '執行檢測Log信息',
+    execute_output_log: '初始化檢測Log信息',
     select_scaning: '( 請勾選中下面的規則組，並點擊執行檢測按鈕 )',
     init_cloud_account_info: '初始化雲賬號信息...',
     init_cloud_region_info: '初始化區域信息...',
