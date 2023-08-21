@@ -245,7 +245,6 @@ public class OssService {
         try {
             syncResource(oss, loginUser);
         } catch (Exception e) {
-            e.printStackTrace();
             oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
             ossMapper.updateByPrimaryKeySelective(oss);
             saveLog(oss.getId(), "i18n_operation_ex" + ": " + e.getMessage(), e.getMessage(), false, 0, loginUser);
@@ -270,7 +269,6 @@ public class OssService {
             try {
                 doSyncBucketInfo(oss, loginUser);
             } catch (Exception e) {
-                e.printStackTrace();
                 oss.setSyncStatus(OSSConstants.SYNC_STATUS.ERROR.name());
                 oss.setUpdateTime(System.currentTimeMillis());
                 ossMapper.updateByPrimaryKeySelective(oss);
@@ -293,7 +291,6 @@ public class OssService {
             OssProvider ossProvider = getOssProvider(oss.getPluginId());
             return saveOssBuckets(ossProvider, oss);
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error("Failed to get the bucket information: " + oss.getName(), e);
             HRException.throwException(Translator.get("i18n_get_bucket_info_failed") + e.getMessage());
             throw e;
@@ -339,7 +336,6 @@ public class OssService {
             ossBucketMapper.deleteByExample(bucketExample);
             return list.size();
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
@@ -570,7 +566,6 @@ public class OssService {
             }
             return getParams(ossAccount, path);
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error("Getting parameters failed: " + ossAccount.getPluginName(), e);
             throw new Exception("Failed to get parameters" + e.getMessage());
         }

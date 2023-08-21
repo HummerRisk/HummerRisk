@@ -252,7 +252,7 @@ public class CloudProjectService {
             dto.setStatus(true);
             List<RuleDTO> ruleDTOS = accountService.getRules(dto);
             for (RuleDTO rule : ruleDTOS) {
-                this.dealTask(rule, scanId, projectId, account, loginUser);
+                this.dealTask(rule, scanId, projectId, cloudGroupId, account, loginUser);
             }
 
             saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_end" + " : " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
@@ -264,13 +264,14 @@ public class CloudProjectService {
 
     }
 
-    private void dealTask(RuleDTO rule, Integer scanId, String projectId, AccountWithBLOBs account, LoginUser loginUser) {
+    private void dealTask(RuleDTO rule, Integer scanId, String projectId, String cloudGroupId, AccountWithBLOBs account, LoginUser loginUser) {
         try {
             if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(), rule.getId(),
                     new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})) {
                 QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
                 BeanUtils.copyBean(quartzTaskDTO, rule);
                 quartzTaskDTO.setProjectId(projectId);
+                quartzTaskDTO.setGroupId(cloudGroupId);
                 List<SelectTag> selectTags = new LinkedList<>();
                 SelectTag s = new SelectTag();
                 s.setAccountId(account.getId());

@@ -63,7 +63,6 @@ public class CloudTaskConstants {
         EMAIL, SMS, ANNOUNCEMENT
     }
 
-    //此处添加类型，需要在 ExtCloudResourceSyncMapper.xml 添加资源态势类型 sql，183行
     public final static String[] ALIYUN_RESOURCE_TYPE = {"aliyun.cdn", "aliyun.disk", "aliyun.ecs", "aliyun.eip", "aliyun.mongodb", "aliyun.oss", "aliyun.polardb", "aliyun.ram", "aliyun.rds", "aliyun.redis", "aliyun.security-group", "aliyun.slb", "aliyun.nas", "aliyun.mse", "aliyun.ack", "aliyun.vpc", "aliyun.postgre-sql"};
     public final static String[] HUAWEI_RESOURCE_TYPE = {"huawei.vpc","huawei.dds", "huawei.disk", "huawei.ecs", "huawei.eip", "huawei.elb", "huawei.gaussdb", "huawei.gaussdbfornosql", "huawei.gaussdbforopengauss", "huawei.iam", "huawei.obs", "huawei.rds", "huawei.redis", "huawei.security-group"};
     public final static String[] TENCENT_RESOURCE_TYPE = {"tencent.vpc", "tencent.es", "tencent.cdb", "tencent.clb", "tencent.cos", "tencent.cvm", "tencent.disk", "tencent.eip", "tencent.mongodb", "tencent.redis", "tencent.security-group"};

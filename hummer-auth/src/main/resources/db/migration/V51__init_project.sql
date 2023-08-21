@@ -103,6 +103,8 @@ ALTER TABLE `resource_item` modify COLUMN `hummer_name` varchar(1024) DEFAULT NU
 
 ALTER TABLE `cloud_task` add `project_id` varchar(128) DEFAULT NULL COMMENT 'cloud project 标识';
 
+ALTER TABLE `cloud_task` add `group_id` varchar(128) DEFAULT NULL COMMENT 'cloud group 标识';
+
 ALTER TABLE `cloud_resource_item` add `resource_type_name` varchar(128) DEFAULT NULL COMMENT '资源类型中文名称';
 
 ALTER TABLE `cloud_resource_item` add `resource_type_belong` varchar(128) DEFAULT NULL COMMENT '资源类型所属大类';
