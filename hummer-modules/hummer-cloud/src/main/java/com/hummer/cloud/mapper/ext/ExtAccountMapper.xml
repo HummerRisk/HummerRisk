@@ -265,6 +265,9 @@
             <if test="status != null">
                 AND t.status = #{status}
             </if>
+            <if test="groupId != null">
+                AND t.id in (select g.rule_id from rule_group_mapping g where g.group_id = #{groupId})
+            </if>
         </where>
         ORDER BY t.id desc
     </select>
