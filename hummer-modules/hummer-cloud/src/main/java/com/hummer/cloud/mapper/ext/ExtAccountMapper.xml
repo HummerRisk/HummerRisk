@@ -28,9 +28,6 @@
         <collection property="cloudEventSyncLogList" ofType="com.hummer.common.core.domain.request.event.CloudEventSyncLogVo" javaType="list"
                     select="selectCloudEventSyncLogList" column="{accountId=id}">
         </collection>
-        <collection property="imageRepoList" ofType="com.hummer.common.core.domain.ImageRepo" javaType="list"
-                    select="selectImageRepoList" column="{accountId=id}">
-        </collection>
     </resultMap>
 
     <resultMap id="OssMap" type="com.hummer.common.core.domain.Oss">
@@ -66,29 +63,6 @@
         <result column="region_name" jdbcType="VARCHAR" property="regionName" />
         <result column="account_name" jdbcType="VARCHAR" property="accountName" />
         <result column="account_icon" jdbcType="VARCHAR" property="accountIcon" />
-    </resultMap>
-
-    <resultMap id="ImageRepoMap" type="com.hummer.common.core.domain.ImageRepo">
-        <id column="id" jdbcType="VARCHAR" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="status" jdbcType="VARCHAR" property="status" />
-        <result column="create_time" jdbcType="BIGINT" property="createTime" />
-        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
-        <result column="creator" jdbcType="VARCHAR" property="creator" />
-        <result column="repo" jdbcType="VARCHAR" property="repo" />
-        <result column="user_name" jdbcType="VARCHAR" property="userName" />
-        <result column="password" jdbcType="VARCHAR" property="password" />
-        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
-        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
-        <result column="is_bind_account" jdbcType="BIT" property="isBindAccount" />
-        <result column="credential" jdbcType="VARCHAR" property="credential" />
-    </resultMap>
-
-    <resultMap id="ServerResultMap" type="com.hummer.common.core.dto.ServerDTO"
-               extends="com.hummer.cloud.mapper.AccountMapper.BaseResultMap">
-        <result column="ip" property="ip"/>
-        <result column="userName" property="userName"/>
-        <result column="password" jdbcType="VARCHAR" property="password" />
     </resultMap>
 
     <sql id="condition">
@@ -231,14 +205,6 @@
         ORDER BY t.create_time DESC
     </select>
 
-    <select id="selectImageRepoList" resultMap="ImageRepoMap">
-        SELECT
-            t.*
-        FROM image_repo t
-        where t.account_id = #{accountId}
-        ORDER BY t.update_time DESC
-    </select>
-
     <select id="groupList" resultType="java.util.Map">
         SELECT
         IFNULL( sum( t4.return_sum ), 0 ) AS returnSum,
@@ -298,6 +264,9 @@
             </if>
             <if test="status != null">
                 AND t.status = #{status}
+            </if>
+            <if test="groupId != null">
+                AND t.id in (select g.rule_id from rule_group_mapping g where g.group_id = #{groupId})
             </if>
         </where>
         ORDER BY t.id desc
@@ -423,41 +392,6 @@
         ORDER BY t.create_time DESC
     </select>
 
-    <select id="getServerList" resultMap="ServerResultMap">
-        select
-        t.*,
-        sg.ip,
-        sg.user_name as userName,
-        sg.password,
-        sg.server_group_id as groupId,
-        sg.id as groupItemId,
-        user.name as user
-        from cloud_account as t
-        left join plugin p1 on t.plugin_id = p1.id
-        left join user on t.creator = user.id
-        left join server_group_item sg on sg.server_id = t.id
-        <where>
-            <if test="request.combine != null">
-                <include refid="combine">
-                    <property name="condition" value="request.combine"/>
-                    <property name="name" value="request.name"/>
-                </include>
-            </if>
-
-            <if test="request.name != null and request.name != ''">
-                and t.name like CONCAT('%', #{request.name},'%')
-            </if>
-            <if test="request.status != null and request.status != ''">
-                and t.status = #{request.status}
-            </if>
-            <if test="request.groupId != null and request.groupId != ''">
-                and sg.server_group_id = #{request.groupId}
-            </if>
-            and t.plugin_id = 'hummer-server-plugin'
-        </where>
-        order by t.update_time desc
-    </select>
-
     <select id="historyList" resultType="java.util.Map">
         SELECT
         t5.resource_name as resourceName,
@@ -519,6 +453,54 @@
             AND p.type = 'cloud'
         </where>
         ORDER BY t5.create_time DESC
+    </select>
+
+    <resultMap id="AccountBaseResultMap" type="com.hummer.common.core.domain.Account">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+    </resultMap>
+
+    <select id="account" parameterType="java.lang.String" resultMap="AccountBaseResultMap">
+        select t.*
+        from cloud_account t
+        where t.id = #{id}
+    </select>
+
+    <resultMap id="CloudBaseResultMap" type="com.hummer.common.core.domain.CloudTask">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_tags" jdbcType="VARCHAR" property="ruleTags" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="resource_types" jdbcType="VARCHAR" property="resourceTypes" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion" />
+    </resultMap>
+
+    <select id="cloudTaskList" parameterType="java.lang.String" resultMap="CloudBaseResultMap">
+        select t.*
+        from cloud_task t
+        where t.account_id = #{id}
+          and t.status in ('FINISHED', 'WARNING')
     </select>
 
 </mapper>

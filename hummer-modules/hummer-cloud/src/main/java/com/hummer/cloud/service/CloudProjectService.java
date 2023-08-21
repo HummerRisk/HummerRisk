@@ -235,6 +235,7 @@ public class CloudProjectService {
             cloudGroup.setProjectId(projectId);
             cloudGroup.setAccountId(account.getId());
             cloudGroup.setAccountName(account.getName());
+            cloudGroup.setPluginId(account.getPluginId());
             cloudGroup.setPluginIcon(account.getPluginIcon());
             cloudGroup.setPluginName(account.getPluginName());
             cloudGroup.setCreateTime(System.currentTimeMillis());
@@ -244,7 +245,7 @@ public class CloudProjectService {
             cloudGroup.setGroupDesc(ruleGroup.getDescription());
             cloudGroup.setGroupName(ruleGroup.getName());
             cloudGroup.setGroupFlag(ruleGroup.getFlag());
-            cloudGroup.setGroupLevel(cloudGroup.getGroupLevel());
+            cloudGroup.setGroupLevel(ruleGroup.getLevel());
 
             cloudGroupMapper.insertSelective(cloudGroup);
 
@@ -255,6 +256,7 @@ public class CloudProjectService {
             QuartzTaskDTO dto = new QuartzTaskDTO();
             dto.setAccountId(account.getId());
             dto.setPluginId(account.getPluginId());
+            dto.setGroupId(ruleGroup.getId().toString());//此规则组下面的规则
             dto.setStatus(true);
             List<RuleDTO> ruleDTOS = accountService.getRules(dto);
             for (RuleDTO rule : ruleDTOS) {
@@ -272,43 +274,40 @@ public class CloudProjectService {
 
     private void dealTask(RuleDTO rule, Integer scanId, String projectId, String cloudGroupId, AccountWithBLOBs account, LoginUser loginUser) {
         try {
-            if (rule.getStatus() && !cloudTaskService.checkRuleTaskStatus(account.getId(), rule.getId(),
-                    new String[]{CloudTaskConstants.TASK_STATUS.APPROVED.name(), CloudTaskConstants.TASK_STATUS.PROCESSING.name()})) {
-                QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
-                BeanUtils.copyBean(quartzTaskDTO, rule);
-                quartzTaskDTO.setProjectId(projectId);
-                quartzTaskDTO.setGroupId(cloudGroupId);
-                List<SelectTag> selectTags = new LinkedList<>();
-                SelectTag s = new SelectTag();
-                s.setAccountId(account.getId());
-                JSONArray array = parseArray(rule.getRegions() != null ? rule.getRegions() : account.getCheckRegions());
-                JSONObject object;
-                List<String> regions = new ArrayList<>();
-                for (int i = 0; i < array.size(); i++) {
-                    try {
-                        object = array.getJSONObject(i);
-                        String value = object.getString("regionId");
-                        regions.add(value);
-                    } catch (Exception e) {
-                        String value = array.get(0).toString();
-                        regions.add(value);
-                    }
+            QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
+            BeanUtils.copyBean(quartzTaskDTO, rule);
+            quartzTaskDTO.setProjectId(projectId);
+            quartzTaskDTO.setGroupId(cloudGroupId);
+            List<SelectTag> selectTags = new LinkedList<>();
+            SelectTag s = new SelectTag();
+            s.setAccountId(account.getId());
+            JSONArray array = parseArray(rule.getRegions() != null ? rule.getRegions() : account.getCheckRegions());
+            JSONObject object;
+            List<String> regions = new ArrayList<>();
+            for (int i = 0; i < array.size(); i++) {
+                try {
+                    object = array.getJSONObject(i);
+                    String value = object.getString("regionId");
+                    regions.add(value);
+                } catch (Exception e) {
+                    String value = array.get(0).toString();
+                    regions.add(value);
                 }
-                s.setRegions(regions);
-                selectTags.add(s);
-                quartzTaskDTO.setSelectTags(selectTags);
-                quartzTaskDTO.setType("manual");
-                quartzTaskDTO.setAccountId(account.getId());
-                quartzTaskDTO.setTaskName(rule.getName());
-                saveCloudProcessLog(projectId, "", "i18n_operation_process" + " : " + "i18n_init_task" + "[" + rule.getName() + "]", StringUtils.EMPTY, true, loginUser);
+            }
+            s.setRegions(regions);
+            selectTags.add(s);
+            quartzTaskDTO.setSelectTags(selectTags);
+            quartzTaskDTO.setType("manual");
+            quartzTaskDTO.setAccountId(account.getId());
+            quartzTaskDTO.setTaskName(rule.getName());
+            saveCloudProcessLog(projectId, "", "i18n_operation_process" + " : " + "i18n_init_task" + "[" + rule.getName() + "]", StringUtils.EMPTY, true, loginUser);
 
-                CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, loginUser);
-                if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
-                    try {
-                        systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+            CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, loginUser);
+            if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
+                try {
+                    systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
             }
         } catch (Exception e) {
