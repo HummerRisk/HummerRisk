@@ -76,6 +76,14 @@ public class ResourceCreateService {
     private CloudResourceRelaLinkMapper cloudResourceRelaLinkMapper;
     @Autowired
     private CommonThreadPool commonThreadPool;
+    @Autowired
+    private CloudProjectMapper cloudProjectMapper;
+    @Autowired
+    private CloudProjectLogMapper cloudProjectLogMapper;
+    @Autowired
+    private CloudGroupMapper cloudGroupMapper;
+    @Autowired
+    private CloudGroupLogMapper cloudGroupLogMapper;
     @DubboReference
     private ISystemProviderService systemProviderService;
 
@@ -87,35 +95,35 @@ public class ResourceCreateService {
     @XxlJob("cloudTasksJobHandler")
     public void cloudTasksJobHandler() throws Exception {
         //云规则检测
-        final CloudTaskExample cloudTaskExample = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria = cloudTaskExample.createCriteria();
+        final CloudProjectExample cloudProjectExample = new CloudProjectExample();
+        CloudProjectExample.Criteria criteria = cloudProjectExample.createCriteria();
         criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             criteria.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
-        cloudTaskExample.setOrderByClause("create_time limit 10");
-        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(cloudTaskExample);
-        if (CollectionUtils.isNotEmpty(cloudTaskList)) {
-            cloudTaskList.forEach(task -> {
-                LogUtil.info("handling cloudTask: {}", toJSONString(task));
-                final CloudTask cloudTaskToBeProceed;
+        cloudProjectExample.setOrderByClause("create_time limit 10");
+        List<CloudProject> cloudProjectList = cloudProjectMapper.selectByExample(cloudProjectExample);
+
+        if (CollectionUtils.isNotEmpty(cloudProjectList)) {
+            cloudProjectList.forEach(project -> {
+                LogUtil.info("handling cloudProject: {}", toJSONString(project));
+                final CloudProject cloudProjectToBeProceed;
                 try {
-                    cloudTaskToBeProceed = BeanUtils.copyBean(new CloudTask(), task);
+                    cloudProjectToBeProceed = BeanUtils.copyBean(new CloudProject(), project);
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
                 }
-                if (processingGroupIdMap.get(cloudTaskToBeProceed.getId()) != null) {
+                if (processingGroupIdMap.get(cloudProjectToBeProceed.getId()) != null) {
                     return;
                 }
-                processingGroupIdMap.put(cloudTaskToBeProceed.getId(), cloudTaskToBeProceed.getId());
+                processingGroupIdMap.put(cloudProjectToBeProceed.getId(), cloudProjectToBeProceed.getId());
                 commonThreadPool.addTask(() -> {
                     try {
-                        handleTask(cloudTaskToBeProceed);
+                        handleProject(cloudProjectToBeProceed);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
-                        processingGroupIdMap.remove(cloudTaskToBeProceed.getId());
+                        processingGroupIdMap.remove(cloudProjectToBeProceed.getId());
                     }
                 });
             });
@@ -151,7 +159,6 @@ public class ResourceCreateService {
                     try {
                         ossService.syncBatch(ossToBeProceed.getId(), null);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(ossToBeProceed.getId());
@@ -210,6 +217,55 @@ public class ResourceCreateService {
         });
     }
 
+    public void handleProject(CloudProject cloudProject) throws Exception {
+        String projectId = cloudProject.getId();
+        try {
+            CloudGroupExample cloudGroupExample = new CloudGroupExample();
+            cloudGroupExample.createCriteria().andProjectIdEqualTo(projectId);
+            List<CloudGroup> cloudGroupList = cloudGroupMapper.selectByExample(cloudGroupExample);
+            int successCount = 0;
+            for (CloudGroup cloudGroup : cloudGroupList) {
+                if (LogUtil.getLogger().isDebugEnabled()) {
+                    LogUtil.getLogger().debug("handling cloudGroup: {}", toJSONString(cloudGroup));
+                }
+                if (handleGroup(BeanUtils.copyBean(new CloudGroup(), cloudGroup), cloudProject)) {
+                    successCount++;
+                }
+            }
+            if (!cloudGroupList.isEmpty() && successCount == 0)
+                throw new Exception("Faild to handle all cloudGroups, projectId: " + projectId);
+            String status = CloudTaskConstants.TASK_STATUS.FINISHED.toString();
+            if (successCount != cloudGroupList.size()) {
+                status = CloudTaskConstants.TASK_STATUS.WARNING.toString();
+            }
+            orderService.updateProjectStatus(projectId, null, status);
+
+        } catch (Exception e) {
+            orderService.updateProjectStatus(projectId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
+            LogUtil.error("handleProject, projectId: " + projectId, e);
+        }
+    }
+
+    private boolean handleGroup(CloudGroup cloudGroup, CloudProject cloudProject) throws Exception {
+        orderService.updateGroupStatus(cloudGroup.getId(), CloudTaskConstants.TASK_STATUS.PROCESSING);
+        try {
+            CloudTaskExample example = new CloudTaskExample();
+            example.createCriteria().andProjectIdEqualTo(cloudProject.getId()).andGroupIdEqualTo(cloudGroup.getId());
+            List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(example);
+            for (CloudTask cloudTask : cloudTaskList) {
+                handleTask(cloudTask);
+            }
+            orderService.updateGroupStatus(cloudGroup.getId(), CloudTaskConstants.TASK_STATUS.FINISHED);
+
+            return true;
+        } catch (Exception e) {
+            orderService.updateGroupStatus(cloudGroup.getId(), CloudTaskConstants.TASK_STATUS.ERROR);
+
+            LogUtil.error("handleGroup, groupId: " + cloudGroup.getId(), e);
+            return false;
+        }
+    }
+
     public void handleTask(CloudTask cloudTask) throws Exception {
         String taskId = cloudTask.getId();
         int i = orderService.updateTaskStatus(taskId, CloudTaskConstants.TASK_STATUS.APPROVED.toString(), CloudTaskConstants.TASK_STATUS.PROCESSING.toString());
@@ -243,7 +299,6 @@ public class ResourceCreateService {
             systemProviderService.updateHistoryCloudTask(historyCloudTask);
 
         } catch (Exception e) {
-            e.printStackTrace();
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
 
             //更新历史数据状态
@@ -270,7 +325,6 @@ public class ResourceCreateService {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             orderService.updateTaskItemStatus(taskItem.getId(), CloudTaskConstants.TASK_STATUS.ERROR);
 
             //更新历史数据状态
