@@ -16,7 +16,7 @@
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="24">
-                    <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">
+                    <el-row class="plugin el-row-pdd" v-if="checkedColumnNames.includes('pluginName')">
                       <span class="plugin-name">
                         <el-image v-if="data.pluginIcon" style="border-radius: 50%;width: 25px; height: 25px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
                           <div slot="error" class="image-slot">
@@ -46,103 +46,109 @@
                          </el-button>
                       </span>
                     </el-row>
-                    <el-row style="margin: 10px 0;">
-                      <el-carousel :autoplay="false">
-                        <el-carousel-item v-for="item in data.cloudGroupList" :key="item.id">
-<!--                          <h3 class="medium">{{ item }}</h3>-->
-                          <el-card class="medium medium-card" :body-style="{ padding: '15px', margin: '10px' }">
-                            <div slot="header" class="clearfix">
-                              <span class="table-card-header">{{ item.groupName }}</span>
-                            </div>
-                            <div class="text item">
-                              <el-row>
-                                <el-tooltip class="item" effect="dark" :content="item.groupDesc" placement="top">
-                                  <div class="text-container">{{ item.groupDesc }}</div>
-                                </el-tooltip>
-                              </el-row>
-                              <el-row>
-                                <el-col :span="24">
-                                  <span class="desc-rule">{{ $t('dashboard.rule_detail') }}</span>
-                                  <span class="not_compliance_num">{{ "0" }}</span>
-                                  <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ "10" }}</span>
-                                </el-col>
-                              </el-row>
-                              <el-row style="margin-top: 15px;">
-                                <el-col :span="6">
-                                  <div style="height: 12px;background-color: #8B0000;margin: 1px;border-radius: 3px;"></div>
-                                </el-col>
-                                <el-col :span="6">
-                                  <div style="height: 12px;background-color: #FF4D4D;margin: 1px;border-radius: 3px;"></div>
-                                </el-col>
-                                <el-col :span="6">
-                                  <div style="height: 12px;background-color: #FF8000;margin: 1px;border-radius: 3px;"></div>
-                                </el-col>
-                                <el-col :span="6">
-                                  <div style="height: 12px;background-color: #336D9F;margin: 1px;border-radius: 3px;"></div>
-                                </el-col>
-                              </el-row>
-                              <el-row style="margin-top: 15px;">
-                                <el-col :span="6">
-                                  <span class="label"> {{ $t('commons.critical') }} :</span>
-                                  <span class="value critical"> {{ "0" }}</span>
-                                </el-col>
-                                <el-col :span="6">
-                                  <span class="label"> {{ $t('commons.high') }} :</span>
-                                  <span class="value high"> {{ "1" }}</span>
-                                </el-col>
-                                <el-col :span="6">
-                                  <span class="label"> {{ $t('commons.medium') }} :</span>
-                                  <span class="value middle"> {{ "3" }}</span>
-                                </el-col>
-                                <el-col :span="6">
-                                  <span class="label"> {{ $t('commons.low') }} :</span>
-                                  <span class="value low"> {{ "22" }}</span>
-                                </el-col>
-                              </el-row>
-                            </div>
-                          </el-card>
-                        </el-carousel-item>
-                      </el-carousel>
+                    <el-row class="el-row-pdd">
+                      <span class="plugin-name">
+                        <span class="da-na" v-if="checkedColumnNames.includes('name')">
+                          {{ data.accountName }}
+                          <span v-if="data.jobType === 'cron'" class="pa-time2">
+                            （{{ $t('resource.result_cron') }})
+                          </span>
+                        </span>
+                      </span>
+                      <span class="plugin-type" style="text-align: right;" v-if="checkedColumnNames.includes('flag')">
+                        <span>{{ data.creator }}</span>
+                      </span>
+                    </el-row>
+                    <el-row class="el-row-pdd">
+                      <div class="bottom clearfix">
+                        <span class="plugin-name">
+                          <div class="time time2">
+                            <span class="pa-time">{{ '共 12 规则组' }}&nbsp;
+                            </span>
+                          </div>
+                        </span>
+                        <span class="plugin-type">
+                          <span class="pa-time">{{ '共 12 条规则' }}&nbsp;
+                            </span>
+                        </span>
+                      </div>
+                    </el-row>
+                    <el-row class="el-row-pdd">
+                      <div class="bottom clearfix">
+                        <span class="plugin-name">
+                          <div class="time time2">
+                            <span class="pa-time">{{ data.createTime | timestampFormatDate }}&nbsp;
+                            </span>
+                          </div>
+                        </span>
+                        <span class="plugin-type">
+                          <el-button size="mini" type="danger" circle>
+                            <i class="el-icon-delete"></i>
+                          </el-button>
+                        </span>
+                      </div>
                     </el-row>
                   </el-col>
                 </el-row>
               </div>
-              <div style="padding: 0 14px 14px 14px;margin-top: 5px;">
-                <el-row>
-                  <el-col :span="19">
-                    <span class="da-na" v-if="checkedColumnNames.includes('name')">
-                      {{ data.accountName }}
-<!--                      <span v-if="data.jobType === 'once'" class="pa-time2">-->
-<!--                        {{ $t('resource.result_once') }}-->
-<!--                      </span>-->
-                      <span v-if="data.jobType === 'cron'" class="pa-time2">
-                        （{{ $t('resource.result_cron') }})
-                      </span>
-                    </span>
-                  </el-col>
-                  <el-col :span="5" style="text-align: right;" v-if="checkedColumnNames.includes('flag')">
-                    <span>{{ data.creator }}</span>
-                  </el-col>
-                </el-row>
-                <span class="button time pa-na">
-              </span>
-                <div class="bottom clearfix">
-                  <div class="time time2">
-                    <span class="pa-time">{{ data.createTime | timestampFormatDate }}&nbsp;
-                    </span>
-                  </div>
-                  <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
-                    <span class="el-dropdown-link">
-                      {{ $t('package.operate') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown" v-if="!data.flag">
-                      <el-dropdown-item command="handleDetail">{{ $t('commons.detail') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleLog">{{ $t('commons.log') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
+              <div>
+                <el-carousel :autoplay="false">
+                  <el-carousel-item v-for="item in data.cloudGroupList" :key="item.id">
+                    <el-card class="medium medium-card" :body-style="{ padding: '15px', margin: '10px' }">
+                      <div slot="header" class="clearfix">
+                        <el-row>
+                          <el-col :span="12">
+                            <span class="table-card-header">{{ item.groupName }}</span>
+                          </el-col>
+                          <el-col :span="12">
+                            <span class="desc-rule">{{ $t('dashboard.rule_detail') }}</span>
+                            <span class="not_compliance_num">{{ "0" }}</span>
+                            <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ "10" }}</span>
+                          </el-col>
+                        </el-row>
+                      </div>
+                      <div class="text item">
+                        <el-row>
+                          <el-tooltip class="item" effect="dark" :content="item.groupDesc" placement="top">
+                            <div class="text-container">{{ item.groupDesc }}</div>
+                          </el-tooltip>
+                        </el-row>
+                        <el-row style="margin-top: 15px;">
+                          <el-col :span="6">
+                            <div style="height: 12px;background-color: #8B0000;margin: 1px;border-radius: 3px;"></div>
+                          </el-col>
+                          <el-col :span="6">
+                            <div style="height: 12px;background-color: #FF4D4D;margin: 1px;border-radius: 3px;"></div>
+                          </el-col>
+                          <el-col :span="6">
+                            <div style="height: 12px;background-color: #FF8000;margin: 1px;border-radius: 3px;"></div>
+                          </el-col>
+                          <el-col :span="6">
+                            <div style="height: 12px;background-color: #336D9F;margin: 1px;border-radius: 3px;"></div>
+                          </el-col>
+                        </el-row>
+                        <el-row style="margin-top: 15px;">
+                          <el-col :span="6">
+                            <span class="label"> {{ $t('commons.critical') }} :</span>
+                            <span class="value critical"> {{ "0" }}</span>
+                          </el-col>
+                          <el-col :span="6">
+                            <span class="label"> {{ $t('commons.high') }} :</span>
+                            <span class="value high"> {{ "1" }}</span>
+                          </el-col>
+                          <el-col :span="6">
+                            <span class="label"> {{ $t('commons.medium') }} :</span>
+                            <span class="value middle"> {{ "3" }}</span>
+                          </el-col>
+                          <el-col :span="6">
+                            <span class="label"> {{ $t('commons.low') }} :</span>
+                            <span class="value low"> {{ "22" }}</span>
+                          </el-col>
+                        </el-row>
+                      </div>
+                    </el-card>
+                  </el-carousel-item>
+                </el-carousel>
               </div>
             </el-card>
           </el-col>
@@ -177,12 +183,6 @@
               <el-tag size="mini" type="success" v-else-if="scope.row.flag === false">
                 {{ $t('rule.tag_flag_false') }}
               </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('commons.is_xpack')" v-if="checkedColumnNames.includes('isXpack')" min-width="120" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span v-if="scope.row.xpackTag">{{ $t('commons.yes') }}</span>
-              <span v-if="!scope.row.xpackTag">{{ $t('commons.no') }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="level" v-if="checkedColumnNames.includes('level')" :label="$t('resource.equal_guarantee_level')" min-width="140" show-overflow-tooltip></el-table-column>
@@ -247,11 +247,6 @@ const columnOptions = [
     props: 'level',
     disabled: false
   },
-  {
-    label: 'commons.is_xpack',
-    props: 'isXpack',
-    disabled: false
-  },
 ];
 
 const columnOptions2 = [
@@ -283,11 +278,6 @@ const columnOptions2 = [
   {
     label: 'rule.last_modified',
     props: 'lastModified',
-    disabled: false
-  },
-  {
-    label: 'commons.is_xpack',
-    props: 'isXpack',
     disabled: false
   },
 ];
@@ -359,10 +349,6 @@ const columnOptions2 = [
           {
             tip: this.$t('commons.detail'), icon: "el-icon-edit-outline", type: "primary",
             exec: this.handleDetail
-          },
-          {
-            tip: this.$t('commons.log'), icon: "el-icon-tickets", type: "success",
-            exec: this.handleLog
           },
           {
             tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
@@ -543,18 +529,12 @@ const columnOptions2 = [
           case "handleDetail":
             this.handleDetail(data);
             break;
-          case "handleLog":
-            this.handleLog(data);
-            break;
           case "handleDelete":
             this.handleDelete(data);
             break;
           default:
             break;
         }
-      },
-      handleLog(item) {
-
       },
       handleDetail(item) {
         this.$router.push({
@@ -880,6 +860,9 @@ const columnOptions2 = [
   }
   .el-icon-arrow-down {
     font-size: 12px;
+  }
+  .el-row-pdd {
+    padding: 0 20px;
   }
   /deep/ :focus{outline:0;}
 </style>
