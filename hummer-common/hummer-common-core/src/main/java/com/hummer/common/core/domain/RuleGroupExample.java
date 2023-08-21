@@ -665,66 +665,6 @@ public class RuleGroupExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andXpackTagIsNull() {
-            addCriterion("xpack_tag is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagIsNotNull() {
-            addCriterion("xpack_tag is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagEqualTo(Boolean value) {
-            addCriterion("xpack_tag =", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagNotEqualTo(Boolean value) {
-            addCriterion("xpack_tag <>", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagGreaterThan(Boolean value) {
-            addCriterion("xpack_tag >", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("xpack_tag >=", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagLessThan(Boolean value) {
-            addCriterion("xpack_tag <", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagLessThanOrEqualTo(Boolean value) {
-            addCriterion("xpack_tag <=", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagIn(List<Boolean> values) {
-            addCriterion("xpack_tag in", values, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagNotIn(List<Boolean> values) {
-            addCriterion("xpack_tag not in", values, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagBetween(Boolean value1, Boolean value2) {
-            addCriterion("xpack_tag between", value1, value2, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("xpack_tag not between", value1, value2, "xpackTag");
-            return (Criteria) this;
-        }
-
         public Criteria andImageUrlIsNull() {
             addCriterion("image_url is null");
             return (Criteria) this;

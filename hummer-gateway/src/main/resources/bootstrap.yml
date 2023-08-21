@@ -93,15 +93,3 @@ knife4j:
         # 路由前缀
         context-path: /cloud
         order: 2
-      - name: hummer-k8s
-        url: /k8s/v3/api-docs?group=default
-        service-name: hummer-k8s
-        # 路由前缀
-        context-path: /k8s
-        order: 3
-      - name: hummer-xpack
-        url: /k8s/v3/api-docs?group=default
-        service-name: hummer-xpack
-        # 路由前缀
-        context-path: /xpack
-        order: 4

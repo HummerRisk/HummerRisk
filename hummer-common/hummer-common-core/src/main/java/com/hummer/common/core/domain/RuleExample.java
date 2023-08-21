@@ -1145,65 +1145,6 @@ public class RuleExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andXpackTagIsNull() {
-            addCriterion("xpack_tag is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagIsNotNull() {
-            addCriterion("xpack_tag is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagEqualTo(Byte value) {
-            addCriterion("xpack_tag =", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagNotEqualTo(Byte value) {
-            addCriterion("xpack_tag <>", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagGreaterThan(Byte value) {
-            addCriterion("xpack_tag >", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagGreaterThanOrEqualTo(Byte value) {
-            addCriterion("xpack_tag >=", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagLessThan(Byte value) {
-            addCriterion("xpack_tag <", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagLessThanOrEqualTo(Byte value) {
-            addCriterion("xpack_tag <=", value, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagIn(List<Byte> values) {
-            addCriterion("xpack_tag in", values, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagNotIn(List<Byte> values) {
-            addCriterion("xpack_tag not in", values, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagBetween(Byte value1, Byte value2) {
-            addCriterion("xpack_tag between", value1, value2, "xpackTag");
-            return (Criteria) this;
-        }
-
-        public Criteria andXpackTagNotBetween(Byte value1, Byte value2) {
-            addCriterion("xpack_tag not between", value1, value2, "xpackTag");
-            return (Criteria) this;
-        }
     }
 
     /**

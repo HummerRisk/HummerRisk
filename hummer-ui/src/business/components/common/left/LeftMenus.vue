@@ -60,7 +60,6 @@
     data() {
       return {
         activeIndex: "/",
-        xpack: false,
       }
     },
     watch: {
@@ -75,7 +74,6 @@
       if (this.$route.matched.length > 0) {
         this.activeIndex = this.$route.matched[0].path;
       }
-      this.xpack = sessionStorage.getItem('license');
     },
     methods: {
       handleSelect(index) {

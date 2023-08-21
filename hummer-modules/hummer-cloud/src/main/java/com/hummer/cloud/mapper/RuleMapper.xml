@@ -21,7 +21,6 @@
     <result column="flag" jdbcType="TINYINT" property="flag" />
     <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
     <result column="suggestion" jdbcType="VARCHAR" property="suggestion" />
-    <result column="xpack_tag" jdbcType="TINYINT" property="xpackTag" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -98,7 +97,7 @@
       This element was generated on Fri May 19 22:42:27 CST 2023.
     -->
     id, `name`, `status`, severity, description, script, `parameter`, plugin_id, plugin_name,
-    plugin_icon, last_modified, flag, scan_type, suggestion, xpack_tag
+    plugin_icon, last_modified, flag, scan_type, suggestion
   </sql>
   <select id="selectByExample" parameterType="com.hummer.common.core.domain.RuleExample" resultMap="BaseResultMap">
     <!--
@@ -160,13 +159,13 @@
       severity, description, script,
       `parameter`, plugin_id, plugin_name,
       plugin_icon, last_modified, flag,
-      scan_type, suggestion, xpack_tag
+      scan_type, suggestion
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT},
       #{severity,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{script,jdbcType=VARCHAR},
       #{parameter,jdbcType=VARCHAR}, #{pluginId,jdbcType=VARCHAR}, #{pluginName,jdbcType=VARCHAR},
       #{pluginIcon,jdbcType=VARCHAR}, #{lastModified,jdbcType=BIGINT}, #{flag,jdbcType=TINYINT},
-      #{scanType,jdbcType=VARCHAR}, #{suggestion,jdbcType=VARCHAR}, #{xpackTag,jdbcType=TINYINT}
+      #{scanType,jdbcType=VARCHAR}, #{suggestion,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.hummer.common.core.domain.Rule">
@@ -219,9 +218,6 @@
       <if test="suggestion != null">
         suggestion,
       </if>
-      <if test="xpackTag != null">
-        xpack_tag,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -265,9 +261,6 @@
       </if>
       <if test="suggestion != null">
         #{suggestion,jdbcType=VARCHAR},
-      </if>
-      <if test="xpackTag != null">
-        #{xpackTag,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -332,9 +325,6 @@
       <if test="record.suggestion != null">
         suggestion = #{record.suggestion,jdbcType=VARCHAR},
       </if>
-      <if test="record.xpackTag != null">
-        xpack_tag = #{record.xpackTag,jdbcType=TINYINT},
-      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -360,8 +350,7 @@
       last_modified = #{record.lastModified,jdbcType=BIGINT},
       flag = #{record.flag,jdbcType=TINYINT},
       scan_type = #{record.scanType,jdbcType=VARCHAR},
-      suggestion = #{record.suggestion,jdbcType=VARCHAR},
-      xpack_tag = #{record.xpackTag,jdbcType=TINYINT}
+      suggestion = #{record.suggestion,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -413,9 +402,6 @@
       <if test="suggestion != null">
         suggestion = #{suggestion,jdbcType=VARCHAR},
       </if>
-      <if test="xpackTag != null">
-        xpack_tag = #{xpackTag,jdbcType=TINYINT},
-      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -438,8 +424,7 @@
       last_modified = #{lastModified,jdbcType=BIGINT},
       flag = #{flag,jdbcType=TINYINT},
       scan_type = #{scanType,jdbcType=VARCHAR},
-      suggestion = #{suggestion,jdbcType=VARCHAR},
-      xpack_tag = #{xpackTag,jdbcType=TINYINT}
+      suggestion = #{suggestion,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -1,4 +1,3 @@
-// const requireContext = require.context("@/business/components/xpack/", true, /router\.js$/)
 /* eslint-disable */
 export default {
   path: "/setting",
