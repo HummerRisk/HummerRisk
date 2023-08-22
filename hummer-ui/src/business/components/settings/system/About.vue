@@ -1,6 +1,6 @@
 <template>
   <div v-loading="result.loading">
-    <el-card class="about-card">
+    <el-card shadow="always" class="about-card">
 
       <el-row>
         <img :src="require(`@/assets/img/logo/license.png`)" class="image"/>

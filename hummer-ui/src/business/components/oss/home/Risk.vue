@@ -3,7 +3,7 @@
 
     <div id="pdfDom">
 
-      <el-card class="table-card el-row-card">
+      <el-card shadow="hover" class="table-card el-row-card">
 
         <account-switch :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch" @goReport="goReport"/>
 
@@ -11,7 +11,7 @@
 
       </el-card>
 
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <template v-slot:header>
           <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
             <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
@@ -110,7 +110,7 @@
         <!-- result first -->
 
         <!-- result second -->
-        <el-card class="table-card" v-if="activeName === 'second'">
+        <el-card shadow="hover" class="table-card" v-if="activeName === 'second'">
 
           <template v-slot:header>
             <table-header :condition.sync="resourceCondition" @search="resourceSearch"
@@ -284,7 +284,7 @@
 
     <!--regulation report-->
     <el-drawer class="rtl" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-      <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+      <el-card shadow="hover" class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
         <el-row class="el-row-c">
           <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
           <el-col :span="16"><span>{{ data.project }}</span></el-col>

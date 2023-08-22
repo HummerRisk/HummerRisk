@@ -21,7 +21,9 @@ public interface ExtResourceMapper {
 
     List<ReportDTO> reportList(ResourceRequest resourceRequest);
 
-    SourceDTO source(@Param("accountId")String accountId);
+    SourceDTO source(@Param("accountId") String accountId);
+
+    SourceDTO sourceByProjectId (@Param("projectId") String projectId);
 
     SourceDTO k8sSource(@Param("accountId")String accountId);
 
@@ -56,5 +58,7 @@ public interface ExtResourceMapper {
     List<RuleGroupDTO> ruleGroupList(@Param("request") RuleGroupRequest request);
 
     List<Map<String, Object>> resouceGroups(Map<String, Object> map);
+
+    List<Map<String, Object>> resouceGroupsByProjectId(Map<String, Object> map);
 
 }

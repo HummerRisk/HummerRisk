@@ -12,13 +12,13 @@
         </span>
     </div>
     <div v-else style="height: 150px;overflow: auto">
-      <el-menu-item :key="i.id" v-for="i in items" @click="changeAccountName(i.id)">
+      <el-menu-item :key="i.id" v-for="i in items" @click="changeProject(i.id)">
         <template slot="title">
           <div class="title">
             <img :src="require(`@/assets/img/platform/${i.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-            {{ i.name }}
+            {{ i.name }} | {{ i.createTime | timestampFormatDate }}
           </div>
-          <i class="el-icon-check" v-if="i.id === currentAccountId"></i>
+          <i class="el-icon-check" v-if="i.id === currentProjectId"></i>
         </template>
       </el-menu-item>
     </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {allListUrl} from "@/api/cloud/account/account";
+import {allProjectListUrl} from "@/api/cloud/project/project";
 
 /* eslint-disable */
 export default {
@@ -43,34 +43,32 @@ export default {
       items: [],
       searchArray: [],
       searchString: '',
-      currentAccountId: '',
-      accountName: '',
+      currentProjectId: '',
     }
   },
   props: {
-    accountId: String
+    projectId: String
   },
   watch: {
     searchString(val) {
       this.query(val)
     },
-    accountId() {
+    projectId() {
       this.init();
     },
   },
   methods: {
     async init () {
-      this.currentAccountId = this.accountId;
-      await this.$get(allListUrl, response => {
+      this.currentProjectId = this.projectId;
+      await this.$get(allProjectListUrl, response => {
         this.items = response.data;
         this.searchArray = response.data;
-        if (this.currentAccountId) {
-          let account = this.searchArray.filter(p => p.id === this.currentAccountId);
-          this.accountName = account[0].name;
-          this.changeAccountName(this.currentAccountId);
+        if (this.currentProjectId) {
+          let project = this.searchArray.filter(p => p.id === this.currentProjectId);
+          this.changeProject(this.currentProjectId);
         } else {
           if (this.items.length > 0) {
-            this.changeAccountName(this.items[0].id);
+            this.changeProject(this.items[0].id);
           }
         }
       });
@@ -80,14 +78,14 @@ export default {
     },
     createFilter(queryString) {
       return item => {
-        return (item.name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+        return (item.accountName.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
       };
     },
-    changeAccountName(accountId) {
-      if (accountId) {
-        let account = this.searchArray.filter(p => p.id === accountId);
-        if (account.length > 0) {
-          this.$emit("cloudAccountSwitch", accountId, account[0].name);
+    changeProject(projectId) {
+      if (projectId) {
+        let project = this.searchArray.filter(p => p.id === projectId);
+        if (project.length > 0) {
+          this.$emit("cloudAccountSwitch", projectId, project[0].name);
         }
       }
     }

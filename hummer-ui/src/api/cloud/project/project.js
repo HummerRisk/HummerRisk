@@ -3,6 +3,8 @@ export const projectScanUrl = "/cloud/project/scan";
 
 export const projectListUrl = "/cloud/project/list/";
 
+export const allProjectListUrl = "/cloud/project/allProjectList";
+
 export const projectByIdUrl = "/cloud/project/projectById/";
 
 export const projectDeleteByIdUrl = "/cloud/project/delete/";

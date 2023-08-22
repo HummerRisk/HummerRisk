@@ -84,6 +84,10 @@ public class CloudProjectService {
         return extCloudProjectMapper.getCloudProjectDTOs(cloudGroupRequest);
     }
 
+    public List<CloudProject> getCloudProjects() {
+        return cloudProjectMapper.selectByExample(null);
+    }
+
     public CloudProjectDTO projectById(String projectId) {
         CloudGroupRequest cloudProject = new CloudGroupRequest();
         cloudProject.setId(projectId);

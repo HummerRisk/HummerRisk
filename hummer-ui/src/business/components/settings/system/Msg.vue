@@ -1,7 +1,7 @@
 <template>
   <div v-loading="result.loading">
 
-    <el-card class="table-card">
+    <el-card shadow="always" class="table-card">
       <el-radio-group v-model="selectType" style="margin: 10px 0 10px 0;" @change="typeChange">
         <el-radio-button v-for="(item,index) in msgTypes" :key="index" class="de-msg-radio-class" :label="item.value">
           {{ $t(item.label) }}

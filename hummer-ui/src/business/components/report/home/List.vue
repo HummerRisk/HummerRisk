@@ -1,7 +1,7 @@
 <template>
     <main-container v-loading="result.loading">
 
-      <el-card class="el-row-card" id="pdfDom">
+      <el-card shadow="hover" class="el-row-card" id="pdfDom">
 
         <template v-slot:header>
 
@@ -12,7 +12,7 @@
         <el-row :gutter="20" class="el-row-body">
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div style="height: 110px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
@@ -91,7 +91,7 @@
       <!--检测报告详情-->
       <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="revisible" size="80%" :before-close="handleClose" :direction="directionB"
                  :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-card class="table-card">
+        <el-card shadow="hover" class="table-card">
           <div style="margin-top: 15px;">
             <el-row>
               <el-col :span="4">
@@ -139,14 +139,14 @@
             </el-row>
           </div>
         </el-card>
-        <el-card class="table-report-card">
+        <el-card shadow="hover" class="table-report-card">
           <section class="report-container">
             <main>
               <metric-chart v-if="content" :content="content"/>
             </main>
           </section>
         </el-card>
-        <el-card v-if="resourceTableData.length>0" class="table-report-card-resource">
+        <el-card shadow="hover" v-if="resourceTableData.length>0" class="table-report-card-resource">
           <template v-slot:header>
             <table-header :condition.sync="resourceCondition" @search="searchResource"
                           :title="$t('resource.cloud_resource_detail_result')"
@@ -207,7 +207,7 @@
           </hide-table>
           <table-pagination :change="searchResource" :current-page.sync="resourceCurrentPage" :page-size.sync="resourcePageSize" :total="resourceTotal"/>
         </el-card>
-        <el-card class="table-report-card-resource">
+        <el-card shadow="hover" class="table-report-card-resource">
           <template v-slot:header>
             <table-header :condition.sync="riskCondition" @search="reportListSearch"
                           :title="$t('resource.regulation_list')"/>
@@ -255,7 +255,7 @@
       <!--regulation report-->
       <el-drawer class="btt" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleCloseB"
                  :direction="direction" :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+        <el-card shadow="hover" class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
           <el-row class="el-row-c">
             <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
             <el-col :span="16"><span>{{ data.project }}</span></el-col>

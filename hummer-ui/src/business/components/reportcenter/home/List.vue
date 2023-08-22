@@ -87,7 +87,7 @@
     <!--Create report-->
     <el-drawer class="rtl" :title="$t('reportcenter.report_create')" :visible.sync="createVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
-      <el-card class="table-card" style="margin: 15px;">
+      <el-card shadow="hover" class="table-card" style="margin: 15px;">
         <el-form :model="form" label-position="right" label-width="100px" size="medium" :rules="rule" ref="form" style="margin: 15px 0;">
           <el-form-item :label="$t('reportcenter.report_name')" ref="name" prop="name">
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('reportcenter.report_name')"/>
@@ -105,7 +105,7 @@
     <!--Update report-->
     <el-drawer class="rtl" :title="$t('reportcenter.report_update')" :visible.sync="updateVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true" v-loading="viewResult.loading">
-      <el-card class="table-card" style="margin: 15px;">
+      <el-card shadow="hover" class="table-card" style="margin: 15px;">
         <el-form :model="form" label-position="right" label-width="100px" size="medium" :rules="rule" ref="form" style="margin: 15px 0;">
           <el-form-item :label="$t('reportcenter.report_name')" ref="name" prop="name">
             <el-input v-model="form.name" autocomplete="off" :placeholder="$t('reportcenter.report_name')"/>

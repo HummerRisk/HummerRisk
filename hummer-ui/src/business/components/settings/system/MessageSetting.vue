@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card>
+    <el-card shadow="always">
       <el-tabs class="system-setting" v-model="activeName">
         <el-tab-pane :label="$t('system_parameter_setting.message.setting')" name="message">
           <message-notification/>

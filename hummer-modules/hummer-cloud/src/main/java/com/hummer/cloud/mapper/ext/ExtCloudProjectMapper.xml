@@ -15,15 +15,19 @@
         <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
         <result column="job_type" jdbcType="VARCHAR" property="jobType" />
         <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <result column="groups" jdbcType="INTEGER" property="groups" />
+        <result column="rules" jdbcType="INTEGER" property="rules" />
+        <result column="riskGroups" jdbcType="INTEGER" property="riskGroups" />
+        <result column="riskRules" jdbcType="INTEGER" property="riskRules" />
         <collection property="cloudProjectLogList" ofType="com.hummer.common.core.domain.CloudProjectLog" javaType="list"
                     select="selectCloudProjectLogList" column="{id=id}">
         </collection>
-        <collection property="cloudGroupList" ofType="com.hummer.common.core.domain.CloudGroup" javaType="list"
+        <collection property="cloudGroupList" ofType="com.hummer.common.core.dto.CloudGroupDTO" javaType="list"
                     select="selectCloudGroupList" column="{id=id}">
         </collection>
     </resultMap>
 
-    <resultMap id="BaseGroupMap" type="com.hummer.common.core.domain.CloudGroup">
+    <resultMap id="BaseGroupMap" type="com.hummer.common.core.dto.CloudGroupDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="group_id" jdbcType="INTEGER" property="groupId" />
@@ -43,6 +47,12 @@
         <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
         <result column="job_type" jdbcType="VARCHAR" property="jobType" />
         <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <result column="sum" jdbcType="INTEGER" property="sum" />
+        <result column="complianceNum" jdbcType="INTEGER" property="complianceNum" />
+        <result column="critical" jdbcType="INTEGER" property="critical" />
+        <result column="high" jdbcType="INTEGER" property="high" />
+        <result column="medium" jdbcType="INTEGER" property="medium" />
+        <result column="low" jdbcType="INTEGER" property="low" />
     </resultMap>
 
     <resultMap id="CloudProjectLogMap" type="com.hummer.common.core.domain.CloudProjectLog">
@@ -207,7 +217,11 @@
 
     <select id="getCloudProjectDTOs" resultMap="BaseResultMap">
         select
-        t.*
+        t.*,
+        (select count(cg.id) from cloud_group cg where cg.project_id = t.id) as 'groups',
+        (select count(cg.id) from cloud_group cg where cg.project_id = t.id and cg.id in (select ct.group_id from cloud_task ct where ct.project_id = t.id and ct.return_sum &gt; 0)) as 'riskGroups',
+        (select count(r.id) from rule r where r.id in (select g.rule_id from rule_group_mapping g left join cloud_group cg on g.group_id = cg.group_id where cg.project_id = t.id)) as 'rules',
+        (select count(r.id) from cloud_task r where r.project_id = t.id and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g left join cloud_group cg on g.group_id = cg.group_id where cg.project_id = t.id)) as 'riskRules'
         from cloud_project as t
         <where>
             <if test="request.combine != null">
@@ -235,7 +249,13 @@
 
     <select id="selectCloudGroupList" resultMap="BaseGroupMap">
         SELECT
-            t.*
+            t.*,
+            (select count(r.id) from rule r where r.id in (select g.rule_id from rule_group_mapping g where g.group_id = t.group_id)) as 'sum',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'complianceNum',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'CriticalRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'critical',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'HighRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'high',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'MediumRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'medium',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'LowRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'low'
         FROM cloud_group t
         where t.project_id = #{id}
         ORDER BY t.create_time DESC

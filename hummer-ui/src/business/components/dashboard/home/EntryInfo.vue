@@ -2,7 +2,7 @@
   <container v-loading="result.loading" class="container">
     <el-col :span="24" style="padding: 0;">
       <el-row>
-        <el-card class="table-card">
+        <el-card shadow="hover" class="table-card">
           <el-row>
             <el-col :span="24">
               <span class="hr-card-data">

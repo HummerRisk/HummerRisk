@@ -1,7 +1,7 @@
 <template>
   <div v-loading="result.loading">
 
-    <el-card class="table-card">
+    <el-card shadow="always" class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
                       :create-tip="$t('proxy.create')" :title="$t('commons.proxy')" :show-create="true" :show-delete-name="false"

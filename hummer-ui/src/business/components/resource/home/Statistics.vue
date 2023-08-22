@@ -1,7 +1,7 @@
 <template>
     <main-container v-loading="result.loading">
 
-      <el-card class="el-row-card">
+      <el-card shadow="hover" class="el-row-card">
 
         <account-change :project-name="currentAccount" @cloudAccountSwitch="cloudAccountSwitch" @selectAccount="selectAccount"/>
 
@@ -9,7 +9,7 @@
 
       </el-card>
 
-      <el-card class="table-card" v-if="groups.length > 0">
+      <el-card shadow="hover" class="table-card" v-if="groups.length > 0">
         <el-tabs class="border-card" type="border-card" @tab-click="handleClick">
           <el-tab-pane
             v-for="group in groups"
@@ -64,7 +64,7 @@
         </el-tabs>
       </el-card>
 
-      <el-card class="table-report-card">
+      <el-card shadow="hover" class="table-report-card">
         <section class="report-container">
           <main>
             <metric-chart :content="content"/>
@@ -72,7 +72,7 @@
         </section>
       </el-card>
 
-      <el-card>
+      <el-card shadow="always">
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"

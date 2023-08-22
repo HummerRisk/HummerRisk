@@ -1,7 +1,7 @@
 <template>
   <container v-loading="result.loading" class="container">
     <el-col :span="16" style="padding-right: 10px;">
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <el-tabs v-model="activeName" type="card" class="active-card">
           <el-tab-pane :label="$t('k8s.vuln_compliance')" name="first">
             <el-col :span="12">
@@ -39,7 +39,7 @@
       </el-card>
     </el-col>
     <el-col :span="8" style="padding-left: 0;">
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <template v-slot:header>
           <span class="title">{{ $t('dashboard.image_risk') }}</span>
         </template>

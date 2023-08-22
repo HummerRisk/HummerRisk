@@ -47,6 +47,13 @@ public class ResourceController {
     }
 
     @I18n
+    @Operation(summary = "云检测资源")
+    @GetMapping("sourceByProjectId/{projectId}")
+    public SourceDTO sourceByProjectId(@PathVariable String projectId) {
+        return resourceService.sourceByProjectId(projectId);
+    }
+
+    @I18n
     @Operation(summary = "云原生资源")
     @GetMapping("k8sSource/{accountId}")
     public SourceDTO k8sSource(@PathVariable String accountId) {
@@ -228,5 +235,12 @@ public class ResourceController {
     @PostMapping("resouceGroups")
     public List<Map<String, Object>> resouceGroups(@RequestBody Map<String, Object> params) {
         return resourceService.resouceGroups(params);
+    }
+
+    @I18n
+    @Operation(summary = "云资源项目检测规则组结果")
+    @PostMapping("resouceGroupsByProjectId")
+    public List<Map<String, Object>> resouceGroupsByProjectId(@RequestBody Map<String, Object> params) {
+        return resourceService.resouceGroupsByProjectId(params);
     }
 }

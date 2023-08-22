@@ -1,7 +1,7 @@
 <template>
   <container v-loading="result.loading" class="container">
     <el-col :span="8" style="padding-right: 0;">
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <template v-slot:header>
           <span class="title">{{ $t('dashboard.non_compliant_assets') }}</span>
         </template>
@@ -9,7 +9,7 @@
       </el-card>
     </el-col>
     <el-col :span="8">
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <template v-slot:header>
           <span class="title">{{ $t('dashboard.non_compliant_risk') }}</span>
         </template>
@@ -17,7 +17,7 @@
       </el-card>
     </el-col>
     <el-col :span="8" style="padding-left: 0;">
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <template v-slot:header>
           <span class="title">{{ $t('rule.rule') + $t('resource.i18n_not_compliance') }}</span>
         </template>

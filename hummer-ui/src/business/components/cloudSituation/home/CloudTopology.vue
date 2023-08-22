@@ -1,6 +1,6 @@
 <template>
   <main-container>
-    <el-card class="table-card el-row-card">
+    <el-card shadow="hover" class="table-card el-row-card">
       <topo-switch @selectAccount="selectAccount"/>
     </el-card>
 

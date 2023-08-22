@@ -175,10 +175,10 @@ export default {
       }
     },
     showTaskDetail(item) {
-      this.$router.push({
-        name: 'cloudResult',
-        params: {id: item.accountId},
-      }).catch(error => error);
+      // this.$router.push({
+      //   name: 'cloudResult',
+      //   params: {id: item.accountId},
+      // }).catch(error => error);
       this.detailForm = {};
       this.$get(cloudTaskDetailUrl + item.id, response => {
         if (response.success) {

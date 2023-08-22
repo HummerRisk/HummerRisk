@@ -1,6 +1,6 @@
 <template>
   <div v-loading="result.loading">
-    <el-card class="table-card">
+    <el-card shadow="always" class="table-card">
       <template v-slot:header>
         <div>
           <el-row type="flex" just ify="space-between" align="middle">

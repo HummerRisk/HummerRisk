@@ -1,6 +1,6 @@
 <template>
   <main-container class="main-container" v-loading="result.loading">
-    <el-card class="table-card">
+    <el-card shadow="hover" class="table-card">
       <el-row type="flex">
         <el-col :span="24" class="image">
           <div>

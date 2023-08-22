@@ -97,6 +97,10 @@ public class ResourceService {
         return extResourceMapper.source(accountId);
     }
 
+    public SourceDTO sourceByProjectId (String projectId) {
+        return extResourceMapper.sourceByProjectId(projectId);
+    }
+
     public SourceDTO k8sSource (String accountId) {
         return extResourceMapper.k8sSource(accountId);
     }
@@ -773,5 +777,9 @@ public class ResourceService {
 
     public List<Map<String, Object>> resouceGroups(Map<String, Object> params) {
         return extResourceMapper.resouceGroups(params);
+    }
+
+    public List<Map<String, Object>> resouceGroupsByProjectId(Map<String, Object> params) {
+        return extResourceMapper.resouceGroupsByProjectId(params);
     }
 }

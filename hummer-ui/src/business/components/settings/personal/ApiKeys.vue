@@ -1,6 +1,6 @@
 <template>
   <div v-loading="result.loading">
-    <el-card class="table-card">
+    <el-card shadow="always" class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search"
                       :create-tip="$t('commons.create') + ' API Keys'" title="API Keys" :show-create="true"

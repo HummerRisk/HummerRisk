@@ -280,6 +280,12 @@
                 <property name="object" value="${condition}.pluginId"/>
             </include>
         </if>
+        <if test="${condition}.projectId != null">
+            and project_id
+            <include refid="condition">
+                <property name="object" value="${condition}.projectId"/>
+            </include>
+        </if>
     </sql>
 
     <resultMap id="selectManualTasksBaseResultMap" type="com.hummer.common.core.domain.CloudTask">
@@ -320,6 +326,9 @@
             </if>
             <if test="request.accountId != null and request.accountId != ''">
                 and t.account_id = #{request.accountId}
+            </if>
+            <if test="request.projectId != null and request.projectId != ''">
+                and t.project_id = #{request.projectId}
             </if>
             <if test="request.taskName != null and request.taskName != ''">
                 and t.task_name like CONCAT('%', #{request.taskName},'%')

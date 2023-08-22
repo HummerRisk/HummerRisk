@@ -1,7 +1,7 @@
 <template>
   <div v-loading="result.loading">
 
-    <el-card class="table-card">
+    <el-card shadow="always" class="table-card">
       <template v-slot:header>
         <table-header :condition.sync="condition" @search="search" @create="create"
                       :create-tip="$t('user.create')" :title="$t('system.user_list')" :show-create="true" :show-delete-name="false"

@@ -2,7 +2,7 @@
   <container v-loading="result.loading" class="container">
     <el-col :span="24" style="padding: 0;">
       <el-row>
-        <el-card class="table-card">
+        <el-card shadow="hover" class="table-card">
           <el-row>
             <el-col :span="24">
               <span class="hr-card-data">
@@ -17,7 +17,7 @@
               <el-row class="lb-row-txt-white">
                 <el-col :span="12">
                   <!-- cloud -->
-                  <el-card class="cloud-card">
+                  <el-card shadow="hover" class="cloud-card">
                     <div slot="header" class="clearfix">
                       <span>{{ $t('commons.cloud_manage') }}</span>
                     </div>
@@ -56,7 +56,7 @@
                 </el-col>
                 <el-col :span="12">
                   <!-- cloud -->
-                  <el-card class="cloud-card">
+                  <el-card shadow="hover" class="cloud-card">
                     <div slot="header" class="clearfix">
                       <span>{{ $t('commons.cloud_scan') }}</span>
                     </div>
