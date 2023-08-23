@@ -123,6 +123,43 @@
         ORDER BY t.create_time DESC
     </select>
 
+    <select id="sourceByProjectId" parameterType="java.lang.String" resultMap="ResultMap">
+        SELECT
+        t.*,
+        t.creator as userName,
+        t.account_name as name,
+        t.return_sum as returnSum,
+        t.resources_sum as resourcesSum,
+        IFNULL((
+        SELECT
+        count( tc.id )
+        FROM
+        cloud_task tc
+        WHERE
+        tc.project_id = t.id
+        and tc.status in ('FINISHED', 'ERROR', 'WARNING')
+        ), 0) as overRules,
+        IFNULL((
+        SELECT
+        count( tt.id )
+        FROM
+        cloud_task tt
+        WHERE
+        tt.project_id = t.id
+        ), 0) as allRules,
+        IFNULL((select t1.scan_score FROM history_scan t1 WHERE t.account_id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
+        t.status AS resultStatus
+        FROM cloud_project t
+        LEFT JOIN plugin p on t.plugin_id = p.id
+        <where>
+            <if test="projectId != null and projectId != ''">
+                AND t.id = #{projectId}
+            </if>
+            and p.type in ('cloud')
+        </where>
+        ORDER BY t.create_time DESC
+    </select>
+
     <select id="k8sSource" parameterType="java.lang.String" resultMap="ResultMap">
         SELECT
         t.*,
@@ -262,6 +299,9 @@
             </if>
             <if test="request.accountId != null">
                 AND t.account_id = #{request.accountId}
+            </if>
+            <if test="request.projectId != null">
+                AND t4.project_id = #{request.projectId}
             </if>
             <if test="request.regionId != null">
                 AND t.region_id = #{request.regionId}
@@ -666,6 +706,7 @@
                sum(IFNULL(t.return_sum, 0)) as sum
         FROM resource t
         JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN cloud_task t2 on t1.task_id = t2.id
         <where>
             <if test="id != null and id != ''">
                 AND t.account_id = #{id}
@@ -675,6 +716,9 @@
             </if>
             <if test="taskId != null and taskId != ''">
                 AND t1.task_id = #{taskId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND t2.project_id = #{projectId}
             </if>
         </where>
         GROUP BY t.region_id,t.region_name
@@ -687,6 +731,7 @@
                sum(IFNULL(t.return_sum, 0)) as sum
         FROM resource t
         JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN cloud_task t2 on t1.task_id = t2.id
         <where>
             <if test="id != null and id != ''">
                 AND t.account_id = #{id}
@@ -696,6 +741,9 @@
             </if>
             <if test="taskId != null and taskId != ''">
                 AND t1.task_id = #{taskId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND t2.project_id = #{projectId}
             </if>
         </where>
         GROUP BY t.severity
@@ -708,6 +756,7 @@
                sum(IFNULL(t.return_sum, 0)) as sum
         FROM resource t
         JOIN cloud_task_item_resource t1 on t.id = t1.resource_id
+        JOIN cloud_task t2 on t1.task_id = t2.id
         <where>
             <if test="id != null and id != ''">
                 AND t.account_id = #{id}
@@ -717,6 +766,9 @@
             </if>
             <if test="taskId != null and taskId != ''">
                 AND t1.task_id = #{taskId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND t2.project_id = #{projectId}
             </if>
         </where>
         GROUP BY t.resource_type
@@ -739,6 +791,9 @@
             </if>
             <if test="taskId != null and taskId != ''">
                 AND t.task_id = #{taskId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND t2.project_id = #{projectId}
             </if>
         </where>
         GROUP BY t.task_id
@@ -893,6 +948,23 @@
             AND t1.rule_id in (select c.rule_id from cloud_task c where c.account_id = #{id})
         </where>
         GROUP BY t.id, t.name
+        ORDER BY noComplianceRule desc
+    </select>
+
+    <select id="resouceGroupsByProjectId" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+        cg.group_name as `name`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `noComplianceRule`,
+        (select count(t2.id) from cloud_task t2 where t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `sumRule`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'CriticalRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `critical`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'HighRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `high`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'MediumRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `medium`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'LowRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `low`
+        FROM cloud_group cg
+        <where>
+            AND cg.project_id = #{id}
+        </where>
+        GROUP BY cg.id, cg.group_name
         ORDER BY noComplianceRule desc
     </select>
 

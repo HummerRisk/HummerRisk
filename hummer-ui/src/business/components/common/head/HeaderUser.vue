@@ -57,7 +57,7 @@ import {signoutUrl} from "@/api/auth/auth";
             window.location.href = "https://hummerrisk.com";
             break;
           case "apiHelp":
-            let api = process.env.VUE_APP_BASE_API
+            let api = process.env.VUE_APP_BASE_API;
             window.open(api+'/doc.html', "_blank");
             break;
           default:

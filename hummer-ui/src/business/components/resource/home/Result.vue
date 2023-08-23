@@ -2,8 +2,8 @@
   <main-container v-loading="result.loading">
 
     <div id="pdfDom">
-      <el-card class="table-card el-row-card">
-        <account-switch :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch" @goReport="goReport"/>
+      <el-card shadow="hover" class="table-card el-row-card">
+        <result-header @goReport="goReport" @back="back"/>
         <el-divider></el-divider>
         <h2 style="font-size: 18px;" v-if="source">{{ $t('account.cloud_account') }}</h2>
         <el-row v-if="source">
@@ -61,29 +61,29 @@
                 <span style="color: #909090;font-size: 16px;">{{ $t('resource.status') }}</span>
               </el-col>
               <el-col :span="8">
-                     <span style="font-size: 16px;">
-                      <span style="color: #579df8;" v-if="source.resultStatus === 'APPROVED'">
-                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                      </span>
-                      <span style="color: #579df8;" v-else-if="source.resultStatus === 'PROCESSING'">
-                        <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
-                      </span>
-                      <span style="color: #7ebf59;" v-else-if="source.resultStatus === 'FINISHED'">
-                        <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
-                      </span>
-                      <span style="color: red;" v-else-if="source.resultStatus === 'ERROR'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_exception') }}
-                      </span>
-                      <span style="color: #dda450;" v-else-if="source.resultStatus === 'WARNING'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
-                      </span>
-                      <span style="color: #dda450;" v-else-if="source.resultStatus === 'UNDEFINED'">
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
-                      </span>
-                      <span style="color: #dda450;" v-else>
-                        <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
-                      </span>
-                    </span>
+                <span style="font-size: 16px;">
+                  <span style="color: #579df8;" v-if="source.resultStatus === 'APPROVED'">
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                  </span>
+                  <span style="color: #579df8;" v-else-if="source.resultStatus === 'PROCESSING'">
+                    <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                  </span>
+                  <span style="color: #7ebf59;" v-else-if="source.resultStatus === 'FINISHED'">
+                    <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                  </span>
+                  <span style="color: red;" v-else-if="source.resultStatus === 'ERROR'">
+                    <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_exception') }}
+                  </span>
+                  <span style="color: #dda450;" v-else-if="source.resultStatus === 'WARNING'">
+                    <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                  </span>
+                  <span style="color: #dda450;" v-else-if="source.resultStatus === 'UNDEFINED'">
+                    <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
+                  </span>
+                  <span style="color: #dda450;" v-else>
+                    <i class="el-icon-warning"></i> {{ $t('resource.i18n_done') }}
+                  </span>
+                </span>
               </el-col>
             </el-row>
             <!-- 第三行 -->
@@ -94,21 +94,6 @@
               <el-col :span="8">
                 <span style="font-size: 16px;">{{ source.createTime | timestampFormatDate }}</span>
               </el-col>
-              <el-col :span="4">
-                <span style="color: #909090;font-size: 16px;">{{ $t('commons.operating') }}</span>
-              </el-col>
-              <el-col :span="8">
-              <span style="font-size: 16px;">
-                 <el-tooltip class="item" effect="dark" :content="$t('resource.scan')" placement="top">
-                    <el-button type="primary" size="mini" @click="handleScans(source)" circle><i
-                      class="el-icon-refresh-right"></i></el-button>
-                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('resource.delete_result')" placement="top">
-                  <el-button type="danger" size="mini" @click="handleDelete(source)" circle><i
-                    class="el-icon-delete"></i></el-button>
-                </el-tooltip>
-              </span>
-              </el-col>
             </el-row>
           </el-col>
         </el-row>
@@ -118,11 +103,11 @@
       </el-card>
 
       <!--规则组-->
-      <el-card class="table-card el-row-card" v-if="groupsData.length > 0">
+      <el-card shadow="always" class="table-card el-row-card" v-if="groupsData.length > 0">
         <el-row v-bind:class="{'box-card1': groups === 1, 'box-card2': groups === 2}">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData"
                   :key="index" class="el-col el-col-group">
-            <el-card :body-style="{ padding: '15px', margin: '10px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px', margin: '10px' }">
               <div slot="header" class="clearfix">
                 <span class="table-card-header">{{ data.name }}</span>
               </div>
@@ -182,7 +167,7 @@
         </el-row>
       </el-card>
 
-      <el-card class="table-card">
+      <el-card shadow="always" class="table-card">
         <template v-slot:header>
           <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
             <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
@@ -288,7 +273,7 @@
         <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
           <!--regions-->
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('account.regions') }}</span>
                 <table-search-right :condition.sync="regionCondition" @change="regionFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -316,7 +301,7 @@
 
           <!--rule-->
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
                 <table-search-right :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -344,7 +329,7 @@
 
           <!--resource type-->
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
                 <table-search-right :condition.sync="resourceTypeCondition" @change="resourceTypeFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -372,7 +357,7 @@
 
           <!--severity-->
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
                 <table-search-right :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -400,7 +385,7 @@
 
         </el-row>
 
-        <el-card class="table-card" v-if="activeName === 'second'">
+        <el-card shadow="always" class="table-card" v-if="activeName === 'second'">
 
           <template v-slot:header>
             <table-header :condition.sync="resourceCondition" @search="resourceSearch"
@@ -578,7 +563,7 @@
 
     <!--regulation report-->
     <el-drawer class="rtl" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-      <el-card v-loading="ruleResult.loading" class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+      <el-card shadow="always" v-loading="ruleResult.loading" class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
         <el-row class="el-row-c">
           <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
           <el-col :span="16"><span>{{ data.project }}</span></el-col>
@@ -613,7 +598,7 @@ import DialogFooter from "@/business/components/common/components/DialogFooter";
 import CenterChart from "@/business/components/common/components/CenterChart";
 import ResultLog from "./ResultLog";
 import {_filter, _sort} from "@/common/js/utils";
-import AccountSwitch from "@/business/components/resource/head/AccountSwitch";
+import ResultHeader from "@/business/components/resource/head/ResultHeader";
 import TableSearchBar from '@/business/components/common/components/TableSearchBar';
 import ResultReadOnly from "@/business/components/common/components/ResultReadOnly";
 import {RESOURCE_CONFIGS, RESULT_CONFIGS} from "@/business/components/common/components/search/search-components";
@@ -621,13 +606,13 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl,
+  cloudResourceListUrl, resouceGroupsByProjectIdUrl,
   resouceGroupsUrl,
   resourceAccountDeleteUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
   resourceRuleDataUrl,
-  resourceSeverityDataUrl,
+  resourceSeverityDataUrl, resourceSourceByProjectIdUrl,
   resourceSourceUrl,
   resourceTypeDataUrl,
   string2PrettyFormatUrl
@@ -724,7 +709,7 @@ export default {
     DialogFooter,
     CenterChart,
     ResultLog,
-    AccountSwitch,
+    ResultHeader,
     TableSearchBar,
     ResultReadOnly,
     SeverityType,
@@ -749,7 +734,6 @@ export default {
       condition: {
         components: RESULT_CONFIGS
       },
-      accountId: '',
       projectId: '',
       direction: 'rtl',
       tagSelect: [],
@@ -757,24 +741,12 @@ export default {
       timer: '',
       currentAccount: '',
       buttons: [
-        {
-          tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "success",
-          exec: this.handleScans
-        },
-        {
-          tip: this.$t('resource.delete_result'), icon: "el-icon-delete", type: "danger",
-          exec: this.handleDelete
-        }
       ],
       rule_buttons: [
         {
           tip: this.$t('resource.regulation'), icon: "el-icon-document", type: "warning",
           exec: this.showSeverityDetail
         },
-        {
-          tip: this.$t('resource.scan'), icon: "el-icon-refresh-right", type: "primary",
-          exec: this.handleScan
-        }
       ],
       resource_buttons: [
         {
@@ -947,29 +919,14 @@ export default {
     handleSuggestion(item) {
       window.open(item.suggestion,'_blank','');
     },
-    handleDelete(obj) {
-      this.$alert(this.$t('account.delete_confirm') + obj.name + this.$t('resource.resource_result') + " ？", '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.result = this.$get(resourceAccountDeleteUrl + obj.id, res => {
-              setTimeout(function () {
-                window.location.reload()
-              }, 2000);
-              this.$success(this.$t('commons.delete_success'));
-            });
-          }
-        }
-      });
-    },
     async search() {
-      await this.$get(resourceSourceUrl + this.accountId, response => {
+      await this.$get(resourceSourceByProjectIdUrl + this.projectId, response => {
         this.source = response.data;
       });
 
       let url = cloudTaskManualListUrl + this.currentPage + "/" + this.pageSize;
       //在这里实现事件
-      this.condition.accountId = this.accountId;
+      this.condition.projectId = this.projectId;
       this.result = await this.$post(url, this.condition, response => {
         let data = response.data;
         this.total = data.itemCount;
@@ -978,7 +935,7 @@ export default {
     },
     resourceSearch() {
       let url = cloudResourceListUrl + this.resourcePage + "/" + this.resourceSize;
-      this.resourceCondition.accountId = this.accountId;
+      this.resourceCondition.projectId = this.projectId;
       this.result = this.$post(url, this.resourceCondition, response => {
         let data = response.data;
         this.resourceTotal = data.itemCount;
@@ -1027,7 +984,7 @@ export default {
       this.resourceSearch();
     },
     init() {
-      if (!this.accountId) return;
+      if (!this.projectId) return;
       this.initSelect();
       this.search();
       this.initGroup();
@@ -1037,17 +994,12 @@ export default {
       this.ruleDataSearch();
       this.resourceSearch();
     },
-    cloudAccountSwitch(accountId, accountName) {
-      this.accountId = accountId;
-      this.currentAccount = accountName;
-      this.init();
-    },
     getStatus() {
       if (this.checkStatus(this.tableData)) {
         this.search();
         clearInterval(this.timer);
       }
-      this.$get(resourceSourceUrl + this.accountId, response => {
+      this.$get(resourceSourceByProjectIdUrl + this.projectId, response => {
         let data = response.data;
         if (!data) {
           return;
@@ -1065,7 +1017,7 @@ export default {
           this.fake.end();
         }
         let url = cloudTaskManualListUrl + this.currentPage + "/" + this.pageSize;
-        this.condition.accountId = this.accountId;
+        this.condition.projectId = this.projectId;
         //在这里实现事件
         this.$post(url, this.condition, response => {
           for (let data of response.data.listObject) {
@@ -1129,34 +1081,6 @@ export default {
       this.visible =  false;
       this.regulationVisible = false;
     },
-    handleScans(item) {
-      this.$alert(this.$t('resource.handle_scans'), '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.result = this.$get(ruleReScansUrl + item.id, response => {
-              if (response.success) {
-                this.search();
-              }
-            });
-          }
-        }
-      });
-    },
-    handleScan(item) {
-      this.$alert(this.$t('resource.handle_scans'), '', {
-        confirmButtonText: this.$t('commons.confirm'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            this.ruleResult = this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
-              if (response.success) {
-                this.search();
-              }
-            });
-          }
-        }
-      });
-    },
     showCodemirror() {
       setTimeout(() => {
         this.$refs.cmEditor.codemirror.refresh();
@@ -1180,7 +1104,7 @@ export default {
       this.regionDataSearch();
     },
     regionDataSearch() {
-      this.regionCondition.id = this.accountId;
+      this.regionCondition.projectId = this.projectId;
       this.result = this.$post(resourceRegionDataUrl, this.regionCondition, response => {
         let data = response.data;
         this.regionData = data;
@@ -1190,7 +1114,7 @@ export default {
       this.severityDataSearch();
     },
     severityDataSearch() {
-      this.severityCondition.id = this.accountId;
+      this.severityCondition.projectId = this.projectId;
       this.result = this.$post(resourceSeverityDataUrl, this.severityCondition, response => {
         let data = response.data;
         this.severityData = data;
@@ -1200,7 +1124,7 @@ export default {
       this.resourceTypeDataSearch();
     },
     resourceTypeDataSearch() {
-      this.resourceTypeCondition.id = this.accountId;
+      this.resourceTypeCondition.projectId = this.projectId;
       this.result = this.$post(resourceTypeDataUrl, this.resourceTypeCondition, response => {
         let data = response.data;
         this.resourceTypeData = data;
@@ -1210,7 +1134,7 @@ export default {
       this.ruleDataSearch();
     },
     ruleDataSearch() {
-      this.ruleCondition.id = this.accountId;
+      this.ruleCondition.projectId = this.projectId;
       this.result = this.$post(resourceRuleDataUrl, this.ruleCondition, response => {
         let data = response.data;
         this.ruleData = data;
@@ -1280,12 +1204,12 @@ export default {
     goReport() {
       this.$router.push({
         name: 'cloudReport',
-        params: {id: this.accountId},
+        params: {id: this.projectId},
       }).catch(error => error);
     },
     initGroup() {
       this.groupsData = [];
-      this.result = this.$post(resouceGroupsUrl, {id: this.accountId}, response => {
+      this.result = this.$post(resouceGroupsByProjectIdUrl, {id: this.projectId}, response => {
         this.groupsData = response.data;
       });
     },
@@ -1297,6 +1221,11 @@ export default {
       }
       this.initGroup();
     },
+    back() {
+      this.$router.push({
+        name: 'cloudResult',
+      }).catch(error => error);
+    },
   },
   computed: {
     codemirror() {
@@ -1304,10 +1233,12 @@ export default {
     }
   },
   activated() {
-    if (this.$route.params.id) this.accountId = this.$route.params.id;
+    if (this.$route.params.id) this.projectId = this.$route.params.id;
+    this.init();
   },
   created() {
-    if (this.$route.params.id) this.accountId = this.$route.params.id;
+    if (this.$route.params.id) this.projectId = this.$route.params.id;
+    this.init();
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {
