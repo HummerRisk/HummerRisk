@@ -2,7 +2,7 @@
   <main-container v-loading="result.loading">
     <div id="pdfDom">
 
-      <el-card class="table-card el-row-card">
+      <el-card shadow="hover" class="table-card el-row-card">
         <el-row type="flex" justify="space-between" align="middle">
           <span class="operate-button">
             <el-button  icon="el-icon-back" @click="back">{{ $t('k8s.back_resource') }}</el-button>
@@ -117,11 +117,11 @@
                      :stroke-width="26" :percentage="progressResult"></el-progress>
       </el-card>
 
-      <el-card class="table-card el-row-card" v-if="groupsData.length > 0">
+      <el-card shadow="hover" class="table-card el-row-card" v-if="groupsData.length > 0">
         <el-row v-bind:class="{'box-card1': groups === 1, 'box-card2': groups === 2}">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in groupsData"
                   :key="index" class="el-col el-col-group">
-            <el-card :body-style="{ padding: '15px', margin: '10px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px', margin: '10px' }">
               <div slot="header" class="clearfix">
                 <span>{{ data.name }}</span>
               </div>
@@ -181,7 +181,7 @@
         </el-row>
       </el-card>
 
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <template v-slot:header>
           <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
             <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
@@ -283,7 +283,7 @@
         <el-row :gutter="20" class="el-row-body" v-if="activeName === 'second'">
           <!--rule-->
           <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
                 <table-search-right :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -311,7 +311,7 @@
 
           <!--resource type-->
           <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
                 <table-search-right :condition.sync="resourceTypeCondition" @change="resourceTypeFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -339,7 +339,7 @@
 
           <!--severity-->
           <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
                 <table-search-right :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -367,7 +367,7 @@
 
         </el-row>
 
-        <el-card class="table-card" v-if="activeName === 'second'">
+        <el-card shadow="hover" class="table-card" v-if="activeName === 'second'">
 
           <template v-slot:header>
             <table-header :condition.sync="resourceCondition" @search="resourceSearch"
@@ -546,7 +546,7 @@
 
     <!--regulation report-->
     <el-drawer class="rtl" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleClose" :direction="direction" :destroy-on-close="true">
-      <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+      <el-card shadow="hover" class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
         <el-row class="el-row-c">
           <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
           <el-col :span="16"><span>{{ data.project }}</span></el-col>

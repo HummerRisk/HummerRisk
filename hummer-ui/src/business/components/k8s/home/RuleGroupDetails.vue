@@ -3,7 +3,7 @@
 
     <div id="pdfDom">
 
-      <el-card class="table-card el-row-card" v-if="source">
+      <el-card shadow="hover" class="table-card el-row-card" v-if="source">
         <h2 style="font-size: 18px;">{{ 'Kubernetes' }}</h2>
         <el-row>
           <el-col :span="6">
@@ -106,7 +106,7 @@
                      :stroke-width="26" :percentage="progressResult"></el-progress>
       </el-card>
 
-      <el-card class="table-card">
+      <el-card shadow="hover" class="table-card">
         <template v-slot:header>
           <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
             <el-tab-pane :label="$t('resource.result_list')" name="first"></el-tab-pane>
@@ -204,7 +204,7 @@
 
           <!--rule-->
           <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.rule') }}</span>
                 <table-search-right :condition.sync="ruleCondition" @change="ruleFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -232,7 +232,7 @@
 
           <!--resource type-->
           <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.resource_type') }}</span>
                 <table-search-right :condition.sync="resourceTypeCondition" @change="resourceTypeFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -260,7 +260,7 @@
 
           <!--severity-->
           <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div slot="header" class="clearfix">
                 <span style="float: left;padding: 8px 0;color: #1e6427;">{{ $t('rule.severity') }}</span>
                 <table-search-right :condition.sync="severityCondition" @change="severityFilter" style="float: right;width: 70%" class="search-bar"/>
@@ -288,7 +288,7 @@
 
         </el-row>
 
-        <el-card class="table-card" v-if="activeName === 'second'">
+        <el-card shadow="hover" class="table-card" v-if="activeName === 'second'">
 
           <template v-slot:header>
             <table-header :condition.sync="resourceCondition" @search="resourceSearch"

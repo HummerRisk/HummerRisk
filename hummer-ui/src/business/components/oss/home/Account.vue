@@ -330,7 +330,7 @@
                :visible.sync="scanVisible"
                class="" width="70%" v-loading="groupResult.loading">
       <div>
-        <el-card class="box-card el-box-card">
+        <el-card shadow="hover" class="box-card el-box-card">
           <div slot="header" class="clearfix">
               <span>
                 <img :src="require(`@/assets/img/platform/${accountWithGroup.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>

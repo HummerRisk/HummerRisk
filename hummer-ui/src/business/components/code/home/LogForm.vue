@@ -29,7 +29,7 @@
             </div>
             <div v-if="result.Vulnerabilities">
               <div class="ch-mar-top" :key="index" v-for="(vulnerability, index) in result.Vulnerabilities">
-                <el-card v-bind:class="{ 'box-card box-card-critical': vulnerability.Severity === 'CRITICAL',
+                <el-card shadow="hover" v-bind:class="{ 'box-card box-card-critical': vulnerability.Severity === 'CRITICAL',
                    'box-card box-card-high': vulnerability.Severity === 'HIGH',
                    'box-card box-card-medium': vulnerability.Severity === 'MEDIUM',
                    'box-card box-card-low': vulnerability.Severity === 'LOW',

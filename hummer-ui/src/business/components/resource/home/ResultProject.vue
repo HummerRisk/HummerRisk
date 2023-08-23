@@ -12,64 +12,57 @@
 
         <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData" :key="index" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ 'cursor': 'pointer', 'padding': '15px' }">
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="24">
-                    <el-row class="plugin el-row-pdd" v-if="checkedColumnNames.includes('pluginName')">
+                    <el-row class="el-row-pdd" v-if="checkedColumnNames.includes('pluginName')">
                       <span class="plugin-name">
                         <el-image v-if="data.pluginIcon" style="border-radius: 50%;width: 25px; height: 25px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
                           <div slot="error" class="image-slot">
                             <i class="el-icon-picture-outline"></i>
                           </div>
                         </el-image>
-                          {{ data.pluginName }}
+                        {{ data.pluginName }} : {{ data.accountName }}
                       </span>
                       <span class="plugin-type">
-                         <el-button plain size="mini" type="primary" v-if="data.status === 'UNCHECKED'">
-                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                         <el-button plain size="mini" type="primary" v-if="data.status === 'UNCHECKED'" @click="goResult(data.id)">
+                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }} | {{ $t('commons.into_detail') }}
                          </el-button>
-                         <el-button plain size="mini" type="primary" v-else-if="data.status === 'APPROVED'">
-                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                         <el-button plain size="mini" type="primary" v-else-if="data.status === 'APPROVED'" @click="goResult(data.id)">
+                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }} | {{ $t('commons.into_detail') }}
                          </el-button>
-                         <el-button plain size="mini" type="primary" v-else-if="data.status === 'PROCESSING'">
-                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+                         <el-button plain size="mini" type="primary" v-else-if="data.status === 'PROCESSING'" @click="goResult(data.id)">
+                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }} | {{ $t('commons.into_detail') }}
                          </el-button>
-                         <el-button plain size="mini" type="success" v-else-if="data.status === 'FINISHED'">
-                            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+                         <el-button plain size="mini" type="success" v-else-if="data.status === 'FINISHED'" @click="goResult(data.id)">
+                            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }} | {{ $t('commons.into_detail') }}
                          </el-button>
-                         <el-button plain size="mini" type="danger" v-else-if="data.status === 'ERROR'">
-                            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+                         <el-button plain size="mini" type="danger" v-else-if="data.status === 'ERROR'" @click="goResult(data.id)">
+                            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }} | {{ $t('commons.into_detail') }}
                          </el-button>
-                         <el-button plain size="mini" type="warning" v-else-if="data.status === 'WARNING'">
-                            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+                         <el-button plain size="mini" type="warning" v-else-if="data.status === 'WARNING'" @click="goResult(data.id)">
+                            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }} | {{ $t('commons.into_detail') }}
                          </el-button>
-                      </span>
-                    </el-row>
-                    <el-row class="el-row-pdd">
-                      <span class="plugin-name">
-                        <span class="da-na" v-if="checkedColumnNames.includes('name')">
-                          {{ data.accountName }}
-                          <span v-if="data.jobType === 'cron'" class="pa-time2">
-                            （{{ $t('resource.result_cron') }})
-                          </span>
-                        </span>
-                      </span>
-                      <span class="plugin-type" style="text-align: right;" v-if="checkedColumnNames.includes('flag')">
-                        <span>{{ data.creator }}</span>
                       </span>
                     </el-row>
                     <el-row class="el-row-pdd">
                       <div class="bottom clearfix">
                         <span class="plugin-name">
-                          <div class="time time2">
-                            <span class="pa-time">{{ '共 12 规则组' }}&nbsp;
-                            </span>
-                          </div>
+                          <span class="pa-time">{{ $t('rule.group_sum_project', [data.groups]) }}</span>
                         </span>
                         <span class="plugin-type">
-                          <span class="pa-time">{{ '共 12 条规则' }}&nbsp;
-                            </span>
+                          <span class="pa-time2">{{ $t('rule.risk_group_sum_project', [data.riskGroups]) }}</span>
+                        </span>
+                      </div>
+                    </el-row>
+                    <el-row class="el-row-pdd">
+                      <div class="bottom clearfix">
+                        <span class="plugin-name">
+                          <span class="pa-time">{{ $t('rule.rule_sum_project', [data.rules]) }}</span>
+                        </span>
+                        <span class="plugin-type">
+                          <span class="pa-time2">{{ $t('rule.risk_rule_sum_project', [data.riskRules]) }}</span>
                         </span>
                       </div>
                     </el-row>
@@ -77,14 +70,17 @@
                       <div class="bottom clearfix">
                         <span class="plugin-name">
                           <div class="time time2">
-                            <span class="pa-time">{{ data.createTime | timestampFormatDate }}&nbsp;
-                            </span>
-                          </div>
+                              <span class="pa-time">{{ data.createTime | timestampFormatDate }}
+                              </span>
+                            </div>
                         </span>
                         <span class="plugin-type">
-                          <el-button size="mini" type="danger" circle>
-                            <i class="el-icon-delete"></i>
-                          </el-button>
+                          <span v-if="data.jobType === 'cron'" class="pa-time2">
+                              （{{ $t('resource.result_cron') }})
+                            </span>
+                           <span class="plugin-type" v-if="checkedColumnNames.includes('flag')">
+                              <span>{{ data.creator }}</span>
+                            </span>
                         </span>
                       </div>
                     </el-row>
@@ -94,16 +90,18 @@
               <div>
                 <el-carousel :autoplay="false">
                   <el-carousel-item v-for="item in data.cloudGroupList" :key="item.id">
-                    <el-card class="medium medium-card" :body-style="{ padding: '15px', margin: '10px' }">
+                    <el-card shadow="hover" class="medium medium-card" :body-style="{ padding: '15px', margin: '10px' }">
                       <div slot="header" class="clearfix">
                         <el-row>
-                          <el-col :span="12">
-                            <span class="table-card-header">{{ item.groupName }}</span>
+                          <el-col :span="15">
+                            <span class="desc-rule">{{ item.groupName }}</span>
+                            <span class="not_compliance_num"></span>
+                            <span class="compliance_num"></span>
                           </el-col>
-                          <el-col :span="12">
-                            <span class="desc-rule">{{ $t('dashboard.rule_detail') }}</span>
-                            <span class="not_compliance_num">{{ "0" }}</span>
-                            <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ "10" }}</span>
+                          <el-col :span="9">
+                            <span class="desc-rule2">{{ $t('dashboard.rule_detail') }}</span>
+                            <span class="not_compliance_num">{{ item.complianceNum }}</span>
+                            <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ item.sum }}</span>
                           </el-col>
                         </el-row>
                       </div>
@@ -115,34 +113,20 @@
                         </el-row>
                         <el-row style="margin-top: 15px;">
                           <el-col :span="6">
-                            <div style="height: 12px;background-color: #8B0000;margin: 1px;border-radius: 3px;"></div>
-                          </el-col>
-                          <el-col :span="6">
-                            <div style="height: 12px;background-color: #FF4D4D;margin: 1px;border-radius: 3px;"></div>
-                          </el-col>
-                          <el-col :span="6">
-                            <div style="height: 12px;background-color: #FF8000;margin: 1px;border-radius: 3px;"></div>
-                          </el-col>
-                          <el-col :span="6">
-                            <div style="height: 12px;background-color: #336D9F;margin: 1px;border-radius: 3px;"></div>
-                          </el-col>
-                        </el-row>
-                        <el-row style="margin-top: 15px;">
-                          <el-col :span="6">
                             <span class="label"> {{ $t('commons.critical') }} :</span>
-                            <span class="value critical"> {{ "0" }}</span>
+                            <span class="value critical"> {{ item.critical }}</span>
                           </el-col>
                           <el-col :span="6">
                             <span class="label"> {{ $t('commons.high') }} :</span>
-                            <span class="value high"> {{ "1" }}</span>
+                            <span class="value high"> {{ item.high }}</span>
                           </el-col>
                           <el-col :span="6">
                             <span class="label"> {{ $t('commons.medium') }} :</span>
-                            <span class="value middle"> {{ "3" }}</span>
+                            <span class="value middle"> {{ item.medium }}</span>
                           </el-col>
                           <el-col :span="6">
                             <span class="label"> {{ $t('commons.low') }} :</span>
-                            <span class="value low"> {{ "22" }}</span>
+                            <span class="value low"> {{ item.low }}</span>
                           </el-col>
                         </el-row>
                       </div>
@@ -397,16 +381,7 @@ const columnOptions2 = [
         ],
         checkAll2: true,
         isIndeterminate2: false,
-        groupTypes: [
-          {id: 'cloud', name: 'Cloud'},
-          {id: 'k8s', name: 'K8s'},
-          {id: 'server', name: 'Server'},
-        ],
         checkPlugins: [],
-        serverTypes: [
-          {id: 'linux', name: 'Linux'},
-          {id: 'windows', name: 'Windows'}
-        ],
       }
     },
 
@@ -595,6 +570,11 @@ const columnOptions2 = [
           }
         }
       },
+      goResult(projectId) {
+        this.$router.push({
+          path: '/resource/resultdetails/' + projectId,
+        }).catch(error => error);
+      },
     },
     created() {
       this.init();
@@ -718,14 +698,14 @@ const columnOptions2 = [
   }
   .plugin-name {
     float: left;
-    width: 70%;
+    width: 50%;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
   }
   .plugin-type {
     float: right;
-    width: 30%;
+    width: 50%;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -790,6 +770,14 @@ const columnOptions2 = [
   }
   .desc-rule {
     color: #646a73;
+    height: 22px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .desc-rule2 {
+    color: red;
     height: 22px;
     font-weight: 400;
     font-size: 14px;
@@ -863,6 +851,11 @@ const columnOptions2 = [
   }
   .el-row-pdd {
     padding: 0 20px;
+  }
+  .rl-cen {
+    text-align: center;
+    position: fixed;
+    top: 0;
   }
   /deep/ :focus{outline:0;}
 </style>

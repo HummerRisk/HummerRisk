@@ -10,7 +10,7 @@
           </ul>
           <div class="ch-mar-top" v-if="logForm.vulnerabilityReport.items">
             <div class="ch-mar-top" :key="index" v-for="(item, index) in logForm.vulnerabilityReport.items">
-              <el-card class="box-card">
+              <el-card shadow="hover" class="box-card">
                 <div class="ch-mar">
                   <h3>Report:&nbsp;{{ item.metadata.name }}</h3>
                   <ul style="margin-left: 60px;">
@@ -24,7 +24,7 @@
                   </ul>
                 </div>
                 <div class="box-chr2 box-card" :key="index" v-for="(vulnerability, index) in item.report.vulnerabilities">
-                  <el-card>
+                  <el-card shadow="hover">
                     <div slot="header" class="clearfix clearfix-dev">
                       <el-row>
                         <el-col v-bind:class="{ 'icon-title box-critical': vulnerability.severity === 'CRITICAL',
@@ -97,7 +97,7 @@
           </ul>
           <div class="ch-mar-top" v-if="logForm.configAuditReport.items">
             <div class="ch-mar-top" :key="index" v-for="(item, index) in logForm.configAuditReport.items">
-              <el-card class="box-card">
+              <el-card shadow="hover" class="box-card">
                 <div class="ch-mar">
                   <h3>Report:&nbsp;{{ item.metadata.name }}</h3>
                   <ul style="margin-left: 60px;">

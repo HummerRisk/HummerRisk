@@ -9,7 +9,7 @@
         </template>
 
         <div>
-          <el-card class="el-box-card">
+          <el-card shadow="hover" class="el-box-card">
             <div slot="header" class="clearfix">
               <span>
                 <el-button type="primary" size="small" @click="scanGroup()">{{ $t('scaning.perform_detection') }}</el-button>
@@ -177,7 +177,7 @@
                   <codemirror ref="cmEditor" v-model="script" class="code-mirror" :options="cmOptions" />
                 </el-col>
                 <el-col :span="6">
-                  <el-card class="box-card">
+                  <el-card shadow="hover" class="box-card">
                     <el-result v-if="!cloudProject.resultStatus" icon="info" :title="$t('scaning.no_scan')" :subTitle="$t('scaning.no_scan_ing')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.no_scan') }}</el-button>
@@ -704,42 +704,6 @@ import {
             }
           }
         });
-      },
-      changeProcessOrder(cloudProcess) {
-        switch (cloudProcess.processOrder) {
-          case 1:
-            cloudProcess.processOrder = 2;
-            cloudProcess.processStep = 1;
-            break;
-          case 2:
-            cloudProcess.processOrder = 3;
-            cloudProcess.processStep = 1;
-            break;
-          case 3:
-            cloudProcess.processOrder = 4;
-            cloudProcess.processStep = 1;
-            break;
-          case 4:
-            cloudProcess.processOrder = 5;
-            cloudProcess.processStep = 2;
-            break;
-          case 5:
-            cloudProcess.processOrder = 6;
-            cloudProcess.processStep = 2;
-            break;
-          case 6:
-            cloudProcess.processOrder = 7;
-            cloudProcess.processStep = 2;
-            break;
-          case 7:
-            cloudProcess.processOrder = 8;
-            cloudProcess.processStep = 2;
-            break;
-          case 8:
-            cloudProcess.processOrder = 9;
-            cloudProcess.processStep = 3;
-            break;
-        }
       },
       initGroups(pluginId) {
         this.result = this.$get(groupsByAccountId + pluginId,response => {

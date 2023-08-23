@@ -14,7 +14,7 @@
         <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
@@ -305,7 +305,7 @@
       <!--rule bind-->
       <el-drawer class="rtl edit-dev-drawer" :title="$t('rule.rule_list_bind')" :visible.sync="bindVisible" size="85%" :before-close="handleClose" :direction="direction"
                  :destroy-on-close="true">
-        <el-card class="table-card edit_dev" style="">
+        <el-card class="table-card edit_dev" shadow="hover">
           <div style="text-align: center; margin: 25px;">
             <p style="text-align: center; padding: 10px;margin: 25px;color: red;background-color: aliceblue;">{{ $t('rule.rule_list_bind') }}</p>
             <el-transfer :titles="[$t('rule.source_rule'), $t('rule.target_rule')]" :filter-method="filterMethod" class="el-trans"

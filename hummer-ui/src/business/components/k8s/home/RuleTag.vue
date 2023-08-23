@@ -1,6 +1,6 @@
 <template>
     <main-container>
-      <el-card class="table-card" v-loading="result.loading">
+      <el-card shadow="hover" class="table-card" v-loading="result.loading">
         <template v-slot:header>
           <table-header :condition.sync="condition" @search="search"
                         :title="$t('rule.rule_tag_list')"

@@ -2,7 +2,7 @@
   <div v-loading="result.loading">
     <container class="container" >
       <el-col :span="12">
-        <el-card class="table-card">
+        <el-card shadow="hover" class="table-card">
           <template v-slot:header>
             <span class="title">{{ $t('fs.by_project_chart') }}</span>
           </template>
@@ -10,7 +10,7 @@
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card class="table-card">
+        <el-card shadow="hover" class="table-card">
           <template v-slot:header>
             <span class="title">{{ $t('commons.by_severity') }}</span>
           </template>
@@ -20,7 +20,7 @@
     </container>
     <container class="container">
       <el-col :span="24">
-        <el-card class="table-card">
+        <el-card shadow="hover" class="table-card">
           <template v-slot:header>
             <span class="title">{{ $t('fs.by_fs') }}</span>
           </template>

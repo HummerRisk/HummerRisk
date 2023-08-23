@@ -72,7 +72,7 @@
         </section>
       </el-card>
 
-      <el-card>
+      <el-card shadow="hover">
         <template v-slot:header>
           <table-header :condition.sync="condition"
                         @search="search"
