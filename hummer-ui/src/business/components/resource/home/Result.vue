@@ -1234,9 +1234,11 @@ export default {
   },
   activated() {
     if (this.$route.params.id) this.projectId = this.$route.params.id;
+    this.init();
   },
   created() {
     if (this.$route.params.id) this.projectId = this.$route.params.id;
+    this.init();
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {

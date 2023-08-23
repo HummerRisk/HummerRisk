@@ -879,19 +879,18 @@
 
     <select id="resouceGroupsByProjectId" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT
-        t.name as `name`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.project_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `noComplianceRule`,
-        (select count(t2.id) from cloud_task t2 where t2.project_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `sumRule`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'CriticalRisk' and t2.project_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `critical`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'HighRisk' and t2.project_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `high`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'MediumRisk' and t2.project_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `medium`,
-        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'LowRisk' and t2.project_id = #{id} and t2.rule_id in (select m.rule_id from rule_group_mapping m where t.id = m.group_id)) AS `low`
-        FROM rule_group t
-        JOIN rule_group_mapping t1 on t.id = t1.group_id
+        cg.group_name as `name`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `noComplianceRule`,
+        (select count(t2.id) from cloud_task t2 where t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `sumRule`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'CriticalRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `critical`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'HighRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `high`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'MediumRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `medium`,
+        (select count(t2.id) from cloud_task t2 where t2.return_sum &gt; 0 and t2.severity = 'LowRisk' and t2.group_id = cg.id and t2.rule_id in (select m.rule_id from rule_group_mapping m where cg.group_id = m.group_id)) AS `low`
+        FROM cloud_group cg
         <where>
-            AND t1.rule_id in (select c.rule_id from cloud_task c where c.project_id = #{id})
+            AND cg.project_id = #{id}
         </where>
-        GROUP BY t.id, t.name
+        GROUP BY cg.id, cg.group_name
         ORDER BY noComplianceRule desc
     </select>
 
