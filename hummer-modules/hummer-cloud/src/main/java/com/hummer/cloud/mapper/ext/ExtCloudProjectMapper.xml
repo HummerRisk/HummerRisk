@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hummer.cloud.mapper.ext.ExtCloudProjectMapper">
-    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudProjectDTO"
-               extends="com.hummer.cloud.mapper.CloudProjectMapper.BaseResultMap">
+    <resultMap id="BaseResultMap" type="com.hummer.common.core.dto.CloudProjectDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="account_name" jdbcType="VARCHAR" property="accountName" />
@@ -19,6 +18,31 @@
         <collection property="cloudProjectLogList" ofType="com.hummer.common.core.domain.CloudProjectLog" javaType="list"
                     select="selectCloudProjectLogList" column="{id=id}">
         </collection>
+        <collection property="cloudGroupList" ofType="com.hummer.common.core.domain.CloudGroup" javaType="list"
+                    select="selectCloudGroupList" column="{id=id}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="BaseGroupMap" type="com.hummer.common.core.domain.CloudGroup">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="group_id" jdbcType="INTEGER" property="groupId" />
+        <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+        <result column="group_desc" jdbcType="VARCHAR" property="groupDesc" />
+        <result column="group_level" jdbcType="VARCHAR" property="groupLevel" />
+        <result column="group_flag" jdbcType="TINYINT" property="groupFlag" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="job_type" jdbcType="VARCHAR" property="jobType" />
+        <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
     </resultMap>
 
     <resultMap id="CloudProjectLogMap" type="com.hummer.common.core.domain.CloudProjectLog">
@@ -31,8 +55,7 @@
         <result column="result" jdbcType="TINYINT" property="result" />
     </resultMap>
 
-    <resultMap id="BaseGroupResultMap" type="com.hummer.common.core.dto.CloudGroupDTO"
-               extends="com.hummer.cloud.mapper.CloudGroupMapper.BaseResultMap">
+    <resultMap id="BaseGroupResultMap" type="com.hummer.common.core.dto.CloudGroupDTO">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="group_id" jdbcType="INTEGER" property="groupId" />
@@ -68,27 +91,44 @@
         <result column="result" jdbcType="TINYINT" property="result" />
     </resultMap>
 
-    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.dto.CloudProcessDTO"
-               extends="com.hummer.cloud.mapper.CloudProcessMapper.BaseResultMap">
+    <resultMap id="BaseProcessResultMap" type="com.hummer.common.core.dto.CloudProcessDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="projectId" jdbcType="VARCHAR" property="projectId" />
+        <result column="process_step" jdbcType="INTEGER" property="processStep" />
+        <result column="process_order" jdbcType="INTEGER" property="processOrder" />
+        <result column="process_name" jdbcType="VARCHAR" property="processName" />
+        <result column="process_rate" jdbcType="INTEGER" property="processRate" />
+        <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
+        <result column="resultStatus" jdbcType="VARCHAR" property="resultStatus" />
+        <collection property="cloudProcessList" ofType="com.hummer.common.core.domain.CloudProcess" javaType="list"
+                    select="selectCloudProcessList" column="{projectId=projectId}">
+        </collection>
+        <collection property="cloudProcessLogList" ofType="com.hummer.common.core.domain.CloudProcessLog" javaType="list"
+                    select="selectCloudProcessLogList" column="{projectId=projectId}">
+        </collection>
+    </resultMap>
+
+    <resultMap id="CloudProcessMap" type="com.hummer.common.core.domain.CloudProcess">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="process_step" jdbcType="INTEGER" property="processStep" />
+        <result column="process_order" jdbcType="INTEGER" property="processOrder" />
+        <result column="process_name" jdbcType="VARCHAR" property="processName" />
         <result column="process_rate" jdbcType="INTEGER" property="processRate" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="exec_time" jdbcType="VARCHAR" property="execTime" />
-        <collection property="cloudProcessLogList" ofType="com.hummer.common.core.domain.CloudProcessLog" javaType="list"
-                    select="selectCloudProcessLogList" column="{id=id}">
-        </collection>
     </resultMap>
 
-    <resultMap id="CloudProcessLogMap" type="com.hummer.common.core.domain.CloudProcessLog">
+    <resultMap id="CloudProcessLogMap" type="com.hummer.common.core.domain.CloudProcessLogWithBLOBs">
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="project_id" jdbcType="VARCHAR" property="projectId" />
         <result column="process_id" jdbcType="VARCHAR" property="processId" />
         <result column="create_time" jdbcType="BIGINT" property="createTime" />
         <result column="operator" jdbcType="VARCHAR" property="operator" />
         <result column="result" jdbcType="TINYINT" property="result" />
+        <result column="operation" jdbcType="LONGVARCHAR" property="operation" />
+        <result column="output" jdbcType="LONGVARCHAR" property="output" />
     </resultMap>
 
     <sql id="condition">
@@ -193,6 +233,14 @@
         order by t.create_time desc
     </select>
 
+    <select id="selectCloudGroupList" resultMap="BaseGroupMap">
+        SELECT
+            t.*
+        FROM cloud_group t
+        where t.project_id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+
     <select id="selectCloudProjectLogList" resultMap="CloudProjectLogMap">
         SELECT
             t.*
@@ -229,7 +277,7 @@
         order by t.create_time desc
     </select>
 
-    <select id="selectCloudProjectLogList" resultMap="CloudProjectLogMap">
+    <select id="selectCloudGroupLogList" resultMap="CloudProjectLogMap">
         SELECT
             t.*
         FROM cloud_group_log t
@@ -237,27 +285,36 @@
         ORDER BY t.create_time DESC
     </select>
 
-    <select id="getCloudProcessDTOs" resultMap="BaseProcessResultMap">
+    <select id="getCloudProcessDTO" resultMap="BaseProcessResultMap">
         select
-        t.*
-        from cloud_process as t
-        <where>
-            <if test="request.id != null and request.id != ''">
-                and t.id = #{request.id}
-            </if>
-            <if test="request.projectId != null and request.projectId != ''">
-                and t.project_id = #{request.projectId}
-            </if>
-        </where>
-        order by t.create_time desc
+        t.id,
+        t.project_id as projectId,
+        t.process_step,
+        t.process_order,
+        t.process_name,
+        t.process_rate,
+        t.`status` as resultStatus,
+        t.exec_time
+        FROM cloud_process t
+        WHERE t.project_id = #{request.projectId} AND t.process_order = #{request.processOrder} AND t.process_step = #{request.processStep}
+        ORDER BY t.process_order desc
+        LIMIT 1
+    </select>
+
+    <select id="selectCloudProcessList" resultMap="CloudProcessMap">
+        SELECT
+            t.*
+        FROM cloud_process t
+        where t.project_id = #{projectId}
+        order by t.process_order, t.process_step, t.create_time desc
     </select>
 
     <select id="selectCloudProcessLogList" resultMap="CloudProcessLogMap">
         SELECT
             t.*
         FROM cloud_process_log t
-        where t.process_id = #{id}
-        ORDER BY t.create_time DESC
+        where t.project_id = #{projectId}
+        order by t.create_time
     </select>
 
 </mapper>

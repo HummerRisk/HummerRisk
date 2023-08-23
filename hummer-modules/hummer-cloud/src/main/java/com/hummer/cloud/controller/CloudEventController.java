@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Tag(name = "云审计")
 @RestController
-@RequestMapping("cloud/event")
+@RequestMapping("event")
 public class CloudEventController {
 
     @Autowired

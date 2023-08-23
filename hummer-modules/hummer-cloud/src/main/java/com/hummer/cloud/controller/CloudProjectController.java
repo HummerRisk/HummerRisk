@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudProjectService;
 import com.hummer.common.core.domain.CloudProcess;
+import com.hummer.common.core.domain.CloudProcessLogWithBLOBs;
 import com.hummer.common.core.domain.request.project.CloudGroupRequest;
 import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.CloudGroupDTO;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @Tag(name = "云资源检测历史")
 @RestController
-@RequestMapping(value = "cloud/project")
+@RequestMapping(value = "project")
 public class CloudProjectController {
 
     @Autowired
@@ -84,25 +85,31 @@ public class CloudProjectController {
         cloudProjectService.deleteGroups(selectIds, tokenService.getLoginUser());
     }
 
-    @Operation(summary = "项目执行过程列表")
+    @Operation(summary = "更新初始化流程")
     @I18n
-    @PostMapping("processList/{goPage}/{pageSize}")
-    public Pager<List<CloudProcessDTO>> getCloudProcessDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudProcess cloudProcess) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, cloudProjectService.getCloudProcessDTOs(cloudProcess));
+    @PostMapping("process/update")
+    public CloudProcess updateProcess(@RequestBody CloudProcess cloudProcess) throws Exception {
+        return cloudProjectService.updateProcess(cloudProcess);
     }
 
-    @Operation(summary = "项目执行过程详情")
+    @Operation(summary = "项目执行初始化列表")
     @I18n
-    @GetMapping("processById/{groupId}")
-    public CloudProcessDTO processById(@PathVariable String processId) {
-        return cloudProjectService.processById(processId);
+    @PostMapping("processList")
+    public CloudProcessDTO getCloudProcessDTO(@RequestBody CloudProcess cloudProcess) {
+        return cloudProjectService.getCloudProcessDTO(cloudProcess);
+    }
+
+    @Operation(summary = "项目执行初始化日志列表")
+    @I18n
+    @PostMapping("processLogList")
+    public List<CloudProcessLogWithBLOBs> getCloudProcessLogs(@RequestBody CloudProcess cloudProcess) {
+        return cloudProjectService.getCloudProcessLogs(cloudProcess);
     }
 
     @Operation(summary = "执行项目检测")
     @PostMapping("scan")
-    public void scan(@RequestBody ScanGroupRequest request) throws Exception {
-        cloudProjectService.scan(request, tokenService.getLoginUser());
+    public String scan(@RequestBody ScanGroupRequest request) throws Exception {
+        return cloudProjectService.scan(request, tokenService.getLoginUser());
     }
 
 }

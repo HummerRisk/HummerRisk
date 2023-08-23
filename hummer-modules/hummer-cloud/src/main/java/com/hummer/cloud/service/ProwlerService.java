@@ -262,6 +262,8 @@ public class ProwlerService {
         cloudTask.setApplyUser(Objects.requireNonNull(loginUser).getUserId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.prowler.name());
+        cloudTask.setProjectId(quartzTaskDTO.getProjectId());
+        cloudTask.setGroupId(quartzTaskDTO.getGroupId());
 
         CloudTaskExample example = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = example.createCriteria();

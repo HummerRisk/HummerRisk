@@ -2,10 +2,10 @@
     <main-container>
       <el-card class="table-card" v-loading="result.loading">
         <template v-slot:header>
-          <scan-header  :condition.sync="condition"
+          <scan-header  :condition.sync="condition" @search="search"
                         :title="$t('scaning.scaning_log')"
                         @back="back" :backTip="$t('account.back_account')"
-                        :show-save="false" :show-create="false" :show-setting="false" :show-clean="false"/>
+                        :show-save="false" :show-create="false" :show-setting="false"/>
         </template>
 
         <div>
@@ -30,7 +30,7 @@
         <el-row>
           <el-col :span="4">
             <div style="height: 600px;margin: 25px;">
-              <el-steps direction="vertical" :active="activeStep">
+              <el-steps direction="vertical" :active="cloudProject.processStep">
                 <el-step :title="$t('scaning.initial_configuration')" :description="$t('scaning.waiting_configuration')">
                 </el-step>
                 <el-step :title="$t('scaning.perform_detection')" :description="$t('scaning.waiting_perform')">
@@ -45,61 +45,57 @@
               <el-row id="row1" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage1 > 0 && percentage1 < 100,
-                                  'font-end': percentage1 === 0 || percentage1 === 100 }">
-                    <i v-if="percentage1 > 0 && percentage1 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage1 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage1 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.init_cloud_account_info') }}
-                    <I v-if="seconds1 > 0" style="float: right;margin-right: 23px;">{{ seconds1 + $t('second.title') }}</I>
-                    <I v-if="seconds1 > 0 && minutes1 > 0" style="float: right">{{ minutes1 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessAccount.processRate > 0 && cloudProcessAccount.processRate < 100,
+                                'font-end': cloudProcessAccount.processRate === 0 || cloudProcessAccount.processRate === 100 }">
+                    <i v-if="cloudProcessAccount.processRate > 0 && cloudProcessAccount.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessAccount.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessAccount.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessAccount.processName }}
+                    <I v-if="cloudProcessAccount.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessAccount.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage1" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessAccount.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row id="row2" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage2 > 0 && percentage2 < 100,
-                                  'font-end': percentage2 === 0 || percentage2 === 100 }">
-                    <i v-if="percentage2 > 0 && percentage2 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage2 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage2 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.init_cloud_region_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds2 > 0" style="float: right;margin-right: 23px;">{{ seconds2 + $t('second.title') }}</I>
-                    <I v-if="seconds2 > 0 && minutes2 > 0" style="float: right">{{ minutes2 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessRegion.processRate > 0 && cloudProcessRegion.processRate < 100,
+                                'font-end': cloudProcessRegion.processRate === 0 || cloudProcessRegion.processRate === 100 }">
+                    <i v-if="cloudProcessRegion.processRate > 0 && cloudProcessRegion.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessRegion.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessRegion.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessRegion.processName }}
+                    <I v-if="cloudProcessRegion.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessRegion.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage2" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessRegion.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row id="row3" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage3 > 0 && percentage3 < 100,
-                                  'font-end': percentage3 === 0 || percentage3 === 100 }">
-                    <i v-if="percentage3 > 0 && percentage3 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage3 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage3 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.init_cloud_group_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds3 > 0" style="float: right;margin-right: 23px;">{{ seconds3 + $t('second.title') }}</I>
-                    <I v-if="seconds3 > 0 && minutes3 > 0" style="float: right">{{ minutes3 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessGroup.processRate > 0 && cloudProcessGroup.processRate < 100,
+                                'font-end': cloudProcessGroup.processRate === 0 || cloudProcessGroup.processRate === 100 }">
+                    <i v-if="cloudProcessGroup.processRate > 0 && cloudProcessGroup.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessGroup.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessGroup.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessGroup.processName }}
+                    <I v-if="cloudProcessGroup.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessGroup.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage3" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessGroup.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row id="row4" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage4 > 0 && percentage4 < 100,
-                                  'font-end': percentage4 === 0 || percentage4 === 100 }">
-                    <i v-if="percentage4 > 0 && percentage4 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage4 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage4 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.init_cloud_rule_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds4 > 0" style="float: right;margin-right: 23px;">{{ seconds4 + $t('second.title') }}</I>
-                    <I v-if="seconds4 > 0 && minutes4 > 0" style="float: right">{{ minutes4 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessRule.processRate > 0 && cloudProcessRule.processRate < 100,
+                                'font-end': cloudProcessRule.processRate === 0 || cloudProcessRule.processRate === 100 }">
+                    <i v-if="cloudProcessRule.processRate > 0 && cloudProcessRule.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessRule.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessRule.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessRule.processName }}
+                    <I v-if="cloudProcessRule.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessRule.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage4" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessRule.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
             </div>
@@ -107,76 +103,71 @@
               <el-row id="row5" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage5 > 0 && percentage5 < 100,
-                                  'font-end': percentage5 === 0 || percentage5 === 100 }">
-                    <i v-if="percentage5 > 0 && percentage5 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage5 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage5 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.init_env_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds5 > 0" style="float: right;margin-right: 23px;">{{ seconds5 + $t('second.title') }}</I>
-                    <I v-if="seconds5 > 0 && minutes5 > 0" style="float: right">{{ minutes5 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessEnv.processRate > 0 && cloudProcessEnv.processRate < 100,
+                                'font-end': cloudProcessEnv.processRate === 0 || cloudProcessEnv.processRate === 100 }">
+                    <i v-if="cloudProcessEnv.processRate > 0 && cloudProcessEnv.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessEnv.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessEnv.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessEnv.processName }}
+                    <I v-if="cloudProcessEnv.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessEnv.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage5" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessEnv.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row id="row6" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage6 > 0 && percentage6 < 100,
-                                  'font-end': percentage6 === 0 || percentage6 === 100 }">
-                    <i v-if="percentage6 > 0 && percentage6 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage6 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage6 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.create_scan_info') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds6 > 0" style="float: right;margin-right: 23px;">{{ seconds6 + $t('second.title') }}</I>
-                    <I v-if="seconds6 > 0 && minutes6 > 0" style="float: right">{{ minutes6 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessScan.processRate > 0 && cloudProcessScan.processRate < 100,
+                                'font-end': cloudProcessScan.processRate === 0 || cloudProcessScan.processRate === 100 }">
+                    <i v-if="cloudProcessScan.processRate > 0 && cloudProcessScan.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessScan.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessScan.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessScan.processName }}
+                    <I v-if="cloudProcessScan.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessScan.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage6" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessScan.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row id="row7" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage7 > 0 && percentage7 < 100,
-                                  'font-end': percentage7 === 0 || percentage7 === 100 }">
-                    <i v-if="percentage7 > 0 && percentage7 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage7 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage7 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.create_scan_rule') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds7 > 0" style="float: right;margin-right: 23px;">{{ seconds7 + $t('second.title') }}</I>
-                    <I v-if="seconds7 > 0 && minutes7 > 0" style="float: right">{{ minutes7 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessScanGroup.processRate > 0 && cloudProcessScanGroup.processRate < 100,
+                                'font-end': cloudProcessScanGroup.processRate === 0 || cloudProcessScanGroup.processRate === 100 }">
+                    <i v-if="cloudProcessScanGroup.processRate > 0 && cloudProcessScanGroup.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessScanGroup.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessScanGroup.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessScanGroup.processName }}
+                    <I v-if="cloudProcessScanGroup.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessScanGroup.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage7" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessScanGroup.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row id="row8" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage8 > 0 && percentage8 < 100,
-                                  'font-end': percentage8 === 0 || percentage8 === 100 }">
-                    <i v-if="percentage8 > 0 && percentage8 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage8 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage8 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.create_scan_task') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds8 > 0" style="float: right;margin-right: 23px;">{{ seconds8 + $t('second.title') }}</I>
-                    <I v-if="seconds8 > 0 && minutes8 > 0" style="float: right">{{ minutes8 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessScanTask.processRate > 0 && cloudProcessScanTask.processRate < 100,
+                                'font-end': cloudProcessScanTask.processRate === 0 || cloudProcessScanTask.processRate === 100 }">
+                    <i v-if="cloudProcessScanTask.processRate > 0 && cloudProcessScanTask.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessScanTask.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessScanTask.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessScanTask.processName }}
+                    <I v-if="cloudProcessScanTask.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessScanTask.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage8" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessScanTask.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
               <el-row id="row9" style="margin: 15px 0;">
                 <el-col :span="22">
                   <h5 v-bind:class="{
-                                  'font-ing': percentage9 > 0 && percentage9 < 100,
-                                  'font-end': percentage9 === 0 || percentage9 === 100 }">
-                    <i v-if="percentage9 > 0 && percentage9 < 100" class="el-icon-loading"></i>
-                    <i v-if="percentage9 === 0" class="el-icon-video-pause"></i>
-                    <i v-if="percentage9 === 100" class="el-icon-circle-check"></i>
-                    {{ $t('scaning.start_scan_task') }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <I v-if="seconds9 > 0" style="float: right;margin-right: 23px;">{{ seconds9 + $t('second.title') }}</I>
-                    <I v-if="seconds9 > 0 && minutes9 > 0" style="float: right">{{ minutes9 + $t('minute.title') }}:</I>
+                                'font-ing': cloudProcessStartTask.processRate > 0 && cloudProcessStartTask.processRate < 100,
+                                'font-end': cloudProcessStartTask.processRate === 0 || cloudProcessStartTask.processRate === 100 }">
+                    <i v-if="cloudProcessStartTask.processRate > 0 && cloudProcessStartTask.processRate < 100" class="el-icon-loading"></i>
+                    <i v-if="cloudProcessStartTask.processRate === 0" class="el-icon-video-pause"></i>
+                    <i v-if="cloudProcessStartTask.processRate === 100" class="el-icon-circle-check"></i>
+                    {{ cloudProcessStartTask.processName }}
+                    <I v-if="cloudProcessStartTask.processRate > 0" style="float: right;margin-right: 23px;">{{ cloudProcessStartTask.execTime + $t('second.title') }}</I>
                   </h5>
-                  <el-progress :percentage="percentage9" :color="customColorMethod"></el-progress>
+                  <el-progress :percentage="cloudProcessStartTask.processRate" :color="customColorMethod"></el-progress>
                 </el-col>
               </el-row>
             </div>
@@ -187,17 +178,17 @@
                 </el-col>
                 <el-col :span="6">
                   <el-card class="box-card">
-                    <el-result v-if="resultStatus == 0" icon="info" :title="$t('scaning.no_scan')" :subTitle="$t('scaning.no_scan_ing')">
+                    <el-result v-if="!cloudProject.resultStatus" icon="info" :title="$t('scaning.no_scan')" :subTitle="$t('scaning.no_scan_ing')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.no_scan') }}</el-button>
                       </template>
                     </el-result>
-                    <el-result v-if="resultStatus == 1" icon="warning" :title="$t('scaning.start_scan')" :subTitle="$t('scaning.start_scan_ing')">
+                    <el-result v-if="cloudProject.resultStatus === 'APPROVED'" icon="warning" :title="$t('scaning.start_scan')" :subTitle="$t('scaning.start_scan_ing')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.start_scan') }}</el-button>
                       </template>
                     </el-result>
-                    <el-result v-if="resultStatus == 2" icon="success" :title="$t('scaning.create_end')" :subTitle="$t('scaning.go_scan_result')">
+                    <el-result v-if="cloudProject.resultStatus === 'FINISHED'" icon="success" :title="$t('scaning.create_end')" :subTitle="$t('scaning.go_scan_result')">
                       <template slot="extra">
                         <el-button type="primary" size="medium" @click="goResult">{{ $t('scaning.go_result') }}</el-button>
                       </template>
@@ -230,6 +221,13 @@ import {
 } from "@/api/cloud/account/account";
 import {groupsByAccountId, ruleScanUrl} from "@/api/cloud/rule/rule";
 import FakeProgress from "fake-progress";
+import {
+  processCreateUrl,
+  processListUrl,
+  processLogListUrl,
+  processUpdateUrl,
+  projectScanUrl
+} from "@/api/cloud/project/project";
 
 /* eslint-disable */
   export default {
@@ -290,17 +288,6 @@ import FakeProgress from "fake-progress";
           readOnly: true,
           viewportMargin: 30
         },
-        script: '',
-        percentage1: 0,
-        percentage2: 0,
-        percentage3: 0,
-        percentage4: 0,
-        percentage5: 0,
-        percentage6: 0,
-        percentage7: 0,
-        percentage8: 0,
-        percentage9: 0,
-        percentage: 0,
         customColor: '#409eff',
         customColors: [
           {color: '#f56c6c', percentage: 20},
@@ -309,73 +296,123 @@ import FakeProgress from "fake-progress";
           {color: '#1989fa', percentage: 80},
           {color: '#6f7ad3', percentage: 100}
         ],
-        minutes1: 0,
-        seconds1: 0,
-        intervalId1: null,
-        minutes2: 0,
-        seconds2: 0,
-        intervalId2: null,
-        minutes3: 0,
-        seconds3: 0,
-        intervalId3: null,
-        minutes4: 0,
-        seconds4: 0,
-        intervalId4: null,
-        minutes5: 0,
-        seconds5: 0,
-        intervalId5: null,
-        minutes6: 0,
-        seconds6: 0,
-        intervalId6: null,
-        minutes7: 0,
-        seconds7: 0,
-        intervalId7: null,
-        minutes8: 0,
-        seconds8: 0,
-        intervalId8: null,
-        minutes9: 0,
-        seconds9: 0,
-        intervalId9: null,
-        resultStatus: 0,
-        resultTag: false,
-        activeStep: 1,
-        fake1: new FakeProgress({
-          timeConstant : 1000,
-          autoStart : true
-        }),
-        fake2: new FakeProgress({
-          timeConstant : 1000,
-          autoStart : true
-        }),
-        fake3: new FakeProgress({
-          timeConstant : 2000,
-          autoStart : true
-        }),
-        fake4: new FakeProgress({
-          timeConstant : 2000,
-          autoStart : true
-        }),
-        fake5: new FakeProgress({
-          timeConstant : 10000,
-          autoStart : true
-        }),
-        fake6: new FakeProgress({
-          timeConstant : 10000,
-          autoStart : true
-        }),
-        fake7: new FakeProgress({
-          timeConstant : 20000,
-          autoStart : true
-        }),
-        fake8: new FakeProgress({
-          timeConstant : 30000,
-          autoStart : true
-        }),
-        fake9: new FakeProgress({
-          timeConstant : 10000,
-          autoStart : true
-        }),
-        timer: '',
+        script: '',
+        cloudProject: {
+          resultStatus: null,
+          processStep: 1,
+          processOrder: 1,
+        },
+        projectId: '',
+        cloudProcessAccount: {
+          processStep: 1,
+          processOrder: 1,
+          processName: this.$t('scaning.init_cloud_account_info'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 3000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessRegion: {
+          processStep: 1,
+          processOrder: 2,
+          processName: this.$t('scaning.init_cloud_region_info'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 3000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessGroup: {
+          processStep: 1,
+          processOrder: 3,
+          processName: this.$t('scaning.init_cloud_group_info'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 3000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessRule: {
+          processStep: 1,
+          processOrder: 4,
+          processName: this.$t('scaning.init_cloud_rule_info'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 3000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessEnv: {
+          processStep: 2,
+          processOrder: 5,
+          processName: this.$t('scaning.init_env_info'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 5000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessScan: {
+          processStep: 2,
+          processOrder: 6,
+          processName: this.$t('scaning.create_scan_info'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 5000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessScanGroup: {
+          processStep: 2,
+          processOrder: 7,
+          processName: this.$t('scaning.create_scan_group'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 10000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessScanTask: {
+          processStep: 2,
+          processOrder: 8,
+          processName: this.$t('scaning.create_scan_task'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 10000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessStartTask: {
+          processStep: 3,
+          processOrder: 9,
+          processName: this.$t('scaning.start_scan_task'),
+          processRate: 0,
+          execTime: 0,
+          fake: new FakeProgress({
+            timeConstant : 10000,
+            autoStart : true
+          }),
+          intervalId: '',
+        },
+        cloudProcessLogList: [],
+        timeDifferenceInSeconds: 0,
       }
     },
     created() {
@@ -408,16 +445,13 @@ import FakeProgress from "fake-progress";
         }).catch(error => error);
       },
       goResult() {
-        if (this.resultStatus === 0) {
+        if (!this.cloudProject.resultStatus) {
           this.$warning(this.$t('scaning.no_scan_ing'));
-          return;
-        } else if (this.resultStatus === 1) {
+        } else if (this.cloudProject.resultStatus === 'APPROVED') {
           this.$warning(this.$t('scaning.start_scan_ing'));
-          return;
-        } else {
+        } else if (this.cloudProject.resultStatus === 'FINISHED') {
           this.$router.push({
-            name: 'cloudResult',
-            params: {id: this.accountWithGroup.id},
+            path: '/resource/resultdetails/' + this.projectId,
           }).catch(error => error);
         }
       },
@@ -432,225 +466,279 @@ import FakeProgress from "fake-progress";
       },
       startTimer() {
         //第一步
-        this.goAnchor('row1');
-        this.intervalId1 = setInterval(() => {
-          this.seconds1++;
-          if (this.seconds1 === 60) {
-            this.seconds1 = 0;
-            this.minutes1++;
-          }
+        this.cloudProcessAccount.intervalId = setInterval(() => {
+          this.cloudProcessAccount.execTime++;
           //进度条前端一直转不会到100%
-          this.percentage1 = parseInt(this.fake1.progress * 100);
+          this.cloudProcessAccount.processRate = parseInt(this.cloudProcessAccount.fake.progress * 100);
         }, 1000);
         setTimeout(() => {
-          this.percentage1 = 100;
-          this.fake1.end();
-          clearInterval(this.intervalId1);
+          this.cloudProcessAccount.processRate = 100;
+          this.cloudProcessAccount.fake.end();
+          clearInterval(this.cloudProcessAccount.intervalId);
 
-          this.script = this.script + this.$t('scaning.init_cloud_account_info') + "\r" + "init cloud account info start" + "\r" + "init cloud account info end" + "\r";
-          // 获取滚动信息  注意是cmEditor.codemirror
-          let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-          // 滚动 注意是cmEditor.codemirror
-          this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+          let accountParams = {
+            projectId: this.projectId,
+            processStep: this.cloudProcessAccount.processStep,
+            processOrder: this.cloudProcessAccount.processOrder,
+            execTime: this.cloudProcessAccount.execTime,
+          };
+          this.$post(processUpdateUrl, accountParams, response => {
+            this.cloudProject = response.data;
+            this.cloudProcessAccount.processName = response.data.processName;
+          });
 
           //第二步
-          this.goAnchor('row2');
-          this.intervalId2 = setInterval(() => {
-            this.seconds2++;
-            if (this.seconds2 === 60) {
-              this.seconds2 = 0;
-              this.minutes2++;
-            }
+          this.cloudProcessRegion.intervalId = setInterval(() => {
+            this.cloudProcessRegion.execTime++;
             //进度条前端一直转不会到100%
-            this.percentage2 = parseInt(this.fake2.progress * 100);
+            this.cloudProcessRegion.processRate = parseInt(this.cloudProcessRegion.fake.progress * 100);
           }, 1000);
           setTimeout(() => {
-            this.percentage2 = 100;
-            this.fake2.end();
-            clearInterval(this.intervalId2);
+            this.cloudProcessRegion.processRate = 100;
+            this.cloudProcessRegion.fake.end();
+            clearInterval(this.cloudProcessRegion.intervalId);
 
-            this.script = this.script + this.$t('scaning.init_cloud_region_info') + "\r" + "init cloud account regions start" + "\r" + "init cloud account regions end" + "\r";
-            // 获取滚动信息  注意是cmEditor.codemirror
-            let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-            // 滚动 注意是cmEditor.codemirror
-            this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+            let regionParams = {
+              projectId: this.projectId,
+              processStep: this.cloudProcessRegion.processStep,
+              processOrder: this.cloudProcessRegion.processOrder,
+              execTime: this.cloudProcessRegion.execTime,
+            };
+            this.$post(processUpdateUrl, regionParams, response => {
+              this.cloudProject = response.data;
+              this.cloudProcessRegion.processName = response.data.processName;
+            });
 
             //第三步
-            this.goAnchor('row3');
-            this.intervalId3 = setInterval(() => {
-              this.seconds3++;
-              if (this.seconds3 === 60) {
-                this.seconds3 = 0;
-                this.minutes3++;
-              }
+            this.cloudProcessGroup.intervalId = setInterval(() => {
+              this.cloudProcessGroup.execTime++;
               //进度条前端一直转不会到100%
-              this.percentage3 = parseInt(this.fake3.progress * 100);
+              this.cloudProcessGroup.processRate = parseInt(this.cloudProcessGroup.fake.progress * 100);
             }, 1000);
             setTimeout(() => {
-              this.percentage3 = 100;
-              this.fake3.end();
-              clearInterval(this.intervalId3);
+              this.cloudProcessGroup.processRate = 100;
+              this.cloudProcessGroup.fake.end();
+              clearInterval(this.cloudProcessGroup.intervalId);
 
-              this.script = this.script + this.$t('scaning.init_cloud_group_info') + "\r" + "init rule group start" + "\r" + "init rule group end" + "\r";
-              // 获取滚动信息  注意是cmEditor.codemirror
-              let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-              // 滚动 注意是cmEditor.codemirror
-              this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+              let groupParams = {
+                projectId: this.projectId,
+                processStep: this.cloudProcessGroup.processStep,
+                processOrder: this.cloudProcessGroup.processOrder,
+                execTime: this.cloudProcessGroup.execTime,
+              };
+              this.$post(processUpdateUrl, groupParams, response => {
+                this.cloudProject = response.data;
+                this.cloudProcessGroup.processName = response.data.processName;
+              });
 
               //第四步
-              this.goAnchor('row4');
-              this.intervalId4 = setInterval(() => {
-                this.seconds4++;
-                if (this.seconds4 === 60) {
-                  this.seconds4 = 0;
-                  this.minutes4++;
-                }
+              this.cloudProcessRule.intervalId = setInterval(() => {
+                this.cloudProcessRule.execTime++;
                 //进度条前端一直转不会到100%
-                this.percentage4 = parseInt(this.fake4.progress * 100);
+                this.cloudProcessRule.processRate = parseInt(this.cloudProcessRule.fake.progress * 100);
               }, 1000);
               setTimeout(() => {
-                this.percentage4 = 100;
-                this.fake4.end();
-                clearInterval(this.intervalId4);
-                this.activeStep = 2;
+                this.cloudProcessRule.processRate = 100;
+                this.cloudProcessRule.fake.end();
+                clearInterval(this.cloudProcessRule.intervalId);
 
-                this.script = this.script + this.$t('scaning.init_cloud_rule_info') + "\r" + "init rules start" + "\r" + "init rules end" + "\r";
-                // 获取滚动信息  注意是cmEditor.codemirror
-                let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-                // 滚动 注意是cmEditor.codemirror
-                this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+                let ruleParams = {
+                  projectId: this.projectId,
+                  processStep: this.cloudProcessRule.processStep,
+                  processOrder: this.cloudProcessRule.processOrder,
+                  execTime: this.cloudProcessRule.execTime,
+                };
+                this.$post(processUpdateUrl, ruleParams, response => {
+                  this.cloudProject = response.data;
+                  this.cloudProcessRule.processName = response.data.processName;
+                });
 
                 //第五步
-                this.goAnchor('row5');
-                this.intervalId5 = setInterval(() => {
-                  this.seconds5++;
-                  if (this.seconds5 === 60) {
-                    this.seconds5 = 0;
-                    this.minutes5++;
-                  }
+                this.cloudProcessEnv.intervalId = setInterval(() => {
+                  this.cloudProcessEnv.execTime++;
                   //进度条前端一直转不会到100%
-                  this.percentage5 = parseInt(this.fake5.progress * 100);
+                  this.cloudProcessEnv.processRate = parseInt(this.cloudProcessEnv.fake.progress * 100);
                 }, 1000);
                 setTimeout(() => {
-                  this.percentage5 = 100;
-                  this.fake5.end();
-                  clearInterval(this.intervalId5);
+                  this.cloudProcessEnv.processRate = 100;
+                  this.cloudProcessEnv.fake.end();
+                  clearInterval(this.cloudProcessEnv.intervalId);
 
-                  this.script = this.script + this.$t('scaning.init_env_info') + "\r" + "init env start" + "\r" + "init env end" + "\r";
-                  // 获取滚动信息  注意是cmEditor.codemirror
-                  let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-                  // 滚动 注意是cmEditor.codemirror
-                  this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+                  let envParams = {
+                    projectId: this.projectId,
+                    processStep: this.cloudProcessEnv.processStep,
+                    processOrder: this.cloudProcessEnv.processOrder,
+                    execTime: this.cloudProcessEnv.execTime,
+                  };
+                  this.$post(processUpdateUrl, envParams, response => {
+                    this.cloudProject = response.data;
+                    this.cloudProcessEnv.processName = response.data.processName;
+                  });
 
                   //第六步
-                  this.goAnchor('row6');
-                  this.intervalId6 = setInterval(() => {
-                    this.seconds6++;
-                    if (this.seconds6 === 60) {
-                      this.seconds6 = 0;
-                      this.minutes6++;
-                    }
+                  this.cloudProcessScan.intervalId = setInterval(() => {
+                    this.cloudProcessScan.execTime++;
                     //进度条前端一直转不会到100%
-                    this.percentage6 = parseInt(this.fake6.progress * 100);
+                    this.cloudProcessScan.processRate = parseInt(this.cloudProcessScan.fake.progress * 100);
                   }, 1000);
                   setTimeout(() => {
-                    this.percentage6 = 100;
-                    this.fake6.end();
-                    clearInterval(this.intervalId6);
+                    this.cloudProcessScan.processRate = 100;
+                    this.cloudProcessScan.fake.end();
+                    clearInterval(this.cloudProcessScan.intervalId);
 
-                    this.script = this.script + this.$t('scaning.create_scan_info') + "\r" + "create scan start" + "\r" + "create scan end" + "\r";
-                    // 获取滚动信息  注意是cmEditor.codemirror
-                    let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-                    // 滚动 注意是cmEditor.codemirror
-                    this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+                    let scanParams = {
+                      projectId: this.projectId,
+                      processStep: this.cloudProcessScan.processStep,
+                      processOrder: this.cloudProcessScan.processOrder,
+                      execTime: this.cloudProcessScan.execTime,
+                    };
+                    this.$post(processUpdateUrl, scanParams, response => {
+                      this.cloudProject = response.data;
+                      this.cloudProcessScan.processName = response.data.processName;
+                    });
 
                     //第七步
-                    this.goAnchor('row7');
-                    this.intervalId7 = setInterval(() => {
-                      this.seconds7++;
-                      if (this.seconds7 === 60) {
-                        this.seconds7 = 0;
-                        this.minutes7++;
-                      }
+                    this.cloudProcessScanGroup.intervalId = setInterval(() => {
+                      this.cloudProcessScanGroup.execTime++;
                       //进度条前端一直转不会到100%
-                      this.percentage7 = parseInt(this.fake7.progress * 100);
+                      this.cloudProcessScanGroup.processRate = parseInt(this.cloudProcessScanGroup.fake.progress * 100);
                     }, 1000);
                     setTimeout(() => {
-                      this.percentage7 = 100;
-                      this.fake7.end();
-                      clearInterval(this.intervalId7);
+                      this.cloudProcessScanGroup.processRate = 100;
+                      this.cloudProcessScanGroup.fake.end();
+                      clearInterval(this.cloudProcessScanGroup.intervalId);
 
-                      this.script = this.script + this.$t('scaning.create_scan_rule') + "\r" + "create scan rule start" + "\r" + "create scan rule end" + "\r";
-                      // 获取滚动信息  注意是cmEditor.codemirror
-                      let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-                      // 滚动 注意是cmEditor.codemirror
-                      this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+                      let scanGroupParams = {
+                        projectId: this.projectId,
+                        processStep: this.cloudProcessScanGroup.processStep,
+                        processOrder: this.cloudProcessScanGroup.processOrder,
+                        execTime: this.cloudProcessScanGroup.execTime,
+                      };
+                      this.$post(processUpdateUrl, scanGroupParams, response => {
+                        this.cloudProject = response.data;
+                        this.cloudProcessScanGroup.processName = response.data.processName;
+                      });
 
                       //第八步
-                      this.goAnchor('row8');
-                      this.intervalId8 = setInterval(() => {
-                        this.seconds8++;
-                        if (this.seconds8 === 60) {
-                          this.seconds8 = 0;
-                          this.minutes8++;
-                        }
+                      this.cloudProcessScanTask.intervalId = setInterval(() => {
+                        this.cloudProcessScanTask.execTime++;
                         //进度条前端一直转不会到100%
-                        this.percentage8 = parseInt(this.fake8.progress * 100);
+                        this.cloudProcessScanTask.processRate = parseInt(this.cloudProcessScanTask.fake.progress * 100);
                       }, 1000);
                       setTimeout(() => {
-                        this.percentage8 = 100;
-                        this.fake8.end();
-                        clearInterval(this.intervalId8);
+                        this.cloudProcessScanTask.processRate = 100;
+                        this.cloudProcessScanTask.fake.end();
+                        clearInterval(this.cloudProcessScanTask.intervalId);
 
-                        this.script = this.script + this.$t('scaning.create_scan_task') + "\r" + "create scan task start" + "\r" + "create scan task end" + "\r";
-                        // 获取滚动信息  注意是cmEditor.codemirror
-                        let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-                        // 滚动 注意是cmEditor.codemirror
-                        this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
+                        let scanTaskParams = {
+                          projectId: this.projectId,
+                          processStep: this.cloudProcessScanTask.processStep,
+                          processOrder: this.cloudProcessScanTask.processOrder,
+                          execTime: this.cloudProcessScanTask.execTime,
+                        };
+                        this.$post(processUpdateUrl, scanTaskParams, response => {
+                          this.cloudProject = response.data;
+                          this.cloudProcessScanTask.processName = response.data.processName;
+                        });
 
                         //第九步
-                        this.goAnchor('row9');
-                        this.intervalId9 = setInterval(() => {
-                          this.seconds9++;
-                          if (this.seconds9 === 60) {
-                            this.seconds9 = 0;
-                            this.minutes9++;
-                          }
+                        this.cloudProcessStartTask.intervalId = setInterval(() => {
+                          this.cloudProcessStartTask.execTime++;
                           //进度条前端一直转不会到100%
-                          this.percentage9 = parseInt(this.fake9.progress * 100);
-
+                          this.cloudProcessStartTask.processRate = parseInt(this.cloudProcessStartTask.fake.progress * 100);
+                          this.goAnchor("row9");
+                          this.getStatus();
                         }, 1000);
-                        this.timer = setInterval(this.getStatus, 5000);
+                        setTimeout(() => {
+                          this.cloudProcessStartTask.processRate = 100;
+                          this.cloudProcessStartTask.fake.end();
+                          clearInterval(this.cloudProcessStartTask.intervalId);
 
-                      }, Math.round(Math.random() * 9000 ) + 90000);
+                          let startTaskParams = {
+                            projectId: this.projectId,
+                            processStep: this.cloudProcessStartTask.processStep,
+                            processOrder: this.cloudProcessStartTask.processOrder,
+                            execTime: this.cloudProcessStartTask.execTime,
+                          };
+                          this.$post(processUpdateUrl, startTaskParams, response => {
+                            let data = response.data;
+                            this.cloudProject = {
+                              resultStatus: data.status,
+                              processStep: data.processStep,
+                              processOrder: data.processOrder,
+                            };
+                            this.cloudProcessStartTask.processName = data.processName;
+                          });
 
-                    }, Math.round(Math.random() * 9000 ) + 60000);
+                        }, Math.round(Math.random() * 9000 ) + 12000);
 
-                  }, Math.round(Math.random() * 9000 ) + 40000);
+                      }, Math.round(Math.random() * 9000 ) + 9000);
 
-                }, Math.round(Math.random() * 9000 ) + 20000);
+                    }, Math.round(Math.random() * 9000 ) + 6000);
 
-              }, Math.round(Math.random() * 9000 ) + 1000);
+                  }, Math.round(Math.random() * 9000 ) + 1000);
 
-            }, Math.round(Math.random() * 9000 ) + 1000);
+                }, Math.round(Math.random() * 9000 ) + 1000);
 
-          }, Math.round(Math.random() * 9000 ) + 1000);
+              }, Math.round(Math.random() * 5000 ) + 1000);
 
-        }, Math.round(Math.random() * 9000 ) + 1000);
+            }, Math.round(Math.random() * 5000 ) + 1000);
 
-      },
-      stopTimer() {
-        clearInterval(this.intervalId1);
+          }, Math.round(Math.random() * 5000 ) + 1000);
+
+        }, Math.round(Math.random() * 5000 ) + 1000);
+
       },
       getStatus() {
-        if (this.resultTag) {
-          this.showScript();
-          clearInterval(this.timer);
-          clearInterval(this.intervalId9);
-          this.percentage9 = 100;
-          this.fake9.end();
-          this.activeStep = 3;
-          this.resultStatus = 2;
+        let params = {
+          projectId: this.projectId,
+        };
+        this.$post(processLogListUrl, params, res => {
+          let data = res.data;
+          if(!data) return;
+          this.cloudProcessLogList = data;//日志
+          for (let cloudProcessLog of this.cloudProcessLogList) {
+            let row = this.timestampFormatDate(cloudProcessLog.createTime) + ' ' + cloudProcessLog.operator + ' ' + cloudProcessLog.operation + ' ' + cloudProcessLog.output;
+            if (!this.script.includes(row)) {
+              this.showScript(row);
+            }
+          }
+        });
+      },
+      changeProcessOrder(cloudProcess) {
+        switch (cloudProcess.processOrder) {
+          case 1:
+            cloudProcess.processOrder = 2;
+            cloudProcess.processStep = 1;
+            break;
+          case 2:
+            cloudProcess.processOrder = 3;
+            cloudProcess.processStep = 1;
+            break;
+          case 3:
+            cloudProcess.processOrder = 4;
+            cloudProcess.processStep = 1;
+            break;
+          case 4:
+            cloudProcess.processOrder = 5;
+            cloudProcess.processStep = 2;
+            break;
+          case 5:
+            cloudProcess.processOrder = 6;
+            cloudProcess.processStep = 2;
+            break;
+          case 6:
+            cloudProcess.processOrder = 7;
+            cloudProcess.processStep = 2;
+            break;
+          case 7:
+            cloudProcess.processOrder = 8;
+            cloudProcess.processStep = 2;
+            break;
+          case 8:
+            cloudProcess.processOrder = 9;
+            cloudProcess.processStep = 3;
+            break;
         }
       },
       initGroups(pluginId) {
@@ -668,14 +756,16 @@ import FakeProgress from "fake-progress";
                 this.$warning(this.$t('account.please_choose_rule_group'));
                 return;
               }
-              this.resultStatus = 1;
+              this.cloudProject.resultStatus = 1;
               let params = {
                 accountId: this.accountWithGroup.id,
                 groups: this.checkedGroups
               }
-              this.startTimer();
-              this.$post(ruleScanUrl, params, res => {
-                this.resultTag = true;
+
+              this.$post(projectScanUrl, params, res => {
+                let data = res.data;
+                this.projectId = data;
+                this.startTimer();
               });
             }
           }
@@ -694,23 +784,12 @@ import FakeProgress from "fake-progress";
           this.checkedGroups = Array.from(concatArr);
         }
       },
-      showScript() {
-        this.script = this.script + this.$t('scaning.start_scan_task') + "\r" + "scan start" + "\r";
+      showScript(data) {
+        this.script = this.script + data + "\r";
         // 获取滚动信息  注意是cmEditor.codemirror
         let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
         // 滚动 注意是cmEditor.codemirror
         this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
-
-        this.$get(cloudTaskLogByAccountIdUrl + this.accountId, response => {
-          for (let logItem of response.data) {
-            let str = this.timestampFormatDate(logItem.createTime) + ' ' + logItem.operator + ' ' + logItem.operation + ' ' + logItem.output;
-            this.script = this.script + str + "\r";
-            // 获取滚动信息  注意是cmEditor.codemirror
-            let sc = this.$refs.cmEditor.codemirror.getScrollInfo();
-            // 滚动 注意是cmEditor.codemirror
-            this.$refs.cmEditor.codemirror.scrollTo(sc.left,( sc.height + sc.top));
-          }
-        });
       },
       timestampFormatDate (timestamp) {
         if (!timestamp) {

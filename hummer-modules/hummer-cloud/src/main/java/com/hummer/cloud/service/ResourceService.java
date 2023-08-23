@@ -106,7 +106,6 @@ public class ResourceService {
         try {
             resourceDTOListTmp = getComplianceResult(request);
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error(e.getMessage());
             throw new RuntimeException("查询失败");
         }
@@ -172,7 +171,6 @@ public class ResourceService {
             cloudTaskMapper.updateByPrimaryKeySelective(cloudTask);
 
         } catch (Exception e) {
-            e.printStackTrace();
             HRException.throwException(e.getMessage());
         }
 
@@ -206,6 +204,8 @@ public class ResourceService {
             resourceItem.setResourceId(resourceWithBLOBs.getId());
             resourceItem.setSeverity(resourceWithBLOBs.getSeverity());
             resourceItem.setResourceType(resourceWithBLOBs.getResourceType());
+            resourceItem.setResourceTypeName(PlatformUtils.tranforResourceType2Name(resourceWithBLOBs.getResourceType()));
+            resourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType(resourceWithBLOBs.getResourceType()));
             resourceItem.setHummerId(hummerId);
             resourceItem.setHummerName(hummerName);
             resourceItem.setResource(jsonObject.toJSONString());
@@ -248,7 +248,6 @@ public class ResourceService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error("[{}] Generate updateResourceSum policy.yml file，and custodian run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
         }

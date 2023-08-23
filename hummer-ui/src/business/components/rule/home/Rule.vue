@@ -151,7 +151,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" :rules="{required: true, message: $t('rule.rule_set'), trigger: 'change'}">
-            <el-select style="width: 100%;" multiple filterable :clearable="true"  v-model="createRuleForm.ruleSets">
+            <el-select style="width: 100%;" multiple filterable :clearable="true" v-model="createRuleForm.ruleSets">
               <el-option
                 v-for="item in ruleSetOptions"
                 :key="item.id"
@@ -165,7 +165,7 @@
               <el-option
                 v-for="item in inspectionSeportOptions"
                 :key="item.id"
-                :label="item.id + '. ' + item.project?item.project.substring(0, 50):'' + '...'"
+                :label="item.id + '. ' + item.project.substring(0, 50) + '...'"
                 :value="item.id">
               </el-option>
             </el-select>
@@ -252,7 +252,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('rule.rule_set')" :rules="{required: true, message: $t('rule.rule_set'), trigger: 'change'}">
-            <el-select style="width: 100%;" multiple filterable :clearable="true"  v-model="updateRuleForm.ruleSets">
+            <el-select style="width: 100%;" multiple filterable :clearable="true" v-model="updateRuleForm.ruleSets">
               <el-option
                 v-for="item in ruleSetOptions"
                 :key="item.id"
@@ -266,7 +266,7 @@
               <el-option
                 v-for="item in inspectionSeportOptions"
                 :key="item.id"
-                :label="item.id + '. ' + item.project?item.project.substring(0, 50):'' + '...'"
+                :label="item.id + '. ' + item.project.substring(0, 50) + '...'"
                 :value="item.id">
               </el-option>
             </el-select>
@@ -367,7 +367,7 @@
               <el-option
                 v-for="item in inspectionSeportOptions"
                 :key="item.id"
-                :label="item.id + '. ' + item.project?item.project.substring(0, 50):'' + '...'"
+                :label="item.id + '. ' + item.project.substring(0, 50) + '...'"
                 :value="item.id">
               </el-option>
             </el-select>

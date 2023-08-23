@@ -68,6 +68,10 @@ public class OrderService {
     private ResourceRuleMapper resourceRuleMapper;
     @Autowired @Lazy
     private RuleTagMappingMapper ruleTagMappingMapper;
+    @Autowired @Lazy
+    private CloudProjectMapper cloudProjectMapper;
+    @Autowired @Lazy
+    private CloudGroupMapper cloudGroupMapper;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -471,7 +475,7 @@ public class OrderService {
 
     private CloudTask createTaskOrder(QuartzTaskDTO quartzTaskDTO, String status, LoginUser loginUser) throws Exception {
         CloudTask cloudTask = new CloudTask();
-        cloudTask.setTaskName(quartzTaskDTO.getTaskName() != null ?quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
+        cloudTask.setTaskName(quartzTaskDTO.getTaskName() != null ? quartzTaskDTO.getTaskName():quartzTaskDTO.getName());
         cloudTask.setRuleId(quartzTaskDTO.getId());
         cloudTask.setSeverity(quartzTaskDTO.getSeverity());
         cloudTask.setType(quartzTaskDTO.getType());
@@ -484,6 +488,8 @@ public class OrderService {
         cloudTask.setApplyUser(Objects.requireNonNull(loginUser).getUserId());
         cloudTask.setStatus(status);
         cloudTask.setScanType(ScanTypeConstants.custodian.name());
+        cloudTask.setProjectId(quartzTaskDTO.getProjectId());
+        cloudTask.setGroupId(quartzTaskDTO.getGroupId());
 
         CloudTaskExample example = new CloudTaskExample();
         CloudTaskExample.Criteria criteria = example.createCriteria();
@@ -592,6 +598,25 @@ public class OrderService {
             systemProviderService.insertHistoryCloudTaskLog(BeanUtils.copyBean(new HistoryCloudTaskLogWithBLOBs(), cloudTaskItemLog));
         }
 
+    }
+
+    public int updateProjectStatus(String projectId, String oldStatus, String newStatus) {
+        CloudProjectExample example = new CloudProjectExample();
+        CloudProjectExample.Criteria criteria = example.createCriteria();
+        criteria.andIdEqualTo(projectId);
+        if (StringUtils.isNotBlank(oldStatus)) {
+            criteria.andStatusEqualTo(oldStatus);
+        }
+        CloudProject cloudProject = new CloudProject();
+        cloudProject.setStatus(newStatus);
+        return cloudProjectMapper.updateByExampleSelective(cloudProject, example);
+    }
+
+    public void updateGroupStatus(String groupId, CloudTaskConstants.TASK_STATUS status) {
+        CloudGroup cloudGroup = new CloudGroup();
+        cloudGroup.setId(groupId);
+        cloudGroup.setStatus(status.name());
+        cloudGroupMapper.updateByPrimaryKeySelective(cloudGroup);
     }
 
     public int updateTaskStatus(String taskId, String oldStatus, String newStatus) {

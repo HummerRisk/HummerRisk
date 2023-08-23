@@ -280,10 +280,12 @@ public class CloudSyncService {
                             cloudResourceItem.setRegionId(region);
                             cloudResourceItem.setRegionName(cloudResourceSyncItem.getRegionName());
                             cloudResourceItem.setResourceId(cloudResourceWithBLOBs.getId());
-                            cloudResourceItem.setResourceType(resourceType);
                             cloudResourceItem.setHummerId(hummerId);
                             cloudResourceItem.setHummerName(hummerName);
                             cloudResourceItem.setCreateTime(nowDate);
+                            cloudResourceItem.setResourceType(resourceType);
+                            cloudResourceItem.setResourceTypeName(PlatformUtils.tranforResourceType2Name(resourceType));
+                            cloudResourceItem.setResourceTypeBelong(PlatformUtils.tranforResourceType(resourceType));
                             cloudResourceItem.setResource(jsonObject.toJSONString());
 
                             //云资源同步资源详情表
@@ -298,7 +300,6 @@ public class CloudSyncService {
                         saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_end_sync_resource", "资源总数:" + resourcesArr.size(), true, accountId, user.getUserId());
 
                     } catch (Exception e) {
-                        e.printStackTrace();
                         cloudResourceSyncItem.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
                         cloudResourceSyncItemMapper.updateByPrimaryKey(cloudResourceSyncItem);
                         saveCloudResourceSyncItemLog(cloudResourceSyncItem.getId(), "i18n_error_sync_resource", e.getMessage(), false, accountId, user.getUserId());

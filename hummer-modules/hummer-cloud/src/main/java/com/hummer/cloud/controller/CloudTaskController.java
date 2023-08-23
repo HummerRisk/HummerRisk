@@ -16,15 +16,15 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
 @Hidden
 @RestController
-@RequestMapping(value = "cloud/task")
+@RequestMapping(value = "task")
 public class CloudTaskController {
     @Autowired
     private CloudTaskService cloudTaskService;

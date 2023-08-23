@@ -211,25 +211,7 @@
     <select id="selectResourceType" resultMap="ResourceBaseResultMap">
         select
         CONCAT('资源类型:', t.resource_type) as name,
-        CASE
-            WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
-                                     'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
-            WHEN t.resource_type IN ('aliyun.polardb', 'aliyun.rds', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
-                                     'huawei.gaussdbforopengauss', 'huawei.rds', 'tencent.cdb', 'aws.rds', 'azure.cosmosdb',
-                                     'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mysql') THEN 'rds'
-            WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
-            WHEN t.resource_type IN ('aliyun.disk', 'huawei.disk', 'tencent.disk', 'aws.ebs', 'azure.disk', 'jdcloud.disk', 'baidu.volume') THEN 'disk'
-            WHEN t.resource_type IN ('huawei.iam') THEN 'iam'
-            WHEN t.resource_type IN ('aliyun.eip', 'huawei.eip', 'tencent.eip', 'aws.network-addr', 'azure.publicip', 'gcp.app-engine-domain', 'qingcloud.eip', 'ucloud.eip', 'jdcloud.eip', 'ksyun.eip', 'volc.eip', 'vsphere.host', 'openstack.network', 'baidu.eip') THEN 'eip'
-            WHEN t.resource_type IN ('aliyun.slb', 'huawei.elb', 'tencent.clb', 'aws.elb', 'azure.loadbalancer', 'ucloud.ulb', 'jdcloud.lb', 'ksyun.slb', 'baidu.blb', 'baidu.app-blb') THEN 'elb'
-            WHEN t.resource_type IN ('aliyun.security-group', 'huawei.security-group', 'tencent.security-group', 'aws.security-group', 'azure.networksecuritygroup', 'ucloud.securitygroup', 'jdcloud.securitygroup', 'volc.securitygroup', 'openstack.security-group', 'openstack.security-groups', 'baidu.security-group') THEN 'sg'
-            WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc', 'huawei.vpc', 'gcp.vpc', 'azure.vnet') THEN 'vpc'
-            WHEN t.resource_type IN ('aliyun.redis', 'huawei.redis', 'tencent.redis') THEN 'redis'
-            WHEN t.resource_type IN ('aliyun.mongodb', 'tencent.mongodb', 'qingcloud.mongodb', 'volc.mongodb') THEN 'mongodb'
-            WHEN t.resource_type IN ('aliyun.postgre-sql') THEN 'postgresql'
-            WHEN t.resource_type IN ('tencent.es') THEN 'es'
-            ELSE 'other'
-        END AS 'type',
+        t.resource_type_belong AS 'type',
         (
             select count(t1.id) from cloud_resource_item t1
             where t1.account_id = t.account_id and t1.region_id = t.region_id and t1.resource_type = t.resource_type
@@ -258,31 +240,7 @@
             THEN 1
             ELSE 0
         END AS value,
-        CASE
-            WHEN t.resource_type IN ('aliyun.ecs', 'huawei.ecs', 'tencent.cvm', 'aws.ec2', 'azure.vm', 'qingcloud.ecs', 'ucloud.uhost', 'jdcloud.vm', 'ksyun.kec',
-                                    'volc.ecs', 'vsphere.vm', 'openstack.server', 'baidu.bbc') THEN 'ecs'
-            WHEN t.resource_type IN ('aliyun.polardb', 'aliyun.rds', 'huawei.dds', 'huawei.gaussdb', 'huawei.gaussdbfornosql',
-                                    'huawei.gaussdbforopengauss', 'huawei.rds', 'tencent.cdb', 'aws.rds', 'azure.cosmosdb',
-                                    'azure.sqldatabase', 'azure.sqlserver', 'gcp.sql-backup-run', 'qingcloud.mysql') THEN 'rds'
-            WHEN t.resource_type IN ('aliyun.oss', 'huawei.obs', 'tencent.cos', 'aws.s3', 'qiniu.kodo', 'jdcloud.oss') THEN 'oss'
-            WHEN t.resource_type IN ('aliyun.disk', 'huawei.disk', 'tencent.disk', 'aws.ebs', 'azure.disk', 'jdcloud.disk', 'baidu.volume') THEN 'disk'
-            WHEN t.resource_type IN ('huawei.iam') THEN 'iam'
-            WHEN t.resource_type IN ('aliyun.eip', 'huawei.eip', 'tencent.eip', 'aws.network-addr', 'azure.publicip', 'gcp.app-engine-domain', 'qingcloud.eip', 'ucloud.eip', 'jdcloud.eip', 'ksyun.eip', 'volc.eip', 'vsphere.host', 'openstack.network', 'baidu.eip') THEN 'eip'
-            WHEN t.resource_type IN ('aliyun.slb', 'huawei.elb', 'tencent.clb', 'aws.elb', 'azure.loadbalancer', 'ucloud.ulb', 'jdcloud.lb', 'ksyun.slb', 'baidu.blb', 'baidu.app-blb') THEN 'elb'
-            WHEN t.resource_type IN ('aliyun.security-group', 'huawei.security-group', 'tencent.security-group', 'aws.security-group', 'azure.networksecuritygroup', 'ucloud.securitygroup', 'jdcloud.securitygroup', 'volc.securitygroup', 'openstack.security-group', 'openstack.security-groups', 'baidu.security-group') THEN 'sg'
-            WHEN t.resource_type IN ('aliyun.vpc', 'tencent.vpc', 'aws.vpc', 'huawei.vpc', 'gcp.vpc', 'azure.vnet') THEN 'vpc'
-            WHEN t.resource_type IN ('aliyun.redis', 'huawei.redis', 'tencent.redis') THEN 'redis'
-            WHEN t.resource_type IN ('aliyun.mongodb', 'tencent.mongodb', 'qingcloud.mongodb', 'volc.mongodb') THEN 'mongodb'
-            WHEN t.resource_type IN ('aliyun.postgre-sql') THEN 'postgresql'
-            WHEN t.resource_type IN ('tencent.es') THEN 'es'
-            ELSE 'other'
-        END AS 'type',
-        t.account_id as accountId,
-        t1.name as accountName,
-        t.region_id as regionId,
-        t.region_name as regionName,
-        t.plugin_id as pluginId,
-        t.plugin_name as pluginName,
+        t.resource_type_belong AS 'type',
         t.hummer_id as id,
         t.id as resource,
         t.resource_type as resourceType

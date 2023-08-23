@@ -15,6 +15,6 @@ public interface ExtCloudProjectMapper {
 
     List<CloudGroupDTO> getCloudGroupDTOs(@Param("request") CloudGroupRequest request);
 
-    List<CloudProcessDTO> getCloudProcessDTOs(@Param("request") CloudProcess request);
+    CloudProcessDTO getCloudProcessDTO(@Param("request") CloudProcess request);
 
 }
