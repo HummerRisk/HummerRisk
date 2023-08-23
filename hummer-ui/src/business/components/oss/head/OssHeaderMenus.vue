@@ -16,14 +16,6 @@
             {{ $t("oss.oss_bucket") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/oss/ossRisk'">
-            {{ $t("oss.oss_risk") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/oss/ossReport'">
-            {{ $t("oss.oss_report") }}
-          </el-menu-item>
-
         </el-menu>
       </el-col>
     </el-row>
