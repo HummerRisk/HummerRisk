@@ -24,7 +24,7 @@ public class SwaggerProvider implements SwaggerResourcesProvider, WebFluxConfigu
     /**
      * Swagger2默认的url后缀
      */
-    public static final String SWAGGER2URL = "/v2/api-docs";
+    public static final String SWAGGER2URL = "/v3/api-docs";
 
     /**
      * 网关路由

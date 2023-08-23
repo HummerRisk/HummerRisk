@@ -2,13 +2,13 @@ package com.hummer.gateway.controller;
 
 import com.hummer.common.core.constant.TokenConstants;
 import com.hummer.common.core.utils.StringUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import io.swagger.v3.oas.annotations.Hidden;
 
 @Hidden
 @Controller
