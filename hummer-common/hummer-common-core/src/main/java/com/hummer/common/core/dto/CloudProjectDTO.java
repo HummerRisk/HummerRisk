@@ -1,6 +1,5 @@
 package com.hummer.common.core.dto;
 
-import com.hummer.common.core.domain.CloudGroup;
 import com.hummer.common.core.domain.CloudProject;
 import com.hummer.common.core.domain.CloudProjectLog;
 
@@ -10,7 +9,15 @@ public class CloudProjectDTO extends CloudProject {
 
     private List<CloudProjectLog> cloudProjectLogList;
 
-    private List<CloudGroup> cloudGroupList;
+    private List<CloudGroupDTO> cloudGroupList;
+
+    private Integer groups;
+
+    private Integer rules;
+
+    private Integer riskGroups;
+
+    private Integer riskRules;
 
     public List<CloudProjectLog> getCloudProjectLogList() {
         return cloudProjectLogList;
@@ -20,11 +27,43 @@ public class CloudProjectDTO extends CloudProject {
         this.cloudProjectLogList = cloudProjectLogList;
     }
 
-    public List<CloudGroup> getCloudGroupList() {
+    public List<CloudGroupDTO> getCloudGroupList() {
         return cloudGroupList;
     }
 
-    public void setCloudGroupList(List<CloudGroup> cloudGroupList) {
+    public void setCloudGroupList(List<CloudGroupDTO> cloudGroupList) {
         this.cloudGroupList = cloudGroupList;
+    }
+
+    public Integer getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Integer groups) {
+        this.groups = groups;
+    }
+
+    public Integer getRules() {
+        return rules;
+    }
+
+    public void setRules(Integer rules) {
+        this.rules = rules;
+    }
+
+    public Integer getRiskGroups() {
+        return riskGroups;
+    }
+
+    public void setRiskGroups(Integer riskGroups) {
+        this.riskGroups = riskGroups;
+    }
+
+    public Integer getRiskRules() {
+        return riskRules;
+    }
+
+    public void setRiskRules(Integer riskRules) {
+        this.riskRules = riskRules;
     }
 }

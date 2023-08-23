@@ -261,6 +261,7 @@ export default {
     yes: '是',
     no: '否',
     log: '日誌',
+    into_detail: '進入詳情',
   },
   workspace: {
     create: '創建工作空間',
@@ -707,6 +708,10 @@ export default {
     rule_group: '雲檢測規則組',
     suggestion: '優化建議',
     rule_sum: '(共 {0} 條規則)',
+    rule_sum_project: '共 {0} 條規則',
+    group_sum_project: '共 {0} 條規則組',
+    risk_rule_sum_project: '(有風險規則數為 {0})',
+    risk_group_sum_project: '(有風險規則組數為 {0})',
     group_type: '規則組類型',
   },
   resource: {

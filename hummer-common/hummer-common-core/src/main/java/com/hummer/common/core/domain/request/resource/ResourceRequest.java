@@ -25,6 +25,8 @@ public class ResourceRequest extends Resource {
     private String itemSortSecondLevel;
     private String name;
     private String groupId;
+
+    private String projectId;
     private List<String> resourceTypes;
 
     @ApiModelProperty(hidden = true)
@@ -166,5 +168,13 @@ public class ResourceRequest extends Resource {
 
     public void setHummerName(String hummerName) {
         this.hummerName = hummerName;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 }

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.hummer.cloud.service.CloudProjectService;
 import com.hummer.common.core.domain.CloudProcess;
 import com.hummer.common.core.domain.CloudProcessLogWithBLOBs;
+import com.hummer.common.core.domain.CloudProject;
 import com.hummer.common.core.domain.request.project.CloudGroupRequest;
 import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.CloudGroupDTO;
@@ -37,6 +38,13 @@ public class CloudProjectController {
     public Pager<List<CloudProjectDTO>> getCloudProjectDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudGroupRequest cloudGroupRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudProjectService.getCloudProjectDTOs(cloudGroupRequest));
+    }
+
+    @Operation(summary = "所有项目")
+    @I18n
+    @PostMapping("allProjectList")
+    public List<CloudProject> getCloudProjects() {
+        return cloudProjectService.getCloudProjects();
     }
 
     @Operation(summary = "项目详情")

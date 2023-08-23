@@ -98,6 +98,7 @@
         <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
         <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
         <result column="suggestion" jdbcType="VARCHAR" property="suggestion" />
+        <result column="account_name" property="accountName"/>
     </resultMap>
 
     <select id="getTopTasksForEmail" resultMap="BaseResultMap" parameterType="com.hummer.common.core.domain.MessageOrder">
@@ -192,7 +193,7 @@
         </if>
     </select>
 
-    <select id="selectByHummerId" resultMap="BaseResultMap" parameterType="String">
+    <select id="selectByHummerId" resultMap="BaseResultMap">
         select distinct a.id, a.task_name, a.severity, a.rule_tags, a.type, a.resource_types
         FROM cloud_task a
         join cloud_task_item b on a.id = b.task_id
@@ -279,6 +280,12 @@
                 <property name="object" value="${condition}.pluginId"/>
             </include>
         </if>
+        <if test="${condition}.projectId != null">
+            and project_id
+            <include refid="condition">
+                <property name="object" value="${condition}.projectId"/>
+            </include>
+        </if>
     </sql>
 
     <resultMap id="selectManualTasksBaseResultMap" type="com.hummer.common.core.domain.CloudTask">
@@ -319,6 +326,9 @@
             </if>
             <if test="request.accountId != null and request.accountId != ''">
                 and t.account_id = #{request.accountId}
+            </if>
+            <if test="request.projectId != null and request.projectId != ''">
+                and t.project_id = #{request.projectId}
             </if>
             <if test="request.taskName != null and request.taskName != ''">
                 and t.task_name like CONCAT('%', #{request.taskName},'%')

@@ -261,6 +261,7 @@ export default {
     yes: 'Yes',
     no: 'No',
     log: 'Log',
+    into_detail: 'Into details',
   },
   workspace: {
     create:'Create a workspace',
@@ -707,6 +708,10 @@ export default {
     rule_group: 'Cloud detection rule group',
     suggestion: 'Optimization suggestion',
     rule_sum: '(Total {0} rules)',
+    rule_sum_project: 'Total {0} rules',
+    group_sum_project: 'Total {0} rule groups',
+    risk_rule_sum_project: '(The number of risky rules is {0})',
+    risk_group_sum_project: '(The number of risky rule groups is {0})',
     group_type: 'rule group type',
   },
   resource: {

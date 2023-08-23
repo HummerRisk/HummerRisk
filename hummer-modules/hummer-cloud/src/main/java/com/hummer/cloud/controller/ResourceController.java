@@ -47,6 +47,13 @@ public class ResourceController {
     }
 
     @I18n
+    @Operation(summary = "云检测资源")
+    @GetMapping("sourceByProjectId/{projectId}")
+    public SourceDTO sourceByProjectId(@PathVariable String projectId) {
+        return resourceService.sourceByProjectId(projectId);
+    }
+
+    @I18n
     @Operation(summary = "云原生资源")
     @GetMapping("k8sSource/{accountId}")
     public SourceDTO k8sSource(@PathVariable String accountId) {
@@ -59,14 +66,6 @@ public class ResourceController {
     public Pager<List<ResourceDTO>> list(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.search(request));
-    }
-
-    @I18n
-    @Operation(summary = "K8s资源列表")
-    @PostMapping("k8sList/{goPage}/{pageSize}")
-    public Pager<List<ResourceDTO>> k8sList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
-        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, resourceService.getK8sComplianceResult(request));
     }
 
     @I18n
@@ -236,5 +235,12 @@ public class ResourceController {
     @PostMapping("resouceGroups")
     public List<Map<String, Object>> resouceGroups(@RequestBody Map<String, Object> params) {
         return resourceService.resouceGroups(params);
+    }
+
+    @I18n
+    @Operation(summary = "云资源项目检测规则组结果")
+    @PostMapping("resouceGroupsByProjectId")
+    public List<Map<String, Object>> resouceGroupsByProjectId(@RequestBody Map<String, Object> params) {
+        return resourceService.resouceGroupsByProjectId(params);
     }
 }
