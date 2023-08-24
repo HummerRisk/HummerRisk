@@ -16,7 +16,7 @@
 <script>
 import AccountTree from "@/business/components/reportcenter/head/AccountTree";
 import MainContainer from "@/business/components/common/components/MainContainer";
-import {reportAccountListUrl} from "@/api/xpack/report";
+import {reportProjectListUrl} from "@/api/cloud/report/report";
 
 /* eslint-disable */
 export default {
@@ -52,7 +52,7 @@ export default {
   methods: {
     list() {
       //账号信息
-      this.result = this.$get(reportAccountListUrl, response => {
+      this.result = this.$get(reportProjectListUrl, response => {
           this.data = response.data;
       });
     },

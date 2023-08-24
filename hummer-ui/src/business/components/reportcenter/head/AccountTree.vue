@@ -59,7 +59,7 @@ export default {
         return this.$t("reportcenter.all_account");
       }
     },
-    cloudAccount: {
+    cloudProject: {
       type: String,
       default() {
         return this.$t("task.task_cloud");
@@ -126,7 +126,7 @@ export default {
         "name": this.allLabel,
         "level": 0,
         "children": [
-          {name: this.cloudAccount, level: 1, type: 'cloudAccount', children: this.treeNodes.cloudAccount},
+          {name: this.cloudProject, level: 1, type: 'cloudProject', children: this.treeNodes.projectVoList},
           {name: this.serverAccount, level: 1, type: 'serverAccount', children: this.treeNodes.serverAccount},
           {name: this.k8sAccount, level: 1, type: 'k8sAccount', children: this.treeNodes.k8sAccount},
           {name: this.configAccount, level: 1, type: 'configAccount', children: this.treeNodes.configAccount},
