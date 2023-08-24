@@ -20,7 +20,6 @@ HummerRisk
 │       └── hummer-system                              // 系统模块 [9300]
 │       └── hummer-cloud                               // 混合云服务 [9400]
 │       └── hummer-k8s                                 // 云原生服务 [9500]
-│       └── hummer-xpack                               // 扩展模块 [9600]
 ├── hummer-visual                                      // 图形化管理模块
 │       └── hummer-monitor                             // 监控中心 [9100]
 ├──pom.xml                                             // 公共依赖

@@ -12,7 +12,6 @@
         <module>hummer-cloud</module>
         <module>hummer-k8s</module>
         <module>hummer-system</module>
-        <module>hummer-xpack</module>
     </modules>
 
     <artifactId>hummer-modules</artifactId>
