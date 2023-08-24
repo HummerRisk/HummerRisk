@@ -25,7 +25,6 @@ public class ResourceRequest extends Resource {
     private String itemSortSecondLevel;
     private String name;
     private String groupId;
-
     private String projectId;
     private List<String> resourceTypes;
 

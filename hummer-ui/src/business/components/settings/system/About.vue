@@ -30,7 +30,7 @@
             <span>{{ $t('system.version') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ license.edition === 'Enterprise'?$t('system.enterprise'):$t('system.community') }}</span>
+            <span>{{ $t('system.enterprise') }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -49,7 +49,7 @@
             <span>{{ $t('system.version_number') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ 'v1.3.0' }}</span>
+            <span>{{ version }}</span>
           </el-col>
         </el-row>
         <span v-if="license.message" style="color: red;font-style:italic;">{{ license.message }}</span>
@@ -125,6 +125,7 @@ import {getLicenseUrl, isLicenseUrl, updateLicenseUrl} from "@/api/system/system
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
           {img: require(`@/assets/img/about/gitee.png`), url: 'https://gitee.com/hummercloud/HummerRisk'},
         ],
+        version: '1.3.0'
       }
     },
     created() {

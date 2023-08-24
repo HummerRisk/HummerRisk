@@ -1,22 +1,22 @@
 <template>
-  <div v-loading="result.loading" style="width: 300px;">
+  <div v-loading="result.loading" class="main-cond">
     <el-input :placeholder="$t('resource.search_by_name')"
               prefix-icon="el-icon-search"
               v-model="searchString"
               clearable
               class="search-input"
               size="small"/>
-    <div v-if="items.length === 0" style="text-align: center; margin: 15px 0">
-        <span style="font-size: 15px; color: #8a8b8d;">
+    <div v-if="items.length === 0" class="v-dar">
+        <span class="v-dar-span">
           {{ $t('resource.i18n_no_data') }}
         </span>
     </div>
-    <div v-else style="height: 150px;overflow: auto">
+    <div v-else class="e-dar">
       <el-menu-item :key="i.id" v-for="i in items" @click="changeProject(i.id)">
         <template slot="title">
           <div class="title">
-            <img :src="require(`@/assets/img/platform/${i.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-            {{ i.name }} | {{ i.createTime | timestampFormatDate }}
+            <img :src="require(`@/assets/img/platform/${i.pluginIcon}`)" class="e-dar-img" alt=""/>
+            {{ i.accountName }} | {{ i.createTime | timestampFormatDate }} {{ $t('dashboard.i18n_scan') }}
           </div>
           <i class="el-icon-check" v-if="i.id === currentProjectId"></i>
         </template>
@@ -64,7 +64,6 @@ export default {
         this.items = response.data;
         this.searchArray = response.data;
         if (this.currentProjectId) {
-          let project = this.searchArray.filter(p => p.id === this.currentProjectId);
           this.changeProject(this.currentProjectId);
         } else {
           if (this.items.length > 0) {
@@ -85,7 +84,7 @@ export default {
       if (projectId) {
         let project = this.searchArray.filter(p => p.id === projectId);
         if (project.length > 0) {
-          this.$emit("cloudAccountSwitch", projectId, project[0].name);
+          this.$emit("projectSwitch", projectId, project[0].accountName, project[0].createTime);
         }
       }
     }
@@ -94,6 +93,31 @@ export default {
 </script>
 
 <style scoped>
+
+.main-cond {
+  width: 400px;
+}
+
+.v-dar {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.v-dar-span {
+  font-size: 15px;
+  color: #8a8b8d;
+}
+
+.e-dar {
+  height: 150px;
+  overflow: auto;
+}
+
+.e-dar-img {
+  width: 16px;
+  height: 16px;
+  vertical-align:middle;
+}
 
 .search-input {
   padding: 0;
@@ -107,7 +131,7 @@ export default {
 .title {
   display: inline-block;
   padding-left: 15px;
-  max-width: 300px;
+  max-width: 400px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

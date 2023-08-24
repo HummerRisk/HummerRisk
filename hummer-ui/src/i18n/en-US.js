@@ -1921,6 +1921,7 @@ export default {
   report: {
     download_group: 'Download Compliance Report',
     download_account: 'Download the overall compliance report of the cloud account',
+    download_project: 'Download the current detection and compliance report of the cloud account',
     scan_details: 'Test report details',
     scan_rules: 'List of detection rules',
     have_risk_rule: 'Number of risky rules',

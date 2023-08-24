@@ -120,12 +120,20 @@ public class ResourceService {
         return extResourceMapper.searchExportData(request, accountIds);
     }
 
+    public List<ExportDTO> searchExportDataByProject(ResourceRequest request, List<String> projectIds) {
+        return extResourceMapper.searchExportDataByProject(request, projectIds);
+    }
+
     public List<ExportDTO> searchGroupExportData(ResourceRequest request, String groupId, String accountId) {
         return extResourceMapper.searchGroupExportData(request, groupId, accountId);
     }
 
     public List<ReportDTO> reportList(ResourceRequest request) {
         return extResourceMapper.reportList(request);
+    }
+
+    public List<ReportDTO> reportByProjectList(ResourceRequest request) {
+        return extResourceMapper.reportByProjectList(request);
     }
 
     private List<ResourceDTO> getComplianceResult(ResourceRequest resourceRequest) {
@@ -551,7 +559,7 @@ public class ResourceService {
                 org.apache.commons.beanutils.BeanUtils.populate(resourceRequest, params);
             }
             List<ExcelExportRequest.Column> columns = request.getColumns();
-            List<ExportDTO> exportDTOs = searchExportData(resourceRequest, request.getAccountIds());
+            List<ExportDTO> exportDTOs = searchExportDataByProject(resourceRequest, request.getProjectIds());
             List<List<Object>> data = exportDTOs.stream().map(resource -> {
                 return new ArrayList<Object>() {{
                     columns.forEach(column -> {
@@ -713,6 +721,10 @@ public class ResourceService {
         return extResourceMapper.reportIso(accountId, groupId);
     }
 
+    public Map<String, String> reportIsoList (String projectId, String groupId) {
+        return extResourceMapper.reportIsoList(projectId, groupId);
+    }
+
     public List<Map<String, String>> groups (Map<String, Object> params) {
         return extResourceMapper.groups(params);
     }
@@ -769,6 +781,10 @@ public class ResourceService {
 
     public List<RuleGroupDTO> ruleGroupList(RuleGroupRequest request) {
         return extResourceMapper.ruleGroupList(request);
+    }
+
+    public List<RuleGroupDTO> ruleGroupByProjectList(RuleGroupRequest request) {
+        return extResourceMapper.ruleGroupByProjectList(request);
     }
 
     public List<ResourceDTO> resourceList(ResourceRequest resourceRequest) {

@@ -21,6 +21,8 @@ public interface ExtResourceMapper {
 
     List<ReportDTO> reportList(ResourceRequest resourceRequest);
 
+    List<ReportDTO> reportByProjectList(ResourceRequest resourceRequest);
+
     SourceDTO source(@Param("accountId") String accountId);
 
     SourceDTO sourceByProjectId (@Param("projectId") String projectId);
@@ -37,9 +39,13 @@ public interface ExtResourceMapper {
 
     Map<String, String> reportIso(@Param("accountId") String accountId, @Param("groupId") String groupId);
 
+    Map<String, String> reportIsoList(@Param("accountId") String projectId, @Param("groupId") String groupId);
+
     List<Map<String, String>> groups(Map<String, Object> params);
 
     List<ExportDTO> searchExportData(ResourceRequest resourceRequest, @Param("accountIds") List<String> accountIds);
+
+    List<ExportDTO> searchExportDataByProject(ResourceRequest resourceRequest, @Param("projectIds") List<String> projectIds);
 
     List<ExportDTO> searchGroupExportData(ResourceRequest request, @Param("groupId") String groupId, @Param("accountId") String accountId);
 
@@ -56,6 +62,8 @@ public interface ExtResourceMapper {
     List<RuleInspectionReport> regulation(String ruleId);
 
     List<RuleGroupDTO> ruleGroupList(@Param("request") RuleGroupRequest request);
+
+    List<RuleGroupDTO> ruleGroupByProjectList(@Param("request") RuleGroupRequest request);
 
     List<Map<String, Object>> resouceGroups(Map<String, Object> map);
 

@@ -85,7 +85,9 @@ public class CloudProjectService {
     }
 
     public List<CloudProject> getCloudProjects() {
-        return cloudProjectMapper.selectByExample(null);
+        CloudProjectExample example = new CloudProjectExample();
+        example.setOrderByClause("create_time desc");
+        return cloudProjectMapper.selectByExample(example);
     }
 
     public CloudProjectDTO projectById(String projectId) {
