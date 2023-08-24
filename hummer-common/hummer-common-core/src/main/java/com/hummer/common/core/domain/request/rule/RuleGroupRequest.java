@@ -12,7 +12,7 @@ public class RuleGroupRequest extends RuleGroup {
 
     private String accountId;
 
-    private String type;
+    private String projectId;
 
     private Map<String, Object> combine;
 
@@ -32,13 +32,11 @@ public class RuleGroupRequest extends RuleGroup {
         this.accountId = accountId;
     }
 
-    @Override
-    public String getType() {
-        return type;
+    public String getProjectId() {
+        return projectId;
     }
 
-    @Override
-    public void setType(String type) {
-        this.type = type;
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 }

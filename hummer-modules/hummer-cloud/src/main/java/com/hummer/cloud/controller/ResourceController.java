@@ -77,6 +77,14 @@ public class ResourceController {
     }
 
     @I18n
+    @Operation(summary = "合规报告列表")
+    @PostMapping("reportByProjectList/{goPage}/{pageSize}")
+    public Pager<List<ReportDTO>> reportByProjectList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.reportByProjectList(request));
+    }
+
+    @I18n
     @Operation(summary = "资源详情")
     @GetMapping("{id}")
     public ResourceDetailDTO getResource(@PathVariable String id) throws Exception {
@@ -166,6 +174,13 @@ public class ResourceController {
     }
 
     @I18n
+    @Operation(summary = "风险安全策略信息")
+    @GetMapping("reportIsoList/{projectId}/{groupId}")
+    public Map<String, String> reportIsoList(@PathVariable String projectId, @PathVariable String groupId) {
+        return resourceService.reportIsoList(projectId, groupId);
+    }
+
+    @I18n
     @Operation(summary = "规则组详情")
     @PostMapping("rule/groups")
     public List<Map<String, String>> groups(@RequestBody Map<String, Object> params) {
@@ -220,6 +235,14 @@ public class ResourceController {
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.ruleGroupList(request));
+    }
+
+    @I18n
+    @Operation(summary = "合规报告规则组列表")
+    @PostMapping(value = "ruleGroupByProjectList/{goPage}/{pageSize}")
+    public Pager<List<RuleGroupDTO>> ruleGroupByProjectList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, resourceService.ruleGroupByProjectList(request));
     }
 
     @I18n

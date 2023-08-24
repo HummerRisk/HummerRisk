@@ -340,7 +340,7 @@
                 AND t.hummer_id like CONCAT('%',#{request.hummerId},'%')
             </if>
             <if test="request.groupId != null">
-                AND t6.id in (select rule_id from rule_group_mapping where group_id = #{request.groupId})
+                AND t4.group_id = #{request.groupId}
             </if>
         </where>
         ORDER BY t.create_time DESC
@@ -465,6 +465,51 @@
         ORDER BY FIELD(status, 'risky','risk_free'), t.id
     </select>
 
+    <select id="reportByProjectList" parameterType="com.hummer.common.core.domain.request.resource.ResourceRequest" resultMap="ReportListResultMap">
+        SELECT
+        t.*,
+        CASE
+        WHEN
+        (
+        SELECT count(t5.id)
+        FROM rule_inspection_report_mapping t1
+        JOIN rule t2 ON t1.rule_id = t2.id
+        JOIN resource_rule t3 ON t2.id = t3.rule_id
+        JOIN resource t4 ON t4.id = t3.resource_id
+        JOIN cloud_task_item_resource cti ON t4.id = cti.resource_id
+        JOIN cloud_task ct ON cti.task_id = ct.id
+        JOIN resource_item t5 ON t4.id = t5.resource_id
+        WHERE t1.report_id = t.id
+        AND ct.project_id = #{projectId}
+        AND t1.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+        ) > 0 THEN 'risky'
+        ELSE 'risk_free'
+        END AS status
+        FROM rule_inspection_report t
+        <where>
+            <if test="project != null and project != ''">
+                AND t.project like CONCAT('%',#{project},'%')
+            </if>
+            <if test="itemSortFirstLevel != null and itemSortFirstLevel != ''">
+                AND t.item_sort_first_level = #{itemSortFirstLevel}
+            </if>
+            <if test="itemSortSecondLevel != null and itemSortSecondLevel != ''">
+                AND t.item_sort_second_level = #{itemSortSecondLevel}
+            </if>
+            <if test="name != null and name != ''">
+                AND LOWER(t.project) like CONCAT('%',#{name},'%')
+            </if>
+            AND (
+            SELECT count(t.id)
+            FROM rule_inspection_report_mapping t1
+            JOIN rule t2 ON t1.rule_id = t2.id
+            WHERE t1.report_id = t.id
+            AND t1.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            ) > 0
+        </where>
+        ORDER BY FIELD(status, 'risky','risk_free'), t.id
+    </select>
+
     <select id="getReportTaskList" resultType="com.hummer.common.core.domain.CloudTask" parameterType="java.lang.String">
         SELECT DISTINCT t.*
         FROM cloud_task t
@@ -519,33 +564,80 @@
             AS resourcesSum
     </select>
 
+    <select id="reportIsoList" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT
+            (
+                SELECT
+                    count( DISTINCT t.id )
+                FROM
+                    rule_inspection_report t
+                        LEFT JOIN rule_inspection_report_mapping t1 ON t1.report_id = t.id
+                        LEFT JOIN cloud_task_item t2 ON t2.rule_id = t1.rule_id
+                        LEFT JOIN cloud_task t3 ON t3.id = t2.task_id
+                        LEFT JOIN rule_group_mapping t4 ON t3.rule_id = t4.rule_id
+                WHERE
+                    t3.project_id = #{projectId}
+                  AND t3.return_sum > 0
+                  AND t3.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            )
+                AS riskyRegulation,
+
+            (
+                SELECT count( DISTINCT t.id ) FROM rule_inspection_report t
+            ) AS totalRegulation,
+
+            (
+                SELECT
+                    sum( t.return_sum )
+                FROM
+                    cloud_task t
+                WHERE
+                    t.project_id = #{projectId}
+                  AND t.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            )
+                AS returnSum,
+
+            (
+                SELECT
+                    sum( t.resources_sum )
+                FROM
+                    cloud_task t
+                WHERE
+                    t.project_id = #{projectId}
+                  AND t.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = #{groupId})
+            )
+                AS resourcesSum
+    </select>
+
     <select id="groups" resultType="java.util.Map">
         SELECT
             t.id,
-            t.name,
-            t.description,
-            t.level,
+            t.group_name as `name`,
+            t.group_desc as `description`,
+            t.group_level as `level`,
             t.plugin_id as pluginId,
-            t.flag,
+            t.group_flag as `flag`,
             CASE
             WHEN
             (
-            SELECT count(t5.id) FROM rule_group_mapping t1
-            JOIN rule t2 ON t1.rule_id = t2.id
-            JOIN resource_rule t3 ON t2.id = t3.rule_id
-            JOIN resource t4 ON t4.id = t3.resource_id
-            JOIN resource_item t5 ON t4.id = t5.resource_id
-            WHERE t1.group_id = t.id
-            AND t4.account_id = #{accountId}
+                SELECT count(t5.id)
+                FROM rule_inspection_report_mapping t1
+                         JOIN rule t2 ON t1.rule_id = t2.id
+                         JOIN resource_rule t3 ON t2.id = t3.rule_id
+                         JOIN resource t4 ON t4.id = t3.resource_id
+                         JOIN cloud_task_item_resource cti ON t4.id = cti.resource_id
+                         JOIN cloud_task ct ON cti.task_id = ct.id
+                         JOIN resource_item t5 ON t4.id = t5.resource_id
+                WHERE t1.report_id = t.id
+                  AND ct.project_id = #{projectId}
+                  AND t1.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.group_id)
             ) > 0 THEN 'risky'
             ELSE 'risk_free'
             END AS status,
-            (select create_time from cloud_task where account_id = #{accountId} order by create_time desc limit 1) as createTime,
+            (select create_time from cloud_task where project_id = #{projectId} order by create_time desc limit 1) as createTime,
             '暂无合规报告' as state
-        FROM rule_group t
-        left join cloud_account t1 on t.plugin_id = t1.plugin_id
-        WHERE t1.id = #{accountId}
-        AND t.id IN (SELECT group_id FROM rule_group_mapping)
+        FROM cloud_group t
+        WHERE t.id = #{projectId}
     </select>
 
     <select id="searchExportData" resultType="com.hummer.common.core.dto.ExportDTO" parameterType="java.lang.String">
@@ -575,6 +667,33 @@
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
+    <select id="searchExportDataByProject" resultType="com.hummer.common.core.dto.ExportDTO" parameterType="java.lang.String">
+        SELECT
+        DISTINCT t.hummer_id as hummerId,
+        t.region_id as regionId,
+        t.region_name as regionName,
+        t1.resource_name as resourceName,
+        t.resource_type as resourceType,
+        t.severity,
+        t3.name as ruleName,
+        t3.description as ruleDescription,
+        IFNULL(t5.project, '暂无') as project,
+        IFNULL(t5.item_sort_first_level, '暂无') as firstLevel,
+        IFNULL(t5.item_sort_second_level, '暂无') as secondLevel,
+        IFNULL(t5.improvement, '暂无') as improvement
+        FROM resource_item t
+        JOIN resource t1 on t.resource_id = t1.id
+        JOIN resource_rule t2 on t.resource_id = t2.resource_id
+        JOIN rule t3 on t2.rule_id = t3.id
+        LEFT JOIN rule_inspection_report_mapping t4 on t3.id = t4.rule_id
+        LEFT JOIN rule_inspection_report t5 on t4.report_id = t5.id
+        WHERE t.account_id in
+        <foreach collection='projectIds' item='projectId' open='(' separator=',' close=')'>
+            #{projectId}
+        </foreach>
+        ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
+    </select>
+
     <select id="searchGroupExportData" resultType="com.hummer.common.core.dto.ExportDTO" parameterType="java.lang.String">
         SELECT
         DISTINCT t.hummer_id as hummerId,
@@ -593,10 +712,11 @@
         JOIN resource t1 on t.resource_id = t1.id
         JOIN resource_rule t2 on t.resource_id = t2.resource_id
         JOIN rule t3 on t2.rule_id = t3.id
-        JOIN rule_group_mapping g on t3.id = g.rule_id and g.group_id = #{groupId}
+        JOIN cloud_task_item_resource cti on cti.resource_id = t.resource_id
+        JOIN cloud_task ct on cti.task_id = ct.id
         LEFT JOIN rule_inspection_report_mapping t4 on t3.id = t4.rule_id
         LEFT JOIN rule_inspection_report t5 on t4.report_id = t5.id
-        WHERE t.account_id = #{accountId}
+        WHERE ct.project_id = #{projectId} and ct.group_id = #{groupId}
         ORDER BY t.resource_type, t1.resource_name, t.region_id, t.hummer_id
     </select>
 
@@ -771,7 +891,7 @@
         SELECT count(g.id)
         FROM rule_group_mapping g
         WHERE g.group_id = t.id
-        AND g.rule_id in (select tt.rule_id from cloud_task tt where tt.resources_sum &gt; 0 and tt.account_id = #{request.accountId})
+        AND g.rule_id in (select tt.rule_id from cloud_task tt where tt.return_sum &gt; 0 and tt.account_id = #{request.accountId})
         ) as riskRuleSum,
         p.name as pluginName,
         p.icon as pluginIcon,
@@ -857,6 +977,102 @@
             and t.id in (select r.group_id from rule_group_mapping r join cloud_task ct on r.rule_id = ct.rule_id where ct.account_id = #{request.accountId})
         </where>
         order by `status`, createTime desc
+    </select>
+
+    <select id="ruleGroupByProjectList" resultType="com.hummer.common.core.dto.RuleGroupDTO">
+        select
+        r.*,
+        (SELECT count(g.id) from rule_group_mapping g where g.group_id = t.group_id) as ruleSum,
+        (
+        SELECT count(g.id)
+        FROM rule_group_mapping g
+        WHERE g.group_id = t.group_id
+        AND g.rule_id in (select tt.rule_id from cloud_task tt where tt.return_sum &gt; 0 and tt.project_id = t.project_id)
+        ) as riskRuleSum,
+        p.name as pluginName,
+        p.icon as pluginIcon,
+        CASE
+        WHEN
+        (
+        SELECT count(t5.id) FROM rule_group_mapping t1
+        JOIN rule t2 ON t1.rule_id = t2.id
+        JOIN resource_rule t3 ON t2.id = t3.rule_id
+        JOIN resource t4 ON t4.id = t3.resource_id
+        JOIN resource_item t5 ON t4.id = t5.resource_id
+        WHERE t1.group_id = t.group_id
+        AND t4.account_id = t1.account_id
+        ) > 0 THEN 'risky'
+        ELSE 'risk_free'
+        END AS status,
+        (
+        SELECT c1.create_time FROM cloud_task c1
+        WHERE c1.project_id = t1.id and c1.rule_id in (select r1.rule_id from rule_group_mapping r1 where r1.group_id = t.group_id)
+        order by create_time desc limit 1) as createTime,
+        '暂无合规报告' as state,
+        (
+        SELECT
+        IFNULL(count( DISTINCT g.id ), 0)
+        FROM
+        rule_inspection_report r
+        JOIN rule_inspection_report_mapping t1 ON t1.report_id = r.id
+        JOIN cloud_task_item t2 ON t2.rule_id = t1.rule_id
+        JOIN cloud_task t3 ON t3.id = t2.task_id
+        JOIN rule_group_mapping t4 ON t3.rule_id = t4.rule_id
+        JOIN rule_group g ON t4.group_id = g.id
+        WHERE t3.project_id = t1.id and g.id = t.group_id
+        AND t3.return_sum > 0
+        )
+        AS riskyRegulation,
+        (
+        SELECT count( DISTINCT r.id ) FROM rule_inspection_report r
+        ) AS totalRegulation,
+        (
+        SELECT
+        IFNULL(sum( r.return_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.project_id = t1.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.group_id)
+        )
+        AS returnSum,
+        (
+        SELECT
+        IFNULL(sum( r.resources_sum ), 0)
+        FROM
+        cloud_task r
+        WHERE
+        r.project_id = t1.id
+        AND r.rule_id IN (SELECT rule_id FROM rule_group_mapping WHERE group_id = t.group_id)
+        )
+        AS resourcesSum
+        from cloud_group as t
+        join cloud_project t1 on t.project_id = t1.id
+        join plugin p on t1.plugin_id = p.id
+        join rule_group r on t.group_id = r.id
+        <where>
+            <if test="request.combine != null">
+                <include refid="combine2">
+                    <property name="condition" value="request.combine"/>
+                </include>
+            </if>
+            <if test="request.projectId != null and request.projectId != ''">
+                and t.project_id = #{request.projectId}
+            </if>
+            <if test="request.name != null and request.name != ''">
+                and LOWER(t1.account_name) like concat('%', LOWER(#{request.name}), '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                and LOWER(t.group_desc) like concat('%', LOWER(#{request.description}), '%')
+            </if>
+            <if test="request.level != null and request.level != ''">
+                and LOWER(t.group_level) like concat('%', LOWER(#{request.level}), '%')
+            </if>
+            <if test="request.pluginId != null and request.pluginId != ''">
+                and t1.plugin_id = #{request.pluginId}
+            </if>
+        </where>
+        order by t.`status`, t.create_time desc
     </select>
 
     <select id="resouceGroups" resultType="java.util.Map" parameterType="java.util.Map">

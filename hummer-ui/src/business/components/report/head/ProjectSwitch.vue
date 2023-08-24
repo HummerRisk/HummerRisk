@@ -8,7 +8,7 @@
           {{ $t('account.cloud_account') }}: {{ currentAccount }} | {{ $t('commons.last_scan_time') }}: {{ createTime | timestampFormatDate }}
         </span>
       </template>
-      <project-search-list @projectSwitch="projectSwitch" @selectProject="selectProject"/>
+      <project-search-list :projectId="projectId" @projectSwitch="projectSwitch"/>
 
       <el-divider/>
 
@@ -21,34 +21,43 @@
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>
     </el-submenu>
+
+    <el-button class="el-btn-btm" type="warning" plain size="small" @click="pdfDown">{{ $t('pdf.export_pdf') }}</el-button>
+    <el-button class="el-btn-btm" type="success" plain size="small" @click="openDownload">{{ $t('report.download_project') }}</el-button>
+
   </el-menu>
 </template>
 
 <script>
 import ProjectSearchList from "@/business/components/common/head/ProjectSearchList";
+import htmlToPdf from "@/common/js/htmlToPdf";
 
 /* eslint-disable */
 export default {
   name: "ProjectSwitch",
   props: {
-    accountName: String
+    projectId: String
   },
   components: {ProjectSearchList},
   data() {
     return {
+      htmlTitle: this.$t('pdf.html_title'),
       currentAccount: '',
       createTime: '',
     }
   },
   methods: {
-    projectSwitch(accountId, accountName, createTime) {
+    projectSwitch(projectId, accountName, createTime) {
       this.currentAccount = accountName;
       this.createTime = createTime;
-      this.$emit("projectSwitch", accountId, createTime);
+      this.$emit("projectSwitch", projectId, createTime);
     },
-    selectProject(accountId, accountName) {
-      this.currentAccount = accountName;
-      this.$emit('selectProject', accountId, accountName);
+    openDownload() {
+      this.$emit('openDownload');
+    },
+    //下载pdf
+    pdfDown() {
+      htmlToPdf.getPdfById(this.htmlTitle);
     },
   },
 }
@@ -57,7 +66,7 @@ export default {
 <style scoped>
 .account-name {
   display: inline-block;
-  width: 250px;
+  width: 350px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;

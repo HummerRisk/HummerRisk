@@ -9,7 +9,11 @@ export const string2PrettyFormatUrl = "/cloud/resource/string2PrettyFormat";
 
 export const resourceReportIsoUrl = "/cloud/resource/report/iso/";
 
+export const resourceReportIsoListUrl = "/cloud/resource/reportIsoList/";
+
 export const resourceReportListUrl = "/cloud/resource/reportList/";
+
+export const resourcerReportByProjectListUrl = "/cloud/resource/reportByProjectList/";
 
 export const resourceListUrl = "/cloud/resource/resourceList/";
 
@@ -30,6 +34,8 @@ export const resourceTypeDataUrl = "/cloud/resource/resourceTypeData";
 export const resourceRuleDataUrl = "/cloud/resource/ruleData";
 
 export const resourceRuleGroupListUrl = "/cloud/resource/ruleGroup/list/";
+
+export const ruleGroupByProjectListUrl = "/cloud/resource/ruleGroupByProjectList/";
 
 export const resourceGroupExportUrl = "/cloud/resource/groupExport";
 

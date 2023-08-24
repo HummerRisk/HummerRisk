@@ -1,18 +1,18 @@
 <template>
     <main-container v-loading="result.loading">
 
-      <el-card class="el-row-card" id="pdfDom">
+      <el-card shadow="hover" class="el-row-card" id="pdfDom">
 
         <template v-slot:header>
 
           <report-table-header :condition.sync="condition" @search="search" :items="items"
-                               :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch"
+                               :projectId="projectId" @projectSwitch="projectSwitch"
                                @openDownload="openDownload" :show-open="true"/>
         </template>
         <el-row :gutter="20" class="el-row-body">
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="8" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
+            <el-card shadow="hover" :body-style="{ padding: '15px' }">
               <div style="height: 110px;">
                 <el-row :gutter="20">
                   <el-col :span="3">
@@ -91,7 +91,7 @@
       <!--检测报告详情-->
       <el-drawer class="btt" :title="$t('resource.report_detail')" :visible.sync="revisible" size="80%" :before-close="handleClose" :direction="directionB"
                  :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-card class="table-card">
+        <el-card shadow="hover" class="table-card">
           <div style="margin-top: 15px;">
             <el-row>
               <el-col :span="4">
@@ -139,14 +139,14 @@
             </el-row>
           </div>
         </el-card>
-        <el-card class="table-report-card">
+        <el-card shadow="hover" class="table-report-card">
           <section class="report-container">
             <main>
               <metric-chart v-if="content" :content="content"/>
             </main>
           </section>
         </el-card>
-        <el-card v-if="resourceTableData.length>0" class="table-report-card-resource">
+        <el-card shadow="hover" v-if="resourceTableData.length>0" class="table-report-card-resource">
           <template v-slot:header>
             <table-header :condition.sync="resourceCondition" @search="searchResource"
                           :title="$t('resource.cloud_resource_detail_result')"
@@ -207,7 +207,7 @@
           </hide-table>
           <table-pagination :change="searchResource" :current-page.sync="resourceCurrentPage" :page-size.sync="resourcePageSize" :total="resourceTotal"/>
         </el-card>
-        <el-card class="table-report-card-resource">
+        <el-card shadow="hover" class="table-report-card-resource">
           <template v-slot:header>
             <table-header :condition.sync="riskCondition" @search="reportListSearch"
                           :title="$t('resource.regulation_list')"/>
@@ -255,7 +255,7 @@
       <!--regulation report-->
       <el-drawer class="btt" :title="$t('resource.regulation')" :visible.sync="regulationVisible"  size="60%" :before-close="handleCloseB"
                  :direction="direction" :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-card class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
+        <el-card shadow="hover" class="table-card" :body-style="{ padding: '15px', margin: '15px' }" v-for="(data, index) in regulationData" :key="data.id">
           <el-row class="el-row-c">
             <el-col :span="8"><span style="color: #215d9a;">{{ '(' + (index + 1) +') ' + $t('resource.basic_requirements_for_grade_protection') }}</span></el-col>
             <el-col :span="16"><span>{{ data.project }}</span></el-col>
@@ -428,42 +428,42 @@
       <!--Rule detail-->
 
       <!-- 合并下载报告 -->
-      <el-drawer class="rtl" :title="$t('resource.merge_resource')" :visible.sync="infoVisible" size="80%" :before-close="handleClose" :direction="direction"
-                 :destroy-on-close="true" v-loading="viewResult.loading">
-        <el-table border :data="accountData" class="adjust-table table-content" @sort-change="sort"
-                  :row-class-name="tableRowClassName" @select-all="select" @select="select" style="margin: 1%;">
-          <el-table-column type="selection" min-width="3%">
-          </el-table-column>
-          <el-table-column type="index" min-width="4%"/>
-          <el-table-column prop="name" :label="$t('account.name')" min-width="12%" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>
-            <template v-slot:default="scope">
-              <span>
-                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="15%" :label="$t('account.create_time')" sortable
-                           prop="createTime">
-            <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column min-width="15%" :label="$t('account.update_time')" sortable
-                           prop="updateTime">
-            <template v-slot:default="scope">
-              <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>
-        </el-table>
-        <table-pagination :change="accountList" :current-page.sync="accountPage" :page-size.sync="accountSize" :total="accountTotal"/>
-        <el-row style="margin: 3% 0 3% 3%;">
-          <span style="color: red;font-style: italic; font-weight: bold;">{{ $t('resource.desc') }}</span>
-        </el-row>
-        <el-button type="primary" style="margin-left: 45%;" @click="download">{{ $t('resource.download_report') }}</el-button>
-      </el-drawer>
+<!--      <el-drawer class="rtl" :title="$t('resource.merge_resource')" :visible.sync="infoVisible" size="80%" :before-close="handleClose" :direction="direction"-->
+<!--                 :destroy-on-close="true" v-loading="viewResult.loading">-->
+<!--        <el-table border :data="accountData" class="adjust-table table-content" @sort-change="sort"-->
+<!--                  :row-class-name="tableRowClassName" @select-all="select" @select="select" style="margin: 1%;">-->
+<!--          <el-table-column type="selection" min-width="3%">-->
+<!--          </el-table-column>-->
+<!--          <el-table-column type="index" min-width="4%"/>-->
+<!--          <el-table-column prop="name" :label="$t('account.name')" min-width="12%" show-overflow-tooltip></el-table-column>-->
+<!--          <el-table-column :label="$t('account.cloud_platform')" min-width="10%" show-overflow-tooltip>-->
+<!--            <template v-slot:default="scope">-->
+<!--              <span>-->
+<!--                <img :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>-->
+<!--                 &nbsp;&nbsp; {{ scope.row.pluginName }}-->
+<!--              </span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column min-width="15%" :label="$t('account.create_time')" sortable-->
+<!--                           prop="createTime">-->
+<!--            <template v-slot:default="scope">-->
+<!--              <span><i class="el-icon-time"></i> {{ scope.row.createTime | timestampFormatDate }}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column min-width="15%" :label="$t('account.update_time')" sortable-->
+<!--                           prop="updateTime">-->
+<!--            <template v-slot:default="scope">-->
+<!--              <span><i class="el-icon-time"></i> {{ scope.row.updateTime | timestampFormatDate }}</span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column prop="userName" :label="$t('account.creator')" min-width="8%" show-overflow-tooltip/>-->
+<!--        </el-table>-->
+<!--        <table-pagination :change="accountList" :current-page.sync="accountPage" :page-size.sync="accountSize" :total="accountTotal"/>-->
+<!--        <el-row style="margin: 3% 0 3% 3%;">-->
+<!--          <span style="color: red;font-style: italic; font-weight: bold;">{{ $t('resource.desc') }}</span>-->
+<!--        </el-row>-->
+<!--        <el-button type="primary" style="margin-left: 45%;" @click="download">{{ $t('resource.download_report') }}</el-button>-->
+<!--      </el-drawer>-->
       <!-- 合并下载报告 -->
 
       <!--rule list-->
@@ -547,10 +547,10 @@ import {
   resourceGroupExportUrl,
   resourceListUrl,
   resourceRegulationUrl,
-  resourceReportIsoUrl,
-  resourceReportListUrl,
-  resourceRuleGroupListUrl,
-  resourceRuleGroupsUrl
+  resourceReportIsoListUrl,
+  resourcerReportByProjectListUrl,
+  resourceRuleGroupsUrl,
+  ruleGroupByProjectListUrl
 } from "@/api/cloud/resource/resource";
 import {accountListUrl} from "@/api/cloud/account/account";
 
@@ -691,8 +691,8 @@ const columnOptions3 = [
         ],
         visible: false,
         revisible: false,
-        accountId: '',
-        accountIds: [],
+        projectId: '',
+        projectIds: [],
         direction: 'rtl',
         directionB: 'btt',
         detailForm: {},
@@ -864,14 +864,14 @@ const columnOptions3 = [
       },
       select2(selection) {
       },
-      cloudAccountSwitch (accountId, accountName) {
-        this.accountId = accountId;
+      projectSwitch (projectId, accountName) {
+        this.projectId = projectId;
         this.currentAccount = accountName;
         this.search();
       },
       async search () {
-        this.condition.accountId = this.accountId;
-        this.result = await this.$post(resourceRuleGroupListUrl + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
+        this.condition.projectId = this.projectId;
+        this.result = await this.$post(ruleGroupByProjectListUrl + this.fcurrentPage + "/" + this.fpageSize, this.condition, response => {
           let data = response.data;
           this.ftotal = data.itemCount;
           this.ftableData = data.listObject;
@@ -971,7 +971,7 @@ const columnOptions3 = [
         });
       },
       async reportIsoSearch() {
-        this.viewResult = await this.$get(resourceReportIsoUrl + this.accountId + '/' + this.groupId, response => {
+        this.viewResult = await this.$get(resourceReportIsoListUrl + this.projectId + '/' + this.groupId, response => {
           this.content = response.data;
           this.content.groupName = this.groupName;
           this.reportListSearch();
@@ -979,9 +979,9 @@ const columnOptions3 = [
         });
       },
       async reportListSearch() {
-        let url = resourceReportListUrl + this.currentPage + "/" + this.pageSize;
+        let url = resourcerReportByProjectListUrl + this.currentPage + "/" + this.pageSize;
         //在这里实现事件
-        this.riskCondition.accountId = this.accountId;
+        this.riskCondition.projectId = this.projectId;
         this.riskCondition.groupId = this.groupId;
         this.viewResult = await this.$post(url, this.riskCondition, response => {
           let data = response.data;
@@ -992,7 +992,7 @@ const columnOptions3 = [
       async searchResource() {
         let url = resourceListUrl + this.resourceCurrentPage + "/" + this.resourcePageSize;
         //在这里实现事件
-        this.resourceCondition.accountId = this.accountId;
+        this.resourceCondition.projectId = this.projectId;
         this.resourceCondition.groupId = this.groupId;
         this.viewResult = await this.$post(url, this.resourceCondition, response => {
           let data = response.data;
@@ -1032,7 +1032,7 @@ const columnOptions3 = [
         this.severityOptions = severityOptions;
       },
       ruleSetOptionsFnc () {
-        this.viewResult = this.$post(resourceRuleGroupsUrl, {"accountId":this.accountId}, res => {
+        this.viewResult = this.$post(resourceRuleGroupsUrl, {"projectId":this.projectId}, res => {
           this.ruleSetOptions = res.data;
         });
       },
@@ -1042,13 +1042,14 @@ const columnOptions3 = [
         });
       },
       init() {
-        if (this.$route.params.id) this.accountId = this.$route.params.id;
+        if (this.$route.params.id) this.projectId = this.$route.params.id;
+        if (!this.projectId) return;
         this.tagLists();
         this.activePlugin();
         this.severityOptionsFnc();
         this.ruleSetOptionsFnc();
         this.inspectionSeportOptionsFnc();
-        this.accountList();
+        // this.accountList();
         this.search();
       },
       filterAccount (tag) {
@@ -1085,17 +1086,9 @@ const columnOptions3 = [
         this.detailForm = item;
         this.visible=true;
       },
-      handleScan () {
-        this.viewResult = this.$get(ruleReScanUrl + item.id + "/" + item.accountId, response => {
-          if (response.success) {
-            this.search();
-          }
-        });
-      },
       openDownload() {
         this.infoVisible = true;
-        this.accountIds = [];
-        this.accountIds.push(this.accountId);
+        this.download();
       },
       download() {
         let myDate = new Date();
@@ -1117,10 +1110,11 @@ const columnOptions3 = [
                 {value: this.$t('resource.basic_requirements_for_grade_protection'), key: "basicRequirements"},
                 {value: this.$t('resource.suggestions_for_improvement'), key: "improvement"},
               ];
-              this.accountIds = this.accountIds.concat(Array.from(this.selectIds));
+              this.projectIds = [];
+              this.projectIds.push(this.projectId);
               this.result = this.$download(resourceExportUrl, {
                 columns: columns,
-                accountIds: this.accountIds,
+                projectIds: this.projectIds,
               }, response => {
                 if (response.status === 201) {
                   let blob = new Blob([response.data], {type: "'application/octet-stream'"});
@@ -1170,7 +1164,7 @@ const columnOptions3 = [
               ];
               this.viewResult = this.$download(resourceGroupExportUrl, {
                 columns: columns,
-                accountId: this.accountId,
+                projectId: this.projectId,
                 groupId: data.id,
               }, response => {
                 if (response.status === 201) {

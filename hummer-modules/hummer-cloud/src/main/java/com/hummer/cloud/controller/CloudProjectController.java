@@ -42,7 +42,7 @@ public class CloudProjectController {
 
     @Operation(summary = "所有项目")
     @I18n
-    @PostMapping("allProjectList")
+    @GetMapping("allProjectList")
     public List<CloudProject> getCloudProjects() {
         return cloudProjectService.getCloudProjects();
     }

@@ -3,7 +3,7 @@
   <div>
     <el-row type="flex" justify="space-between" align="middle">
       <span>
-        <project-switch class="account-change" :projectId="projectId" @projectSwitch="projectSwitch"
+        <account-switch class="account-change" :accountId="accountId" @cloudAccountSwitch="cloudAccountSwitch"
                         @openDownload="openDownload"/>
       </span>
       <span>
@@ -29,7 +29,7 @@
 import TableSearchBar from '@/business/components/report/head/TableSearchBar';
 import TableButton from '@/business/components/common/components/TableButton';
 import TableAdvSearchBar from "@/business/components/common/components/search/TableAdvSearchBar";
-import ProjectSwitch from "@/business/components/report/head/ProjectSwitch";
+import AccountSwitch from "@/business/components/report/head/AccountSwitch";
 import Vue from "vue";
 
 /* eslint-disable */
@@ -39,7 +39,7 @@ import Vue from "vue";
       TableAdvSearchBar,
       TableSearchBar,
       TableButton,
-      ProjectSwitch
+      AccountSwitch
     },
     data(){
       return {
@@ -48,7 +48,7 @@ import Vue from "vue";
       }
     },
     props: {
-      projectId: String,
+      accountId: String,
       title: {
         type: String,
         default() {
@@ -129,8 +129,8 @@ import Vue from "vue";
       validate() {
         this.$emit('validate');
       },
-      projectSwitch(projectId, createTime) {
-        this.$emit("projectSwitch", projectId, createTime);
+      cloudAccountSwitch(accountId, accountName) {
+        this.$emit('cloudAccountSwitch', accountId, accountName);
       },
       openDownload() {
         this.$emit('openDownload');

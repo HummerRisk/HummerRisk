@@ -1921,6 +1921,7 @@ export default {
   report: {
     download_group: '下载合规报告',
     download_account: '下载云账号整体合规报告',
+    download_project: '下载云账号当次检测合规报告',
     scan_details: '检测报告详情',
     scan_rules: '检测规则列表',
     have_risk_rule: '有风险规则数',
