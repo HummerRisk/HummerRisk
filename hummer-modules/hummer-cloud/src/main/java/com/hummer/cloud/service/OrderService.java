@@ -609,6 +609,8 @@ public class OrderService {
         }
         CloudProject cloudProject = new CloudProject();
         cloudProject.setStatus(newStatus);
+        cloudProject.setResourcesSum(extCloudTaskMapper.getResourceSumByProject(projectId));
+        cloudProject.setReturnSum(extCloudTaskMapper.getReturnSumByProject(projectId));
         return cloudProjectMapper.updateByExampleSelective(cloudProject, example);
     }
 
@@ -616,6 +618,8 @@ public class OrderService {
         CloudGroup cloudGroup = new CloudGroup();
         cloudGroup.setId(groupId);
         cloudGroup.setStatus(status.name());
+        cloudGroup.setResourcesSum(extCloudTaskMapper.getResourceSumByGroup(groupId));
+        cloudGroup.setReturnSum(extCloudTaskMapper.getReturnSumByGroup(groupId));
         cloudGroupMapper.updateByPrimaryKeySelective(cloudGroup);
     }
 
