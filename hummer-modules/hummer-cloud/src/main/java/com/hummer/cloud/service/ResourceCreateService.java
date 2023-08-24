@@ -71,19 +71,11 @@ public class ResourceCreateService {
     @Autowired
     private CloudResourceSyncItemMapper cloudResourceSyncItemMapper;
     @Autowired
-    private CloudResourceRelaMapper cloudResourceRelaMapper;
-    @Autowired
-    private CloudResourceRelaLinkMapper cloudResourceRelaLinkMapper;
-    @Autowired
     private CommonThreadPool commonThreadPool;
     @Autowired
     private CloudProjectMapper cloudProjectMapper;
     @Autowired
-    private CloudProjectLogMapper cloudProjectLogMapper;
-    @Autowired
     private CloudGroupMapper cloudGroupMapper;
-    @Autowired
-    private CloudGroupLogMapper cloudGroupLogMapper;
     @DubboReference
     private ISystemProviderService systemProviderService;
 
@@ -94,7 +86,7 @@ public class ResourceCreateService {
     //云资源检测
     @XxlJob("cloudTasksJobHandler")
     public void cloudTasksJobHandler() throws Exception {
-        //云规则检测
+        //云账号（规则组）检测
         final CloudProjectExample cloudProjectExample = new CloudProjectExample();
         CloudProjectExample.Criteria criteria = cloudProjectExample.createCriteria();
         criteria.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString());

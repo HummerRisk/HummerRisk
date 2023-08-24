@@ -35,4 +35,12 @@ public interface ExtCloudTaskMapper {
     List<CloudTask> selectManualTasks(@Param("request") ManualRequest request);
 
     List<CloudTask> selectOssManualTasks(@Param("request") ManualRequest request);
+
+    Long getResourceSumByProject(String projectId);
+
+    Long getReturnSumByProject(String projectId);
+
+    Long getResourceSumByGroup(String groupId);
+
+    Long getReturnSumByGroup(String groupId);
 }
