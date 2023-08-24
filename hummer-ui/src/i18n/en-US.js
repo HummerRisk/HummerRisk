@@ -262,6 +262,7 @@ export default {
     no: 'No',
     log: 'Log',
     into_detail: 'Into details',
+    sum: 'Total',
   },
   workspace: {
     create:'Create a workspace',
@@ -712,6 +713,10 @@ export default {
     group_sum_project: 'Total {0} rule groups',
     risk_rule_sum_project: '(The number of risky rules is {0})',
     risk_group_sum_project: '(The number of risky rule groups is {0})',
+    rule_t_project: 'rules',
+    group_t_project: 'groups',
+    risk_rule_t_project: 'The number of risky rules is',
+    risk_group_t_project: 'The number of risky rule groups is',
     group_type: 'rule group type',
   },
   resource: {

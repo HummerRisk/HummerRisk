@@ -262,6 +262,7 @@ export default {
     no: '否',
     log: '日志',
     into_detail: '进入详情',
+    sum: '共',
   },
   workspace: {
     create: '创建工作空间',
@@ -712,6 +713,10 @@ export default {
     group_sum_project: '共 {0} 条规则组',
     risk_rule_sum_project: '(有风险规则数为 {0})',
     risk_group_sum_project: '(有风险规则组数为 {0})',
+    rule_t_project: '条规则',
+    group_t_project: '条规则组',
+    risk_rule_t_project: '有风险规则数为',
+    risk_group_t_project: '有风险规则组数为',
     group_type: '规则组类型',
   },
   resource: {
