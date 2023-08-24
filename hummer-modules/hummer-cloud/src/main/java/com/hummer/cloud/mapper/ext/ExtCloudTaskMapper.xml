@@ -384,14 +384,14 @@
         WHERE t.id = #{projectId}
     </select>
 
-    <select id="getResourceSumByProject" resultType="java.lang.Long">
+    <select id="getResourceSumByGroup" resultType="java.lang.Long">
         SELECT sum(IFNULL(t1.resources_sum, 0))
         FROM cloud_group t
         LEFT JOIN cloud_task t1 ON t.id = t1.group_id
         WHERE t.id = #{groupId}
     </select>
 
-    <select id="getReturnSumByProject" resultType="java.lang.Long">
+    <select id="getReturnSumByGroup" resultType="java.lang.Long">
         SELECT sum(IFNULL(t1.return_sum, 0))
         FROM cloud_project t
         LEFT JOIN cloud_task t1 ON t.id = t1.group_id
