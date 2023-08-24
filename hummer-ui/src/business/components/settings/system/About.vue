@@ -13,7 +13,7 @@
           </el-col>
           <el-col :span="10" class="col-te">
             <span v-if="license.company">{{ license.company }}</span>
-            <span v-else>{{ $t('system.no_license') }}</span>
+            <span v-else>{{ '--' }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -58,7 +58,7 @@
       <div style="padding: 14px;">
         <el-row>
           <el-col :span="24" class="license-le">
-            <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>
+<!--            <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>-->
             <el-button plain size="medium" @click="others">{{ $t('dashboard.i18n_other') }}</el-button>
           </el-col>
         </el-row>
