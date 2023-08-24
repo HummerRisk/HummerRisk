@@ -9,6 +9,8 @@ export const deleteReportsUrl = "/cloud/report/deleteReports";
 
 export const reportAccountListUrl = "/cloud/report/accountList";
 
+export const reportProjectListUrl = "/cloud/report/accountByProjectList";
+
 export const createReportUrl = "/cloud/report/createReport";
 
 export const updateReportUrl = "/cloud/report/updateReport";

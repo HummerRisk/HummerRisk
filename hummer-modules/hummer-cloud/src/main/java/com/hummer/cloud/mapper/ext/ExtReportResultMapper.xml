@@ -177,4 +177,82 @@
         </if>
     </select>
 
+    <resultMap id="ProjectBaseResultMap" type="com.hummer.common.core.domain.request.task.ProjectVo">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="selectProjectByExample" parameterType="com.hummer.common.core.domain.CloudProjectExample" resultMap="ProjectBaseResultMap">
+        select t.id,
+        concat(t.account_name, ' ( ', t.plugin_name, ' ) ', DATE_FORMAT(FROM_UNIXTIME(t.create_time/1000), '%Y-%m-%d %H:%i:%s')) as name,
+        'cloudProject' as type
+        from cloud_project t
+        left join plugin p on t.plugin_id = p.id
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <resultMap id="CloudProjectBaseResultMap" type="com.hummer.common.core.domain.CloudProject">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="job_type" jdbcType="VARCHAR" property="jobType" />
+        <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+    </resultMap>
+
+    <select id="getCloudProject" parameterType="java.lang.String" resultMap="CloudProjectBaseResultMap">
+        select t.*
+        from cloud_project t
+        where t.id = #{id}
+    </select>
+
+    <resultMap id="CloudBaseResultMap" type="com.hummer.common.core.domain.CloudTask">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_tags" jdbcType="VARCHAR" property="ruleTags" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="resource_types" jdbcType="VARCHAR" property="resourceTypes" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion" />
+    </resultMap>
+
+    <select id="cloudTaskList" parameterType="java.lang.String" resultMap="CloudBaseResultMap">
+        select t.*
+        from cloud_task t
+        where t.account_id = #{id}
+          and t.status in ('FINISHED', 'WARNING')
+    </select>
+
 </mapper>

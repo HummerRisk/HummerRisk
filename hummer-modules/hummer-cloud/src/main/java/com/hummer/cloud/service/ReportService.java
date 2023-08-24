@@ -1,6 +1,6 @@
 package com.hummer.cloud.service;
 
-import com.hummer.cloud.dto.AccountDTO;
+import com.hummer.cloud.dto.ProjectDTO;
 import com.hummer.cloud.dto.ReportDTO;
 import com.hummer.cloud.dto.ReportResultDTO;
 import com.hummer.cloud.mapper.ReportResultDetailMapper;
@@ -17,7 +17,9 @@ import com.hummer.common.core.constant.ResourceOperation;
 import com.hummer.common.core.constant.ResourceTypeConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.task.AccountVo;
+import com.hummer.common.core.domain.request.task.ProjectVo;
 import com.hummer.common.core.dto.AccountTreeDTO;
+import com.hummer.common.core.dto.ProjectTreeDTO;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.model.LoginUser;
@@ -76,6 +78,17 @@ public class ReportService {
         accountExample.setOrderByClause("create_time desc");
         List<AccountVo> accounts = extReportResultMapper.selectAccountByExample(accountExample);
         dto.setCloudAccount(accounts);
+        return dto;
+    }
+
+    public ProjectTreeDTO accountByProjectList() {
+        ProjectTreeDTO dto = new ProjectTreeDTO();
+        //云账号检测记录（项目）
+        CloudProjectExample example = new CloudProjectExample();
+        example.createCriteria().andPluginIdIn(PlatformUtils.getCloudPlugin());
+        example.setOrderByClause("create_time desc");
+        List<ProjectVo> projectVoList = extReportResultMapper.selectProjectByExample(example);
+        dto.setProjectVoList(projectVoList);
         return dto;
     }
 
@@ -191,19 +204,19 @@ public class ReportService {
             example.createCriteria().andResultIdEqualTo(id);
             List<ReportResultDetail> reportResultDetailList = reportResultDetailMapper.selectByExample(example);
 
-            List<AccountDTO> accountDTOList = new LinkedList<>();
+            List<ProjectDTO> projectDTOList = new LinkedList<>();
 
             for (ReportResultDetail reportResultDetail : reportResultDetailList) {
-                if (StringUtils.equals(reportResultDetail.getType(), "cloudAccount")) {
-                    AccountDTO accountDTO = new AccountDTO();
-                    String accountId = reportResultDetail.getAccountId();
-                    accountDTO.setAccount(extAccountMapper.account(accountId));
-                    accountDTO.setCloudTaskList(extAccountMapper.cloudTaskList(accountId));
-                    accountDTOList.add(accountDTO);
+                if (StringUtils.equals(reportResultDetail.getType(), "cloudProject")) {
+                    ProjectDTO projectDTO = new ProjectDTO();
+                    String projectId = reportResultDetail.getAccountId();
+                    projectDTO.setCloudProject(extReportResultMapper.getCloudProject(projectId));
+                    projectDTO.setCloudTaskList(extReportResultMapper.cloudTaskList(projectId));
+                    projectDTOList.add(projectDTO);
                 }
             }
 
-            PdfReport.accountDTOList = accountDTOList;
+            PdfReport.projectDTOList = projectDTOList;
 
             // 1.新建document对象
             Document document = new Document(PageSize.A4);// 建立一个Document对象

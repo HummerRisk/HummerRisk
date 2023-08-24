@@ -1,22 +1,23 @@
 package com.hummer.cloud.dto;
 
 import com.hummer.common.core.domain.Account;
+import com.hummer.common.core.domain.CloudProject;
 import com.hummer.common.core.domain.CloudTask;
 
 import java.util.List;
 
-public class AccountDTO {
+public class ProjectDTO {
 
-    private Account account;
+    private CloudProject cloudProject;
 
     private List<CloudTask> cloudTaskList;
 
-    public Account getAccount() {
-        return account;
+    public CloudProject getCloudProject() {
+        return cloudProject;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setCloudProject(CloudProject cloudProject) {
+        this.cloudProject = cloudProject;
     }
 
     public List<CloudTask> getCloudTaskList() {

@@ -59,7 +59,7 @@ export default {
         return this.$t("reportcenter.all_account");
       }
     },
-    cloudAccount: {
+    cloudProject: {
       type: String,
       default() {
         return this.$t("task.task_cloud");
@@ -83,6 +83,7 @@ export default {
   },
   methods: {
     init() {
+      console.log(111, this.treeNodes);
       //资源信息树
       this.extendTreeNodes = [];
       this.extendTreeNodes.unshift({
@@ -90,7 +91,7 @@ export default {
         "name": this.allLabel,
         "level": 0,
         "children": [
-          {name: this.cloudAccount, level: 1, type: 'cloudAccount', children: this.treeNodes.cloudAccount},
+          {name: this.cloudProject, level: 1, type: 'cloudProject', children: this.treeNodes.projectVoList},
         ],
       });
       if (this.expandedNode.length === 0) {

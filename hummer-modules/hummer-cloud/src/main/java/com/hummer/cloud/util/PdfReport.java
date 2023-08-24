@@ -2,8 +2,9 @@ package com.hummer.cloud.util;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.hummer.cloud.dto.AccountDTO;
+import com.hummer.cloud.dto.ProjectDTO;
 import com.hummer.common.core.domain.Account;
+import com.hummer.common.core.domain.CloudProject;
 import com.hummer.common.core.domain.CloudTask;
 import com.hummer.common.core.utils.StringUtils;
 import com.itextpdf.text.*;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class PdfReport {
 
-    public static List<AccountDTO> accountDTOList = new LinkedList<>();
+    public static List<ProjectDTO> projectDTOList = new LinkedList<>();
 
     // main测试
     /*public static void main(String[] args) throws Exception {
@@ -116,13 +117,13 @@ public class PdfReport {
         document.add(paragraph);//第一页 Title
 
         //多云检测
-        if (accountDTOList.size() > 0) {
-            for (AccountDTO accountDTO : accountDTOList) {
+        if (!projectDTOList.isEmpty()) {
+            for (ProjectDTO projectDTO : projectDTOList) {
                 document.add(cloudImage);//云检测项
-                Account account = accountDTO.getAccount();
-                String name = "云账号: " + account.getName() + "    云平台: " + account.getPluginName();
+                CloudProject cloudProject = projectDTO.getCloudProject();
+                String name = "云账号: " + cloudProject.getAccountName() + "    云平台: " + cloudProject.getPluginName();
 
-                List<CloudTask> cloudTaskList = accountDTO.getCloudTaskList();
+                List<CloudTask> cloudTaskList = projectDTO.getCloudTaskList();
                 // 表格
                 PdfPTable table = createTable(new float[] { 210, 80, 80, 110, 80 });
                 table.addCell(createCell(name, headfont, Element.ALIGN_LEFT, 6, false));

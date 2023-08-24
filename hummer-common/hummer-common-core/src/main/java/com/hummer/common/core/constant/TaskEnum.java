@@ -4,7 +4,7 @@ package com.hummer.common.core.constant;
  * @author harris
  */
 public enum TaskEnum {
-    cloudAccount("cloudAccount"), rule("rule"), tag("tag"), group("group");
+    cloudAccount("cloudAccount"), cloudProject("cloudProject"), rule("rule"), tag("tag"), group("group");
 
     private String type;
 

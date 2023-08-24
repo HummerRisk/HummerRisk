@@ -7,6 +7,7 @@ import com.hummer.cloud.dto.ReportResultDTO;
 import com.hummer.cloud.service.ReportService;
 import com.hummer.common.core.domain.ReportResultLog;
 import com.hummer.common.core.dto.AccountTreeDTO;
+import com.hummer.common.core.dto.ProjectTreeDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
@@ -42,6 +43,13 @@ public class ReportController {
     @GetMapping("accountList")
     public AccountTreeDTO listAccounts() throws Exception {
         return reportService.listAccounts();
+    }
+
+    @I18n
+    @Operation(summary = "资源信息列表")
+    @GetMapping("accountByProjectList")
+    public ProjectTreeDTO accountByProjectList() throws Exception {
+        return reportService.accountByProjectList();
     }
 
     @I18n
