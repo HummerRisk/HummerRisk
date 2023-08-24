@@ -16,8 +16,8 @@
               <div style="height: 130px;">
                 <el-row :gutter="20">
                   <el-col :span="24">
-                    <el-row class="el-row-pdd" v-if="checkedColumnNames.includes('pluginName')">
-                      <span class="plugin-name">
+                    <el-row class="el-row-pdd">
+                      <span class="plugin-name" v-if="checkedColumnNames.includes('pluginName')">
                         <el-image v-if="data.pluginIcon" style="border-radius: 50%;width: 25px; height: 25px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
                           <div slot="error" class="image-slot">
                             <i class="el-icon-picture-outline"></i>
@@ -25,7 +25,7 @@
                         </el-image>
                         {{ data.pluginName }} : {{ data.accountName }}
                       </span>
-                      <span class="plugin-type">
+                      <span class="plugin-type" v-if="checkedColumnNames.includes('status')">
                          <el-button plain size="mini" type="primary" v-if="data.status === 'UNCHECKED'" @click="goResult(data.id)">
                             <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }} | {{ $t('commons.into_detail') }}
                          </el-button>
@@ -46,39 +46,45 @@
                          </el-button>
                       </span>
                     </el-row>
-                    <el-row class="el-row-pdd">
+                    <el-row class="el-row-pdd" v-if="checkedColumnNames.includes('group')">
                       <div class="bottom clearfix">
                         <span class="plugin-name">
-                          <span class="pa-time">{{ $t('rule.group_sum_project', [data.groups]) }}</span>
+                          <span>{{ $t('commons.sum') }}</span>
+                          <span class="pa-time2"> {{ data.groups }}</span>
+                          <span> {{ $t('rule.group_t_project') }}</span>
                         </span>
                         <span class="plugin-type">
-                          <span class="pa-time2">{{ $t('rule.risk_group_sum_project', [data.riskGroups]) }}</span>
+                          <span>{{ $t('rule.risk_group_t_project') }}</span>
+                          <span class="pa-time2"> {{ data.riskGroups }}</span>
+                        </span>
+                      </div>
+                    </el-row>
+                    <el-row class="el-row-pdd" v-if="checkedColumnNames.includes('rule')">
+                      <div class="bottom clearfix">
+                        <span class="plugin-name">
+                          <span>{{ $t('commons.sum') }}</span>
+                          <span class="pa-time2"> {{ data.rules }}</span>
+                          <span> {{ $t('rule.rule_t_project') }}</span>
+                        </span>
+                        <span class="plugin-type">
+                          <span>{{ $t('rule.risk_rule_t_project') }}</span>
+                          <span class="pa-time2"> {{ data.riskRules }}</span>
                         </span>
                       </div>
                     </el-row>
                     <el-row class="el-row-pdd">
                       <div class="bottom clearfix">
-                        <span class="plugin-name">
-                          <span class="pa-time">{{ $t('rule.rule_sum_project', [data.rules]) }}</span>
-                        </span>
-                        <span class="plugin-type">
-                          <span class="pa-time2">{{ $t('rule.risk_rule_sum_project', [data.riskRules]) }}</span>
-                        </span>
-                      </div>
-                    </el-row>
-                    <el-row class="el-row-pdd">
-                      <div class="bottom clearfix">
-                        <span class="plugin-name">
-                          <div class="time time2">
+                        <span class="plugin-name2" v-if="checkedColumnNames.includes('createTime')">
+                          <div class="time2">
                               <span class="pa-time">{{ data.createTime | timestampFormatDate }}
                               </span>
                             </div>
                         </span>
-                        <span class="plugin-type">
+                        <span class="plugin-type2" v-if="checkedColumnNames.includes('creator')">
                           <span v-if="data.jobType === 'cron'" class="pa-time2">
                               （{{ $t('resource.result_cron') }})
                             </span>
-                           <span class="plugin-type" v-if="checkedColumnNames.includes('flag')">
+                           <span class="plugin-type">
                               <span>{{ data.creator }}</span>
                             </span>
                         </span>
@@ -149,27 +155,52 @@
           <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
           </el-table-column>
           <el-table-column type="index" min-width="40"/>
-          <el-table-column prop="name" v-if="checkedColumnNames.includes('name')" :label="$t('rule.rule_set_name')" min-width="180" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="description" v-if="checkedColumnNames.includes('description')" :label="$t('commons.description')" min-width="600" show-overflow-tooltip></el-table-column>
-          <el-table-column :label="$t('account.cloud_platform')" v-if="checkedColumnNames.includes('pluginName')" min-width="180" show-overflow-tooltip>
+          <el-table-column prop="name" v-if="checkedColumnNames.includes('pluginName')" :label="$t('account.cloud_platform')" min-width="180" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>
                 <img v-if="scope.row.pluginIcon" :src="require(`@/assets/img/platform/${scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
-                 &nbsp;&nbsp; {{ scope.row.pluginName }}
+                 &nbsp;&nbsp; {{ scope.row.pluginName }} : {{ scope.row.accountName }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('rule.tag_flag')" v-if="checkedColumnNames.includes('flag')" min-width="140" show-overflow-tooltip>
+          <el-table-column v-slot:default="scope" v-if="checkedColumnNames.includes('status')" :label="$t('resource.status')" min-width="130" prop="status"
+                           :sortable="true" show-overflow-tooltip>
+            <el-button @click="goResult(scope.row.id)" plain size="mini" type="primary" v-if="scope.row.status === 'UNCHECKED'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="goResult(scope.row.id)" plain size="mini" type="primary" v-else-if="scope.row.status === 'APPROVED'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="goResult(scope.row.id)" plain size="mini" type="primary" v-else-if="scope.row.status === 'PROCESSING'">
+              <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
+            </el-button>
+            <el-button @click="goResult(scope.row.id)" plain size="mini" type="success" v-else-if="scope.row.status === 'FINISHED'">
+              <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
+            </el-button>
+            <el-button @click="goResult(scope.row.id)" plain size="mini" type="danger" v-else-if="scope.row.status === 'ERROR'">
+              <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
+            </el-button>
+            <el-button @click="goResult(scope.row.id)" plain size="mini" type="warning" v-else-if="scope.row.status === 'WARNING'">
+              <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
+            </el-button>
+          </el-table-column>
+          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')"
+                           :sortable="true" show-overflow-tooltip>
             <template v-slot:default="scope">
-              <el-tag size="mini" type="danger" v-if="scope.row.flag === true">
-                {{ $t('rule.tag_flag_true') }}
-              </el-tag>
-              <el-tag size="mini" type="success" v-else-if="scope.row.flag === false">
-                {{ $t('rule.tag_flag_false') }}
-              </el-tag>
+              <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="level" v-if="checkedColumnNames.includes('level')" :label="$t('resource.equal_guarantee_level')" min-width="140" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="description" v-if="checkedColumnNames.includes('group')" :label="$t('rule.rule_set')" min-width="260" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              {{ $t('rule.group_sum_project', [scope.row.groups]) }} {{ $t('rule.risk_rule_sum_project', [scope.row.riskRules]) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" v-if="checkedColumnNames.includes('group')" :label="$t('rule.rule_set')" min-width="260" show-overflow-tooltip>
+            <template v-slot:default="scope">
+              {{ $t('rule.rule_sum_project', [scope.row.rules]) }} {{ $t('rule.risk_rule_sum_project', [scope.row.riskRules]) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="creator" v-if="checkedColumnNames.includes('creator')" :label="$t('account.creator')" min-width="100" show-overflow-tooltip/>
           <el-table-column min-width="170" :label="$t('commons.operating')" fixed="right">
             <template v-slot:default="scope">
               <table-operators :buttons="buttons" :row="scope.row"/>
@@ -197,8 +228,9 @@ import FTablePagination from "../../common/pagination/FTablePagination";
 import TableOperator from "../../common/components/TableOperator";
 import DialogFooter from "../../common/components/DialogFooter";
 import {_filter, _sort} from "@/common/js/utils";
-import SeverityType from "@/business/components/common/components/SeverityType";
-import {RULE_CONFIGS, RULE_GROUP_CONFIGS} from "../../common/components/search/search-components";
+import {
+  RESULT_PROJECT_CONFIGS,
+} from "../../common/components/search/search-components";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {cloudPluginUrl} from "@/api/system/system";
 import {RULE_GROUP_IMG} from "@/common/js/constants";
@@ -207,61 +239,66 @@ import {projectDeleteByIdUrl, projectDeletesUrl, projectListUrl} from "@/api/clo
 //列表展示与隐藏
 const columnOptions = [
   {
-    label: 'rule.rule_set_name',
-    props: 'name',
-    disabled: false
-  },
-  {
-    label: 'commons.description',
-    props: 'description',
-    disabled: false
-  },
-  {
     label: 'account.cloud_platform',
     props: 'pluginName',
     disabled: false
   },
   {
-    label: 'rule.tag_flag',
-    props: 'flag',
+    label: 'resource.status',
+    props: 'status',
     disabled: false
   },
   {
-    label: 'resource.equal_guarantee_level',
-    props: 'level',
+    label: 'rule.rule_set',
+    props: 'group',
+    disabled: false
+  },
+  {
+    label: 'rule.rule',
+    props: 'rule',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'resource.creator',
+    props: 'creator',
     disabled: false
   },
 ];
 
 const columnOptions2 = [
   {
-    label: 'rule.rule_name',
-    props: 'name',
-    disabled: false
-  },
-  {
-    label: 'rule.resource_type',
-    props: 'resourceType',
-    disabled: false
-  },
-  {
     label: 'account.cloud_platform',
     props: 'pluginName',
     disabled: false
   },
   {
-    label: 'rule.severity',
-    props: 'severity',
+    label: 'resource.status',
+    props: 'status',
     disabled: false
   },
   {
-    label: 'commons.description',
-    props: 'description',
+    label: 'rule.rule_set',
+    props: 'group',
     disabled: false
   },
   {
-    label: 'rule.last_modified',
-    props: 'lastModified',
+    label: 'rule.rule',
+    props: 'rule',
+    disabled: false
+  },
+  {
+    label: 'commons.create_time',
+    props: 'createTime',
+    disabled: false
+  },
+  {
+    label: 'resource.creator',
+    props: 'creator',
     disabled: false
   },
 ];
@@ -277,7 +314,6 @@ const columnOptions2 = [
       FTablePagination,
       TableOperator,
       DialogFooter,
-      SeverityType,
       TableHeader,
       HideTable,
     },
@@ -286,10 +322,7 @@ const columnOptions2 = [
         result: {},
         viewResult: {},
         condition: {
-          components: RULE_GROUP_CONFIGS
-        },
-        ruleCondition: {
-          components: RULE_CONFIGS
+          components: RESULT_PROJECT_CONFIGS
         },
         plugins: [],
         tableData: [],
@@ -352,17 +385,13 @@ const columnOptions2 = [
         //名称搜索
         items: [
           {
-            name: 'rule.rule_set_name',
-            id: 'name'
+            name: 'account.name',
+            id: 'accountName'
           },
           {
-            name: 'commons.description',
-            id: 'description'
-          },
-          {
-            name: 'resource.equal_guarantee_level',
-            id: 'level',
-          },
+            name: 'account.creator',
+            id: 'creator'
+          }
         ],
         checkAll: true,
         isIndeterminate: false,
@@ -371,12 +400,12 @@ const columnOptions2 = [
         //名称搜索
         items2: [
           {
-            name: 'rule.rule_name',
-            id: 'name'
+            name: 'account.name',
+            id: 'accountName'
           },
           {
-            name: 'commons.description',
-            id: 'description'
+            name: 'account.creator',
+            id: 'creator'
           }
         ],
         checkAll2: true,
@@ -637,6 +666,7 @@ const columnOptions2 = [
     color: #1e6427;
   }
   .pa-time2 {
+    font-size: 18px;
     color: red;
   }
   .button-drop {
@@ -703,9 +733,24 @@ const columnOptions2 = [
     text-overflow:ellipsis;
     white-space:nowrap;
   }
+  .plugin-name2 {
+    float: left;
+    width: 70%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
   .plugin-type {
     float: right;
     width: 50%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    text-align: right;
+  }
+  .plugin-type2 {
+    float: right;
+    width: 30%;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -777,7 +822,6 @@ const columnOptions2 = [
   }
 
   .desc-rule2 {
-    color: red;
     height: 22px;
     font-weight: 400;
     font-size: 14px;
