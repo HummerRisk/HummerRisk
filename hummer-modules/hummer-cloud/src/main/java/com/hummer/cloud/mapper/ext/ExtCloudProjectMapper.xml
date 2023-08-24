@@ -238,7 +238,7 @@
                 and LOWER(t.account_name) like CONCAT('%', LOWER(#{request.accountName}),'%')
             </if>
             <if test="request.creator != null and request.creator != ''">
-                and LOWER(creator) like CONCAT('%', LOWER(#{creator}),'%')
+                and LOWER(t.creator) like CONCAT('%', LOWER(#{request.creator}),'%')
             </if>
             <if test="request.status != null and request.status != ''">
                 and t.status = #{request.status}
