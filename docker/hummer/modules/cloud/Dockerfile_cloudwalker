@@ -1,5 +1,5 @@
 
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v1.3.0 as prowler-env
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v1.4.0 as prowler-env
 
 # 基础镜像
 FROM  registry.cn-beijing.aliyuncs.com/hummerrisk/alpine:jre17
