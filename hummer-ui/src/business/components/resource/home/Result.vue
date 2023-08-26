@@ -606,14 +606,13 @@ import SeverityType from "@/business/components/common/components/SeverityType";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import TableSearchRight from "@/business/components/common/components/search/TableSearchRight";
 import {
-  cloudResourceListUrl, resouceGroupsByProjectIdUrl,
-  resouceGroupsUrl,
-  resourceAccountDeleteUrl,
+  cloudResourceListUrl,
+  resouceGroupsByProjectIdUrl,
   resourceRegionDataUrl,
   resourceRegulationUrl,
   resourceRuleDataUrl,
-  resourceSeverityDataUrl, resourceSourceByProjectIdUrl,
-  resourceSourceUrl,
+  resourceSeverityDataUrl,
+  resourceSourceByProjectIdUrl,
   resourceTypeDataUrl,
   string2PrettyFormatUrl
 } from "@/api/cloud/resource/resource";
