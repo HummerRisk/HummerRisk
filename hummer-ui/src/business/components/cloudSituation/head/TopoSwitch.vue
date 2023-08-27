@@ -16,9 +16,10 @@
     <el-collapse accordion>
       <el-collapse-item>
         <template slot="title">
-          <el-row style="padding: 10px 10px 10px 20px;width: 100%;background-color: aliceblue;">
+          <!-- 首行展示，折叠 -->
+          <el-row class="spa-san-c">
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-server.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-server.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -26,7 +27,7 @@
               <span>{{ ' — ' + $t('cloud_topo.server_resource') }}</span>
             </el-col>
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-db.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-db.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -34,7 +35,7 @@
               <span>{{ ' — ' + $t('cloud_topo.db_resource') }}</span>
             </el-col>
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-oss.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-oss.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -42,7 +43,7 @@
               <span>{{ ' — ' + $t('cloud_topo.oss_resource') }}</span>
             </el-col>
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-disk.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-disk.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -50,7 +51,7 @@
               <span>{{ ' — ' + $t('cloud_topo.disk_resource') }}</span>
             </el-col>
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-iam.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-iam.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -58,7 +59,7 @@
               <span>{{ ' — ' + $t('cloud_topo.iam_resource') }}</span>
             </el-col>
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-eip.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-eip.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -66,7 +67,7 @@
               <span>{{ ' — ' + $t('cloud_topo.eip_resource') }}</span>
             </el-col>
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-lb.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-lb.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -74,7 +75,7 @@
               <span>{{ ' — ' + $t('cloud_topo.elb_resource') }}</span>
             </el-col>
             <el-col :span="3">
-              <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-sg.svg`)">
+              <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-sg.svg`)">
                 <div slot="error" class="image-slot">
                   <i class="el-icon-picture-outline"></i>
                 </div>
@@ -83,9 +84,10 @@
             </el-col>
           </el-row>
         </template>
-        <el-row style="padding: 10px 31px 10px 20px;width: 100%;background-color: aliceblue;">
+        <!-- 第二行展示，折叠 -->
+        <el-row class="spa-san-b">
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-vpc.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-vpc.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -93,7 +95,7 @@
             <span>{{ ' — ' + $t('cloud_topo.vpc_resource') }}</span>
           </el-col>
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-es.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-es.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -101,7 +103,7 @@
             <span>{{ ' — ' + $t('cloud_topo.es_resource') }}</span>
           </el-col>
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-redis.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-redis.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -109,7 +111,7 @@
             <span>{{ ' — ' + $t('cloud_topo.redis_resource') }}</span>
           </el-col>
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-mongodb.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-mongodb.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -117,7 +119,7 @@
             <span>{{ ' — ' + $t('cloud_topo.mongodb_resource') }}</span>
           </el-col>
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-postgresql.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-postgresql.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -125,7 +127,82 @@
             <span>{{ ' — ' + $t('cloud_topo.postgresql_resource') }}</span>
           </el-col>
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-other.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-iam-role.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.iam_role_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-ami.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.ami_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-cloudtrail.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.cloudtrail_resource') }}</span>
+          </el-col>
+        </el-row>
+        <!-- 第三行展示，折叠 -->
+        <el-row class="spa-san-b">
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-emr.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.emr_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-glacier.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.glacier_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-kms.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.kms_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-lambda.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.lambda_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-subnet.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.subnet_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-redshift.svg`)">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+            <span>{{ ' — ' + $t('cloud_topo.redshift_resource') }}</span>
+          </el-col>
+          <el-col :span="3">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-other.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -134,13 +211,11 @@
           </el-col>
           <el-col :span="3">
           </el-col>
-          <el-col :span="3">
-          </el-col>
         </el-row>
         <el-divider content-position="right">{{ $t('cloud_topo.risk_icon') }}</el-divider>
-        <el-row style="padding: 10px 31px 10px 20px;width: 100%;background-color: aliceblue;">
+        <el-row class="spa-san-b">
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/n-server.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/n-server.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -148,7 +223,7 @@
             <span>{{ ' — ' + $t('resource.n_risk') }}</span>
           </el-col>
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/e-server.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/e-server.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -156,7 +231,7 @@
             <span>{{ ' — ' + $t('resource.have_risk') }}</span>
           </el-col>
           <el-col :span="3">
-            <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/cloudtopo/u-server.svg`)">
+            <el-image class="spa-san-a" :src="require(`@/assets/img/cloudtopo/u-server.svg`)">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline"></i>
               </div>
@@ -232,5 +307,20 @@ export default {
   background-color: aliceblue;
   z-index: 999;
 }
-
+.spa-san-a {
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  vertical-align:middle;
+}
+.spa-san-b {
+  padding: 10px 31px 10px 20px;
+  width: 100%;
+  background-color: aliceblue;
+}
+.spa-san-c {
+  padding: 10px 10px 10px 20px;
+  width: 100%;
+  background-color: aliceblue;
+}
 </style>
