@@ -1523,6 +1523,42 @@ public class PlatformUtils {
         if (!esTypes.isEmpty()) {
             return "es";
         }
+        List<String> iamRoleTypes = Arrays.stream(CloudTaskConstants.IAM_ROLE_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!iamRoleTypes.isEmpty()) {
+            return "iam-role";
+        }
+        List<String> amiTypes = Arrays.stream(CloudTaskConstants.AMI_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!amiTypes.isEmpty()) {
+            return "ami";
+        }
+        List<String> cloudtrailTypes = Arrays.stream(CloudTaskConstants.CLOUDTRAIL_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!cloudtrailTypes.isEmpty()) {
+            return "cloudtrail";
+        }
+        List<String> emrTypes = Arrays.stream(CloudTaskConstants.EMR_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!emrTypes.isEmpty()) {
+            return "emr";
+        }
+        List<String> glacierTypes = Arrays.stream(CloudTaskConstants.GLACIER_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!glacierTypes.isEmpty()) {
+            return "glacier";
+        }
+        List<String> kmsTypes = Arrays.stream(CloudTaskConstants.KMS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!kmsTypes.isEmpty()) {
+            return "kms";
+        }
+        List<String> lambdaTypes = Arrays.stream(CloudTaskConstants.LAMBDA_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!lambdaTypes.isEmpty()) {
+            return "lambda";
+        }
+        List<String> subnetTypes = Arrays.stream(CloudTaskConstants.SUBNET_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!subnetTypes.isEmpty()) {
+            return "subnet";
+        }
+        List<String> redshiftTypes = Arrays.stream(CloudTaskConstants.REDSHIFT_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        if (!redshiftTypes.isEmpty()) {
+            return "redshift";
+        }
         return "other";
     }
 
