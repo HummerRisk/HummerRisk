@@ -652,6 +652,8 @@ export default {
     update_tag: '修改標籤',
     rule_tag_flag: '內置規則標籤不允許被修改與刪除',
     resource_type: '資源類型',
+    resource_type_name: '資源類型名稱',
+    resource_type_belong: '資源類型所屬大類',
     severity: '風險等級',
     CriticalRisk: '高危風險',
     HighRisk: '高風險',
