@@ -652,6 +652,8 @@ export default {
     update_tag:'Modify tag',
     rule_tag_flag:'The built-in rule tag is not allowed to be modified or deleted',
     resource_type:'Resource type',
+    resource_type_name: 'Resource type name',
+    resource_type_belong: 'Resource type belongs to category',
     severity:'risk level',
     CriticalRisk: 'High Risk',
     HighRisk:'High Risk',

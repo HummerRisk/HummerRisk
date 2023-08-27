@@ -4,12 +4,13 @@
       {{ $t('rule.resource_type') }}
     </el-button>
     <!--regions-->
-    <el-drawer class="rtl" :title="$t('rule.resource_type')" :visible.sync="regionsVisible" size="45%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('rule.resource_type')" :visible.sync="regionsVisible" size="55%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
         <el-table-column type="index" min-width="10%"/>
-        <el-table-column prop="resourceType" :label="$t('rule.resource_type')" min-width="45%"></el-table-column>
-        <el-table-column prop="count" :label="$t('event.data_count')" min-width="45%"></el-table-column>
+        <el-table-column prop="resourceType" :label="$t('rule.resource_type')" min-width="35%"></el-table-column>
+        <el-table-column prop="resourceTypeName" :label="$t('rule.resource_type_name')" min-width="45%"></el-table-column>
+        <el-table-column prop="count" :label="$t('event.data_count')" min-width="10%"></el-table-column>
       </el-table>
     </el-drawer>
     <!--regions-->
