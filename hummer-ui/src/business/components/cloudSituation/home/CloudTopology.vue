@@ -54,6 +54,13 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
+            <i class="el-icon-takeaway-box"></i>
+            {{ $t('rule.resource_type_name') }}
+          </template>
+          {{ details.resourceTypeName }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
             <i class="el-icon-collection-tag"></i>
             {{ $t('resource.risk') }}
           </template>
@@ -98,7 +105,7 @@ import ResultReadOnly from "@/business/components/cloudSituation/head/ResultRead
 import TopoSwitch from "@/business/components/cloudSituation/head/TopoSwitch";
 import * as d3 from 'd3';
 import * as math from 'mathjs';
-import {cloudTopologyByAccountIdUrl, cloudTopologyUrl} from "@/api/cloud/sync/sync";
+import {cloudTopologyByAccountIdUrl} from "@/api/cloud/sync/sync";
 import {cloudResourceByIdUrl, resourceRiskListUrl} from "@/api/cloud/account/account";
 /* eslint-disable */
 const width = 1600;
