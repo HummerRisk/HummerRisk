@@ -244,6 +244,9 @@
         t.hummer_id as `id`,
         t.id as `resource`,
         t.resource_type as `resourceType`,
+        t1.name as `accountName`,
+        t.plugin_name as `pluginName`,
+        t.region_name as `regionName`,
         t.resource_type_name as `resourceTypeName`
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id
