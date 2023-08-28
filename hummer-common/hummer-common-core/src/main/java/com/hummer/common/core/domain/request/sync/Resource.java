@@ -28,6 +28,8 @@ public class Resource {
     private String type;
 
     private String resourceType;
+    private String resourceTypeName;
+    private String resourceTypeBelong;
 
     private String resource;
 
@@ -133,5 +135,21 @@ public class Resource {
 
     public void setResource(String resource) {
         this.resource = resource;
+    }
+
+    public String getResourceTypeName() {
+        return resourceTypeName;
+    }
+
+    public void setResourceTypeName(String resourceTypeName) {
+        this.resourceTypeName = resourceTypeName;
+    }
+
+    public String getResourceTypeBelong() {
+        return resourceTypeBelong;
+    }
+
+    public void setResourceTypeBelong(String resourceTypeBelong) {
+        this.resourceTypeBelong = resourceTypeBelong;
     }
 }
