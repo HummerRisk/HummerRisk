@@ -5,6 +5,7 @@ import TableSearchSelect from "./TableSearchSelect";
 import {cloudPluginUrl, nativePluginUrl, userAllListUrl} from "@/api/system/system";
 import {allListUrl} from "@/api/cloud/account/account";
 import {allCloudResourceTypesUrl, allCloudRuleGroupsUrl, ruleTagsUrl} from "@/api/cloud/rule/rule";
+import {namespacesUrl} from "../../../../../api/k8s/k8s/k8s";
 
 /* eslint-disable */
 export default {
