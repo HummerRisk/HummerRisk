@@ -186,7 +186,7 @@
                :destroy-on-close="true">
       <div v-loading="viewResult.loading">
         <span style="color: red;"><I>{{ $t('image.image_repo_note') }}</I></span>
-        <table-header :condition.sync="condition" @search="handleList"
+        <table-header :condition.sync="imageCondition" @search="handleList"
                       @scan="saveAddAll" :scanTip="$t('image.one_scan')"
                       @setting="setting" :settingTip="$t('image.batch_settings_repo')"
                       :show-name="false" :show-scan="true" :show-setting="true"
@@ -418,8 +418,8 @@ import {
   syncImageUrl
 } from "@/api/k8s/image/image";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
-import {pluginByIdUrl, proxyListAllUrl} from "@/api/system/system";
-import {accountListUrl, allListUrl, iamStrategyUrl} from "@/api/cloud/account/account";
+import {proxyListAllUrl} from "@/api/system/system";
+import {allListUrl} from "@/api/cloud/account/account";
 
 //列表展示与隐藏
 const columnOptions = [
@@ -727,7 +727,6 @@ export default {
       return row.status === value;
     },
     handleEdit(row) {
-      console.log(row)
       this.updateVisible = true;
       this.form = row;
       if(!!row.credential&&row.pluginIcon === 'aliyun.png'){
@@ -816,8 +815,8 @@ export default {
     handleList(item) {
       if (item) {
         this.handleItem = item;
+        this.imageCondition.repoId = this.handleItem.id;
       }
-      this.imageCondition.repoId = this.handleItem.id;
       this.viewResult = this.$post(repoItemListUrl + this.imagePage + "/" + this.imageSize, this.imageCondition, response => {
         let data = response.data;
         this.imageTotal = data.itemCount;
