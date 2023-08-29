@@ -1719,8 +1719,6 @@ public class CloudSyncService {
 
                 break;
             case "aliyun.nas":
-                x = 100L;
-                y = 100L;
                 String MountTargets = jsonObject.getString("MountTargets");
                 JSONArray MountTarget = JSONArray.parseArray(!StringUtils.isEmpty(JSONObject.parseObject(MountTargets).getString("MountTarget"))?JSONObject.parseObject(MountTargets).getString("MountTarget"):"[]");
 
@@ -1730,8 +1728,8 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
                 cloudResourceRela.setSymbol("network_security.svg");
-                cloudResourceRela.setxAxis(x);//100
-                cloudResourceRela.setyAxis(y);//100
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
 
                 insertCloudResourceRela(cloudResourceRela);
 
@@ -1743,9 +1741,13 @@ public class CloudSyncService {
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
                 cloudResourceRela.setSymbol("file_system.svg");
-                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setxAxis(200L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(NasRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                 for (Object o : MountTarget) {
                     JSONObject jsonO = JSONObject.parseObject(o.toString());
@@ -1758,7 +1760,7 @@ public class CloudSyncService {
                     cloudResourceRela.setHummerId(vpcId);
                     cloudResourceRela.setCategory("aliyun.vpc");
                     cloudResourceRela.setSymbol("network_hub.svg");
-                    cloudResourceRela.setxAxis(100L);//100
+                    cloudResourceRela.setxAxis(300L);//100
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
 
@@ -1771,7 +1773,7 @@ public class CloudSyncService {
                     cloudResourceRela.setHummerId(MountTargetDomain);
                     cloudResourceRela.setCategory("aliyun.domain");
                     cloudResourceRela.setSymbol("domain.svg");
-                    cloudResourceRela.setxAxis(200L);//100
+                    cloudResourceRela.setxAxis(400L);//100
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
 
