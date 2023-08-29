@@ -45,14 +45,6 @@ export default {
             type: 'value',
             show: false,
           },
-          legend: [
-            {
-              // selectedMode: 'single',
-              data: graph.categories.map(function (a) {
-                return a.name;
-              })
-            }
-          ],
           series: [
             {
               type: 'graph',
