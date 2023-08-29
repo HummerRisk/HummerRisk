@@ -45,11 +45,18 @@ export default {
             type: 'value',
             show: false,
           },
+          tooltip: {
+            formatter(params){
+              let strs = params.name.split("\n");
+              return `<b>资源类型: <b/> ${strs[0]}
+                    <br/><b>资源名称: <b/> ${strs[1]}
+                    <br/><b>资源标识: <b/> ${params.value}`;
+            }
+          },
           series: [
             {
               type: 'graph',
               layout: 'force',
-
               label: {
                 show: true,
                 textStyle: { fontSize: 12, color: '#000' },
@@ -61,8 +68,8 @@ export default {
                 formatter(params){
                   let strs = params.name.split("\n");
                   return `<b>资源类型: <b/> ${strs[0]}
-                <br/><b>资源名称: <b/> ${strs[1]}
-                <br/><b>资源标识: <b/> ${params.value}`;
+                    <br/><b>资源名称: <b/> ${strs[1]}
+                    <br/><b>资源标识: <b/> ${params.value}`;
                 }
               },
               emphasis:{
@@ -74,7 +81,7 @@ export default {
               edgeSymbol: ['none', 'arrow'],
               edgeSymbolSize: 15,
               force: {
-                repulsion: 100,
+                repulsion: 60,
                 friction: 0.3,
                 edgeLength:200
               },
