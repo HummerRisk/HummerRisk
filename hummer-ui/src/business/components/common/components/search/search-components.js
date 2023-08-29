@@ -575,6 +575,30 @@ export const SOURCE_NAME = {
   },
 }
 
+
+export const SOURCE_NAMESPACE = {
+  key: "sourceNamespace", // 返回结果Map的key
+  name: "TableSearchSelect", // Vue控件名称
+  label: "k8s.source_namespace", // 显示名称
+  operator: {
+    options: [OPERATORS.IN, OPERATORS.NOT_IN],
+    change: function (component, value) { // 运算符change事件
+      component.value = value;
+    }
+  },
+  options: { // 异步获取候选项
+    url: namespacesUrl,
+    labelKey: "sourceNamespace",
+    valueKey: "sourceNamespace",
+    showLabel: option => {
+      return option.label;
+    }
+  },
+  props: { // 尾部控件的props，一般为element ui控件的props
+    multiple: true
+  }
+}
+
 export const SOURCE_TYPE = {
   key: "sourceType",
   name: 'TableSearchSelect',
