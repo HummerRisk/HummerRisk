@@ -869,7 +869,7 @@
         group by t.source_namespace
     </select>
 
-    <resultMap id="BaseCloudNativeSource2YamlListResultMap" type="com.hummer.common.core.domain.request.CloudNativeSourceVo">
+    <resultMap id="BaseCloudNativeSource2YamlListResultMap" type="com.hummer.common.core.domain.request.cloudNative.CloudNativeSourceVo">
         <id column="id" jdbcType="VARCHAR" property="id" />
         <result column="cloud_native_id" jdbcType="VARCHAR" property="cloudNativeId" />
         <result column="cloud_native_name" jdbcType="VARCHAR" property="cloudNativeName" />
