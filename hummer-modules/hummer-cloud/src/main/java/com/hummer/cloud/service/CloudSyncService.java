@@ -197,7 +197,7 @@ public class CloudSyncService {
                             LogUtil.info("sync all resource {scanner}[api body]: " + jsonObject.toJSONString());
 
                             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-                            String result = restTemplate.postForObject("http://hummer-scaner/run", httpEntity, String.class);
+                            String result = restTemplate.postForObject("http://hummer-scanner/run", httpEntity, String.class);
                             JSONObject resultJson = JSONObject.parseObject(result);
                             String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
                             String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";

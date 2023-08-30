@@ -280,7 +280,7 @@ public class ResourceService {
             LogUtil.info(uuid + " {scanner}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
             LogUtil.info(uuid + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
             String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
@@ -440,7 +440,7 @@ public class ResourceService {
             LogUtil.warn(taskItem.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-            String result = restTemplate.postForObject("http://hummer-scaner/run",httpEntity,String.class);
+            String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
             LogUtil.info(taskItem.getId() + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
             String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
