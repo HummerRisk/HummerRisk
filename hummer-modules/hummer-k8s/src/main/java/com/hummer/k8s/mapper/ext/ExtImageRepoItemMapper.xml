@@ -74,12 +74,6 @@
                 <property name="object" value="${condition}.path"/>
             </include>
         </if>
-        <if test='${condition}.size != null'>
-            and t.size
-            <include refid="condition">
-                <property name="object" value="${condition}.size"/>
-            </include>
-        </if>
     </sql>
 
     <select id="repoItemList" resultMap="ImageRepoResultMap">
@@ -90,7 +84,6 @@
             <if test="request.combine != null">
                 <include refid="combine">
                     <property name="condition" value="request.combine"/>
-                    <property name="project" value="request.project"/>
                 </include>
             </if>
 

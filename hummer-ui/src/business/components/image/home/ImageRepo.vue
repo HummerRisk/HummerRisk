@@ -696,6 +696,7 @@ export default {
         let repoOld = response.data?response.data.repoOld:this.imageData[0].path.split('/')[0];
         let repo = response.data?response.data.repo:'';
         this.settingForm.repoId = this.handleItem.id;
+        this.repoId = this.handleItem.id;
         this.settingForm.repoOld = repoOld;
         this.settingForm.repo = repo;
         this.settingVisible = true;
@@ -813,16 +814,16 @@ export default {
       });
     },
     handleList(item) {
-      if (item) {
+      if (!!item.id) {
         this.handleItem = item;
-        this.imageCondition.repoId = this.handleItem.id;
+        this.repoId = this.handleItem.id;
       }
+      this.imageCondition.repoId = this.repoId;
       this.viewResult = this.$post(repoItemListUrl + this.imagePage + "/" + this.imageSize, this.imageCondition, response => {
         let data = response.data;
         this.imageTotal = data.itemCount;
         this.imageData = data.listObject;
         this.imageVisible = true;
-        this.repoId = this.handleItem.id;
       });
     },
     handleSync() {
