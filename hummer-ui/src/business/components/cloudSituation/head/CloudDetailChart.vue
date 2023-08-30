@@ -46,12 +46,6 @@ export default {
             show: false,
           },
           tooltip: {
-            formatter(params){
-              let strs = params.name.split("\n");
-              return `<b>资源类型: <b/> ${strs[0]}
-                    <br/><b>资源名称: <b/> ${strs[1]}
-                    <br/><b>资源标识: <b/> ${params.value}`;
-            }
           },
           series: [
             {
@@ -59,18 +53,29 @@ export default {
               layout: 'force',
               label: {
                 show: true,
+                distance: 20,
                 textStyle: { fontSize: 12, color: '#000' },
                 formatter: params => {
                   return `${params.name}\n\n\n\n\n\n\n${params.value}`
                 },
               },
               tooltip: {
-                formatter(params){
-                  let strs = params.name.split("\n");
-                  return `<b>资源类型: <b/> ${strs[0]}
-                    <br/><b>资源名称: <b/> ${strs[1]}
-                    <br/><b>资源标识: <b/> ${params.value}`;
-                }
+                tooltip:{
+                  formatter(params){
+                    let tooltipdata = params.data;
+                    var result = '';
+                    if(params.dataType == 'node'){
+                      let nodename = tooltipdata.name.split("\n")
+                      return `<b>资源名称: <b/>  ${nodename[1]}
+                              <br/>命名空间:  ${nodename[0]}
+                              <br/>资源类型:  ${params.value}`
+                    }
+                    if(params.dataType == 'edge'){
+                      return ``;
+                    }
+                    return result;
+                  }
+                },
               },
               emphasis:{
                 scale : true,
@@ -83,7 +88,7 @@ export default {
               force: {
                 repulsion: 60,
                 friction: 0.3,
-                edgeLength:200
+                edgeLength: 150
               },
               lineStyle:{
                 'color':'blue',
