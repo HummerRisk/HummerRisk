@@ -470,33 +470,7 @@ export default {
                   if (d.riskType == 'uncheck') {
                     filePrefix = "u-"
                   }
-                  filePosfix = 'other.svg'
-                  if (d.type == 'ecs')
-                    filePosfix = 'server.svg'
-                  if (d.type == 'rds')
-                    filePosfix = 'db.svg'
-                  if (d.type == 'oss')
-                    filePosfix = 'oss.svg'
-                  if (d.type == 'disk')
-                    filePosfix = 'disk.svg'
-                  if (d.type == 'iam')
-                    filePosfix = 'iam.svg'
-                  if (d.type == 'eip')
-                    filePosfix = 'eip.svg'
-                  if (d.type == 'elb')
-                    filePosfix = 'lb.svg'
-                  if (d.type == 'sg')
-                    filePosfix = 'sg.svg'
-                  if (d.type == 'vpc')
-                    filePosfix = 'vpc.svg'
-                  if (d.type == 'es')
-                    filePosfix = 'es.svg'
-                  if (d.type == 'redis')
-                    filePosfix = 'redis.svg'
-                  if (d.type == 'mongodb')
-                    filePosfix = 'mongodb.svg'
-                  if (d.type == 'postgresql')
-                    filePosfix = 'postgresql.svg'
+                  filePosfix = d.type + '.svg'
                   let imageFIle = require("@/assets/img/cloudtopo/" + filePrefix + filePosfix)
                   imageType = filePrefix + filePosfix
                   return imageFIle
@@ -1141,7 +1115,11 @@ export default {
       });
     },
     async resourceRiskList() {
-      await this.$get(resourceRiskListUrl + this.details.regionId + "/" + this.details.id, response => {
+      let params = {
+        regionId: this.details.regionId,
+        hummerId: this.details.id
+      };
+      await this.$post(resourceRiskListUrl, params, response => {
         this.string2PrettyFormat = response.data;
       });
     },
@@ -1163,6 +1141,7 @@ export default {
           regionId: target.getAttribute("regionId"),
           regionName: target.getAttribute("regionName"),
           resourceType: target.getAttribute("resourceType"),
+          resourceTypeName: target.getAttribute("resourceTypeName"),
           riskType: target.getAttribute("riskType"),
           type: target.getAttribute("type"),
           resource: target.getAttribute("resource"),
