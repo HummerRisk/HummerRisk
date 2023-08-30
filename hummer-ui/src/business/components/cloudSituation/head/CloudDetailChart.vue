@@ -59,23 +59,21 @@ export default {
                   return `${params.name}\n\n\n\n\n\n\n${params.value}`
                 },
               },
-              tooltip: {
-                tooltip:{
-                  formatter(params){
-                    let tooltipdata = params.data;
-                    var result = '';
-                    if(params.dataType == 'node'){
-                      let nodename = tooltipdata.name.split("\n")
-                      return `<b>资源名称: <b/>  ${nodename[1]}
-                              <br/>命名空间:  ${nodename[0]}
-                              <br/>资源类型:  ${params.value}`
-                    }
-                    if(params.dataType == 'edge'){
-                      return ``;
-                    }
-                    return result;
+              tooltip:{
+                formatter(params){
+                  let tooltipdata = params.data;
+                  var result = '';
+                  if(params.dataType == 'node'){
+                    let nodename = tooltipdata.name.split("\n");
+                    return `<b>资源名称: <b/>  ${nodename[1]}
+                            <br/>命名空间:  ${nodename[0]}
+                            <br/>资源类型:  ${params.value}`;
                   }
-                },
+                  if(params.dataType == 'edge'){
+                    return ``;
+                  }
+                  return result;
+                }
               },
               emphasis:{
                 scale : true,
@@ -88,7 +86,7 @@ export default {
               force: {
                 repulsion: 60,
                 friction: 0.3,
-                edgeLength: 150
+                edgeLength: 100
               },
               lineStyle:{
                 'color':'blue',
