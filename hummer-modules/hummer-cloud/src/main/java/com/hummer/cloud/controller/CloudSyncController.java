@@ -71,18 +71,21 @@ public class CloudSyncController {
         cloudSyncService.deleteLogs(selectIds);
     }
 
+    @I18n
     @Operation(summary = "资源态势拓扑图")
     @GetMapping(value = "cloudTopology")
     public CloudTopology cloudTopology() {
         return cloudSyncService.cloudTopology("all");
     }
 
+    @I18n
     @Operation(summary = "根据云账号ID搜索资源拓扑图")
     @GetMapping(value = "cloudTopologyByAccountId/{accountId}")
     public CloudTopology cloudTopologyByAccountId(@PathVariable String accountId) {
         return cloudSyncService.cloudTopology(accountId);
     }
 
+    @I18n
     @Operation(summary = "资源关系图")
     @GetMapping(value = "cloudTopologyRela/{resourceItemId}")
     public TopoChartDTO cloudTopologyRela(@PathVariable String resourceItemId) {

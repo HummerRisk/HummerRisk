@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Hidden
 @RestController
@@ -50,9 +51,9 @@ public class CloudResourceController {
     }
 
     @I18n
-    @GetMapping(value = "risk/list/{regionId}/{hummerId}")
-    public List<CloudTask> listResourceRisk(@PathVariable String regionId, @PathVariable String hummerId) {
-        return cloudResourceService.getCloudTaskByHummerId(hummerId,regionId);
+    @PostMapping(value = "risk/list")
+    public List<CloudTask> listResourceRisk(@RequestBody Map<String, Object> params) {
+        return cloudResourceService.getCloudTaskByHummerId(params);
     }
 
     @I18n
