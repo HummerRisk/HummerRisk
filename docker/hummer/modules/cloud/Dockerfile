@@ -3,7 +3,7 @@ FROM registry.cn-beijing.aliyuncs.com/hummerrisk/prowler:v1.4.0 as prowler-env
 
 FROM registry.cn-beijing.aliyuncs.com/hummerrisk/cloud-custodian:v1.4.0 as custodian-env
 # 基础镜像
-FROM registry.cn-beijing.aliyuncs.com/hummerrisk/ubuntu22-jre17:py3.8.10
+FROM registry.cn-beijing.aliyuncs.com/hummerrisk/ubuntu22-jre17:py3.10
 
 # author
 MAINTAINER Hummer
