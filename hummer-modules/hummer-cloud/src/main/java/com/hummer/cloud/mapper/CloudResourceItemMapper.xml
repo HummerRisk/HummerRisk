@@ -206,7 +206,7 @@
       #{pluginIcon,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, #{regionId,jdbcType=VARCHAR}, 
       #{regionName,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, 
       #{hummerName,jdbcType=VARCHAR}, #{resourceTypeName,jdbcType=VARCHAR}, #{resourceTypeBelong,jdbcType=VARCHAR}, 
-      #{resourceTypeIcon,jdbcType=VARCHAR}, #{resource,jdbcType=LONGVARCHAR})
+      #{resource,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.hummer.common.core.domain.CloudResourceItem">
     <!--
@@ -310,9 +310,6 @@
       </if>
       <if test="resourceTypeBelong != null">
         #{resourceTypeBelong,jdbcType=VARCHAR},
-      </if>
-      <if test="resourceTypeIcon != null">
-        #{resourceTypeIcon,jdbcType=VARCHAR},
       </if>
       <if test="resource != null">
         #{resource,jdbcType=LONGVARCHAR},
