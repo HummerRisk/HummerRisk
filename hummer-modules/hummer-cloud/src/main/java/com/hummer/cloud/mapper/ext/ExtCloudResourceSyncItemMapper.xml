@@ -64,10 +64,12 @@
     </select>
 
     <select id="selectResourceTypeBySyncId" resultType="java.util.Map" parameterType="String">
-        select resource_type "resourceType", resource_type_name "resourceTypeName", sum(count) as `count`
-        FROM cloud_resource_sync_item
-        where sync_id = #{syncId}
-        group by resource_type
-        order by resource_type
+        select t.resource_type as `resourceType`,
+               (select t1.resource_type_name from cloud_resource_item t1 where t.resource_type = t1.resource_type limit 1) as `resourceTypeName`,
+               sum(t.count) as `count`
+        FROM cloud_resource_sync_item t
+        where t.sync_id = #{syncId}
+        group by t.resource_type
+        order by t.resource_type
     </select>
 </mapper>
