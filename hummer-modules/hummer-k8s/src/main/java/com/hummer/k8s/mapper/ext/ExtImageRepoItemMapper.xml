@@ -68,7 +68,7 @@
                 <property name="object" value="${condition}.tag"/>
             </include>
         </if>
-        <if test='${condition}.path != null and (${path} == null or ${path} == "")'>
+        <if test='${condition}.path != null'>
             and t.path
             <include refid="condition">
                 <property name="object" value="${condition}.path"/>

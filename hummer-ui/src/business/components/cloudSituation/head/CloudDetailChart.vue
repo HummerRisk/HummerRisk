@@ -49,16 +49,14 @@ export default {
             formatter(params){
               let strs = params.name.split("\n");
               return `<b>资源类型: <b/> ${strs[0]}
-                <br/><b>资源名称: <b/> ${strs[1]}
-                <br/><b>资源标识: <b/> ${params.value}`;
+                    <br/><b>资源名称: <b/> ${strs[1]}
+                    <br/><b>资源标识: <b/> ${params.value}`;
             }
           },
           series: [
             {
               type: 'graph',
-              layout: 'none',
-
-              symbolSize: 40,
+              layout: 'force',
               label: {
                 show: true,
                 textStyle: { fontSize: 12, color: '#000' },
@@ -66,13 +64,34 @@ export default {
                   return `${params.name}\n\n\n\n\n\n\n${params.value}`
                 },
               },
-              edgeSymbol: ['circle', 'arrow'],
-              edgeSymbolSize: [4, 10],
+              tooltip: {
+                formatter(params){
+                  let strs = params.name.split("\n");
+                  return `<b>资源类型: <b/> ${strs[0]}
+                    <br/><b>资源名称: <b/> ${strs[1]}
+                    <br/><b>资源标识: <b/> ${params.value}`;
+                }
+              },
+              emphasis:{
+                scale : true,
+                focus : 'adjacency'
+              },
+              legendHoverLink : true,
+              roam: true,
+              edgeSymbol: ['none', 'arrow'],
+              edgeSymbolSize: 15,
+              force: {
+                repulsion: 60,
+                friction: 0.3,
+                edgeLength:200
+              },
+              lineStyle:{
+                'color':'blue',
+                'width':3
+              },
+              symbolSize: 100,
               data: cloudResourceRelaList,
               links: cloudResourceRelaLinkList,
-              lineStyle: {
-                color: '#2f4554'
-              },
             },
           ],
         };

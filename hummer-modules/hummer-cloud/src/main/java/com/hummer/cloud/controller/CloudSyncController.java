@@ -37,6 +37,7 @@ public class CloudSyncController {
     }
 
     @I18n
+    @Operation(summary = "同步资源类型数量列表")
     @GetMapping(value = "resourceType/list/{syncId}")
     public List<Map<String,Object>> listResourceType(@PathVariable String syncId) {
         return cloudSyncService.getResourceType(syncId);

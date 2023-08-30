@@ -163,8 +163,8 @@
 
     <select id="cloudTopology" resultMap="D3BaseResultMap">
         select
-            'Cloud' as name,
-            #{accountId} as accountId
+            'Cloud' as `name`,
+            #{accountId} as `accountId`
     </select>
 
     <select id="selectCloudAccount" resultMap="CloudBaseResultMap">
@@ -174,13 +174,13 @@
            select count(t1.id) from cloud_resource_item t1
            where t1.account_id = t.account_id
          ), '个资源)'
-        ) as name,
+        ) as `name`,
         (
             select count(t1.id) from cloud_resource_item t1
             where t1.account_id = t.account_id
-        ) as total,
-        t1.plugin_id as type,
-        t1.id as accountId
+        ) as `total`,
+        t1.plugin_id as `type`,
+        t1.id as `accountId`
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id
         <if test='accountId != null and accountId != "" and accountId != "all"'>
@@ -196,13 +196,13 @@
            select count(t1.id) from cloud_resource_item t1
            where t1.account_id = t.account_id and t1.region_id = t.region_id
          ), '个资源)'
-        ) as name,
+        ) as `name`,
         (
             select count(t1.id) from cloud_resource_item t1
             where t1.account_id = t.account_id and t1.region_id = t.region_id
-        ) as total,
-        t.account_id as accountId,
-        t.region_id as regionId
+        ) as `total`,
+        t.account_id as `accountId`,
+        t.region_id as `regionId`
         from cloud_resource_item t
         where t.account_id = #{accountId}
         group by t.region_id, t.region_name, t.account_id
@@ -210,15 +210,15 @@
 
     <select id="selectResourceType" resultMap="ResourceBaseResultMap">
         select
-        CONCAT('资源类型:', t.resource_type) as name,
-        t.resource_type_belong AS 'type',
+        CONCAT('资源类型:', t.resource_type) as `name`,
+        t.resource_type_belong AS `type`,
         (
             select count(t1.id) from cloud_resource_item t1
             where t1.account_id = t.account_id and t1.region_id = t.region_id and t1.resource_type = t.resource_type
-        ) as total,
-        t.account_id as accountId,
-        t.region_id as regionId,
-        t.resource_type as resourceType
+        ) as `total`,
+        t.account_id as `accountId`,
+        t.region_id as `regionId`,
+        t.resource_type as `resourceType`
         from cloud_resource_item t
         where t.region_id = #{regionId} and t.account_id = #{accountId}
         group by t.resource_type, t.region_id, t.account_id
@@ -230,7 +230,7 @@
             WHEN t.hummer_name is not null
             THEN CONCAT(t.hummer_name)
             ELSE CONCAT(t.hummer_id)
-        END AS name,
+        END AS `name`,
         CASE
             WHEN t.hummer_id IN (SELECT t1.hummer_id FROM resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
             THEN 2
@@ -239,11 +239,15 @@
             AND t.hummer_id IN (SELECT t1.hummer_id FROM cloud_resource_item t1 WHERE t.account_id = t1.account_id and t.region_id = t1.region_id and t.resource_type = t1.resource_type)
             THEN 1
             ELSE 0
-        END AS value,
-        t.resource_type_belong AS 'type',
-        t.hummer_id as id,
-        t.id as resource,
-        t.resource_type as resourceType
+        END AS `value`,
+        t.resource_type_belong AS `type`,
+        t.hummer_id as `id`,
+        t.id as `resource`,
+        t.resource_type as `resourceType`,
+        t1.name as `accountName`,
+        t.plugin_name as `pluginName`,
+        t.region_name as `regionName`,
+        t.resource_type_name as `resourceTypeName`
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id
         where t.resource_type = #{resourceType} and t.region_id = #{regionId} and t.account_id = #{accountId}

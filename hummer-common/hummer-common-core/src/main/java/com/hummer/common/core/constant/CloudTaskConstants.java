@@ -109,5 +109,14 @@ public class CloudTaskConstants {
     public final static String[] MONGODB_TYPE = {"aliyun.mongodb", "tencent.mongodb", "qingcloud.mongodb", "volc.mongodb"};
     public final static String[] POSTGRESQL_TYPE = {"aliyun.postgre-sql"};
     public final static String[] ES_TYPE = {"tencent.es"};
+    public final static String[] IAM_ROLE_TYPE = {"aws.iam-role"};
+    public final static String[] AMI_TYPE = {"aws.ami"};
+    public final static String[] CLOUDTRAIL_TYPE = {"aws.cloudtrail"};
+    public final static String[] EMR_TYPE = {"aws.emr"};
+    public final static String[] GLACIER_TYPE = {"aws.glacier"};
+    public final static String[] KMS_TYPE = {"aws.kms"};
+    public final static String[] LAMBDA_TYPE = {"aws.lambda"};
+    public final static String[] SUBNET_TYPE = {"aws.subnet"};
+    public final static String[] REDSHIFT_TYPE = {"aws.redshift"};
 
 }

@@ -35,7 +35,7 @@ export default {
     {
       path: "result",
       name: "cloudResult",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/resource/home/Result'),
+      component: () => import(/* webpackChunkName: "api" */ '@/business/components/resource/home/ResultProject'),
     },
     {
       path: "statistics",
