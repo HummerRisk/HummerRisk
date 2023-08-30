@@ -336,9 +336,9 @@
     },
     methods: {
       init() {
-        this.ossList = this.row.ossList;
-        this.cloudEventSyncLogList = this.row.cloudEventSyncLogList;
-        this.imageRepoList = this.row.imageRepoList;
+        this.ossList = this.row.ossList?this.row.ossList:[];
+        this.cloudEventSyncLogList = this.row.cloudEventSyncLogList?this.row.cloudEventSyncLogList:[];
+        this.imageRepoList = this.row.imageRepoList?this.row.imageRepoList:[];
       },
       showLinks() {
         this.linksVisible =  true;
