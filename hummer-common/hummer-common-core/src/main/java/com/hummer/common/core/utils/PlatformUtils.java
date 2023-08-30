@@ -1693,13 +1693,13 @@ public class PlatformUtils {
     }
 
     public static String tranforResourceType(String resourceType) {
-        List<String> ecsTypes = Arrays.stream(CloudTaskConstants.ECS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        List<String> ecsTypes = Arrays.stream(CloudTaskConstants.SERVER_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!ecsTypes.isEmpty()) {
-            return "ecs";
+            return "server";
         }
-        List<String> rdsTypes = Arrays.stream(CloudTaskConstants.RDS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        List<String> rdsTypes = Arrays.stream(CloudTaskConstants.DB_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!rdsTypes.isEmpty()) {
-            return "rds";
+            return "db";
         }
         List<String> ossTypes = Arrays.stream(CloudTaskConstants.OSS_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!ossTypes.isEmpty()) {
@@ -1717,9 +1717,9 @@ public class PlatformUtils {
         if (!eipTypes.isEmpty()) {
             return "eip";
         }
-        List<String> elbTypes = Arrays.stream(CloudTaskConstants.ELB_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
+        List<String> elbTypes = Arrays.stream(CloudTaskConstants.LB_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!elbTypes.isEmpty()) {
-            return "elb";
+            return "lb";
         }
         List<String> sgTypes = Arrays.stream(CloudTaskConstants.SG_TYPE).filter(item -> StringUtils.equals(item, resourceType)).collect(Collectors.toList());
         if (!sgTypes.isEmpty()) {
