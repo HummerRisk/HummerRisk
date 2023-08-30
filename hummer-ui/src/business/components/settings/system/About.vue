@@ -58,7 +58,7 @@
       <div style="padding: 14px;">
         <el-row>
           <el-col :span="24" class="license-le">
-<!--            <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>-->
+            <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>
             <el-button plain size="medium" @click="others">{{ $t('dashboard.i18n_other') }}</el-button>
           </el-col>
         </el-row>

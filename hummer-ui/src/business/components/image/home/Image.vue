@@ -23,14 +23,14 @@
 
 <script>
 import ImageGroup from "@/business/components/image/home/ImageGroup";
-import ImageList from "./ImageList";
+import ImageList from "@/business/components/image/home/ImageList";
 import Container from "@/business/components/common/components/Container";
 import AsideContainer from "@/business/components/common/components/AsideContainer";
 import MainContainer from "@/business/components/common/components/MainContainer";
 
 /* eslint-disable */
 export default {
-  name: "Image",
+  name: "ImagePage",
   components: {
     Container,
     AsideContainer,

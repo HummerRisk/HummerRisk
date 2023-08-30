@@ -427,20 +427,22 @@ import {IMAGE_CONFIGS} from "@/business/components/common/components/search/sear
 import {
   addImageUrl,
   allImageReposUrl,
-  changeImageUrl, deleteImageReposUrl, deleteImagesUrl,
+  changeImageUrl,
+  deleteImagesUrl,
   deleteImageUrl,
   getImageResultUrl,
   getImageResultWithBLOBsUrl,
-  imageDownloadUrl, imageGroupListUrl,
+  imageDownloadUrl,
+  imageGroupListUrl,
   imageListUrl,
-  imageLogUrl, scanImagesUrl,
+  imageLogUrl,
+  scanImagesUrl,
   scanImageUrl,
   updateImageUrl
 } from "@/api/k8s/image/image";
 import {allSbomListUrl, allSbomVersionListUrl} from "@/api/k8s/sbom/sbom";
 import {proxyListAllUrl} from "@/api/system/system";
 import {saveAs} from "@/common/js/FileSaver";
-import {serverGroupListUrl} from "@/api/k8s/server/server";
 
 //列表展示与隐藏
 const columnOptions = [
