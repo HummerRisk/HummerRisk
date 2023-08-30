@@ -9,6 +9,7 @@ import com.hummer.common.core.dto.CloudTaskDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExtCloudTaskMapper {
 
@@ -30,7 +31,7 @@ public interface ExtCloudTaskMapper {
 
     List<CloudTaskDTO> selectByExample(CloudTaskExample example);
 
-    List<CloudTask> selectByHummerId(@Param("hummerId") String hummerId,@Param("regionId") String regionId);
+    List<CloudTask> selectByHummerId(Map<String, Object> params);
 
     List<CloudTask> selectManualTasks(@Param("request") ManualRequest request);
 
