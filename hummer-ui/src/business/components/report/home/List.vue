@@ -864,7 +864,7 @@ const columnOptions3 = [
       },
       select2(selection) {
       },
-      projectSwitch (projectId, accountName) {
+      projectSwitch (projectId, accountName, createTime) {
         this.projectId = projectId;
         this.currentAccount = accountName;
         this.search();

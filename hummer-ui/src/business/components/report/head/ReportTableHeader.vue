@@ -129,8 +129,8 @@ import Vue from "vue";
       validate() {
         this.$emit('validate');
       },
-      projectSwitch(projectId, createTime) {
-        this.$emit("projectSwitch", projectId, createTime);
+      projectSwitch(projectId, accountName, createTime) {
+        this.$emit("projectSwitch", projectId, accountName, createTime);
       },
       openDownload() {
         this.$emit('openDownload');
