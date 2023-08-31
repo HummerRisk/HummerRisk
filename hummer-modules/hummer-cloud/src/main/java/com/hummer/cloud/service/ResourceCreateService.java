@@ -304,10 +304,6 @@ public class ResourceCreateService {
 
     public boolean handleTask(CloudTask cloudTask) throws Exception {
         String taskId = cloudTask.getId();
-        int i = orderService.updateTaskStatus(taskId, CloudTaskConstants.TASK_STATUS.APPROVED.toString(), CloudTaskConstants.TASK_STATUS.PROCESSING.toString());
-        if (i == 0) {
-            return false;
-        }
         try {
             CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
             cloudTaskItemExample.createCriteria().andTaskIdEqualTo(taskId);
