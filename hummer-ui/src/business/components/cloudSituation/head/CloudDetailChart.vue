@@ -45,32 +45,34 @@ export default {
             type: 'value',
             show: false,
           },
-          legend: [
-            {
-              // selectedMode: 'single',
-              data: graph.categories.map(function (a) {
-                return a.name;
-              })
-            }
-          ],
+          tooltip: {
+          },
           series: [
             {
               type: 'graph',
               layout: 'force',
-
               label: {
                 show: true,
+                distance: 20,
                 textStyle: { fontSize: 12, color: '#000' },
                 formatter: params => {
                   return `${params.name}\n\n\n\n\n\n\n${params.value}`
                 },
               },
-              tooltip: {
+              tooltip:{
                 formatter(params){
-                  let strs = params.name.split("\n");
-                  return `<b>资源类型: <b/> ${strs[0]}
-                <br/><b>资源名称: <b/> ${strs[1]}
-                <br/><b>资源标识: <b/> ${params.value}`;
+                  let tooltipdata = params.data;
+                  var result = '';
+                  if(params.dataType == 'node'){
+                    let nodename = tooltipdata.name.split("\n");
+                    return `<b>资源类型: <b/>  ${nodename[0]}
+                            <br/>资源名称:  ${nodename[1]}
+                            <br/>资源标识:  ${params.value}`;
+                  }
+                  if(params.dataType == 'edge'){
+                    return ``;
+                  }
+                  return result;
                 }
               },
               emphasis:{
@@ -82,9 +84,9 @@ export default {
               edgeSymbol: ['none', 'arrow'],
               edgeSymbolSize: 15,
               force: {
-                repulsion: 100,
+                repulsion: 60,
                 friction: 0.3,
-                edgeLength:200
+                edgeLength: 100
               },
               lineStyle:{
                 'color':'blue',
