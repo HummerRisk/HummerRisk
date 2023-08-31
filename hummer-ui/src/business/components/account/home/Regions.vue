@@ -30,7 +30,7 @@
     </el-popover>
 
     <!--regions-->
-    <el-drawer class="rtl" :title="$t('account.all_regions')" :visible.sync="regionsVisible" size="50%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('account.all_regions')" :visible.sync="regionsVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <div style="color: red;font-style:italic;margin: 5px 0 10px 10px;">
         <el-row>
