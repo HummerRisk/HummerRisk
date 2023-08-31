@@ -263,6 +263,7 @@ export default {
     log: 'Log',
     into_detail: 'Into details',
     sum: 'Total',
+    finish: 'End',
   },
   workspace: {
     create:'Create a workspace',

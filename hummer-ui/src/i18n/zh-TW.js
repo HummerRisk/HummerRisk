@@ -263,6 +263,7 @@ export default {
     log: '日誌',
     into_detail: '進入詳情',
     sum: '共',
+    finish: '結束',
   },
   workspace: {
     create: '創建工作空間',
