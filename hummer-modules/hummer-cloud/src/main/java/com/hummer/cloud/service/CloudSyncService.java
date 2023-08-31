@@ -190,36 +190,61 @@ public class CloudSyncService {
 
                         Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
 
-                        HttpHeaders headers = new HttpHeaders();
-                        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-                        JSONObject jsonObj = PlatformUtils.fixedScanner(finalScript, map, account.getPluginId());
-                        LogUtil.warn("sync all resource {scanner}[api body]: " + jsonObj.toJSONString());
+                        if (systemProviderService.license()) {
+                            //企业版
+                            HttpHeaders headers = new HttpHeaders();
+                            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+                            JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, account.getPluginId());
+                            LogUtil.info("sync all resource {scanner}[api body]: " + jsonObject.toJSONString());
 
-                        HttpEntity<?> httpEntity = new HttpEntity<>(jsonObj, headers);
-                        String result = restTemplate.postForObject("http://hummer-scaner/run", httpEntity, String.class);
-                        JSONObject resultJson = JSONObject.parseObject(result);
-                        String resultCode = resultJson.getString("code").toString();
-                        String resultMsg = resultJson.getString("msg").toString();
-                        if (!StringUtils.equals(resultCode, "200")) {
-                            HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
+                            HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
+                            String result = restTemplate.postForObject("http://hummer-scanner/run", httpEntity, String.class);
+                            JSONObject resultJson = JSONObject.parseObject(result);
+                            String resultCode = resultJson != null ? resultJson.getString("code") : "";
+                            String resultMsg = resultJson != null ? resultJson.getString("msg") : "";
+                            if (!StringUtils.equals(resultCode, "200")) {
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
+                            }
+
+                            resultStr = resultJson.getString("data");
+
+                            if (PlatformUtils.isUserForbidden(resultStr)) {
+                                resultStr = Translator.get("i18n_create_resource_region_failed");
+                                readResource = false;
+                            }
+                            if (resultStr.contains("ERROR"))
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + " 「api server」: " + resultStr);
+
+                            custodianRun = jsonObject.toJSONString();
+                            metadata = jsonObject.toJSONString();
+
+                            if (readResource) {
+                                resources = resultStr;
+                            }
+
+                        } else {//社区版
+                            dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid + "/" + region;
+                            CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml", false);
+                            String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
+                            LogUtil.warn(account.getId() + " {}[command]: " + command);
+                            resultStr = CommandUtils.commonExecCmdWithResult(command, dirPath);
+                            if (LogUtil.getLogger().isDebugEnabled()) {
+                                LogUtil.getLogger().debug("resource created: {}", resultStr);
+                            }
+                            if (PlatformUtils.isUserForbidden(resultStr)) {
+                                resultStr = Translator.get("i18n_create_resource_region_failed");
+                                readResource = false;
+                            }
+                            if (resultStr.contains("ERROR"))
+                                HRException.throwException(Translator.get("i18n_create_resource_failed") + "「cloud」: " + resultStr);
+
+                            custodianRun = ReadFileUtils.readToBuffer(dirPath + "/all-resources/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
+                            metadata = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.METADATA_RESULT_FILE);
+
+                            if (readResource) {
+                                resources = ReadFileUtils.readJsonFile(dirPath + "/all-resources/", CloudTaskConstants.RESOURCES_RESULT_FILE);
+                            }
                         }
-
-                        resultStr = resultJson.getString("data").toString();
-
-                        if (PlatformUtils.isUserForbidden(resultStr)) {
-                            resultStr = Translator.get("i18n_create_resource_region_failed");
-                            readResource = false;
-                        }
-                        if (resultStr.contains("ERROR"))
-                            HRException.throwException(Translator.get("i18n_create_resource_failed") + " 「api server」: " + resultStr);
-
-                        custodianRun = jsonObj.toJSONString();
-                        metadata = jsonObj.toJSONString();
-
-                        if (readResource) {
-                            resources = resultStr;
-                        }
-
 
                         CloudResourceWithBLOBs cloudResourceWithBLOBs = new CloudResourceWithBLOBs();
                         cloudResourceWithBLOBs.setId(UUIDUtil.newUUID());
@@ -398,36 +423,22 @@ public class CloudSyncService {
             cloudResourceRelaLinkExample.createCriteria().andResourceItemIdEqualTo(cloudResourceItem.getId());
             cloudResourceRelaLinkMapper.deleteByExample(cloudResourceRelaLinkExample);
             String pluginId = cloudResourceItem.getPluginId();
-            if (StringUtils.equals(pluginId, "hummer-aws-plugin")) {
-                dealAws(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-azure-plugin")) {
-                dealAzure(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-aliyun-plugin")) {
-                dealAliyun(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-huawei-plugin")) {
-                dealHuawei(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-qcloud-plugin")) {
-                dealQcloud(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-vsphere-plugin")) {
-                dealVsphere(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-openstack-plugin")) {
-                dealOpenstack(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-gcp-plugin")) {
-                dealGcp(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-huoshan-plugin")) {
-                dealHuoshan(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-baidu-plugin")) {
-                dealBaidu(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-qiniu-plugin")) {
-                dealQiniu(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-qingcloud-plugin")) {
-                dealQingcloud(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-ucloud-plugin")) {
-                dealUcloud(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-jdcloud-plugin")) {
-                dealJdcloud(cloudResourceItem);
-            } else if (StringUtils.equals(pluginId, "hummer-ksyun-plugin")) {
-                dealKsyun(cloudResourceItem);
+            switch (pluginId) {
+                case "hummer-aws-plugin" -> dealAws(cloudResourceItem);
+                case "hummer-azure-plugin" -> dealAzure(cloudResourceItem);
+                case "hummer-aliyun-plugin" -> dealAliyun(cloudResourceItem);
+                case "hummer-huawei-plugin" -> dealHuawei(cloudResourceItem);
+                case "hummer-qcloud-plugin" -> dealQcloud(cloudResourceItem);
+                case "hummer-vsphere-plugin" -> dealVsphere(cloudResourceItem);
+                case "hummer-openstack-plugin" -> dealOpenstack(cloudResourceItem);
+                case "hummer-gcp-plugin" -> dealGcp(cloudResourceItem);
+                case "hummer-huoshan-plugin" -> dealHuoshan(cloudResourceItem);
+                case "hummer-baidu-plugin" -> dealBaidu(cloudResourceItem);
+                case "hummer-qiniu-plugin" -> dealQiniu(cloudResourceItem);
+                case "hummer-qingcloud-plugin" -> dealQingcloud(cloudResourceItem);
+                case "hummer-ucloud-plugin" -> dealUcloud(cloudResourceItem);
+                case "hummer-jdcloud-plugin" -> dealJdcloud(cloudResourceItem);
+                case "hummer-ksyun-plugin" -> dealKsyun(cloudResourceItem);
             }
             LogUtil.info("结束：计算云资源关系拓扑图数据");
         } catch (Exception e) {
@@ -1695,8 +1706,6 @@ public class CloudSyncService {
 
                 break;
             case "aliyun.nas":
-                x = 100L;
-                y = 100L;
                 String MountTargets = jsonObject.getString("MountTargets");
                 JSONArray MountTarget = JSONArray.parseArray(!StringUtils.isEmpty(JSONObject.parseObject(MountTargets).getString("MountTarget"))?JSONObject.parseObject(MountTargets).getString("MountTarget"):"[]");
 
@@ -1706,8 +1715,8 @@ public class CloudSyncService {
                 cloudResourceRela.setHummerId("Internet");
                 cloudResourceRela.setCategory("aliyun.internet");
                 cloudResourceRela.setSymbol("network_security.svg");
-                cloudResourceRela.setxAxis(x);//100
-                cloudResourceRela.setyAxis(y);//100
+                cloudResourceRela.setxAxis(100L);//100
+                cloudResourceRela.setyAxis(200L);//200
 
                 insertCloudResourceRela(cloudResourceRela);
 
@@ -1719,9 +1728,13 @@ public class CloudSyncService {
                 cloudResourceRela.setName(cloudResourceItem.getHummerName());
                 cloudResourceRela.setCategory(resourceType);
                 cloudResourceRela.setSymbol("file_system.svg");
-                cloudResourceRela.setxAxis(300L);//100
+                cloudResourceRela.setxAxis(200L);//200
                 cloudResourceRela.setyAxis(200L);//200
                 insertCloudResourceRela(cloudResourceRela);
+
+                cloudResourceRelaLink.setSource(Internet);
+                cloudResourceRelaLink.setTarget(NasRelaId);
+                insertCloudResourceRelaLink(cloudResourceRelaLink);
 
                 for (Object o : MountTarget) {
                     JSONObject jsonO = JSONObject.parseObject(o.toString());
@@ -1734,7 +1747,7 @@ public class CloudSyncService {
                     cloudResourceRela.setHummerId(vpcId);
                     cloudResourceRela.setCategory("aliyun.vpc");
                     cloudResourceRela.setSymbol("network_hub.svg");
-                    cloudResourceRela.setxAxis(100L);//100
+                    cloudResourceRela.setxAxis(300L);//100
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
 
@@ -1747,7 +1760,7 @@ public class CloudSyncService {
                     cloudResourceRela.setHummerId(MountTargetDomain);
                     cloudResourceRela.setCategory("aliyun.domain");
                     cloudResourceRela.setSymbol("domain.svg");
-                    cloudResourceRela.setxAxis(200L);//100
+                    cloudResourceRela.setxAxis(400L);//100
                     cloudResourceRela.setyAxis(y + 100L);//200
                     insertCloudResourceRela(cloudResourceRela);
 
