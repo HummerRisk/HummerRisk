@@ -15,6 +15,7 @@
         <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
         <result column="job_type" jdbcType="VARCHAR" property="jobType" />
         <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <result column="scan_score" jdbcType="INTEGER" property="scanScore" />
         <result column="groups" jdbcType="INTEGER" property="groups" />
         <result column="rules" jdbcType="INTEGER" property="rules" />
         <result column="riskGroups" jdbcType="INTEGER" property="riskGroups" />
@@ -47,6 +48,7 @@
         <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
         <result column="job_type" jdbcType="VARCHAR" property="jobType" />
         <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <result column="scan_score" jdbcType="INTEGER" property="scanScore" />
         <result column="sum" jdbcType="INTEGER" property="sum" />
         <result column="complianceNum" jdbcType="INTEGER" property="complianceNum" />
         <result column="critical" jdbcType="INTEGER" property="critical" />
@@ -85,6 +87,7 @@
         <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
         <result column="job_type" jdbcType="VARCHAR" property="jobType" />
         <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+        <result column="scan_score" jdbcType="INTEGER" property="scanScore" />
         <collection property="cloudGroupLogList" ofType="com.hummer.common.core.domain.CloudGroupLog" javaType="list"
                     select="selectCloudGroupLogList" column="{id=id}">
         </collection>
@@ -251,11 +254,11 @@
         SELECT
             t.*,
             (select count(r.id) from rule r where r.id in (select g.rule_id from rule_group_mapping g where g.group_id = t.group_id)) as 'sum',
-            (select count(r.id) from cloud_task r where r.group_id = t.id and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'complianceNum',
-            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'CriticalRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'critical',
-            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'HighRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'high',
-            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'MediumRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'medium',
-            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'LowRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.id)) as 'low'
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.group_id)) as 'complianceNum',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'CriticalRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.group_id)) as 'critical',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'HighRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.group_id)) as 'high',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'MediumRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.group_id)) as 'medium',
+            (select count(r.id) from cloud_task r where r.group_id = t.id and r.severity = 'LowRisk' and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g where g.group_id = t.group_id)) as 'low'
         FROM cloud_group t
         where t.project_id = #{id}
         ORDER BY t.create_time DESC

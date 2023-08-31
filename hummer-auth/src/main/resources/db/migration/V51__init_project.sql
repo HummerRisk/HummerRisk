@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `cloud_project` (
     `return_sum`                 bigint              DEFAULT 0 COMMENT '检测结果风险资源数',
     `job_type`                   varchar(50)         DEFAULT 'once' COMMENT '任务类型：once/cron',
     `xxl_job_id`                 int                 DEFAULT 0 COMMENT '定时任务ID',
+    `scan_score`                 int                 DEFAULT 0 COMMENT '安全评分',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 

@@ -20,6 +20,7 @@
     <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
     <result column="job_type" jdbcType="VARCHAR" property="jobType" />
     <result column="xxl_job_id" jdbcType="INTEGER" property="xxlJobId" />
+    <result column="scan_score" jdbcType="INTEGER" property="scanScore" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -96,7 +97,7 @@
       This element was generated on Fri Aug 11 15:18:52 CST 2023.
     -->
     id, `status`, account_name, account_id, plugin_id, plugin_name, plugin_icon, creator, 
-    create_time, resources_sum, return_sum, job_type, xxl_job_id
+    create_time, resources_sum, return_sum, job_type, xxl_job_id, scan_score
   </sql>
   <select id="selectByExample" parameterType="com.hummer.common.core.domain.CloudProjectExample" resultMap="BaseResultMap">
     <!--
@@ -158,12 +159,12 @@
       account_id, plugin_id, plugin_name, 
       plugin_icon, creator, create_time, 
       resources_sum, return_sum, job_type, 
-      xxl_job_id)
+      xxl_job_id, scan_score)
     values (#{id,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{accountName,jdbcType=VARCHAR}, 
       #{accountId,jdbcType=VARCHAR}, #{pluginId,jdbcType=VARCHAR}, #{pluginName,jdbcType=VARCHAR}, 
       #{pluginIcon,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
       #{resourcesSum,jdbcType=BIGINT}, #{returnSum,jdbcType=BIGINT}, #{jobType,jdbcType=VARCHAR}, 
-      #{xxlJobId,jdbcType=INTEGER})
+      #{xxlJobId,jdbcType=INTEGER}, #{scanScore,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.hummer.common.core.domain.CloudProject">
     <!--
@@ -211,6 +212,9 @@
       </if>
       <if test="xxlJobId != null">
         xxl_job_id,
+      </if>
+      <if test="scanScore != null">
+        scan_score,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -313,6 +317,9 @@
       <if test="record.xxlJobId != null">
         xxl_job_id = #{record.xxlJobId,jdbcType=INTEGER},
       </if>
+      <if test="record.scanScore != null">
+        scan_score = #{record.scanScore,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -337,7 +344,8 @@
       resources_sum = #{record.resourcesSum,jdbcType=BIGINT},
       return_sum = #{record.returnSum,jdbcType=BIGINT},
       job_type = #{record.jobType,jdbcType=VARCHAR},
-      xxl_job_id = #{record.xxlJobId,jdbcType=INTEGER}
+      xxl_job_id = #{record.xxlJobId,jdbcType=INTEGER},
+      scan_score = #{record.scanScore,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -386,6 +394,9 @@
       <if test="xxlJobId != null">
         xxl_job_id = #{xxlJobId,jdbcType=INTEGER},
       </if>
+      <if test="scanScore != null">
+        scan_score = #{scanScore,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -407,7 +418,8 @@
       resources_sum = #{resourcesSum,jdbcType=BIGINT},
       return_sum = #{returnSum,jdbcType=BIGINT},
       job_type = #{jobType,jdbcType=VARCHAR},
-      xxl_job_id = #{xxlJobId,jdbcType=INTEGER}
+      xxl_job_id = #{xxlJobId,jdbcType=INTEGER},
+      scan_score = #{scanScore,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

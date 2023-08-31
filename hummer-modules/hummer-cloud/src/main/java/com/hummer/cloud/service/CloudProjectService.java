@@ -60,14 +60,22 @@ public class CloudProjectService {
     private AccountMapper accountMapper;
     @Autowired
     private RuleGroupMapper ruleGroupMapper;
-    @Autowired
-    @Lazy
+    @Autowired @Lazy
     private AccountService accountService;
-    @Autowired
-    @Lazy
+    @Autowired @Lazy
     private CloudTaskService cloudTaskService;
     @Autowired
     private CommonThreadPool commonThreadPool;
+    @Autowired
+    private CloudTaskItemLogMapper cloudTaskItemLogMapper;
+    @Autowired
+    private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
+    @Autowired
+    private ResourceMapper resourceMapper;
+    @Autowired
+    private ResourceItemMapper resourceItemMapper;
+    @Autowired
+    private ResourceRuleMapper resourceRuleMapper;
     @DubboReference
     private IOperationLogService operationLogService;
     @DubboReference
@@ -128,6 +136,52 @@ public class CloudProjectService {
         CloudProcessLogExample cloudProcessLogExample = new CloudProcessLogExample();
         cloudProcessLogExample.createCriteria().andProjectIdEqualTo(projectId);
         cloudProcessLogMapper.deleteByExample(cloudProcessLogExample);
+
+        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+        cloudTaskExample.createCriteria().andProjectIdEqualTo(projectId);
+        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(cloudTaskExample);
+
+        cloudTaskList.forEach(cloudTask -> {
+            CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+            cloudTaskItemExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
+            List<CloudTaskItem> cloudTaskItemList = cloudTaskItemMapper.selectByExample(cloudTaskItemExample);
+            try {
+                cloudTaskItemList.forEach(taskItem -> {
+                    if (taskItem == null) return;
+                    cloudTaskItemMapper.deleteByPrimaryKey(taskItem.getId());
+
+                    CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+                    cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                    cloudTaskItemLogMapper.deleteByExample(cloudTaskItemLogExample);
+
+                    CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+                    cloudTaskItemResourceExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                    List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample);
+                    cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
+                    cloudTaskItemResources.forEach(taskItemResource -> {
+                        if (taskItemResource == null) return;
+                        resourceMapper.deleteByPrimaryKey(taskItemResource.getResourceId());
+
+                        if (taskItemResource.getResourceId() != null) {
+                            ResourceItemExample resourceItemExample = new ResourceItemExample();
+                            resourceItemExample.createCriteria().andResourceIdEqualTo(taskItemResource.getResourceId());
+                            List<ResourceItem> resourceItems = resourceItemMapper.selectByExample(resourceItemExample);
+                            resourceItems.forEach(resourceItem -> {
+                                ResourceRuleExample resourceRuleExample = new ResourceRuleExample();
+                                if (resourceItem.getResourceId() != null) {
+                                    resourceRuleExample.createCriteria().andResourceIdEqualTo(resourceItem.getResourceId());
+                                    resourceRuleMapper.deleteByExample(resourceRuleExample);
+                                }
+                            });
+                        }
+                    });
+
+                });
+                cloudTaskMapper.deleteByPrimaryKey(cloudTask.getId());
+            } catch (Exception e) {
+                LogUtil.error("Delete manual cloudTask error{} " + e.getMessage());
+            }
+        });
 
         operationLogService.log(loginUser, projectId, cloudProject.getAccountName(), ResourceTypeConstants.CLOUD_PROJECT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_project");
     }
