@@ -96,13 +96,13 @@ public class CloudTaskConstants {
     public final static String PROWLER_RESULT_FILE_PATH = "/prowler";//本地启动用 /tmp
     public final static String PROWLER_CONFIG_FILE_PATH = "/root/.aws";//本地启动用 ~/.aws
 
-    public final static String[] ECS_TYPE = {"aliyun.ecs", "huawei.ecs", "tencent.cvm", "aws.ec2", "azure.vm", "qingcloud.ecs", "ucloud.uhost", "jdcloud.vm", "ksyun.kec", "volc.ecs", "vsphere.vm", "openstack.server", "baidu.bbc"};
-    public final static String[] RDS_TYPE = {"aliyun.polardb", "aliyun.rds", "huawei.dds", "huawei.gaussdb", "huawei.gaussdbfornosql", "huawei.gaussdbforopengauss", "huawei.rds", "tencent.cdb", "aws.rds", "azure.cosmosdb", "azure.sqldatabase", "azure.sqlserver", "gcp.sql-backup-run", "qingcloud.mysql"};
+    public final static String[] SERVER_TYPE = {"aliyun.ecs", "huawei.ecs", "tencent.cvm", "aws.ec2", "azure.vm", "qingcloud.ecs", "ucloud.uhost", "jdcloud.vm", "ksyun.kec", "volc.ecs", "vsphere.vm", "openstack.server", "baidu.bbc"};
+    public final static String[] DB_TYPE = {"aliyun.polardb", "aliyun.rds", "huawei.dds", "huawei.gaussdb", "huawei.gaussdbfornosql", "huawei.gaussdbforopengauss", "huawei.rds", "tencent.cdb", "aws.rds", "azure.cosmosdb", "azure.sqldatabase", "azure.sqlserver", "gcp.sql-backup-run", "qingcloud.mysql"};
     public final static String[] OSS_TYPE = {"aliyun.oss", "huawei.obs", "tencent.cos", "aws.s3", "qiniu.kodo", "jdcloud.oss"};
     public final static String[] DISK_TYPE = {"aliyun.disk", "huawei.disk", "tencent.disk", "aws.ebs", "azure.disk", "jdcloud.disk", "baidu.volume"};
     public final static String[] IAM_TYPE = {"huawei.iam"};
     public final static String[] EIP_TYPE = {"aliyun.eip", "huawei.eip", "tencent.eip", "aws.network-addr", "azure.publicip", "gcp.app-engine-domain", "qingcloud.eip", "ucloud.eip", "jdcloud.eip", "ksyun.eip", "volc.eip", "vsphere.host", "openstack.network", "baidu.eip"};
-    public final static String[] ELB_TYPE = {"aliyun.slb", "huawei.elb", "tencent.clb", "aws.elb", "azure.loadbalancer", "ucloud.ulb", "jdcloud.lb", "ksyun.slb", "baidu.blb", "baidu.app-blb"};
+    public final static String[] LB_TYPE = {"aliyun.slb", "huawei.elb", "tencent.clb", "aws.elb", "azure.loadbalancer", "ucloud.ulb", "jdcloud.lb", "ksyun.slb", "baidu.blb", "baidu.app-blb"};
     public final static String[] SG_TYPE = {"aliyun.security-group", "huawei.security-group", "tencent.security-group", "aws.security-group", "azure.networksecuritygroup", "ucloud.securitygroup", "jdcloud.securitygroup", "volc.securitygroup", "openstack.security-group", "openstack.security-groups", "baidu.security-group"};
     public final static String[] VPC_TYPE = {"aliyun.vpc", "tencent.vpc", "aws.vpc", "huawei.vpc", "gcp.vpc", "azure.vnet"};
     public final static String[] REDIS_TYPE = {"aliyun.redis", "huawei.redis", "tencent.redis"};
