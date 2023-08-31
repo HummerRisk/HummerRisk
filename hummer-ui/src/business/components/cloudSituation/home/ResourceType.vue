@@ -4,7 +4,7 @@
       {{ $t('rule.resource_type') }}
     </el-button>
     <!--resourceType-->
-    <el-drawer class="rtl" :title="$t('rule.resource_type')" :visible.sync="regionsVisible" size="55%" :before-close="handleClose" :direction="direction"
+    <el-drawer class="rtl" :title="$t('rule.resource_type')" :visible.sync="regionsVisible" size="60%" :before-close="handleClose" :direction="direction"
                :destroy-on-close="true">
       <el-table :border="true" :stripe="true" :data="string2PrettyFormat" class="adjust-table table-content">
         <el-table-column type="index" min-width="10%"/>
