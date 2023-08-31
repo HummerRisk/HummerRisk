@@ -102,7 +102,7 @@
         WHERE
         tt.account_id = t.id
         ), 0) as allRules,
-        IFNULL((select t1.scan_score FROM history_scan t1 WHERE t.id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
+        IFNULL((select t1.scan_score FROM cloud_project t1 WHERE t.project_id = t1.id), 100) AS scanScore,
         CASE
         WHEN 'APPROVED' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'APPROVED'
         WHEN 'PROCESSING' IN (SELECT t2.status FROM cloud_task t2 WHERE t.id = t2.account_id) THEN 'PROCESSING'
@@ -147,7 +147,7 @@
         WHERE
         tt.project_id = t.id
         ), 0) as allRules,
-        IFNULL((select t1.scan_score FROM history_scan t1 WHERE t.account_id = t1.account_id ORDER BY t1.create_time DESC limit 1), 100) AS scanScore,
+        IFNULL(t.scan_score, 100) AS scanScore,
         t.status AS resultStatus
         FROM cloud_project t
         LEFT JOIN plugin p on t.plugin_id = p.id

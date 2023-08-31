@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
-import com.hummer.common.core.constant.CloudTaskConstants;
-import com.hummer.common.core.constant.ResourceOperation;
-import com.hummer.common.core.constant.ResourceTypeConstants;
-import com.hummer.common.core.constant.ScanTypeConstants;
+import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.CloudTaskCopyDTO;
 import com.hummer.common.core.dto.CloudTaskDTO;
@@ -609,9 +606,42 @@ public class OrderService {
         }
         CloudProject cloudProject = new CloudProject();
         cloudProject.setStatus(newStatus);
+        cloudProject.setScanScore(calculateScore(projectId));
         cloudProject.setResourcesSum(extCloudTaskMapper.getResourceSumByProject(projectId));
         cloudProject.setReturnSum(extCloudTaskMapper.getReturnSumByProject(projectId));
         return cloudProjectMapper.updateByExampleSelective(cloudProject, example);
+    }
+
+    /**
+     * 计算安全检测评分
+     * 高危：高：中：低 = 4 ： 3 ： 2 ：1
+     *
+     * @param projectId
+     * @return
+     */
+    public Integer calculateScore(String projectId) {
+
+        Integer score = 100;
+        if (projectId == null) {
+            return score;
+        }
+
+        CloudTaskExample example = new CloudTaskExample();
+        CloudTaskExample.Criteria criteria = example.createCriteria();
+        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("CriticalRisk");
+        long critical = cloudTaskMapper.countByExample(example);
+        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("HighRisk");
+        long high = cloudTaskMapper.countByExample(example);
+        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("MediumRisk");
+        long mediuml = cloudTaskMapper.countByExample(example);
+        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("LowRisk");
+        long low = cloudTaskMapper.countByExample(example);
+
+        long sum = 4 * critical + 3 * high + 2 * mediuml + 1 * low;
+        score = 100 - (int) Math.ceil(10 * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + 10 * (3 * high / (sum == 0 ? 1 : sum)) * 100 + 10 * (2 * mediuml / (sum == 0 ? 1 : sum)) * 100 + 10 * (1 * low / (sum == 0 ? 1 : sum)) * 100);
+
+
+        return score;
     }
 
     public void updateGroupStatus(String groupId, CloudTaskConstants.TASK_STATUS status) {
