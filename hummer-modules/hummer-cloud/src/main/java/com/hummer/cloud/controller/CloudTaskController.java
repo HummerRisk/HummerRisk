@@ -47,6 +47,18 @@ public class CloudTaskController {
         return "success";
     }
 
+    @GetMapping("sync/ossTasks")
+    public String ossTasksJobHandler() throws Exception{
+        resourceCreateService.ossTasksJobHandler();
+        return "success";
+    }
+
+    @GetMapping("sync/cloudTasks")
+    public String cloudTasksJobHandler() throws Exception{
+        resourceCreateService.cloudTasksJobHandler();
+        return "success";
+    }
+
     @GetMapping("sync/oss")
     public String  ossSyncTasks() throws Exception {
         resourceCreateService.ossTasksJobHandler();
