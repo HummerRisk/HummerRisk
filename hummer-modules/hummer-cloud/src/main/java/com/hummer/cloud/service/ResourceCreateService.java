@@ -124,7 +124,7 @@ public class ResourceCreateService {
         //K8s 资源检测
         final CloudProjectExample cloudProjectExampleK8s = new CloudProjectExample();
         CloudProjectExample.Criteria criteriaK8s = cloudProjectExampleK8s.createCriteria();
-        criteriaK8s.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdIn(PlatformUtils.getCloudPlugin());;
+        criteriaK8s.andStatusEqualTo(CloudTaskConstants.TASK_STATUS.APPROVED.toString()).andPluginIdIn(PlatformUtils.getCloudPlugin());
         if (CollectionUtils.isNotEmpty(processingGroupIdMap.keySet())) {
             criteriaK8s.andIdNotIn(new ArrayList<>(processingGroupIdMap.keySet()));
         }
@@ -214,26 +214,26 @@ public class ResourceCreateService {
             int runningCount = 0;
             long resourceSum = 0;
             for (CloudResourceSyncItem cloudResourceSyncItem : cloudResourceSyncItems) {
-                resourceSum += cloudResourceSyncItem.getCount()==null?0:cloudResourceSyncItem.getCount();
-                if(CloudTaskConstants.TASK_STATUS.APPROVED.name().equals(cloudResourceSyncItem.getStatus())
-                        ||CloudTaskConstants.TASK_STATUS.RUNNING.name().equals(cloudResourceSyncItem.getStatus())
-                        ||CloudTaskConstants.TASK_STATUS.UNCHECKED.name().equals(cloudResourceSyncItem.getStatus())) {
+                resourceSum += cloudResourceSyncItem.getCount() == null ? 0 : cloudResourceSyncItem.getCount();
+                if (CloudTaskConstants.TASK_STATUS.APPROVED.name().equals(cloudResourceSyncItem.getStatus())
+                        || CloudTaskConstants.TASK_STATUS.RUNNING.name().equals(cloudResourceSyncItem.getStatus())
+                        || CloudTaskConstants.TASK_STATUS.UNCHECKED.name().equals(cloudResourceSyncItem.getStatus())) {
                     runningCount++;
-                }else if (CloudTaskConstants.TASK_STATUS.ERROR.name().equals(cloudResourceSyncItem.getStatus())){
+                } else if (CloudTaskConstants.TASK_STATUS.ERROR.name().equals(cloudResourceSyncItem.getStatus())) {
                     errorCount++;
                 } else if (CloudTaskConstants.TASK_STATUS.FINISHED.name().equals(cloudResourceSyncItem.getStatus())) {
                     successCount++;
                 }
             }
             String syncStatus = CloudTaskConstants.TASK_STATUS.RUNNING.name();
-            if(cloudResourceSyncItems.size() == 0){
-                syncStatus =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
-            } else if (runningCount == 0 && errorCount>0 && successCount > 0){
+            if (cloudResourceSyncItems.size() == 0) {
+                syncStatus = CloudTaskConstants.TASK_STATUS.FINISHED.name();
+            } else if (runningCount == 0 && errorCount > 0 && successCount > 0) {
                 syncStatus = CloudTaskConstants.TASK_STATUS.WARNING.name();
             } else if (runningCount == 0 && errorCount > 0) {
                 syncStatus = CloudTaskConstants.TASK_STATUS.ERROR.name();
-            }else if (runningCount == 0){
-                syncStatus =  CloudTaskConstants.TASK_STATUS.FINISHED.name();
+            } else if (runningCount == 0) {
+                syncStatus = CloudTaskConstants.TASK_STATUS.FINISHED.name();
             }
             CloudResourceSync cloudResourceSync1 = new CloudResourceSync();
             cloudResourceSync1.setId(cloudResourceSync.getId());
@@ -390,7 +390,7 @@ public class ResourceCreateService {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
             List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
-            if (list.size() == 0) return;
+            if (list.isEmpty()) return;
 
             String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + cloudTask.getId() + "/" + taskItem.getRegionId();
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
@@ -404,7 +404,7 @@ public class ResourceCreateService {
             if (LogUtil.getLogger().isDebugEnabled()) {
                 LogUtil.getLogger().debug("resource created: {}", resultStr);
             }
-            if(PlatformUtils.isUserForbidden(resultStr)){
+            if (PlatformUtils.isUserForbidden(resultStr)) {
                 resultStr = Translator.get("i18n_create_resource_region_failed");
                 readResource = false;
             }
@@ -418,18 +418,18 @@ public class ResourceCreateService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId() != null ? taskItemResource.getResourceId() : "", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
                             true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId() != null ? taskItemResource.getResourceId() : "", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
                             false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                     HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String custodianRun = ReadFileUtils.readToBuffer(dirPath + "/" + taskItemResource.getDirName() + "/" + CloudTaskConstants.CUSTODIAN_RUN_RESULT_FILE);
                 String metadata = ReadFileUtils.readJsonFile(dirPath + "/" + taskItemResource.getDirName() + "/", CloudTaskConstants.METADATA_RESULT_FILE);
                 String resources = "[]";
-                if(readResource){
+                if (readResource) {
                     resources = ReadFileUtils.readJsonFile(dirPath + "/" + taskItemResource.getDirName() + "/", CloudTaskConstants.RESOURCES_RESULT_FILE);
                 }
                 ResourceWithBLOBs resourceWithBLOBs = new ResourceWithBLOBs();
@@ -477,7 +477,7 @@ public class ResourceCreateService {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
             List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
-            if (list.size() == 0) return;
+            if (list.isEmpty()) return;
 
             AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getAccount(accountWithBLOBs, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(accountWithBLOBs.getProxyId()));
@@ -485,23 +485,23 @@ public class ResourceCreateService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
             JSONObject jsonObject = PlatformUtils.fixedScanner(taskItem.getDetails(), map, accountWithBLOBs.getPluginId());
-            LogUtil.warn(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
+            LogUtil.warn(cloudTask.getId() + " {cloud createScannerResource}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
             LogUtil.info(cloudTask.getId() + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
-            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
-            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
+            String resultCode = resultJson != null ? resultJson.getString("code") : "";
+            String resultMsg = resultJson != null ? resultJson.getString("msg") : "";
             if (!StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
-            resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
+            resultStr = resultJson != null ? resultJson.getString("data") : "[]";
 
             taskItem.setCommand("api scanner");
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
-            if(PlatformUtils.isUserForbidden(resultStr)){
+            if (PlatformUtils.isUserForbidden(resultStr)) {
                 resultStr = Translator.get("i18n_create_resource_region_failed");
                 readResource = false;
             }
@@ -512,18 +512,18 @@ public class ResourceCreateService {
                 String resourceName = taskItemResource.getResourceName();
                 String taskItemId = taskItem.getId();
                 if (StringUtils.equals(cloudTask.getType(), CloudTaskConstants.TaskType.manual.name()))
-                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId() != null ? taskItemResource.getResourceId() : "", "i18n_operation_begin" + ": " + operation, StringUtils.EMPTY,
                             true, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                 Rule rule = ruleMapper.selectByPrimaryKey(taskItem.getRuleId());
                 if (rule == null) {
-                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId()!=null?taskItemResource.getResourceId():"", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
+                    orderService.saveTaskItemLog(taskItemId, taskItemResource.getResourceId() != null ? taskItemResource.getResourceId() : "", "i18n_operation_ex" + ": " + operation, "i18n_ex_rule_not_exist",
                             false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
                     HRException.throwException(Translator.get("i18n_ex_rule_not_exist") + ":" + taskItem.getRuleId());
                 }
                 String custodianRun = jsonObject.toJSONString();
                 String metadata = jsonObject.toJSONString();
                 String resources = "[]";
-                if(readResource){
+                if (readResource) {
                     resources = resultStr;
                 }
                 ResourceWithBLOBs resourceWithBLOBs = new ResourceWithBLOBs();

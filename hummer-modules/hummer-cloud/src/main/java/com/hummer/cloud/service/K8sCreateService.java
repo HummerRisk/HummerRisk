@@ -205,7 +205,7 @@ public class K8sCreateService {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
             List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
-            if (list.size() == 0) return;
+            if (list.isEmpty()) return;
 
             String dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + cloudTask.getId() + "/" + taskItem.getRegionId();
             CloudNative cloudNative = k8sProviderService.cloudNative(taskItem.getAccountId());
@@ -275,7 +275,6 @@ public class K8sCreateService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             orderService.saveTaskItemLog(taskItem.getId(), "", "i18n_operation_ex" + ": " + operation, e.getMessage(), false, CloudTaskConstants.HISTORY_TYPE.Cloud.name(), null);
             LogUtil.error("createResource, taskItemId: " + taskItem.getId() + ", resultStr:" + resultStr, ExceptionUtils.getStackTrace(e));
             throw e;
@@ -292,7 +291,7 @@ public class K8sCreateService {
             CloudTaskItemResourceExample example = new CloudTaskItemResourceExample();
             example.createCriteria().andTaskIdEqualTo(cloudTask.getId()).andTaskItemIdEqualTo(taskItem.getId());
             List<CloudTaskItemResourceWithBLOBs> list = cloudTaskItemResourceMapper.selectByExampleWithBLOBs(example);
-            if (list.size() == 0) return;
+            if (list.isEmpty()) return;
 
             CloudNative cloudNative = k8sProviderService.cloudNative(taskItem.getAccountId());
             Map<String, String> map = PlatformUtils.getK8sAccount(cloudNative, taskItem.getRegionId(), proxyMapper.selectByPrimaryKey(cloudNative.getProxyId()));
@@ -300,7 +299,7 @@ public class K8sCreateService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
             JSONObject jsonObject = PlatformUtils.fixedScanner(taskItem.getDetails(), map, cloudTask.getPluginId());
-            LogUtil.info(cloudTask.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
+            LogUtil.info(cloudTask.getId() + " {k8s createScannerResource}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
@@ -445,7 +444,6 @@ public class K8sCreateService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.error("[{}] Generate updateResourceSum policy.yml file，and custodian run failed:{}", resourceWithBLOBs.getId(), e.getMessage());
             throw e;
         }

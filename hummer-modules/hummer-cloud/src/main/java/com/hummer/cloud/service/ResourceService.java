@@ -276,20 +276,20 @@ public class ResourceService {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-            JSONObject jsonObject = PlatformUtils.fixedScanner(resultFile, map, resourceWithBLOBs.getPluginId());
-            LogUtil.info(uuid + " {scanner}[api body]: " + jsonObject.toJSONString());
+            JSONObject jsonObject = PlatformUtils.fixedScanner(resultFile, map, accountWithBLOBs.getPluginId());
+            LogUtil.info(uuid + " {scanner calculateTotal}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
             LogUtil.info(uuid + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
-            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
-            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
+            String resultCode = resultJson != null ? resultJson.getString("code") : "";
+            String resultMsg = resultJson != null ? resultJson.getString("msg") : "";
             if (!StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
-            String resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
+            String resultStr = resultJson != null ? resultJson.getString("data") : "[]";
 
             if(PlatformUtils.isUserForbidden(resultStr)){
                 resultStr = Translator.get("i18n_create_resource_region_failed");
@@ -434,22 +434,24 @@ public class ResourceService {
         try {
             boolean readResource = true;
 
+            AccountWithBLOBs accountWithBLOBs = accountMapper.selectByPrimaryKey(taskItem.getAccountId());
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-            JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, resourceWithBLOBs.getPluginId());
-            LogUtil.warn(taskItem.getId() + " {scanner}[api body]: " + jsonObject.toJSONString());
+            JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, accountWithBLOBs.getPluginId());
+            LogUtil.warn(taskItem.getId() + " {Resource/createScannerResource}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
             LogUtil.info(taskItem.getId() + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
-            String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";
-            String resultMsg = resultJson != null ? resultJson.getString("msg").toString() : "";
+            String resultCode = resultJson != null ? resultJson.getString("code") : "";
+            String resultMsg = resultJson != null ? resultJson.getString("msg") : "";
             if (!StringUtils.equals(resultCode, "200")) {
                 HRException.throwException(Translator.get("i18n_create_resource_failed") + ": " + resultMsg);
             }
 
-            String resultStr = resultJson != null ? resultJson.getString("data").toString() : "[]";
+            String resultStr = resultJson != null ? resultJson.getString("data") : "[]";
 
             cloudTaskItemMapper.updateByPrimaryKeyWithBLOBs(taskItem);
             if(PlatformUtils.isUserForbidden(resultStr)){
