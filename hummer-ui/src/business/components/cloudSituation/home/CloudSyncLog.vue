@@ -136,8 +136,11 @@ import {
   cloudSyncDeleteUrl,
   cloudSyncLogItemListUrl,
   cloudSyncLogListUrl,
-  cloudSyncUrl, syncCloudTasksUrl,
-  syncDeleteLogsUrl, syncOssTasksUrl, syncResourceUrl
+  cloudSyncUrl,
+  syncCloudTasksUrl,
+  syncDeleteLogsUrl,
+  syncOssTasksUrl,
+  syncResourceUrl
 } from "@/api/cloud/sync/sync";
 import {allListUrl} from "@/api/cloud/account/account";
 

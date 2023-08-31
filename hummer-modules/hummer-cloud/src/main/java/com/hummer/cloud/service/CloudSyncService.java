@@ -191,6 +191,7 @@ public class CloudSyncService {
                         Map<String, String> map = PlatformUtils.getAccount(account, region, proxyMapper.selectByPrimaryKey(account.getProxyId()));
 
                         if (systemProviderService.license()) {
+                            //企业版
                             HttpHeaders headers = new HttpHeaders();
                             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
                             JSONObject jsonObject = PlatformUtils.fixedScanner(finalScript, map, account.getPluginId());
@@ -221,7 +222,7 @@ public class CloudSyncService {
                                 resources = resultStr;
                             }
 
-                        } else {
+                        } else {//社区版
                             dirPath = CloudTaskConstants.RESULT_FILE_PATH_PREFIX + uuid + "/" + region;
                             CommandUtils.saveAsFile(finalScript, dirPath, "policy.yml", false);
                             String command = PlatformUtils.fixedCommand(CommandEnum.custodian.getCommand(), CommandEnum.run.getCommand(), dirPath, fileName, map);
