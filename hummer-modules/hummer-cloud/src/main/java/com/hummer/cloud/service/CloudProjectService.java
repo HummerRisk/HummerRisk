@@ -331,6 +331,7 @@ public class CloudProjectService {
         } catch (Exception e) {
             //防止单元测试无session
         }
+        cloudProjectLogWithBLOBs.setId(UUIDUtil.newUUID());
         cloudProjectLogWithBLOBs.setOperator(operator);
         cloudProjectLogWithBLOBs.setProjectId(projectId);
         cloudProjectLogWithBLOBs.setCreateTime(System.currentTimeMillis());
@@ -350,6 +351,7 @@ public class CloudProjectService {
         } catch (Exception e) {
             //防止单元测试无session
         }
+        cloudGroupLogWithBLOBs.setId(UUIDUtil.newUUID());
         cloudGroupLogWithBLOBs.setOperator(operator);
         cloudGroupLogWithBLOBs.setProjectId(projectId);
         cloudGroupLogWithBLOBs.setGroupId(groupId);
@@ -478,6 +480,7 @@ public class CloudProjectService {
         } catch (Exception e) {
             //防止单元测试无session
         }
+        cloudProcessLogWithBLOBs.setId(UUIDUtil.newUUID());
         cloudProcessLogWithBLOBs.setOperator(operator);
         cloudProcessLogWithBLOBs.setProjectId(projectId);
         cloudProcessLogWithBLOBs.setProcessId(processId);
