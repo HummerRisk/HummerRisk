@@ -65,9 +65,9 @@ export default {
                   var result = '';
                   if(params.dataType == 'node'){
                     let nodename = tooltipdata.name.split("\n");
-                    return `<b>资源名称: <b/>  ${nodename[1]}
-                            <br/>命名空间:  ${nodename[0]}
-                            <br/>资源类型:  ${params.value}`;
+                    return `<b>资源类型: <b/>  ${nodename[0]}
+                            <br/>资源名称:  ${nodename[1]}
+                            <br/>资源标识:  ${params.value}`;
                   }
                   if(params.dataType == 'edge'){
                     return ``;

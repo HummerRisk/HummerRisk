@@ -486,6 +486,7 @@ export default {
                 .attr('regionId', d.regionId)
                 .attr('regionName', d.regionName)
                 .attr('resourceType', d.resourceType)
+                .attr('resourceTypeName', d.resourceTypeName)
                 .attr('riskType', d.riskType)
                 .attr('type', d.type)
                 .attr('resource', d.resource)
@@ -1131,6 +1132,7 @@ export default {
       let target = e.target;
       let thisClassName = target.className;
       if (thisClassName.baseVal === 'clicked-box') {
+        console.log(target)
         this.details = {
           id: target.getAttribute("id"),
           name: target.getAttribute("name"),
