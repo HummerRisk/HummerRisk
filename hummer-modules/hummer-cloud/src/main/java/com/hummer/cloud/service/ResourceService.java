@@ -281,7 +281,7 @@ public class ResourceService {
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
-            LogUtil.info(uuid + " {scanner}[api result]: " + result);
+            LogUtil.info(uuid + " {scanner calculateTotal}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
             String resultCode = resultJson != null ? resultJson.getString("code") : "";
             String resultMsg = resultJson != null ? resultJson.getString("msg") : "";
@@ -443,7 +443,7 @@ public class ResourceService {
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
             String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
-            LogUtil.info(taskItem.getId() + " {scanner}[api result]: " + result);
+            LogUtil.info(taskItem.getId() + " {Resource/createScannerResource}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
             String resultCode = resultJson != null ? resultJson.getString("code") : "";
             String resultMsg = resultJson != null ? resultJson.getString("msg") : "";
