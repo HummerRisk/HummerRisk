@@ -1,23 +1,18 @@
 package com.hummer.cloud.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.aliyuncs.exceptions.ClientException;
 import com.hummer.cloud.mapper.*;
-import com.hummer.cloud.mapper.ext.ExtAccountMapper;
 import com.hummer.cloud.mapper.ext.ExtCloudProjectMapper;
-import com.hummer.common.core.constant.*;
+import com.hummer.common.core.constant.CloudTaskConstants;
+import com.hummer.common.core.constant.ResourceOperation;
+import com.hummer.common.core.constant.ResourceTypeConstants;
+import com.hummer.common.core.constant.TaskEnum;
 import com.hummer.common.core.domain.*;
-import com.hummer.common.core.domain.request.account.CloudAccountRequest;
-import com.hummer.common.core.domain.request.account.CreateCloudAccountRequest;
-import com.hummer.common.core.domain.request.account.UpdateCloudAccountRequest;
 import com.hummer.common.core.domain.request.project.CloudGroupRequest;
 import com.hummer.common.core.domain.request.rule.ScanGroupRequest;
 import com.hummer.common.core.dto.*;
 import com.hummer.common.core.exception.HRException;
-import com.hummer.common.core.i18n.Translator;
 import com.hummer.common.core.utils.*;
 import com.hummer.system.api.IOperationLogService;
 import com.hummer.system.api.ISystemProviderService;
@@ -29,14 +24,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.alibaba.fastjson.JSON.parseArray;
-import static com.alibaba.fastjson.JSON.parseObject;
 
 /**
  * @author harris
@@ -67,14 +60,22 @@ public class CloudProjectService {
     private AccountMapper accountMapper;
     @Autowired
     private RuleGroupMapper ruleGroupMapper;
-    @Autowired
-    @Lazy
+    @Autowired @Lazy
     private AccountService accountService;
-    @Autowired
-    @Lazy
+    @Autowired @Lazy
     private CloudTaskService cloudTaskService;
     @Autowired
     private CommonThreadPool commonThreadPool;
+    @Autowired
+    private CloudTaskItemLogMapper cloudTaskItemLogMapper;
+    @Autowired
+    private CloudTaskItemResourceMapper cloudTaskItemResourceMapper;
+    @Autowired
+    private ResourceMapper resourceMapper;
+    @Autowired
+    private ResourceItemMapper resourceItemMapper;
+    @Autowired
+    private ResourceRuleMapper resourceRuleMapper;
     @DubboReference
     private IOperationLogService operationLogService;
     @DubboReference
@@ -135,6 +136,52 @@ public class CloudProjectService {
         CloudProcessLogExample cloudProcessLogExample = new CloudProcessLogExample();
         cloudProcessLogExample.createCriteria().andProjectIdEqualTo(projectId);
         cloudProcessLogMapper.deleteByExample(cloudProcessLogExample);
+
+        CloudTaskExample cloudTaskExample = new CloudTaskExample();
+        cloudTaskExample.createCriteria().andProjectIdEqualTo(projectId);
+        List<CloudTask> cloudTaskList = cloudTaskMapper.selectByExample(cloudTaskExample);
+
+        cloudTaskList.forEach(cloudTask -> {
+            CloudTaskItemExample cloudTaskItemExample = new CloudTaskItemExample();
+            cloudTaskItemExample.createCriteria().andTaskIdEqualTo(cloudTask.getId());
+            List<CloudTaskItem> cloudTaskItemList = cloudTaskItemMapper.selectByExample(cloudTaskItemExample);
+            try {
+                cloudTaskItemList.forEach(taskItem -> {
+                    if (taskItem == null) return;
+                    cloudTaskItemMapper.deleteByPrimaryKey(taskItem.getId());
+
+                    CloudTaskItemLogExample cloudTaskItemLogExample = new CloudTaskItemLogExample();
+                    cloudTaskItemLogExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                    cloudTaskItemLogMapper.deleteByExample(cloudTaskItemLogExample);
+
+                    CloudTaskItemResourceExample cloudTaskItemResourceExample = new CloudTaskItemResourceExample();
+                    cloudTaskItemResourceExample.createCriteria().andTaskItemIdEqualTo(taskItem.getId());
+                    List<CloudTaskItemResource> cloudTaskItemResources = cloudTaskItemResourceMapper.selectByExample(cloudTaskItemResourceExample);
+                    cloudTaskItemResourceMapper.deleteByExample(cloudTaskItemResourceExample);
+                    cloudTaskItemResources.forEach(taskItemResource -> {
+                        if (taskItemResource == null) return;
+                        resourceMapper.deleteByPrimaryKey(taskItemResource.getResourceId());
+
+                        if (taskItemResource.getResourceId() != null) {
+                            ResourceItemExample resourceItemExample = new ResourceItemExample();
+                            resourceItemExample.createCriteria().andResourceIdEqualTo(taskItemResource.getResourceId());
+                            List<ResourceItem> resourceItems = resourceItemMapper.selectByExample(resourceItemExample);
+                            resourceItems.forEach(resourceItem -> {
+                                ResourceRuleExample resourceRuleExample = new ResourceRuleExample();
+                                if (resourceItem.getResourceId() != null) {
+                                    resourceRuleExample.createCriteria().andResourceIdEqualTo(resourceItem.getResourceId());
+                                    resourceRuleMapper.deleteByExample(resourceRuleExample);
+                                }
+                            });
+                        }
+                    });
+
+                });
+                cloudTaskMapper.deleteByPrimaryKey(cloudTask.getId());
+            } catch (Exception e) {
+                LogUtil.error("Delete manual cloudTask error{} " + e.getMessage());
+            }
+        });
 
         operationLogService.log(loginUser, projectId, cloudProject.getAccountName(), ResourceTypeConstants.CLOUD_PROJECT.name(), ResourceOperation.DELETE, "i18n_delete_cloud_project");
     }
@@ -338,6 +385,7 @@ public class CloudProjectService {
         } catch (Exception e) {
             //防止单元测试无session
         }
+        cloudProjectLogWithBLOBs.setId(UUIDUtil.newUUID());
         cloudProjectLogWithBLOBs.setOperator(operator);
         cloudProjectLogWithBLOBs.setProjectId(projectId);
         cloudProjectLogWithBLOBs.setCreateTime(System.currentTimeMillis());
@@ -357,6 +405,7 @@ public class CloudProjectService {
         } catch (Exception e) {
             //防止单元测试无session
         }
+        cloudGroupLogWithBLOBs.setId(UUIDUtil.newUUID());
         cloudGroupLogWithBLOBs.setOperator(operator);
         cloudGroupLogWithBLOBs.setProjectId(projectId);
         cloudGroupLogWithBLOBs.setGroupId(groupId);
@@ -485,6 +534,7 @@ public class CloudProjectService {
         } catch (Exception e) {
             //防止单元测试无session
         }
+        cloudProcessLogWithBLOBs.setId(UUIDUtil.newUUID());
         cloudProcessLogWithBLOBs.setOperator(operator);
         cloudProcessLogWithBLOBs.setProjectId(projectId);
         cloudProcessLogWithBLOBs.setProcessId(processId);
