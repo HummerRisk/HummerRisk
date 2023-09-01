@@ -28,7 +28,7 @@ export default {
     },
     {
       path: "rule-tag",
-      name: "ruletag",
+      name: "ruleTag",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleTag"),
     },
     {
