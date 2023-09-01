@@ -137,7 +137,10 @@ import {
   cloudSyncLogItemListUrl,
   cloudSyncLogListUrl,
   cloudSyncUrl,
-  syncDeleteLogsUrl
+  syncCloudTasksUrl,
+  syncDeleteLogsUrl,
+  syncOssTasksUrl,
+  syncResourceUrl
 } from "@/api/cloud/sync/sync";
 import {allListUrl} from "@/api/cloud/account/account";
 
@@ -220,6 +223,10 @@ export default {
           exec: this.reSync
         },
         {
+          tip: this.$t('commons.finish'), icon: "el-icon-check", type: "success",
+          exec: this.syncResource
+        },
+        {
           tip: this.$t('commons.delete'), icon: "el-icon-delete", type: "danger",
           exec: this.handleDelete
         }
@@ -299,6 +306,15 @@ export default {
             });
           }
         }
+      });
+    },
+    syncResource() {
+      this.result = this.$get(syncResourceUrl,response => {
+        this.search();
+      });
+      this.$get(syncOssTasksUrl,response => {
+      });
+      this.$get(syncCloudTasksUrl,response => {
       });
     },
     saveSync() {

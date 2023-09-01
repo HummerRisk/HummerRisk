@@ -17,4 +17,10 @@ export const syncDeleteLogsUrl = "/cloud/sync/deleteLogs";
 
 export const cloudTopologyresourceRelaUrl = "/cloud/sync/cloudTopologyRela/";
 
+export const syncResourceUrl = "/cloud/task/sync/resource";
+
+export const syncOssTasksUrl = "/cloud/task/sync/ossTasks";
+
+export const syncCloudTasksUrl = "/cloud/task/sync/cloudTasks";
+
 
