@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     goCloud() {
-      let p = '/account/cloudaccount';
+      let p = '/account/cloud-account';
       this.$router.push({
         path: p
       }).catch(error => error);

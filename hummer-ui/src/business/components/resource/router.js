@@ -1,14 +1,13 @@
 /* eslint-disable */
 export default {
   path: "/resource",
-  name: "Resource",
   redirect: "/resource/result",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ "@/business/components/resource/base")
   },
   children: [
     {
-      path: "clouddashboard",
+      path: "cloud-dashboard",
       name: "cloudDashboard",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/Dashboard"),
     },
@@ -18,17 +17,17 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/resource/home/ResultProject'),
     },
     {
-      path: "resultdetails/:id",
-      name: "CloudResourceDetails",
+      path: "result-details/:id",
+      name: "cloudResourceDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/resource/home/Result"),
     },
     {
-      path: "cloudHistory",
+      path: "cloud-history",
       name: "cloudHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/History"),
     },
     {
-      path: 'accountOverview',
+      path: 'account-overview',
       name: 'cloudOverview',
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
     },

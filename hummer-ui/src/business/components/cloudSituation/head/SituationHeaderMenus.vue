@@ -4,15 +4,15 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/cloudSituation/cloudSituation'">
+          <el-menu-item :index="'/cloud-situation/cloud-situation'">
             {{ $t("account.resource_situation") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/cloudSituation/cloudTopology'">
+          <el-menu-item :index="'/cloud-situation/cloud-topology'">
             {{ $t("account.cloud_topology") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/cloudSituation/cloudSyncLog'">
+          <el-menu-item :index="'/cloud-situation/cloud-sync-log'">
             {{ $t("account.sync_log") }}
           </el-menu-item>
 

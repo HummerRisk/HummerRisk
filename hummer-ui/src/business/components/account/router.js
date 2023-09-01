@@ -1,24 +1,23 @@
 /* eslint-disable */
 export default {
-  name: "Account",
   path: "/account",
-  redirect: "/account/cloudaccount",
+  redirect: "/account/cloud-account",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/account/base')
   },
   children: [
     {
-      path: "cloudaccount",
+      path: "cloud-account",
       name: "cloudAccount",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/CloudAccount'),
     },
     {
-      path: "accountscan/:id",
+      path: "account-scan/:id",
       name: "accountScan",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountScan'),
     },
     {
-      path: "accountscaninglog/:id",
+      path: "account-scaning-log/:id",
       name: "accountScaningLog",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountScaningLog'),
     },

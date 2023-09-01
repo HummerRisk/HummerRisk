@@ -341,7 +341,7 @@ import {
       },
       back () {
         this.$router.push({
-          path: '/account/cloudaccount',
+          path: '/account/cloud-account',
         }).catch(error => error);
       },
       selectOnChangeAll (checkAll, item) {

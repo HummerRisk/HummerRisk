@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Event",
   path: "/event",
   redirect: "/event/sync",
   components: {
@@ -19,17 +18,17 @@ export default {
     },
     {
       path: "overview",
-      name: "EventOverview",
+      name: "eventOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/event/home/Overview"),
     },
     {
       path: "group",
-      name: "EventGroup",
+      name: "eventGroup",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/event/home/Group"),
     },
     {
       path: "ip",
-      name: "EventIp",
+      name: "eventIp",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/event/home/Ip"),
     },
   ]

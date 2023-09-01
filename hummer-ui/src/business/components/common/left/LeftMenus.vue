@@ -18,7 +18,7 @@
           <i class="iconfont icon-guanyuyunguanjia"></i>
           <span slot="title">{{ $t('commons.cloud_manage') }}</span>
         </el-menu-item>
-        <el-menu-item index="/cloudSituation" onselectstart="return false">
+        <el-menu-item index="/cloud-situation" onselectstart="return false">
           <i class="iconfont icon-taishifenxi_0"></i>
           <span slot="title">{{ $t('commons.resource_situation') }}</span>
         </el-menu-item>
@@ -30,7 +30,7 @@
           <i class="iconfont icon-jishufuwu"></i>
           <span slot="title">{{ $t('resource.resource_result') }}</span>
         </el-menu-item>
-        <el-menu-item index="/reportcenter" onselectstart="return false">
+        <el-menu-item index="/report-center" onselectstart="return false">
           <i class="iconfont icon-shujujianguan"></i>
           <span slot="title">{{ $t('reportcenter.reportcenter') }}</span>
         </el-menu-item>

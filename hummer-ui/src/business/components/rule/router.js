@@ -1,8 +1,7 @@
 /* eslint-disable */
 export default {
   path: "/rule",
-  name: "Rule",
-  redirect: "/rule/ruleGroup",
+  redirect: "/rule/rule-group",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ "@/business/components/rule/base")
   },
@@ -13,13 +12,13 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),
     },
     {
-      path: "ruletag",
-      name: "ruletag",
+      path: "rule-tag",
+      name: "ruleTag",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleTag"),
     },
     {
-      path: "ruleGroup",
-      name: "CloudRuleGroup",
+      path: "rule-group",
+      name: "cloudRuleGroup",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/RuleGroup"),
     },
     {

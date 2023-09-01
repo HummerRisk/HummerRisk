@@ -69,17 +69,17 @@ export default {
       switch (type) {
         case 'cloud':
           this.$router.push({
-            path: '/account/cloudaccount'
+            path: '/account/cloud-account'
           }).catch(error => error);
           break;
         case 'cloudSituation':
           this.$router.push({
-            path: '/cloudSituation/cloudSituation'
+            path: '/cloud-situation/cloud-situation'
           }).catch(error => error);
           break;
         case 'ruleGroup':
           this.$router.push({
-            path: '/rule/ruleGroup'
+            path: '/rule/rule-group'
           }).catch(error => error);
           break;
         case 'result':
@@ -89,7 +89,7 @@ export default {
           break;
         case 'cloudReport':
           this.$router.push({
-            path: '/reportcenter/cloudReport'
+            path: '/report-center/cloud-report'
           }).catch(error => error);
           break;
         case 'event':

@@ -1,19 +1,18 @@
 /* eslint-disable */
 export default {
-  name: "Report",
   path: "/report",
-  redirect: "/report/cloudReport",
+  redirect: "/report/cloud-report",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/report/base')
   },
   children: [
     {
-      path: "cloudReport",
+      path: "cloud-report",
       name: "cloudReport",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/report/home/List"),
     },
     {
-      path: 'accountOverview',
+      path: 'account-overview',
       name: 'cloudAccountOverview',
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/account/home/AccountOverview'),
     },

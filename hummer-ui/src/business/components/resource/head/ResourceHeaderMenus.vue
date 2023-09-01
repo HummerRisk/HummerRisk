@@ -3,7 +3,7 @@
     <el-row type="flex">
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
-          <el-menu-item :index="'/resource/clouddashboard'">
+          <el-menu-item :index="'/resource/cloud-dashboard'">
             {{ $t("account.overview") }}
           </el-menu-item>
 
@@ -11,11 +11,11 @@
             {{ $t("resource.cloud_resource_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/accountOverview'">
+          <el-menu-item :index="'/resource/account-overview'">
             {{ $t("account.statistical_analysis") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/cloudHistory'">
+          <el-menu-item :index="'/resource/cloud-history'">
             {{ $t("account.history") }}
           </el-menu-item>
 

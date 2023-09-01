@@ -837,7 +837,7 @@ export default {
     },
     goReport() {
       this.$router.push({
-        name: 'OssReport',
+        name: 'ossReport',
         params: {id: this.accountId},
       }).catch(error => error);
     },

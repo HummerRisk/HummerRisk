@@ -989,7 +989,7 @@ export default {
     },
     goResource (params) {
       this.$router.push({
-        path: '/resource/resultdetails/' + params.id
+        path: '/resource/result-details/' + params.id
       }).catch(error => error);
     },
     tagLists() {

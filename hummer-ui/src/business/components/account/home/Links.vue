@@ -294,11 +294,6 @@
             <span>{{ scope.row.updateTime | timestampFormatDate }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="120" :label="$t('commons.fast_entry')" fixed="right">
-          <el-button plain size="mini" type="success" @click="goRepo()">
-            <i class="el-icon-right"></i> {{ $t('image.image_repo') }}
-          </el-button>
-        </el-table-column>
       </el-table>
     </el-drawer>
     <!--links-->
@@ -354,11 +349,6 @@
       goEvent() {
         this.$router.push({
           path: '/event/sync'
-        }).catch(error => error);
-      },
-      goRepo() {
-        this.$router.push({
-          path: '/image/imageRepo'
         }).catch(error => error);
       },
     },
