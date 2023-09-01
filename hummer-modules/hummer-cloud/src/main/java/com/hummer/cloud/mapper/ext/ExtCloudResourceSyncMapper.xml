@@ -221,7 +221,7 @@
         t.resource_type as `resourceType`
         from cloud_resource_item t
         where t.region_id = #{regionId} and t.account_id = #{accountId}
-        group by t.resource_type, t.region_id, t.account_id
+        group by t.resource_type, t.resource_type_belong, t.region_id, t.account_id
     </select>
 
     <select id="selectResource" resultType="com.hummer.common.core.domain.request.sync.Resource">
@@ -246,7 +246,10 @@
         t.resource_type as `resourceType`,
         t1.name as `accountName`,
         t.plugin_name as `pluginName`,
+        t.plugin_id as `pluginId`,
         t.region_name as `regionName`,
+        t.region_id as `regionId`,
+        t.account_id as `accountId`,
         t.resource_type_name as `resourceTypeName`
         from cloud_resource_item t
         join cloud_account t1 on t.account_id = t1.id
