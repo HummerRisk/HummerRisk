@@ -451,7 +451,7 @@ import {
           this.$warning(this.$t('scaning.start_scan_ing'));
         } else if (this.cloudProject.resultStatus === 'FINISHED') {
           this.$router.push({
-            path: '/account/resultdetails/' + this.projectId,
+            path: '/resource/resultdetails/' + this.projectId,
           }).catch(error => error);
         }
       },

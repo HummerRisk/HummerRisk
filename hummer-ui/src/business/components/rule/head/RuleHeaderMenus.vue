@@ -3,28 +3,21 @@
     <el-row type="flex">
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
-          <el-menu-item :index="'/rule/ruletag'">
-            {{ $t("rule.rule_tag") }}
-          </el-menu-item>
 
-          <el-menu-item :index="'/rule/rulegroup'">
-            {{ $t("history.rule_set") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/rule/regulation'">
-            {{ $t("resource.regulation") }}
+          <el-menu-item :index="'/rule/ruleGroup'">
+            {{ $t("rule.rule_group") }}
           </el-menu-item>
 
           <el-menu-item :index="'/rule/rule'">
             {{ $t("rule.cloud_rule") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/rule/serverRule'">
-            {{ $t("server.server_rule") }}
+          <el-menu-item :index="'/rule/regulation'">
+            {{ $t("resource.regulation") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/rule/k8sRule'">
-            {{ $t("k8s.k8s_rule") }}
+          <el-menu-item :index="'/rule/ruletag'">
+            {{ $t("rule.rule_tag") }}
           </el-menu-item>
 
         </el-menu>

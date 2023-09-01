@@ -3,33 +3,23 @@
     <el-row type="flex">
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
-          <el-menu-item :index="path">
+
+          <el-menu-item :index="'/resource/clouddashboard'">
+            {{ $t("account.overview") }}
+          </el-menu-item>
+
+          <el-menu-item :index="'/resource/result'">
             {{ $t("resource.cloud_resource_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/ServerResult'">
-            {{ $t("server.server_result") }}
+          <el-menu-item :index="'/resource/accountOverview'">
+            {{ $t("account.statistical_analysis") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/K8sResult'">
-            {{ $t("k8s.result") }}
+          <el-menu-item :index="'/resource/cloudHistory'">
+            {{ $t("account.history") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/ConfigResult'">
-            {{ $t("config.config_result") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/resource/ImageResult'">
-            {{ $t("image.image_result") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/resource/CodeResult'">
-            {{ $t("code.code_result") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/resource/FsResult'">
-            {{ $t("fs.fs_result") }}
-          </el-menu-item>
         </el-menu>
       </el-col>
     </el-row>

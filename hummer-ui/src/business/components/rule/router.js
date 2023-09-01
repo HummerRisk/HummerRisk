@@ -33,14 +33,19 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Rule'),
     },
     {
+      path: "rule",
+      name: "cloudRule",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),
+    },
+    {
       path: "ruletag",
       name: "ruletag",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleTag"),
     },
     {
       path: "ruleGroup",
-      name: "ruleGroup",
-      component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleGroup"),
+      name: "CloudRuleGroup",
+      component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/RuleGroup"),
     },
     {
       path: "regulation",

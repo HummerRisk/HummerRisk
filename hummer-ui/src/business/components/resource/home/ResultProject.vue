@@ -542,7 +542,7 @@ const columnOptions2 = [
       },
       handleDetail(item) {
         this.$router.push({
-          path: '/account/resultdetails/' + item.id,
+          path: '/resource/resultdetails/' + item.id,
         }).catch(error => error);
       },
       filterMethod(query, item) {
@@ -601,7 +601,7 @@ const columnOptions2 = [
       },
       goResult(projectId) {
         this.$router.push({
-          path: '/account/resultdetails/' + projectId,
+          path: '/resource/resultdetails/' + projectId,
         }).catch(error => error);
       },
     },
