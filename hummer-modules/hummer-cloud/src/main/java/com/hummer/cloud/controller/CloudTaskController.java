@@ -16,9 +16,9 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
@@ -44,6 +44,18 @@ public class CloudTaskController {
     @GetMapping("sync/resource")
     public String syncResourceTasks() throws Exception{
         resourceCreateService.syncResourceTasksJobHandler();
+        return "success";
+    }
+
+    @GetMapping("sync/ossTasks")
+    public String ossTasksJobHandler() throws Exception{
+        resourceCreateService.ossTasksJobHandler();
+        return "success";
+    }
+
+    @GetMapping("sync/cloudTasks")
+    public String cloudTasksJobHandler() throws Exception{
+        resourceCreateService.cloudTasksJobHandler();
         return "success";
     }
 
