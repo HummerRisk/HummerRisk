@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `cloud_project` (
     `return_sum`                 bigint              DEFAULT 0 COMMENT '检测结果风险资源数',
     `job_type`                   varchar(50)         DEFAULT 'once' COMMENT '任务类型：once/cron',
     `xxl_job_id`                 int                 DEFAULT 0 COMMENT '定时任务ID',
+    `scan_score`                 int                 DEFAULT 0 COMMENT '安全评分',
     PRIMARY KEY (`id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin;
 
@@ -156,3 +157,13 @@ INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('66674b46-c6f1-46e
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('28bb88eb-0ee9-47f1-abce-04c6f07cd83a', 'cost');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('4d19238e-06a6-42f3-b362-5c2578ac5fa9', 'cost');
 INSERT INTO `rule_tag_mapping` (`rule_id`, `tag_key`) VALUES ('afacf811-76ef-49ff-8a3f-4eeede968103', 'cost');
+
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('5c26605b-2aed-48d1-b308-44164d304c7b', '7c08c80f-007a-4796-a5e7-0562867a5a1b', 'aliyun.slb');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('793f18f0-827b-4ca9-9964-26e14fac4cfb', 'c921303f-23aa-4999-8897-472b7711223e', 'aliyun.rds');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('1dd76a26-ace7-465c-b8d4-68e31a8b6298', '373f8917-8cbb-4b3e-b448-60ac0928efcc', 'aliyun.rds');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('92a72baa-132d-4241-aaed-5e7c12335781', 'de764892-0dd4-4cf3-ad2a-7f818f5df549', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('f7f1c868-e897-4c27-bb57-edaf9be3fc68', 'abad943d-2928-418a-8704-0793e6aff03b', 'aliyun.disk');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('aeba93b4-e102-4630-80f2-52bbc7d9be90', '66674b46-c6f1-46e0-9333-e72db63938bc', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('b7909ab9-7193-4b1a-9cfc-b5e64a273373', '28bb88eb-0ee9-47f1-abce-04c6f07cd83a', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('9aff6170-c6d1-41cc-9972-200e05199574', '4d19238e-06a6-42f3-b362-5c2578ac5fa9', 'aliyun.ecs');
+INSERT INTO `rule_type` (`id`, `rule_id`, `resource_type`) VALUES ('d5e0a62a-df08-4e47-adc2-55eac60d54a4', 'afacf811-76ef-49ff-8a3f-4eeede968103', 'aliyun.ecs');
