@@ -487,10 +487,10 @@ public class OrderService {
         return cloudProjectMapper.updateByExampleSelective(cloudProject, example);
     }
 
-    public void updateGroupStatus(String groupId, CloudTaskConstants.TASK_STATUS status) {
+    public void updateGroupStatus(String groupId, String status) {
         CloudGroup cloudGroup = new CloudGroup();
         cloudGroup.setId(groupId);
-        cloudGroup.setStatus(status.name());
+        cloudGroup.setStatus(status);
         cloudGroup.setResourcesSum(extCloudTaskMapper.getResourceSumByGroup(groupId));
         cloudGroup.setReturnSum(extCloudTaskMapper.getReturnSumByGroup(groupId));
         cloudGroupMapper.updateByPrimaryKeySelective(cloudGroup);
