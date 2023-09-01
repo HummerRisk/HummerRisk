@@ -224,9 +224,9 @@ public class HistoryService {
             long critical = historyCloudTaskMapper.countByExample(example);
             criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
             long high = historyCloudTaskMapper.countByExample(example);
-            criteria.andSeverityEqualTo("MediumRisk");
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("MediumRisk");
             long mediuml = historyCloudTaskMapper.countByExample(example);
-            criteria.andSeverityEqualTo("LowRisk");
+            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("LowRisk");
             long low = historyCloudTaskMapper.countByExample(example);
 
             long sum = 4 * critical + 3 * high + 2 * mediuml + 1 * low;
