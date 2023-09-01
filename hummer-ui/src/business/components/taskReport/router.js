@@ -1,8 +1,7 @@
 /* eslint-disable */
 export default {
-  name: "TaskReport",
-  path: "/taskReport",
-  redirect: "/taskReport/report",
+  path: "/task-report",
+  redirect: "/task-report/report",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/taskReport/base')
   },

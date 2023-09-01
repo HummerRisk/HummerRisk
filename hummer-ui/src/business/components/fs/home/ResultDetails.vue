@@ -236,7 +236,7 @@ const columnOptions = [
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/FsResult',
+            path: '/resource/fs-result',
           }).catch(error => error);
         }
       },

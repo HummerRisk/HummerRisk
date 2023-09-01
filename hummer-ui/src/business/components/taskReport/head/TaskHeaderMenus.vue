@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/taskReport/report'">
+          <el-menu-item :index="'/task-report/report'">
             {{ $t("task.task_report") }}
           </el-menu-item>
 

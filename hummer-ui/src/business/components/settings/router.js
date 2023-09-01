@@ -2,7 +2,6 @@
 /* eslint-disable */
 export default {
   path: "/setting",
-  name: "Setting",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/Setting")
   },
@@ -13,12 +12,12 @@ export default {
       meta: {system: true, title: "system.user"}
     },
     {
-      path: "systemparametersetting",
+      path: "system-parameter-setting",
       component: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/system/SystemParameterSetting"),
       meta: {system: true, title: "commons.system_parameter_setting"}
     },
     {
-      path: "messagesetting",
+      path: "message-setting",
       component: () => import("@/business/components/settings/system/MessageSetting"),
       meta: {system: true, title: "system_parameter_setting.message.setting"}
     },
@@ -48,12 +47,12 @@ export default {
       meta: {system: true, title: "commons.about_us"}
     },
     {
-      path: "personsetting",
+      path: "person-setting",
       component: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/personal/PersonSetting"),
       meta: {person: true, title: "commons.personal_setting"}
     },
     {
-      path: "apikeys",
+      path: "api-keys",
       component: () => import(/* webpackChunkName: "setting" */ "@/business/components/settings/personal/ApiKeys"),
       meta: {
         person: true,

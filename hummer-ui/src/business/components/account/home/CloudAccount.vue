@@ -634,7 +634,7 @@ const columnOptions = [
       //调参云账号对应的规则
       handleScan(params) {
         this.$router.push({
-          path: '/account/accountscan/' + params.id,
+          path: '/account/account-scan/' + params.id,
         }).catch(error => error);
       },
       //查询插件
@@ -870,7 +870,7 @@ const columnOptions = [
       },
       handleScaningLog(account) {
         this.$router.push({
-          name: 'accountScaningLog',
+          name: 'account-scaning-log',
           params: account,
         }).catch(error => error);
       },

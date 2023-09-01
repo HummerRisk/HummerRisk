@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "task",
   path: "/task",
   redirect: "/task/list",
   components: {

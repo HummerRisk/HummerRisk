@@ -360,12 +360,12 @@ export default {
       }
       let path = this.$route.path;
       if (path.indexOf("/config") >= 0) {
-        let p = '/config/resultdetails/' + params.id;
+        let p = '/config/result-details/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);
       } else if (path.indexOf("/resource") >= 0) {
-        let p = '/resource/ConfigResultdetails/' + params.id;
+        let p = '/resource/config-result-details/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);

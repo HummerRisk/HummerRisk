@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Server",
   path: "/server",
   redirect: "/server/server",
   components: {
@@ -18,28 +17,28 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Certificate'),
     },
     {
-      path: "ruleGroup",
-      name: "ServerRuleGroup",
+      path: "rule-group",
+      name: "serverRuleGroup",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/RuleGroup'),
     },
     {
       path: "rule",
-      name: "ServerRule",
+      name: "serverRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),
     },
     {
       path: "result",
-      name: "ServerResult",
+      name: "serverResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Result'),
     },
     {
       path: "overview",
-      name: "ServerOverview",
+      name: "serverOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/server/home/Overview"),
     },
     {
       path: "history",
-      name: "ServerHistory",
+      name: "serverHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/server/home/History"),
     },
   ]

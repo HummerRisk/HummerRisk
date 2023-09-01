@@ -122,15 +122,13 @@ export default {
   },
   methods: {
     goCloud() {
-      let p = '/account/cloudaccount';
       this.$router.push({
-        path: p
+        name: 'cloudAccount'
       }).catch(error => error);
     },
     goK8s() {
-      let p = '/k8s/k8s';
       this.$router.push({
-        path: p
+        name: 'k8s'
       }).catch(error => error);
     },
   },

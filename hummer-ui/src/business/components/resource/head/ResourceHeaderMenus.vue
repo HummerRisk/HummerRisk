@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/resource/clouddashboard'">
+          <el-menu-item :index="'/resource/cloud-dashboard'">
             {{ $t("account.overview") }}
           </el-menu-item>
 
@@ -12,11 +12,11 @@
             {{ $t("resource.cloud_resource_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/accountOverview'">
+          <el-menu-item :index="'/resource/account-Overview'">
             {{ $t("account.statistical_analysis") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/cloudHistory'">
+          <el-menu-item :index="'/resource/cloud-history'">
             {{ $t("account.history") }}
           </el-menu-item>
 
@@ -37,31 +37,13 @@ export default {
   },
   data() {
     return {
-      path: '/resource/result',
       isRouterAlive: true,
       currentAccount: '',
     }
   },
   methods: {
-    reload() {
-      this.isRouterAlive = false;
-      this.$nextTick(function () {
-        this.isRouterAlive = true;
-      });
-    },
     init() {
-      let path = this.$route.path;
-      if (path.indexOf("/resource/result") >= 0 || path.indexOf("/resource/ResultDetails") >= 0) {
-        this.path = path;
-        this.reload();
-      }
     },
-    registerEvents() {
-      ResourceEvent.$on(LIST_CHANGE, () => {
-        this.$refs.planRecent.recent();
-        this.$refs.caseRecent.recent();
-      });
-    }
   },
   watch: {
     '$route'(to) {
@@ -70,10 +52,8 @@ export default {
   },
   mounted() {
     this.init();
-    this.registerEvents();
   },
   beforeDestroy() {
-    ResourceEvent.$off(LIST_CHANGE);
   }
 }
 

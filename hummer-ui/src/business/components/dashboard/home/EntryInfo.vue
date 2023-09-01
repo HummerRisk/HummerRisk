@@ -69,7 +69,7 @@ export default {
       switch (type) {
         case 'cloud':
           this.$router.push({
-            path: '/account/cloudaccount'
+            name: 'cloudAccount'
           }).catch(error => error);
           break;
         case 'k8s':

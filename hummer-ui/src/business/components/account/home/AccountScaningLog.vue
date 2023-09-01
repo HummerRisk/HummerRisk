@@ -441,7 +441,7 @@ import {
       },
       back () {
         this.$router.push({
-          path: '/account/cloudaccount',
+          name: 'cloudAccount',
         }).catch(error => error);
       },
       goResult() {
@@ -451,7 +451,7 @@ import {
           this.$warning(this.$t('scaning.start_scan_ing'));
         } else if (this.cloudProject.resultStatus === 'FINISHED') {
           this.$router.push({
-            path: '/resource/resultdetails/' + this.projectId,
+            path: '/resource/result-details/' + this.projectId,
           }).catch(error => error);
         }
       },

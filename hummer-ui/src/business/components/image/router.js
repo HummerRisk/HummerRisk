@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Image",
   path: "/image",
   redirect: "/image/image",
   components: {
@@ -8,8 +7,8 @@ export default {
   },
   children: [
     {
-      path: "imageRepo",
-      name: "ImageRepo",
+      path: "image-repo",
+      name: "imageRepo",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/ImageRepo'),
     },
     {
@@ -19,27 +18,27 @@ export default {
     },
     {
       path: "rule",
-      name: "ImageRule",
+      name: "imageRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Rule'),
     },
     {
       path: "result",
-      name: "ImageResult",
+      name: "imageResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Result'),
     },
     {
-      path: "resultdetails/:id",
-      name: "ImageResultDetails",
+      path: "result-details/:id",
+      name: "imageResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/ResultDetails"),
     },
     {
       path: "overview",
-      name: "ImageOverview",
+      name: "imageOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/Overview"),
     },
     {
       path: "history",
-      name: "ImageHistory",
+      name: "imageHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/image/home/History"),
     },
   ]

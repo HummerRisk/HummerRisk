@@ -1162,7 +1162,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/k8s/resultdetails/' + params.resultId;
+      let p = '/k8s/result-details/' + params.resultId;
       this.$router.push({
         path: p
       }).catch(error => error);
@@ -1172,7 +1172,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/k8s/cloudResultDetails/' + params.id;
+      let p = '/k8s/cloud-result-details/' + params.id;
       this.$router.push({
         path: p
       }).catch(error => error);
@@ -1186,7 +1186,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/k8s/resultconfigdetails/' + params.resultId;
+      let p = '/k8s/result-config-details/' + params.resultId;
       this.$router.push({
         path: p
       }).catch(error => error);
@@ -1196,7 +1196,7 @@ export default {
         this.$warning(this.$t('resource.i18n_no_warn'));
         return;
       }
-      let p = '/k8s/resultkubenchdetails/' + params.resultId;
+      let p = '/k8s/result-kubench-details/' + params.resultId;
       this.$router.push({
         path: p
       }).catch(error => error);

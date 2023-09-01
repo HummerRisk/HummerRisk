@@ -1,7 +1,6 @@
 /* eslint-disable */
 export default {
   path: "/rule",
-  name: "Rule",
   redirect: "/rule/rule",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ "@/business/components/rule/base")
@@ -13,24 +12,14 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),
     },
     {
-      path: "serverRule",
+      path: "server-rule",
       name: "serverRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/server/home/Rule'),
     },
     {
-      path: "k8sRule",
+      path: "k8s-rule",
       name: "k8sRuleToRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/k8s/home/Rule'),
-    },
-    {
-      path: "imageRule",
-      name: "imageRuleToRule",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/image/home/Rule'),
-    },
-    {
-      path: "codeRule",
-      name: "codeRuleToRule",
-      component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Rule'),
     },
     {
       path: "rule",
@@ -38,13 +27,13 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/Rule"),
     },
     {
-      path: "ruletag",
+      path: "rule-tag",
       name: "ruletag",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/rule/home/RuleTag"),
     },
     {
-      path: "ruleGroup",
-      name: "CloudRuleGroup",
+      path: "rule-group",
+      name: "cloudRuleGroup",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/account/home/RuleGroup"),
     },
     {

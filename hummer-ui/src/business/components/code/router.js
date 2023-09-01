@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Code",
   path: "/code",
   redirect: "/code/code",
   components: {
@@ -9,7 +8,7 @@ export default {
   children: [
     {
       path: "overview",
-      name: "CodeOverview",
+      name: "codeOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/Overview"),
     },
     {
@@ -19,22 +18,22 @@ export default {
     },
     {
       path: "rule",
-      name: "CodeRule",
+      name: "codeRule",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/code/home/Rule'),
     },
     {
       path: "result",
-      name: "CodeResult",
+      name: "codeResult",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/Result"),
     },
     {
-      path: "resultdetails/:id",
-      name: "CodeResultDetails",
+      path: "result-details/:id",
+      name: "codeResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/ResultDetails"),
     },
     {
       path: "history",
-      name: "CodeHistory",
+      name: "codeHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/code/home/History"),
     },
   ]

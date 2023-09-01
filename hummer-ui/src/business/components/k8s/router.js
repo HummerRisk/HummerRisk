@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "K8s",
   path: "/k8s",
   redirect: "/k8s/k8s",
   components: {
@@ -14,47 +13,47 @@ export default {
     },
     {
       path: "result",
-      name: "K8sResult",
+      name: "k8sResult",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Result"),
     },
     {
-      path: "resultdetails/:id",
-      name: "K8sResultDetails",
+      path: "result-details/:id",
+      name: "k8sResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultDetails"),
     },
     {
-      path: "resultconfigdetails/:id",
-      name: "K8sResultConfigDetails",
+      path: "result-config-details/:id",
+      name: "k8sResultConfigDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultConfigDetails"),
     },
     {
-      path: "resultkubenchdetails/:id",
-      name: "K8sResultKubenchDetails",
+      path: "result-kubench-details/:id",
+      name: "k8sResultKubenchDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/ResultKubenchDetails"),
     },
     {
-      path: "cloudResultDetails/:id",
-      name: "K8sCloudResultDetails",
+      path: "cloud-result-details/:id",
+      name: "k8sCloudResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/CloudResultDetails"),
     },
     {
       path: "overview",
-      name: "K8sOverview",
+      name: "k8sOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Overview"),
     },
     {
       path: "history",
-      name: "K8sHistory",
+      name: "k8sHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/History"),
     },
     {
-      path: "ruleGroup",
-      name: "K8sRuleGroup",
+      path: "rule-group",
+      name: "k8sRuleGroup",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/RuleGroup"),
     },
     {
       path: "rule",
-      name: "K8sRule",
+      name: "k8sRule",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8s/home/Rule"),
     },
   ]

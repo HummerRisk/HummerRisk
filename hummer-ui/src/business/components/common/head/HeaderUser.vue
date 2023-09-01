@@ -35,7 +35,7 @@ import {signoutUrl} from "@/api/auth/auth";
       handleCommand(command) {
         switch (command) {
           case "personal":
-            this.$router.push('/setting/personsetting').catch(error => error);
+            this.$router.push('/setting/person-setting').catch(error => error);
             break;
           case "logout":
             axios.get(signoutUrl).then(response => {

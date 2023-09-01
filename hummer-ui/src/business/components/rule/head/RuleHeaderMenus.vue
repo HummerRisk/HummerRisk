@@ -4,7 +4,7 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/rule/ruleGroup'">
+          <el-menu-item :index="'/rule/rule-group'">
             {{ $t("rule.rule_group") }}
           </el-menu-item>
 
@@ -16,7 +16,7 @@
             {{ $t("resource.regulation") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/rule/ruletag'">
+          <el-menu-item :index="'/rule/rule-tag'">
             {{ $t("rule.rule_tag") }}
           </el-menu-item>
 

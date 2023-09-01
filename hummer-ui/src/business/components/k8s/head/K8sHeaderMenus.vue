@@ -12,7 +12,7 @@
             {{ $t("commons.k8s_scan") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/k8s/ruleGroup'">
+          <el-menu-item :index="'/k8s/rule-group'">
             {{ $t("k8s.rule_group") }}
           </el-menu-item>
 

@@ -413,7 +413,7 @@ export default {
           path: p
         }).catch(error => error);
       } else if (path.indexOf("/resource") >= 0) {
-        let p = '/resource/ImageResultdetails/' + params.id;
+        let p = '/resource/image-result-details/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);

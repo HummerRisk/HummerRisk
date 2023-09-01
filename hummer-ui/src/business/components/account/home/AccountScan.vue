@@ -247,7 +247,7 @@ import {
                     localStorage.setItem(ACCOUNT_ID, this.accountId);
                     localStorage.setItem(ACCOUNT_NAME, this.accountName);
                     this.$router.push({
-                      path: '/resource/result',
+                      name: 'cloudResult',
                     }).catch(error => error);
                   }
                 }
@@ -341,7 +341,7 @@ import {
       },
       back () {
         this.$router.push({
-          path: '/account/cloudaccount',
+          name: 'cloudAccount',
         }).catch(error => error);
       },
       selectOnChangeAll (checkAll, item) {

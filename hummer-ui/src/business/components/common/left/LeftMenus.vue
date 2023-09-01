@@ -23,7 +23,7 @@
             <i class="iconfont icon-gongyouyunzengzhifuwushenqingliucheng-06"></i>
             <span slot="title">{{ $t('commons.cloud_manage') }}</span>
           </el-menu-item>
-          <el-menu-item index="/cloudSituation" onselectstart="return false">
+          <el-menu-item index="/cloud-situation" onselectstart="return false">
             <i class="iconfont icon-taishifenxi_0"></i>
             <span slot="title">{{ $t('commons.resource_situation') }}</span>
           </el-menu-item>

@@ -1002,7 +1002,7 @@ const columnOptions3 = [
       },
       goResource (params) {
         this.$router.push({
-          path: '/account/resultdetails/' + params.id
+          path: '/account/result-details/' + params.id
         }).catch(error => error);
       },
       tagLists() {

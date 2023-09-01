@@ -90,7 +90,7 @@ export default {
       },
       goDashboard() {
         this.$router.push({
-          path: '/dashboard/dashboard',
+          name: 'dashboard',
         }).catch(error => error);
       },
     }

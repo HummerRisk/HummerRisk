@@ -8,7 +8,7 @@
             {{ $t("image.overview") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/image/imageRepo'">
+          <el-menu-item :index="'/image/image-repo'">
             {{ $t("image.image_repo") }}
           </el-menu-item>
 

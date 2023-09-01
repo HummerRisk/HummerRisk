@@ -374,12 +374,12 @@ export default {
       }
       let path = this.$route.path;
       if (path.indexOf("/code") >= 0) {
-        let p = '/code/resultdetails/' + params.id;
+        let p = '/code/result-details/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);
       } else if (path.indexOf("/resource") >= 0) {
-        let p = '/resource/CodeResultdetails/' + params.id;
+        let p = '/resource/code-result-details/' + params.id;
         this.$router.push({
           path: p
         }).catch(error => error);

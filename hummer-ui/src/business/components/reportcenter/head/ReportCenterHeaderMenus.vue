@@ -4,11 +4,11 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/reportcenter/cloudReport'">
+          <el-menu-item :index="'/report-center/cloud-report'">
             {{ $t("resource.cloud_resource_statistics") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/reportcenter/list'">
+          <el-menu-item :index="'/report-center/list'">
             {{ $t("reportcenter.overall_report_download") }}
           </el-menu-item>
 
