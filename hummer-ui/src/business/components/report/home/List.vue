@@ -864,7 +864,7 @@ const columnOptions3 = [
       },
       select2(selection) {
       },
-      projectSwitch (projectId, accountName) {
+      projectSwitch (projectId, accountName, createTime) {
         this.projectId = projectId;
         this.currentAccount = accountName;
         this.search();
@@ -1002,7 +1002,7 @@ const columnOptions3 = [
       },
       goResource (params) {
         this.$router.push({
-          path: '/resource/resultdetails/' + params.id
+          path: '/account/resultdetails/' + params.id
         }).catch(error => error);
       },
       tagLists() {

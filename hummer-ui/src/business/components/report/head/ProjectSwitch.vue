@@ -50,7 +50,7 @@ export default {
     projectSwitch(projectId, accountName, createTime) {
       this.currentAccount = accountName;
       this.createTime = createTime;
-      this.$emit("projectSwitch", projectId, createTime);
+      this.$emit("projectSwitch", projectId, accountName, createTime);
     },
     openDownload() {
       this.$emit('openDownload');
