@@ -263,6 +263,7 @@ export default {
     log: '日志',
     into_detail: '进入详情',
     sum: '共',
+    finish: '结束',
   },
   workspace: {
     create: '创建工作空间',
