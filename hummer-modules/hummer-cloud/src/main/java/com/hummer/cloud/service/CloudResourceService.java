@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CloudResourceService {
@@ -44,8 +45,8 @@ public class CloudResourceService {
         return extCloudResourceItemMapper.selectResourceRule(hummerId);
     }
 
-    public List<CloudTask> getCloudTaskByHummerId(String hummerId, String regionId){
-        return extCloudTaskMapper.selectByHummerId(hummerId,regionId);
+    public List<CloudTask> getCloudTaskByHummerId(Map<String, Object> params){
+        return extCloudTaskMapper.selectByHummerId(params);
     }
 
     public int countResourceTask(String accountId,String regionId,String resourceType){
