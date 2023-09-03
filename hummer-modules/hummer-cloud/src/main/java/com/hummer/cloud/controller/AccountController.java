@@ -46,7 +46,7 @@ public class AccountController {
 
     @I18n
     @Operation(summary = "所有云账号")
-    @GetMapping("allList")
+    @GetMapping("all/list")
     public List<AccountDTO> getCloudAccountList() {
         CloudAccountRequest request = new CloudAccountRequest();
         request.setStatus(CloudAccountConstants.Status.VALID.name());
@@ -54,21 +54,21 @@ public class AccountController {
     }
 
     @I18n
-    @Operation(summary = "规则组获取云账号")
-    @GetMapping("listByGroup/{pluginId}")
-    public List<Account> listByGroup(@PathVariable String pluginId) {
-        return accountService.listByGroup(pluginId);
+    @Operation(summary = "云插件获取云账号")
+    @GetMapping("list/by/plugin/{pluginId}")
+    public List<Account> listByPlugin(@PathVariable String pluginId) {
+        return accountService.listByPlugin(pluginId);
     }
 
     @I18n
     @Operation(summary = "云账号详情")
-    @GetMapping("getAccount/{id}")
+    @GetMapping("get/account/{id}")
     public AccountWithBLOBs getAccount(@PathVariable String id) {
         return accountService.getAccount(id);
     }
 
     @Hidden
-    @GetMapping(value = "syncAll")
+    @GetMapping(value = "sync/all")
     public boolean syncAllCloudAccount() {
         try {
             accountService.syncRegions();
@@ -118,14 +118,14 @@ public class AccountController {
 
     @I18n
     @Operation(summary = "获取云账号区域")
-    @GetMapping("getRegions/{id}")
+    @GetMapping("get/regions/{id}")
     public Object getRegions(@PathVariable String id) {
         return accountService.getRegions(id);
     }
 
     @I18n
     @Hidden
-    @PostMapping("string2PrettyFormat")
+    @PostMapping("string/2/pretty/format")
     public String string2PrettyFormat(@RequestBody AccountWithBLOBs accountWithBLOBs) {
         return accountService.string2PrettyFormat(accountWithBLOBs.getRegions());
     }
@@ -205,7 +205,7 @@ public class AccountController {
 
     @I18n
     @Operation(summary = "历史数据")
-    @PostMapping("historyList/{goPage}/{pageSize}")
+    @PostMapping("history/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> historyList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, accountService.historyList(params));
@@ -213,7 +213,7 @@ public class AccountController {
 
     @I18n
     @Operation(summary = "对比历史数据")
-    @PostMapping("historyDiffList/{goPage}/{pageSize}")
+    @PostMapping("history/diff/list/{goPage}/{pageSize}")
     public Pager<List<Map<String, Object>>> historyDiffList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Map<String, Object> params) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, accountService.historyDiffList(params));

@@ -48,14 +48,14 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "云检测资源")
-    @GetMapping("sourceByProjectId/{projectId}")
+    @GetMapping("source/by/projectid/{projectId}")
     public SourceDTO sourceByProjectId(@PathVariable String projectId) {
         return resourceService.sourceByProjectId(projectId);
     }
 
     @I18n
     @Operation(summary = "云原生资源")
-    @GetMapping("k8sSource/{accountId}")
+    @GetMapping("k8s/source/{accountId}")
     public SourceDTO k8sSource(@PathVariable String accountId) {
         return resourceService.k8sSource(accountId);
     }
@@ -70,7 +70,7 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "合规报告列表")
-    @PostMapping("reportList/{goPage}/{pageSize}")
+    @PostMapping("report/list/{goPage}/{pageSize}")
     public Pager<List<ReportDTO>> reportList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.reportList(request));
@@ -78,7 +78,7 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "合规报告列表")
-    @PostMapping("reportByProjectList/{goPage}/{pageSize}")
+    @PostMapping("report/by/project/list/{goPage}/{pageSize}")
     public Pager<List<ReportDTO>> reportByProjectList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.reportByProjectList(request));
@@ -138,7 +138,7 @@ public class ResourceController {
     }
 
     @Operation(summary = "导出规则组检测报告")
-    @PostMapping("groupExport")
+    @PostMapping("group/export")
     public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
         byte[] bytes = resourceService.exportGroupReport(request, tokenService.getLoginUser());
         HttpHeaders headers = new HttpHeaders();
@@ -151,7 +151,7 @@ public class ResourceController {
     }
 
     @Hidden
-    @PostMapping("string2PrettyFormat")
+    @PostMapping("string/2/pretty/format")
     public String string2PrettyFormat(@RequestBody JsonRequest jsonRequest) {
         try {
             return resourceService.toJSONString(jsonRequest.getJson());
@@ -175,7 +175,7 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "风险安全策略信息")
-    @GetMapping("reportIsoList/{projectId}/{groupId}")
+    @GetMapping("report/iso/list/{projectId}/{groupId}")
     public Map<String, String> reportIsoList(@PathVariable String projectId, @PathVariable String groupId) {
         return resourceService.reportIsoList(projectId, groupId);
     }
@@ -189,35 +189,35 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "资源日志")
-    @PostMapping("resourceLog")
+    @PostMapping("resource/log")
     public ResourceWithBLOBs resource(@RequestBody CloudTaskItem cloudTaskItem) {
         return resourceService.resource(cloudTaskItem);
     }
 
     @I18n
     @Operation(summary = "区域统计")
-    @PostMapping("regionData")
+    @PostMapping("region/data")
     public List<Map<String, Object>> regionData(@RequestBody Map<String, Object> map) {
         return resourceService.regionData(map);
     }
 
     @I18n
     @Operation(summary = "风险统计")
-    @PostMapping("severityData")
+    @PostMapping("severity/data")
     public List<Map<String, Object>> severityData(@RequestBody Map<String, Object> map) {
         return resourceService.severityData(map);
     }
 
     @I18n
     @Operation(summary = "资源类型统计")
-    @PostMapping("resourceTypeData")
+    @PostMapping("resource/type/data")
     public List<Map<String, Object>> resourceTypeData(@RequestBody Map<String, Object> map) {
         return resourceService.resourceTypeData(map);
     }
 
     @I18n
     @Operation(summary = "规则统计")
-    @PostMapping("ruleData")
+    @PostMapping("rule/data")
     public List<Map<String, Object>> ruleData(@RequestBody Map<String, Object> map) {
         return resourceService.ruleData(map);
     }
@@ -231,7 +231,7 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "合规报告规则组列表")
-    @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/group/list/{goPage}/{pageSize}")
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.ruleGroupList(request));
@@ -239,7 +239,7 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "合规报告规则组列表")
-    @PostMapping(value = "ruleGroupByProjectList/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/group/by/project/list/{goPage}/{pageSize}")
     public Pager<List<RuleGroupDTO>> ruleGroupByProjectList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.ruleGroupByProjectList(request));
@@ -247,7 +247,7 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "合规报告资源列表")
-    @PostMapping(value = "resourceList/{goPage}/{pageSize}")
+    @PostMapping(value = "resource/list/{goPage}/{pageSize}")
     public Pager<List<ResourceDTO>> resourceList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ResourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, resourceService.resourceList(request));
@@ -255,14 +255,14 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "云资源检测规则组结果")
-    @PostMapping("resouceGroups")
+    @PostMapping("resouce/groups")
     public List<Map<String, Object>> resouceGroups(@RequestBody Map<String, Object> params) {
         return resourceService.resouceGroups(params);
     }
 
     @I18n
     @Operation(summary = "云资源项目检测规则组结果")
-    @PostMapping("resouceGroupsByProjectId")
+    @PostMapping("resouce/groups/by/project")
     public List<Map<String, Object>> resouceGroupsByProjectId(@RequestBody Map<String, Object> params) {
         return resourceService.resouceGroupsByProjectId(params);
     }

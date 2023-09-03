@@ -41,20 +41,20 @@ public class SbomController {
 
     @I18n
     @Operation(summary = "添加SBOM项目")
-    @PostMapping(value = "addSbom")
+    @PostMapping(value = "add/sbom")
     public Sbom addSbom(@RequestBody Sbom request) throws Exception {
         return sbomService.addSbom(request, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "修改SBOM项目")
-    @PostMapping(value = "updateSbom")
+    @PostMapping(value = "update/sbom")
     public Sbom updateSbom(@RequestBody Sbom request) throws Exception {
         return sbomService.updateSbom(request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除SBOM项目")
-    @GetMapping("deleteSbom/{id}")
+    @GetMapping("delete/sbom/{id}")
     public void deleteSbom(@PathVariable String id) throws Exception {
         sbomService.deleteSbom(id, tokenService.getLoginUser());
     }
@@ -67,7 +67,7 @@ public class SbomController {
 
     @I18n
     @Operation(summary = "SBOM项目版本列表")
-    @PostMapping("sbomVersionList/{goPage}/{pageSize}")
+    @PostMapping("sbom/version/list/{goPage}/{pageSize}")
     public Pager<List<SbomVersion>> sbomVersionList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody SbomVersionRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -76,27 +76,27 @@ public class SbomController {
 
     @I18n
     @Operation(summary = "添加SBOM项目版本")
-    @PostMapping(value = "addSbomVersion")
+    @PostMapping(value = "add/sbom/version")
     public SbomVersion addSbomVersion(@RequestBody SbomVersion request) throws Exception {
         return sbomService.addSbomVersion(request, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "修改SBOM项目版本")
-    @PostMapping(value = "updateSbomVersion")
+    @PostMapping(value = "update/sbom/version")
     public SbomVersion updateSbomVersion(@RequestBody SbomVersion request) throws Exception {
         return sbomService.updateSbomVersion(request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除SBOM项目版本")
-    @GetMapping("deleteSbomVersion/{id}")
+    @GetMapping("delete/sbom/version/{id}")
     public void deleteSbomVersion(@PathVariable String id) throws Exception {
         sbomService.deleteSbomVersion(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "项目版本检测配置")
-    @PostMapping(value = "settingVersion")
+    @PostMapping(value = "setting/version")
     public void settingVersion(@RequestBody SettingVersionRequest request) throws Exception {
         sbomService.settingVersion(request);
     }
@@ -110,98 +110,98 @@ public class SbomController {
 
     @I18n
     @Operation(summary = "所有已绑定项目的源码的检测结果")
-    @GetMapping("codeResult/{sbomVersionId}")
+    @GetMapping("code/result/{sbomVersionId}")
     public List<CodeResultDTO> codeResult(@PathVariable String sbomVersionId) {
         return sbomService.codeResult(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "所有已绑定项目的镜像的检测结果")
-    @GetMapping("imageResult/{sbomVersionId}")
+    @GetMapping("image/result/{sbomVersionId}")
     public List<ImageResultDTO> imageResult(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.imageResult(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "所有已绑定项目的文件系统的检测结果")
-    @GetMapping("fsResult/{sbomVersionId}")
+    @GetMapping("fs/result/{sbomVersionId}")
     public List<FsResultDTO> fsResult(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.fsResult(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "所有已绑定项目的源码的历史检测结果")
-    @GetMapping("historyCodeResult/{sbomVersionId}")
+    @GetMapping("history/code/result/{sbomVersionId}")
     public List<HistoryCodeResult> historyCodeResult(@PathVariable String sbomVersionId) {
         return sbomService.historyCodeResult(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "所有已绑定项目的镜像的历史检测结果")
-    @GetMapping("historyImageResult/{sbomVersionId}")
+    @GetMapping("history/image/result/{sbomVersionId}")
     public List<HistoryImageResultDTO> historyImageResult(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.historyImageResult(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "所有已绑定项目的文件系统的历史检测结果")
-    @GetMapping("historyFsResult/{sbomVersionId}")
+    @GetMapping("history/fs/result/{sbomVersionId}")
     public List<HistoryFsResultDTO> historyFsResult(@PathVariable String sbomVersionId) throws Exception {
         return sbomService.historyFsResult(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "源码检测历史日志")
-    @GetMapping(value = "codeLog/{resultId}")
+    @GetMapping(value = "code/log/{resultId}")
     public List<CodeResultLogWithBLOBs> getCodeResultLog(@PathVariable String resultId) {
         return sbomService.getCodeResultLog(resultId);
     }
 
     @I18n
     @Operation(summary = "源码检测结果详情")
-    @GetMapping(value = "getCodeResult/{resultId}")
+    @GetMapping(value = "get/code/result/{resultId}")
     public HistoryCodeResult getCodeResult(@PathVariable String resultId) {
         return sbomService.getCodeResult(resultId);
     }
 
     @I18n
     @Operation(summary = "镜像检测历史日志")
-    @GetMapping(value = "imageLog/{resultId}")
+    @GetMapping(value = "image/log/{resultId}")
     public List<ImageResultLogWithBLOBs> getImageResultLog(@PathVariable String resultId) {
         return sbomService.getImageResultLog(resultId);
     }
 
     @I18n
     @Operation(summary = "源码风险数据信息")
-    @GetMapping("codeMetricChart/{resultId}")
+    @GetMapping("code/metric/chart/{resultId}")
     public MetricChartDTO codeMetricChart(@PathVariable String resultId) {
         return sbomService.codeMetricChart(resultId);
     }
 
     @I18n
     @Operation(summary = "镜像风险数据信息")
-    @GetMapping("imageMetricChart/{resultId}")
+    @GetMapping("image/metric/chart/{resultId}")
     public MetricChartDTO imageMetricChart(@PathVariable String resultId) {
         return sbomService.imageMetricChart(resultId);
     }
 
     @I18n
     @Operation(summary = "文件系统风险数据信息")
-    @GetMapping("fsMetricChart/{resultId}")
+    @GetMapping("fs/metric/chart/{resultId}")
     public MetricChartDTO fsMetricChart(@PathVariable String resultId) {
         return sbomService.fsMetricChart(resultId);
     }
 
     @I18n
     @Operation(summary = "所有SBOM项目")
-    @PostMapping("allSbomList")
+    @PostMapping("all/sbom/list")
     public List<SbomDTO> allSbomList(@RequestBody SbomRequest request) {
         return sbomService.sbomList(request);
     }
 
     @I18n
     @Operation(summary = "所有SBOM项目版本")
-    @PostMapping("allSbomVersionList")
+    @PostMapping("all/sbom/version/list")
     public List<SbomVersion> allSbomVersionList(@RequestBody SbomVersionRequest request) {
         return sbomService.sbomVersionList(request);
     }
@@ -213,7 +213,7 @@ public class SbomController {
     }
 
     @Operation(summary = "批量删除项目")
-    @PostMapping("deleteProjects")
+    @PostMapping("delete/projects")
     public void deleteProjects(@RequestBody List<String> selectIds) throws Exception {
         sbomService.deleteProjects(selectIds, tokenService.getLoginUser());
     }

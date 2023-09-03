@@ -46,14 +46,14 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "所有云原生账号")
-    @GetMapping("allCloudNativeList")
+    @GetMapping("all/cloudnative/list")
     public List<CloudNativeDTO> allCloudNativeList() {
         return k8sService.allCloudNativeList(new CloudNativeRequest());
     }
 
     @I18n
     @Operation(summary = "云原生账号详情")
-    @GetMapping("getCloudNative/{id}")
+    @GetMapping("get/cloudnative/{id}")
     public CloudNative getCloudNative(@PathVariable String id) {
         return k8sService.getCloudNative(id);
     }
@@ -71,13 +71,13 @@ public class K8sController {
     }
 
     @Operation(summary = "校验云原生Operator状态")
-    @PostMapping("operatorStatusValidate/{id}")
+    @PostMapping("operator/status/validate/{id}")
     public ValidateDTO operatorStatusValidate(@PathVariable String id) throws Exception {
         return k8sService.operatorStatusValidate(id);
     }
 
     @Operation(summary = "校验云原生Kubench状态")
-    @PostMapping("kubenchStatusValidate/{id}")
+    @PostMapping("kubench/status/validate/{id}")
     public ValidateDTO kubenchStatusValidate(@PathVariable String id) throws Exception {
         return k8sService.kubenchStatusValidate(id);
     }
@@ -104,7 +104,7 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "资源态势列表")
-    @PostMapping("cloudNativeSourceList/{goPage}/{pageSize}")
+    @PostMapping("cloudnative/source/list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeSourceDTO>> getCloudNativeSourceList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSourceRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -133,21 +133,21 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "云原生检测结果列表")
-    @PostMapping(value = "resultList/{goPage}/{pageSize}")
+    @PostMapping(value = "result/list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultList(request));
     }
 
     @Operation(summary = "删除镜像检测记录")
-    @GetMapping("deleteCloudNativeResult/{id}")
+    @GetMapping("delete/cloudnative/result/{id}")
     public void deleteCloudNativeResult(@PathVariable String id) throws Exception {
         k8sService.deleteCloudNativeResult(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "镜像列表")
-    @PostMapping("imageList/{goPage}/{pageSize}")
+    @PostMapping("image/list/{goPage}/{pageSize}")
     public Pager<List<ImageDTO>> imageList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ImageRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -156,7 +156,7 @@ public class K8sController {
 
     @I18n
     @Hidden
-    @PostMapping("resultItemList/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultItemList(request));
@@ -164,7 +164,7 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "云原生漏洞检测结果详情列表")
-    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/by/search/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultItem>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultItemListBySearch(request));
@@ -172,7 +172,7 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "云原生配置审计结果详情列表")
-    @PostMapping("resultConfigItemList/{goPage}/{pageSize}")
+    @PostMapping("result/config/item/list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultConfigItemWithBLOBs>> resultConfigItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultConfigItemList(request));
@@ -180,7 +180,7 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "云原生配置审计结果详情列表")
-    @PostMapping("resultConfigItemListBySearch/{goPage}/{pageSize}")
+    @PostMapping("result/config/item/list/by/search/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultConfigItemWithBLOBs>> resultConfigItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sConfigResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultConfigItemListBySearch(request));
@@ -188,7 +188,7 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "云原生Cis结果详情列表")
-    @PostMapping("resultKubenchItemListBySearch/{goPage}/{pageSize}")
+    @PostMapping("result/kubench/item/list/by/search/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultKubenchWithBLOBs>> resultKubenchItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody K8sKubenchResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.resultKubenchItemListBySearch(request));
@@ -196,28 +196,28 @@ public class K8sController {
 
     @I18n
     @Hidden
-    @GetMapping(value = "getCloudNativeResult/{resultId}")
+    @GetMapping(value = "get/cloudnative/result/{resultId}")
     public CloudNativeResultDTO getCloudNativeResult(@PathVariable String resultId) {
         return k8sService.getCloudNativeResult(resultId);
     }
 
     @I18n
     @Operation(summary = "云原生检测结果详情")
-    @GetMapping(value = "getCloudNativeResultWithBLOBs/{resultId}")
+    @GetMapping(value = "get/cloudnative/result/withblobs/{resultId}")
     public CloudNativeResultWithBLOBs getCloudNativeResultWithBLOBs(@PathVariable String resultId) {
         return k8sService.getCloudNativeResultWithBLOBs(resultId);
     }
 
     @I18n
     @Hidden
-    @GetMapping(value = "getCloudNativeResultWithBLOBs/topo/{accountId}")
+    @GetMapping(value = "get/cloudnative/result/withblobs/topo/{accountId}")
     public CloudNativeResultWithBLOBs topoResult(@PathVariable String accountId) {
         return k8sService.topoResult(accountId);
     }
 
     @I18n
     @Operation(summary = "云原生安装日志")
-    @PostMapping(value = "installLog/{goPage}/{pageSize}")
+    @PostMapping(value = "install/log/{goPage}/{pageSize}")
     public Pager<List<CloudNativeResultLogWithBLOBs>> getCloudNativeResultLog(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.getCloudNativeResultLog(request.getId()));
@@ -239,21 +239,21 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "所有带有 YAML 的云原生资源信息")
-    @GetMapping("allCloudNativeSource2YamlList")
+    @GetMapping("all/cloudnative/source/2/yaml/list")
     public List<CloudNativeSourceVo> allCloudNativeSource2YamlList() {
         return k8sService.allCloudNativeSource2YamlList();
     }
 
     @I18n
     @Operation(summary = "云原生资源信息")
-    @GetMapping("cloudNativeSource2Yaml/{id}")
+    @GetMapping("cloudnative/source/2/yaml/{id}")
     public CloudNativeSourceWithBLOBs cloudNativeSource2Yaml(@PathVariable String id) {
         return k8sService.cloudNativeSource2Yaml(id);
     }
 
     @I18n
     @Operation(summary = "资源态势同步日志列表")
-    @PostMapping("syncList/{goPage}/{pageSize}")
+    @PostMapping("sync/list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeSourceSyncLogWithBLOBsDTO>> syncList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudNativeSyncLogRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, k8sService.syncList(request));
@@ -261,34 +261,34 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "同步资源态势资源")
-    @GetMapping("syncSource/{id}")
+    @GetMapping("sync/source/{id}")
     public void syncSource(@PathVariable String id) throws Exception {
         k8sService.syncSource(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除资源态势同步日志")
-    @GetMapping("deleteSyncLog/{id}")
+    @GetMapping("delete/sync/log/{id}")
     public void deleteSyncLog(@PathVariable String id) throws Exception {
         k8sService.deleteSyncLog(id);
     }
 
     @I18n
     @Operation(summary = "漏洞风险数据信息")
-    @GetMapping("metricChart/{resultId}")
+    @GetMapping("metric/chart/{resultId}")
     public MetricChartDTO metricChart(@PathVariable String resultId) {
         return k8sService.metricChart(resultId);
     }
 
     @I18n
     @Operation(summary = "配置审计风险数据信息")
-    @GetMapping("metricConfigChart/{resultId}")
+    @GetMapping("metric/config/chart/{resultId}")
     public MetricChartDTO metricConfigChart(@PathVariable String resultId) {
         return k8sService.metricConfigChart(resultId);
     }
 
     @I18n
     @Operation(summary = "Kubench 风险数据信息")
-    @GetMapping("kubenchChart/{resultId}")
+    @GetMapping("kubench/chart/{resultId}")
     public KubenchChartDTO kubenchChart(@PathVariable String resultId) {
         return k8sService.kubenchChart(resultId);
     }
@@ -301,129 +301,129 @@ public class K8sController {
 
     @I18n
     @Operation(summary = "概览TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return k8sService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "K8s 统计")
-    @GetMapping("k8sChart")
+    @GetMapping("k8s/chart")
     public List<Map<String, Object>> k8sChart() {
         return k8sService.k8sChart();
     }
 
     @I18n
     @Operation(summary = "风险统计")
-    @GetMapping("severityChart")
+    @GetMapping("severity/chart")
     public List<Map<String, Object>> severityChart() {
         return k8sService.severityChart();
     }
 
     @I18n
     @Operation(summary = "所有K8s")
-    @GetMapping("allList")
+    @GetMapping("all/list")
     public List<CloudNative> allList() {
         return k8sService.allList();
     }
 
     @I18n
     @Operation(summary = "漏洞检测结果历史详情")
-    @PostMapping("historyResultItemList")
+    @PostMapping("history/result/item/list")
     public List<CloudNativeResultItem> historyResultItemList(@RequestBody CloudNativeResultItem request) {
         return k8sService.historyResultItemList(request);
     }
 
     @I18n
     @Operation(summary = "配置审计结果历史详情")
-    @PostMapping("historyResultConfigItemList")
+    @PostMapping("history/result/config/item/list")
     public List<CloudNativeResultConfigItemWithBLOBs> historyResultConfigItemList(@RequestBody CloudNativeResultConfigItem request) {
         return k8sService.historyResultConfigItemList(request);
     }
 
     @I18n
     @Operation(summary = "Kubench 结果历史详情")
-    @PostMapping("historyResultKubenchList")
+    @PostMapping("history/result/kubench/list")
     public List<CloudNativeResultKubenchWithBLOBs> historyResultKubenchList(@RequestBody CloudNativeResultKubenchWithBLOBs request) {
         return k8sService.historyResultKubenchList(request);
     }
 
     @I18n
     @Operation(summary = "详情资源态势拓扑图")
-    @GetMapping(value = "k8sTopology")
+    @GetMapping(value = "k8s/topology")
     public K8sTopology k8sTopology() {
         return k8sService.k8sTopology();
     }
 
     @I18n
     @Operation(summary = "节点资源态势拓扑图")
-    @GetMapping(value = "nodeTopology")
+    @GetMapping(value = "node/topology")
     public NodeTopology nodeTopology() {
         return k8sService.nodeTopology();
     }
 
     @I18n
     @Operation(summary = "命名空间资源态势拓扑图")
-    @GetMapping(value = "namespaceTopology")
+    @GetMapping(value = "namespace/topology")
     public NameSpaceTopology namespaceTopology() {
         return k8sService.namespaceTopology();
     }
 
     @I18n
     @Operation(summary = "资源态势资源对应的镜像")
-    @GetMapping("sourceImages/{sourceId}")
+    @GetMapping("source/images/{sourceId}")
     public List<CloudNativeSourceImageDTO> sourceImages(@PathVariable String sourceId) throws Exception {
         return k8sService.sourceImages(sourceId);
     }
 
     @I18n
     @Operation(summary = "K8s风险态势拓扑图")
-    @PostMapping(value = "riskTopology")
+    @PostMapping(value = "risk/topology")
     public RiskTopology riskTopology(@RequestBody RiskRequest request) {
         return k8sService.riskTopology(request);
     }
 
     @I18n
     @Operation(summary = "镜像拓扑图")
-    @PostMapping(value = "getImage")
+    @PostMapping(value = "get/image")
     public K8sImage getImage(@RequestBody RiskRequest request) {
         return k8sService.getImage(request);
     }
 
     @Operation(summary = "重新安装 Operator")
-    @PostMapping("reinstallOperator/{id}")
+    @PostMapping("reinstall/operator/{id}")
     public void reinstallOperator(@PathVariable String id) throws Exception {
         k8sService.reinstallOperator(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "重新安装 CIS Benchmark")
-    @PostMapping("reinstallKubench/{id}")
+    @PostMapping("reinstall/kubench/{id}")
     public void reinstallKubench(@PathVariable String id) throws Exception {
         k8sService.reinstallKubench(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "RBAC 资源态势")
-    @GetMapping("rbacChart/{k8sId}")
+    @GetMapping("rbac/chart/{k8sId}")
     public RbacDTO rbacChart(@PathVariable String k8sId) throws Exception {
         return k8sService.rbacChart(k8sId);
     }
 
     @I18n
     @Operation(summary = "规则组获取云原生账号")
-    @GetMapping("listByGroup/{pluginId}")
+    @GetMapping("list/by/group/{pluginId}")
     public List<CloudNative> listByGroup(@PathVariable String pluginId) {
         return k8sService.listByGroup(pluginId);
     }
 
     @Operation(summary = "批量删除K8s资源同步日志")
-    @PostMapping("deleteSyncLogs")
+    @PostMapping("delete/sync/logs")
     public void deleteSyncLogs(@RequestBody List<String> selectIds) throws Exception {
         k8sService.deleteSyncLogs(selectIds);
     }
 
     @Operation(summary = "批量删除K8s账号")
-    @PostMapping("deleteK8ss")
+    @PostMapping("delete/k8ss")
     public void deleteK8ss(@RequestBody List<String> selectIds) throws Exception {
         k8sService.deleteK8ss(selectIds, tokenService.getLoginUser());
     }

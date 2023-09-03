@@ -27,34 +27,34 @@ public class WebMsgController {
     private TokenService tokenService;
 
     @I18n
-    @Operation(summary = "分页查询")
-    @PostMapping("/list/{goPage}/{pageSize}")
+    @Operation(summary = "站内消息列表")
+    @PostMapping("list/{goPage}/{pageSize}")
     public Pager<List<WebMsg>> messages(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody WebMsgRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, webMsgService.queryGrid(request));
     }
 
     @Operation(summary = "查询未读数量")
-    @PostMapping("/unReadCount")
+    @PostMapping("unread/count")
     public Long unReadCount() {
         return webMsgService.queryCount();
     }
 
     @Operation(summary = "设置已读")
-    @GetMapping("/setReaded/{msgId}")
+    @GetMapping("set/readed/{msgId}")
     public void setReaded(@PathVariable Long msgId) {
         webMsgService.setReaded(msgId, tokenService.getLoginUser());
     }
 
 
     @Operation(summary = "批量设置已读")
-    @PostMapping("/batchRead")
+    @PostMapping("batch/read")
     public void batchRead(@RequestBody List<Long> msgIds) {
         webMsgService.setBatchReaded(msgIds, tokenService.getLoginUser());
     }
 
     @Operation(summary = "批量删除")
-    @PostMapping("/batchDelete")
+    @PostMapping("batch/delete")
     public void batchDelete(@RequestBody List<Long> msgIds) {
         webMsgService.batchDelete(msgIds);
     }

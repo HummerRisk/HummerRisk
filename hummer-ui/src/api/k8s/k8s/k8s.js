@@ -1,23 +1,23 @@
 
-export const allCloudNativeSource2YamlListUrl = "/k8s/k8s/allCloudNativeSource2YamlList";
+export const allCloudNativeSource2YamlListUrl = "/k8s/k8s/all/cloudnative/source/2/yaml/list";
 
-export const cloudNativeSource2YamlUrl = "/k8s/k8s/cloudNativeSource2Yaml/";
+export const cloudNativeSource2YamlUrl = "/k8s/k8s/cloudnative/source/2/yaml/";
 
-export const k8sChartUrl = "/k8s/k8s/k8sChart";
+export const k8sChartUrl = "/k8s/k8s/k8s/chart";
 
-export const k8sSeverityChartUrl = "/k8s/k8s/severityChart";
+export const k8sSeverityChartUrl = "/k8s/k8s/severity/chart";
 
 export const k8sValidatesUrl = "/k8s/k8s/validate";
 
 export const k8sValidateUrl = "/k8s/k8s/validate/";
 
-export const operatorStatusValidateUrl = "/k8s/k8s/operatorStatusValidate/";
+export const operatorStatusValidateUrl = "/k8s/k8s/operator/status/validate/";
 
-export const kubenchStatusValidateUrl = "/k8s/k8s/kubenchStatusValidate/";
+export const kubenchStatusValidateUrl = "/k8s/k8s/kubench/status/validate/";
 
-export const allK8sUrl = "/k8s/k8s/allList";
+export const allK8sUrl = "/k8s/k8s/all/list";
 
-export const allCloudNativeListUrl = "/k8s/k8s/allCloudNativeList";
+export const allCloudNativeListUrl = "/k8s/k8s/all/cloudnative/list";
 
 export const k8sListUrl = "/k8s/k8s/list/";
 
@@ -29,79 +29,79 @@ export const updateK8sUrl = "/k8s/k8s/update";
 
 export const scanK8sUrl = "/k8s/k8s/scan";
 
-export const reinstallOperatorUrl = "/k8s/k8s/reinstallOperator/";
+export const reinstallOperatorUrl = "/k8s/k8s/reinstall/operator/";
 
-export const reinstallKubenchUrl = "/k8s/k8s/reinstallKubench/";
+export const reinstallKubenchUrl = "/k8s/k8s/reinstall/kubench/";
 
-export const historyResultItemListUrl = "/k8s/k8s/historyResultItemList";
+export const historyResultItemListUrl = "/k8s/k8s/history/result/item/list";
 
-export const k8sMetricChartUrl = "/k8s/k8s/metricChart/";
+export const k8sMetricChartUrl = "/k8s/k8s/metric/chart/";
 
-export const historyResultConfigItemListUrl = "/k8s/k8s/historyResultConfigItemList";
+export const historyResultConfigItemListUrl = "/k8s/k8s/history/result/config/item/list";
 
-export const historyResultKubenchListUrl = "/k8s/k8s/historyResultKubenchList";
+export const historyResultKubenchListUrl = "/k8s/k8s/history/result/kubench/list";
 
 export const logK8sUrl = "/k8s/k8s/log/";
 
-export const k8sInstallLogUrl = "/k8s/k8s/installLog/";
+export const k8sInstallLogUrl = "/k8s/k8s/install/log/";
 
-export const getCloudNativeResultWithBLOBsUrl = "/k8s/k8s/getCloudNativeResultWithBLOBs/";
+export const getCloudNativeResultWithBLOBsUrl = "/k8s/k8s/get/cloudnative/result/withblobs/";
 
-export const getCloudNativeResultUrl = "/k8s/k8s/getCloudNativeResult/";
+export const getCloudNativeResultUrl = "/k8s/k8s/get/cloudnative/result/";
 
-export const k8sResultListUrl = "/k8s/k8s/resultList/";
+export const k8sResultListUrl = "/k8s/k8s/result/list/";
 
 export const k8sReScanUrl = "/k8s/k8s/reScan/";
 
-export const deleteCloudNativeResultUrl = "/k8s/k8s/deleteCloudNativeResult/";
+export const deleteCloudNativeResultUrl = "/k8s/k8s/delete/cloudnative/result/";
 
 export const k8sDownloadUrl = "/k8s/k8s/download";
 
-export const resultConfigItemListBySearchUrl = "/k8s/k8s/resultConfigItemListBySearch/";
+export const resultConfigItemListBySearchUrl = "/k8s/k8s/result/config/item/list/by/search/";
 
-export const metricConfigChartUrl = "/k8s/k8s/metricConfigChart/";
+export const metricConfigChartUrl = "/k8s/k8s/metric/config/chart/";
 
-export const resultItemListBySearchUrl = "/k8s/k8s/resultItemListBySearch/";
+export const resultItemListBySearchUrl = "/k8s/k8s/result/item/list/by/search/";
 
-export const resultKubenchItemListBySearchUrl = "/k8s/k8s/resultKubenchItemListBySearch/";
+export const resultKubenchItemListBySearchUrl = "/k8s/k8s/result/kubench/item/list/by/search/";
 
-export const kubenchChartUrl = "/k8s/k8s/kubenchChart/";
+export const kubenchChartUrl = "/k8s/k8s/kubench/chart/";
 
-export const k8sTopInfoUrl = "/k8s/k8s/topInfo";
+export const k8sTopInfoUrl = "/k8s/k8s/top/info";
 
-export const rbacChartUrl = "/k8s/k8s/rbacChart/";
+export const rbacChartUrl = "/k8s/k8s/rbac/chart/";
 
-export const syncK8sSourceUrl = "/k8s/k8s/syncSource/";
+export const syncK8sSourceUrl = "/k8s/k8s/sync/source/";
 
-export const syncK8sListUrl = "/k8s/k8s/syncList/";
+export const syncK8sListUrl = "/k8s/k8s/sync/list/";
 
-export const deleteK8sSyncLogUrl = "/k8s/k8s/deleteSyncLog/";
+export const deleteK8sSyncLogUrl = "/k8s/k8s/delete/sync/log/";
 
-export const nodeTopologyUrl = "/k8s/k8s/nodeTopology";
+export const nodeTopologyUrl = "/k8s/k8s/node/topology";
 
-export const namespaceTopologyUrl = "/k8s/k8s/namespaceTopology";
+export const namespaceTopologyUrl = "/k8s/k8s/namespace/topology";
 
-export const k8sTopologyUrl = "/k8s/k8s/k8sTopology";
+export const k8sTopologyUrl = "/k8s/k8s/k8s/topology";
 
-export const k8sRiskTopologyUrl = "/k8s/k8s/riskTopology";
+export const k8sRiskTopologyUrl = "/k8s/k8s/risk/topology";
 
-export const getK8sImageUrl = "/k8s/k8s/getImage";
+export const getK8sImageUrl = "/k8s/k8s/get/image";
 
 export const k8sLogTopoUrl = "/k8s/k8s/log/topo/";
 
-export const getCloudNativeResultWithBLOBsTopoUrl = "/k8s/k8s/getCloudNativeResultWithBLOBs/topo/";
+export const getCloudNativeResultWithBLOBsTopoUrl = "/k8s/k8s/get/cloudnative/result/withblobs/topo/";
 
 export const k8sSituationUrl = "/k8s/k8s/situation";
 
-export const cloudNativeSourceListUrl = "/k8s/k8s/cloudNativeSourceList/";
+export const cloudNativeSourceListUrl = "/k8s/k8s/cloudnative/source/list/";
 
-export const k8sSourceImagesUrl = "/k8s/k8s/sourceImages/";
+export const k8sSourceImagesUrl = "/k8s/k8s/source/images/";
 
-export const k8sListByGroupUrl = "/k8s/k8s/listByGroup/";
+export const k8sListByGroupUrl = "/k8s/k8s/list/by/group/";
 
-export const deleteK8sSyncLogsUrl = "/k8s/k8s/deleteSyncLogs";
+export const deleteK8sSyncLogsUrl = "/k8s/k8s/delete/sync/logs";
 
-export const deleteK8ssUrl = "/k8s/k8s/deleteK8ss";
+export const deleteK8ssUrl = "/k8s/k8s/delete/k8ss";
 
 export const namespacesUrl = "/k8s/k8s/namespaces";
 

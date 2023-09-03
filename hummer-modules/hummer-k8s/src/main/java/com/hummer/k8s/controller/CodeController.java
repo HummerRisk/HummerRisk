@@ -47,41 +47,41 @@ public class CodeController {
 
     @I18n
     @Operation(summary = "所有项目源码")
-    @GetMapping("allList")
+    @GetMapping("all/list")
     public List<Code> allList() {
         return codeService.allList();
     }
 
     @I18n
     @Operation(summary = "所有已绑定项目的源码")
-    @GetMapping("allBindList/{sbomVersionId}")
+    @GetMapping("all/bind/list/{sbomVersionId}")
     public List<Code> allBindList(@PathVariable String sbomVersionId) {
         return codeService.allBindList(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "所有未绑定项目的源码")
-    @GetMapping("unBindList")
+    @GetMapping("unbind/list")
     public List<Code> unBindList() {
         return codeService.unBindList();
     }
 
     @I18n
     @Operation(summary = "添加源码项目")
-    @PostMapping(value = "addCode")
+    @PostMapping(value = "add/code")
     public Code addCode(@RequestBody Code request) throws Exception {
         return codeService.addCode(request, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "修改源码项目")
-    @PostMapping(value = "updateCode")
+    @PostMapping(value = "update/code")
     public Code updateCode(@RequestBody Code request) throws Exception {
         return codeService.updateCode(request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除源码项目")
-    @GetMapping("deleteCode/{id}")
+    @GetMapping("delete/code/{id}")
     public void deleteCode(@PathVariable String id) throws Exception {
         codeService.deleteCode(id, tokenService.getLoginUser());
     }
@@ -100,32 +100,32 @@ public class CodeController {
 
     @I18n
     @Operation(summary = "源码检测规则列表")
-    @PostMapping(value = "ruleList/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/list/{goPage}/{pageSize}")
     public Pager<List<CodeRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeRuleRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.ruleList(request));
     }
 
     @Operation(summary = "添加源码检测规则")
-    @PostMapping(value = "addCodeRule")
+    @PostMapping(value = "add/code/rule")
     public int addCodeRule(@RequestBody CodeRuleRequest request) throws Exception {
         return codeService.addCodeRule(request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "修改源码检测规则")
-    @PostMapping(value = "updateCodeRule")
+    @PostMapping(value = "update/code/rule")
     public int updateCodeRule(@RequestBody CodeRuleRequest request) throws Exception {
         return codeService.updateCodeRule(request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除源码检测规则")
-    @GetMapping(value = "deleteCodeRule/{id}")
+    @GetMapping(value = "delete/code/rule/{id}")
     public void deleteCodeRule(@PathVariable String id) throws Exception  {
         codeService.deleteCodeRule(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "源码检测规则启用")
-    @PostMapping(value = "changeStatus")
+    @PostMapping(value = "change/status")
     public int changeStatus(@RequestBody CodeRule rule) throws Exception {
         return codeService.changeStatus(rule);
     }
@@ -137,14 +137,14 @@ public class CodeController {
     }
 
     @Operation(summary = "重新检测源码规则")
-    @GetMapping("reScan/{id}")
+    @GetMapping("rescan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
         codeService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "源码检测结果列表")
-    @PostMapping(value = "resultListWithBLOBs/{goPage}/{pageSize}")
+    @PostMapping(value = "result/list/withblobs/{goPage}/{pageSize}")
     public Pager<List<CodeResultDTO>> resultListWithBLOBs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.resultListWithBLOBs(request));
@@ -152,7 +152,7 @@ public class CodeController {
 
     @I18n
     @Hidden
-    @PostMapping(value = "resultList/{goPage}/{pageSize}")
+    @PostMapping(value = "result/list/{goPage}/{pageSize}")
     public Pager<List<CodeResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.resultList(request));
@@ -160,7 +160,7 @@ public class CodeController {
 
     @I18n
     @Operation(summary = "源码检测结果详情")
-    @GetMapping(value = "getCodeResult/{resultId}")
+    @GetMapping(value = "get/code/result/{resultId}")
     public CodeResultDTO getCodeResult(@PathVariable String resultId) {
         return codeService.getCodeResult(resultId);
     }
@@ -173,14 +173,14 @@ public class CodeController {
     }
 
     @Operation(summary = "删除源码检测记录")
-    @GetMapping("deleteCodeResult/{id}")
+    @GetMapping("delete/code/result/{id}")
     public void deleteCodeResult(@PathVariable String id) throws Exception {
         codeService.deleteCodeResult(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Hidden
-    @PostMapping("resultItemList/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/{goPage}/{pageSize}")
     public Pager<List<CodeResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.resultItemList(request));
@@ -188,7 +188,7 @@ public class CodeController {
 
     @I18n
     @Operation(summary = "检测结果详情")
-    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/by/search/{goPage}/{pageSize}")
     public Pager<List<CodeResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CodeResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, codeService.resultItemListBySearch(request));
@@ -202,21 +202,21 @@ public class CodeController {
 
     @I18n
     @Operation(summary = "源码概览TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return codeService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "源码项目统计")
-    @GetMapping("projectChart")
+    @GetMapping("project/chart")
     public List<Map<String, Object>> projectChart() {
         return codeService.projectChart();
     }
 
     @I18n
     @Operation(summary = "源码风险统计")
-    @GetMapping("severityChart")
+    @GetMapping("severity/chart")
     public List<Map<String, Object>> severityChart() {
         return codeService.severityChart();
     }
@@ -229,13 +229,13 @@ public class CodeController {
 
     @I18n
     @Operation(summary = "检测结果历史详情")
-    @PostMapping("historyResultItemList")
+    @PostMapping("history/result/item/list")
     public List<CodeResultItemWithBLOBs> historyResultItemList(@RequestBody CodeResultItem request) {
         return codeService.historyResultItemList(request);
     }
 
     @Operation(summary = "批量删除源码")
-    @PostMapping("deleteCodes")
+    @PostMapping("delete/codes")
     public void deleteCodes(@RequestBody List<String> selectIds) throws Exception {
         codeService.deleteCodes(selectIds, tokenService.getLoginUser());
     }

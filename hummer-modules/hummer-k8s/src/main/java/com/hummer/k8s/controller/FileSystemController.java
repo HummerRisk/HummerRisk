@@ -48,28 +48,28 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "所有文件系统")
-    @GetMapping("allList")
+    @GetMapping("all/list")
     public List<FileSystem> allList() {
         return fileSystemService.allList();
     }
 
     @I18n
     @Operation(summary = "所有已绑定文件系统")
-    @GetMapping("allBindList/{sbomVersionId}")
+    @GetMapping("all/bind/list/{sbomVersionId}")
     public List<FileSystem> allBindList(@PathVariable String sbomVersionId) {
         return fileSystemService.allBindList(sbomVersionId);
     }
 
     @I18n
     @Operation(summary = "所有未绑定文件系统")
-    @GetMapping("unBindList")
+    @GetMapping("unbind/list")
     public List<FileSystem> unBindList() {
         return fileSystemService.unBindList();
     }
 
     @I18n
     @Operation(summary = "添加文件系统")
-    @PostMapping(value = "addFs", consumes = {"multipart/form-data"})
+    @PostMapping(value = "add/fs", consumes = {"multipart/form/data"})
     public FileSystem addFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
                             @RequestPart("request") FileSystem request) throws Exception {
         return fileSystemService.addFs(multipartFile, request, tokenService.getLoginUser());
@@ -77,14 +77,14 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "修改文件系统")
-    @PostMapping(value = "updateFs", consumes = {"multipart/form-data"})
+    @PostMapping(value = "update/fs", consumes = {"multipart/form/data"})
     public FileSystem updateFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
                                @RequestPart("request") FileSystem request) throws Exception {
         return fileSystemService.updateFs(multipartFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除文件系统")
-    @GetMapping("deleteFs/{id}")
+    @GetMapping("delete/fs/{id}")
     public void deleteFs(@PathVariable String id) throws Exception {
         fileSystemService.deleteFs(id, tokenService.getLoginUser());
     }
@@ -110,25 +110,25 @@ public class FileSystemController {
     }
 
     @Operation(summary = "添加文件系统检测规则")
-    @PostMapping(value = "addFsRule")
+    @PostMapping(value = "add/fs/rule")
     public int addFsRule(@RequestBody FsRuleRequest request) throws Exception {
         return fileSystemService.addFsRule(request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "修改文件系统检测规则")
-    @PostMapping(value = "updateFsRule")
+    @PostMapping(value = "update/fs/rule")
     public int updateFsRule(@RequestBody FsRuleRequest request) throws Exception {
         return fileSystemService.updateFsRule(request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除文件系统检测规则")
-    @GetMapping(value = "deleteFsRule/{id}")
+    @GetMapping(value = "delete/fs/rule/{id}")
     public void deleteFsRule(@PathVariable String id) throws Exception  {
         fileSystemService.deleteFsRule(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "文件系统检测规则启用")
-    @PostMapping(value = "changeStatus")
+    @PostMapping(value = "change/status")
     public int changeStatus(@RequestBody FileSystemRule rule) throws Exception {
         return fileSystemService.changeStatus(rule);
     }
@@ -140,14 +140,14 @@ public class FileSystemController {
     }
 
     @Operation(summary = "重新检测文件系统规则")
-    @GetMapping("reScan/{id}")
+    @GetMapping("rescan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
         fileSystemService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "文件系统检测结果列表")
-    @PostMapping(value = "resultList/{goPage}/{pageSize}")
+    @PostMapping(value = "result/list/{goPage}/{pageSize}")
     public Pager<List<FsResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FsResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, fileSystemService.resultList(request));
@@ -155,7 +155,7 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "文件系统检测结果详情")
-    @GetMapping(value = "getFsResult/{resultId}")
+    @GetMapping(value = "get/fs/result/{resultId}")
     public FsResultDTO getFsResult(@PathVariable String resultId) {
         return fileSystemService.getFsResult(resultId);
     }
@@ -168,14 +168,14 @@ public class FileSystemController {
     }
 
     @Operation(summary = "删除文件系统检测记录")
-    @GetMapping("deleteFsResult/{id}")
+    @GetMapping("delete/fs/result/{id}")
     public void deleteFsResult(@PathVariable String id) throws Exception {
         fileSystemService.deleteFsResult(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Hidden
-    @PostMapping("resultItemList/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/{goPage}/{pageSize}")
     public Pager<List<FileSystemResultItemWithBLOBs>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FileSystemResultItem request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, fileSystemService.resultItemList(request));
@@ -183,7 +183,7 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "检测结果详情")
-    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/by/search/{goPage}/{pageSize}")
     public Pager<List<FileSystemResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody FsResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, fileSystemService.resultItemListBySearch(request));
@@ -191,21 +191,21 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "文件系统概览TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return fileSystemService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "文件系统项目统计")
-    @GetMapping("projectChart")
+    @GetMapping("project/chart")
     public List<Map<String, Object>> projectChart() {
         return fileSystemService.projectChart();
     }
 
     @I18n
     @Operation(summary = "文件系统风险统计")
-    @GetMapping("severityChart")
+    @GetMapping("severity/chart")
     public List<Map<String, Object>> severityChart() {
         return fileSystemService.severityChart();
     }
@@ -218,13 +218,13 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "检测结果历史详情")
-    @PostMapping("historyResultItemList")
+    @PostMapping("history/result/item/list")
     public List<FileSystemResultItemWithBLOBs> historyResultItemList(@RequestBody FileSystemResultItem request) {
         return fileSystemService.historyResultItemList(request);
     }
 
     @Operation(summary = "批量删除文件系统")
-    @PostMapping("deleteFss")
+    @PostMapping("delete/fss")
     public void deleteFss(@RequestBody List<String> selectIds) throws Exception {
         fileSystemService.deleteFss(selectIds, tokenService.getLoginUser());
     }

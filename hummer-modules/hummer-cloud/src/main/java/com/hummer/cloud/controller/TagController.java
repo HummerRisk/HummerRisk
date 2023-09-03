@@ -50,7 +50,7 @@ public class TagController {
     }
 
     @Operation(summary = "批量删除规则标签")
-    @PostMapping("deleteRuleTags")
+    @PostMapping("delete/rule/tags")
     public void deleteRuleTags(@RequestBody List<String> selectIds) throws Exception {
         ruleService.deleteRuleTags(selectIds, tokenService.getLoginUser());
     }
