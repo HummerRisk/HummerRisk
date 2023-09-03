@@ -11,13 +11,13 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.ApiKeyHandler;
 import com.hummer.system.service.UserKeyService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.Base64;
 import java.util.List;
@@ -74,12 +74,12 @@ public class UserKeysController {
     }
 
     @Operation(summary = "批量删除API Keys")
-    @PostMapping("deleteApiKeys")
+    @PostMapping("delete/apiKeys")
     public void deleteApiKeys(@RequestBody List<String> selectIds) throws Exception {
         userKeyService.deleteApiKeys(selectIds);
     }
 
-    @PostMapping("createToken")
+    @PostMapping("create/token")
     public String createApiToken(@RequestBody UserKey userKey) throws Exception {
         String str = userKey.getAccessKey() + "|" + System.currentTimeMillis();
         String signature = CodingUtil.aesEncrypt(str, userKey.getSecretKey(), userKey.getAccessKey());

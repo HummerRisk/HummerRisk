@@ -14,8 +14,8 @@ import com.hummer.common.core.dto.CloudEventSourceIpInsightDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,41 +91,41 @@ public class CloudEventController {
     }
     @I18n
     @Operation(summary = "操作审计概览TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return cloudEventService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "云账号统计")
-    @GetMapping("cloudChart")
+    @GetMapping("cloud/chart")
     public List<Map<String, Object>> cloudChart() {
         return cloudEventService.cloudChart();
     }
 
     @I18n
     @Operation(summary = "区域统计")
-    @GetMapping("regionChart")
+    @GetMapping("region/chart")
     public List<Map<String, Object>> regionChart() {
         return cloudEventService.regionChart();
     }
 
     @I18n
     @Operation(summary = "风险统计")
-    @GetMapping("severityChart")
+    @GetMapping("severity/chart")
     public List<Map<String, Object>> severityChart() {
         return cloudEventService.severityChart();
     }
 
     @I18n
     @Operation(summary = "IP 访问统计")
-    @GetMapping("ipAccessChart/{ip}/{startDate}/{endDate}")
+    @GetMapping("ip/access/chart/{ip}/{startDate}/{endDate}")
     public ChartDTO ipAccessChart(@PathVariable String ip,@PathVariable String startDate,@PathVariable String endDate){
         return cloudEventService.ipAccessChart(ip,startDate,endDate);
     }
 
     @Operation(summary = "批量删除云事件同步日志")
-    @PostMapping("deleteLogs")
+    @PostMapping("delete/logs")
     public void deleteLogs(@RequestBody List<Integer> selectIds) throws Exception {
         cloudEventService.deleteLogs(selectIds);
     }

@@ -1,11 +1,11 @@
 
-export const cloudEventSeverityChartUrl = "/cloud/event/severityChart";
+export const cloudEventSeverityChartUrl = "/cloud/event/severity/Chart";
 
-export const cloudEventIpAccessChartUrl = "/cloud/event/ipAccessChart/";
+export const cloudEventIpAccessChartUrl = "/cloud/event/ip/access/chart/";
 
-export const cloudEventCloudChartUrl = "/cloud/event/cloudChart";
+export const cloudEventCloudChartUrl = "/cloud/event/cloud/chart";
 
-export const cloudEventRegionChartUrl = "/cloud/event/regionChart";
+export const cloudEventRegionChartUrl = "/cloud/event/region/chart";
 
 export const cloudEventDeleteUrl = "/cloud/event/delete/";
 
@@ -21,8 +21,8 @@ export const cloudEventSyncUrl = "/cloud/event/sync";
 
 export const cloudEventSyncLogDeleteUrl = "/cloud/event/sync/log/delete/";
 
-export const cloudEventTopInfoUrl = "/cloud/event/topInfo";
+export const cloudEventTopInfoUrl = "/cloud/event/top/info";
 
 export const cloudEventSyncLogListUrl = "/cloud/event/sync/log/list/";
 
-export const cloudEventDeleteLogsUrl = "/cloud/event/deleteLogs";
+export const cloudEventDeleteLogsUrl = "/cloud/event/delete/logs";

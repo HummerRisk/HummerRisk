@@ -5,8 +5,8 @@ import com.hummer.common.core.domain.RuleTag;
 import com.hummer.common.core.dto.RuleTagDTO;
 import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.security.service.TokenService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +50,7 @@ public class TagController {
     }
 
     @Operation(summary = "批量删除规则标签")
-    @PostMapping("deleteRuleTags")
+    @PostMapping("delete/rule/tags")
     public void deleteRuleTags(@RequestBody List<String> selectIds) throws Exception {
         ruleService.deleteRuleTags(selectIds, tokenService.getLoginUser());
     }

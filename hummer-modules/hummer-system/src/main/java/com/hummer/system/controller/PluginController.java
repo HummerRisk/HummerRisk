@@ -8,8 +8,8 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.system.service.PluginService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,24 +30,10 @@ public class PluginController {
     }
 
     @I18n
-    @Operation(summary = "所有云原生插件")
-    @GetMapping("native")
-    public List<Plugin> getNativePlugin() {
-        return pluginService.getNativePlugin();
-    }
-
-    @I18n
     @Operation(summary = "云检测引擎类型过滤插件")
     @GetMapping("scan/{scanType}")
     public List<Plugin> getPlugins(@PathVariable String scanType) {
         return pluginService.getAllPlugin(scanType);
-    }
-
-    @I18n
-    @Operation(summary = "K8s检测引擎类型过滤插件")
-    @GetMapping("k8sScan")
-    public List<Plugin> getK8sPlugin() {
-        return pluginService.getNativePlugin();
     }
 
     @Operation(summary = "插件详情")

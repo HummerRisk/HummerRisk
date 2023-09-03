@@ -23,20 +23,20 @@ public class LicenseController {
 
     @I18n
     @Operation(summary = "获取license")
-    @GetMapping(value = "getLicense")
+    @GetMapping(value = "get/license")
     public HummerLicenseWithBLOBs getLicense() {
         return licenseService.getLicense();
     }
 
     @I18n
     @Operation(summary = "上传校验license")
-    @PostMapping(value = "updateLicense", consumes = {"multipart/form-data"})
+    @PostMapping(value = "update/license", consumes = {"multipart/form/data"})
     public void validateLicense(@RequestPart(value = "licenseFile", required = false) MultipartFile licenseFile) throws Exception {
         licenseService.validateLicense(licenseFile, tokenService.getLoginUser());
     }
 
     @Operation(summary = "是否存在有效license")
-    @GetMapping(value = "isLicense")
+    @GetMapping(value = "is/license")
     public boolean isLicense() {
         return licenseService.license();
     }

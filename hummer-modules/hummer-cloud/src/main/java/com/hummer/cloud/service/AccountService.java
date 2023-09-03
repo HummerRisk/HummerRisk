@@ -73,7 +73,7 @@ public class AccountService {
         return extAccountMapper.getCloudAccountList(request);
     }
 
-    public List<Account> listByGroup(String pluginId) {
+    public List<Account> listByPlugin(String pluginId) {
         AccountExample example = new AccountExample();
         example.createCriteria().andPluginIdEqualTo(pluginId).andStatusEqualTo("VALID");
         return accountMapper.selectByExample(example);

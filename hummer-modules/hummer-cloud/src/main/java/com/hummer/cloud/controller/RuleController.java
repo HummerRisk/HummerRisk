@@ -13,11 +13,11 @@ import com.hummer.common.core.handler.annotation.I18n;
 import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class RuleController {
 
     @I18n
     @Operation(summary = "云原生规则列表")
-    @PostMapping(value = "k8sList/{goPage}/{pageSize}")
+    @PostMapping(value = "k8s/list/{goPage}/{pageSize}")
     public Pager<List<RuleDTO>> k8sList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CreateRuleRequest rule) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ruleService.k8sList(rule));
@@ -51,14 +51,14 @@ public class RuleController {
 
     @I18n
     @Hidden
-    @GetMapping(value = "listByAccountId/{accountId}")
+    @GetMapping(value = "list/by/account/{accountId}")
     public List<Rule> listByAccountId(@PathVariable String accountId) {
         return ruleService.getRulesByAccountId(accountId);
     }
 
     @I18n
     @Operation(summary = "规则标签列表")
-    @PostMapping(value = "ruleTag/list/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/tag/list/{goPage}/{pageSize}")
     public Pager<List<RuleTag>> ruleTagList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleTagRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ruleService.ruleTagList(request));
@@ -66,7 +66,7 @@ public class RuleController {
 
     @I18n
     @Operation(summary = "规则组列表")
-    @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/group/list/{goPage}/{pageSize}")
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ruleService.ruleGroupList(request));
@@ -74,21 +74,21 @@ public class RuleController {
 
     @I18n
     @Operation(summary = "所有规则组")
-    @GetMapping(value = "allRuleGroups")
+    @GetMapping(value = "all/rule/groups")
     public List<RuleGroupDTO> allRuleGroups() {
         return ruleService.ruleGroupList(new RuleGroupRequest());
     }
 
     @I18n
     @Operation(summary = "所有云检测规则组")
-    @GetMapping(value = "allCloudRuleGroups")
+    @GetMapping(value = "all/cloud/rule/groups")
     public List<RuleGroupDTO> allCloudRuleGroups() {
         return ruleService.allCloudRuleGroups(new RuleGroupRequest());
     }
 
     @I18n
     @Operation(summary = "规则标签")
-    @GetMapping(value = "ruleTags")
+    @GetMapping(value = "rule/tags")
     public List<RuleTagDTO> getRuleTags() throws Exception {
         return ruleService.getRuleTags();
     }
@@ -123,7 +123,7 @@ public class RuleController {
     }
 
     @Operation(summary = "测试运行规则")
-    @PostMapping(value = "dryRun")
+    @PostMapping(value = "dry/run")
     public boolean dryRun(@RequestBody RuleDTO ruleDTO) throws Exception {
         return ruleService.dryRun(ruleDTO);
     }
@@ -135,7 +135,7 @@ public class RuleController {
     }
 
     @Operation(summary = "批量删除规则")
-    @PostMapping("deleteRules")
+    @PostMapping("delete/rules")
     public void deleteRules(@RequestBody List<String> selectIds) throws Exception {
         ruleService.deleteRules(selectIds, tokenService.getLoginUser());
     }
@@ -149,39 +149,39 @@ public class RuleController {
 
     @I18n
     @Hidden
-    @GetMapping(value = "getRuleByTaskId/{taskId}")
+    @GetMapping(value = "get/rule/by/taskid/{taskId}")
     public RuleDTO getRuleByTaskId(@PathVariable String taskId) throws Exception {
         return ruleService.getRuleByTaskId(taskId);
     }
 
     @Operation(summary = "规则重复")
-    @PostMapping(value = "getRuleByName")
+    @PostMapping(value = "get/rule/by/name")
     public boolean getRuleByName(@RequestBody CreateRuleRequest request) {
         return ruleService.getRuleByName(request);
     }
 
     @Operation(summary = "规则类型")
-    @GetMapping(value = "all/resourceTypes")
+    @GetMapping(value = "all/resource/types")
     public List<Map<String, String>> getAllResourceTypes() {
         return ruleService.getAllResourceTypes();
     }
 
     @Operation(summary = "云检测规则类型")
-    @GetMapping(value = "all/cloudResourceTypes")
+    @GetMapping(value = "all/cloud/resource/types")
     public List<Map<String, String>> cloudResourceTypes() {
         return ruleService.cloudResourceTypes();
     }
 
     @I18n
     @Operation(summary = "规则组")
-    @GetMapping(value = "ruleGroups/{pluginId}")
+    @GetMapping(value = "rule/groups/{pluginId}")
     public List<RuleGroup> getRuleGroups(@PathVariable String pluginId) {
         return ruleService.getRuleGroups(pluginId);
     }
 
     @I18n
     @Operation(summary = "风险安全策略")
-    @PostMapping(value = "ruleInspectionReports/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/inspection/reports/{goPage}/{pageSize}")
     public Pager<List<RuleInspectionReport>> getRuleInspectionReports(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleInspectionReportRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ruleService.getRuleInspectionReportList(request));
@@ -189,37 +189,37 @@ public class RuleController {
 
     @I18n
     @Hidden
-    @GetMapping(value = "all/ruleInspectionReport")
+    @GetMapping(value = "all/rule/inspection/report")
     public List<RuleInspectionReport> getRuleInspectionReport() {
         return ruleService.getRuleInspectionReportList(new RuleInspectionReportRequest());
     }
 
     @Hidden
-    @GetMapping(value = "getResourceTypesById/{ruleId}")
+    @GetMapping(value = "get/resource/types/by/id/{ruleId}")
     public String getResourceTypesById(@PathVariable String ruleId) {
         return ruleService.getResourceTypesById(ruleId);
     }
 
     @Operation(summary = "规则启用")
-    @PostMapping(value = "changeStatus")
+    @PostMapping(value = "change/status")
     public int changeStatus(@RequestBody Rule rule) {
         return ruleService.changeStatus(rule);
     }
 
     @Operation(summary = "批量重新检测")
-    @GetMapping("reScans/{accountId}")
+    @GetMapping("rescans/{accountId}")
     public void reScans(@PathVariable String accountId) throws Exception {
         ruleService.reScans(accountId);
     }
 
     @Operation(summary = "批量重新检测")
-    @GetMapping("reScansK8s/{accountId}")
+    @GetMapping("rescans/k8s/{accountId}")
     public void reScansK8s(@PathVariable String accountId) throws Exception {
         ruleService.reScansK8s(accountId);
     }
 
     @Hidden
-    @GetMapping("reScan/{taskId}/{accountId}")
+    @GetMapping("rescan/{taskId}/{accountId}")
     public void reScan(@PathVariable String taskId, @PathVariable String accountId) throws Exception {
         ruleService.reScan(taskId, accountId, tokenService.getLoginUser());
     }
@@ -251,7 +251,7 @@ public class RuleController {
     }
 
     @Operation(summary = "批量删除规则组")
-    @PostMapping("deleteGroups")
+    @PostMapping("delete/groups")
     public void deleteGroups(@RequestBody List<Integer> selectIds) throws Exception {
         ruleService.deleteGroups(selectIds, tokenService.getLoginUser());
     }
@@ -265,35 +265,35 @@ public class RuleController {
 
     @I18n
     @Hidden
-    @GetMapping("groupsByAccountId/{pluginId}")
+    @GetMapping("groups/by/account/{pluginId}")
     public List<RuleGroup> groupsByAccountId(@PathVariable String pluginId) {
         return ruleService.groupsByAccountId(pluginId);
     }
 
     @I18n
     @Operation(summary = "所有已绑定规则组的规则")
-    @GetMapping("allBindList/{id}")
+    @GetMapping("all/bind/list/{id}")
     public List<Rule> allBindList(@PathVariable String id) {
         return ruleService.allBindList(id);
     }
 
     @I18n
     @Operation(summary = "所有未绑定规则组的规则")
-    @GetMapping("unBindList/{id}")
+    @GetMapping("unbind/list/{id}")
     public List<Rule> unBindList(@PathVariable Integer id) {
         return ruleService.unBindList(id);
     }
 
     @I18n
     @Operation(summary = "规则组绑定规则")
-    @PostMapping(value = "bindRule")
+    @PostMapping(value = "bind/rule")
     public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
         ruleService.bindRule(request);
     }
 
     @I18n
     @Operation(summary = "规则组检测云账号")
-    @GetMapping("scanByGroup/{groupId}/{accountId}")
+    @GetMapping("scan/by/group/{groupId}/{accountId}")
     public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
         ruleService.scanByGroup(groupId, accountId, tokenService.getLoginUser());
     }

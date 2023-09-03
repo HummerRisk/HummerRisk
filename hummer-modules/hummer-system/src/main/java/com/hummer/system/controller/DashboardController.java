@@ -45,7 +45,7 @@ public class DashboardController {
 
     @I18n
     @Operation(summary = "混合云不合规资产风险等级统计")
-    @PostMapping("point/riskList")
+    @PostMapping("point/risk/list")
     public List<Map<String, Object>> riskList(@RequestBody Map<String, Object> params) {
         return dashboardService.riskList(params);
     }
@@ -59,7 +59,7 @@ public class DashboardController {
 
     @I18n
     @Operation(summary = "合计统计")
-    @PostMapping("totalPolicy")
+    @PostMapping("total/policy")
     public List<Map<String, Object>> totalPolicy(@RequestBody Map<String, Object> params) {
         return dashboardService.totalPolicy(params);
     }
@@ -74,14 +74,14 @@ public class DashboardController {
 
     @I18n
     @Operation(summary = "首页TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public TopInfoDTO topInfo(@RequestBody Map<String, Object> params) {
         return dashboardService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "首页TOP检测统计")
-    @GetMapping("topScanInfo")
+    @GetMapping("top/scan/info")
     public List<TopScanDTO> topScanInfo() {
         return dashboardService.topScanInfo();
     }
@@ -94,27 +94,27 @@ public class DashboardController {
 
     @I18n
     @Operation(summary = "保存统计分析")
-    @PostMapping("saveAnalysis")
+    @PostMapping("save/analysis")
     public void saveAnalysis(@RequestBody AnslysisVo anslysisVo) {
         dashboardService.saveAnalysis(anslysisVo);
     }
 
     @Operation(summary = "查询统计分析")
-    @GetMapping("queryAnalysis")
+    @GetMapping("query/analysis")
     public AnslysisVo queryAnalysis() {
         return dashboardService.queryAnalysis();
     }
 
     @I18n
     @Operation(summary = "检测统计分析")
-    @PostMapping("analysisChart")
+    @PostMapping("analysis/chart")
     public ChartDTO analysisChart() {
         return dashboardService.analysisChart();
     }
 
     @I18n
     @Operation(summary = "检测统计分析")
-    @PostMapping("historyScanVo/{goPage}/{pageSize}")
+    @PostMapping("history/scan/vo/{goPage}/{pageSize}")
     public Pager<List<HistoryScanVo>> historyScanVo(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody HistoryScanVo historyScanVo) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, dashboardService.historyScanVo(historyScanVo));
@@ -122,7 +122,7 @@ public class DashboardController {
 
     @I18n
     @Operation(summary = "首页Cloud统计")
-    @PostMapping("cloudInfo")
+    @PostMapping("cloud/info")
     public CloudInfo cloudInfo() {
         return dashboardService.cloudInfo();
     }

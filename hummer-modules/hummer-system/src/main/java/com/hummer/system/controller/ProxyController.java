@@ -9,8 +9,8 @@ import com.hummer.common.core.utils.PageUtils;
 import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.service.ProxyService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +61,7 @@ public class ProxyController {
     }
 
     @Operation(summary = "批量删除代理")
-    @PostMapping("deleteProxys")
+    @PostMapping("delete/proxys")
     public void deleteProxys(@RequestBody List<Integer> selectIds) throws Exception {
         proxyService.deleteProxys(selectIds, tokenService.getLoginUser());
     }

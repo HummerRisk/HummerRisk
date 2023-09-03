@@ -13,11 +13,11 @@ import com.hummer.common.core.utils.Pager;
 import com.hummer.common.security.service.TokenService;
 import com.hummer.system.api.model.LoginUser;
 import com.hummer.system.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @Operation(summary = "更新用户状态")
-    @PostMapping("/special/update_status")
+    @PostMapping("/special/update/status")
     public void updateStatus(@RequestBody User user) {
         userService.updateUser(user);
     }
