@@ -50,7 +50,7 @@
                       <div class="bottom clearfix">
                         <span class="plugin-name">
                           <span>{{ $t('commons.sum') }}</span>
-                          <span class="pa-time2"> {{ data.groups }}</span>
+                          <span class="pa-time3"> {{ data.groups }}</span>
                           <span> {{ $t('rule.group_t_project') }}</span>
                         </span>
                         <span class="plugin-type">
@@ -63,7 +63,7 @@
                       <div class="bottom clearfix">
                         <span class="plugin-name">
                           <span>{{ $t('commons.sum') }}</span>
-                          <span class="pa-time2"> {{ data.rules }}</span>
+                          <span class="pa-time3"> {{ data.rules }}</span>
                           <span> {{ $t('rule.rule_t_project') }}</span>
                         </span>
                         <span class="plugin-type">
@@ -99,13 +99,13 @@
                     <el-card shadow="hover" class="medium medium-card" :body-style="{ padding: '15px', margin: '10px' }">
                       <div slot="header" class="clearfix">
                         <el-row>
-                          <el-col :span="15">
+                          <el-col :span="14">
                             <span class="desc-rule">{{ item.groupName }}</span>
                             <span class="not_compliance_num"></span>
                             <span class="compliance_num"></span>
                           </el-col>
-                          <el-col :span="9">
-                            <span class="desc-rule2">{{ $t('dashboard.rule_detail') }}</span>
+                          <el-col :span="10">
+                            <span class="desc-rule2">{{ $t('resource.have_risk') }}{{ $t('rule.rule_t_project') }}</span>
                             <span class="not_compliance_num">{{ item.complianceNum }}</span>
                             <span class="compliance_num">&nbsp;&nbsp;/&nbsp;{{ item.sum }}</span>
                           </el-col>
@@ -184,18 +184,18 @@
               <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
             </el-button>
           </el-table-column>
-          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.update_time')"
+          <el-table-column prop="createTime" min-width="160" v-if="checkedColumnNames.includes('createTime')" :label="$t('commons.scan_time')"
                            :sortable="true" show-overflow-tooltip>
             <template v-slot:default="scope">
               <span>{{ scope.row.createTime | timestampFormatDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="description" v-if="checkedColumnNames.includes('group')" :label="$t('rule.rule_set')" min-width="260" show-overflow-tooltip>
+          <el-table-column prop="description" v-if="checkedColumnNames.includes('group')" :label="$t('history.rule_set')" min-width="260" show-overflow-tooltip>
             <template v-slot:default="scope">
-              {{ $t('rule.group_sum_project', [scope.row.groups]) }} {{ $t('rule.risk_rule_sum_project', [scope.row.riskRules]) }}
+              {{ $t('rule.group_sum_project', [scope.row.groups]) }} {{ $t('rule.risk_group_sum_project', [scope.row.riskGroups]) }}
             </template>
           </el-table-column>
-          <el-table-column prop="description" v-if="checkedColumnNames.includes('group')" :label="$t('rule.rule_set')" min-width="260" show-overflow-tooltip>
+          <el-table-column prop="description" v-if="checkedColumnNames.includes('group')" :label="$t('rule.rule')" min-width="260" show-overflow-tooltip>
             <template v-slot:default="scope">
               {{ $t('rule.rule_sum_project', [scope.row.rules]) }} {{ $t('rule.risk_rule_sum_project', [scope.row.riskRules]) }}
             </template>
@@ -249,7 +249,7 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'rule.rule_set',
+    label: 'history.rule_set',
     props: 'group',
     disabled: false
   },
@@ -259,7 +259,7 @@ const columnOptions = [
     disabled: false
   },
   {
-    label: 'commons.create_time',
+    label: 'commons.scan_time',
     props: 'createTime',
     disabled: false
   },
@@ -669,6 +669,10 @@ const columnOptions2 = [
     font-size: 18px;
     color: red;
   }
+  .pa-time3 {
+    font-size: 18px;
+    color: #1f2329;
+  }
   .button-drop {
     float: right;
     width: 28%;
@@ -830,14 +834,14 @@ const columnOptions2 = [
 
   .not_compliance_num {
     margin-left: 12px;
-    color: #1f2329;
+    color: red;
     font-size: 20px;
     line-height: 28px;
     font-weight: 500;
   }
 
   .compliance_num {
-    color: #646a73;
+    color: #1f2329;
   }
   .label {
     height: 22px;
