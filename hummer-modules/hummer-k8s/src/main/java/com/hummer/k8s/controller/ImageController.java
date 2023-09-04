@@ -105,7 +105,7 @@ public class ImageController {
 
     @I18n
     @Operation(summary = "添加镜像")
-    @PostMapping(value = "add/image", consumes = {"multipart/form/data"})
+    @PostMapping(value = "add/image", consumes = {"multipart/form-data"})
     public Image addImage(@RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
         return imageService.addImage(tarFile, request, tokenService.getLoginUser());
@@ -113,7 +113,7 @@ public class ImageController {
 
     @I18n
     @Operation(summary = "修改镜像")
-    @PostMapping(value = "update/image", consumes = {"multipart/form/data"})
+    @PostMapping(value = "update/image", consumes = {"multipart/form-data"})
     public Image updateImage(@RequestPart(value = "tarFile", required = false) MultipartFile tarFile,
                           @RequestPart("request") ImageRequest request) throws Exception {
         return imageService.updateImage(tarFile, request, tokenService.getLoginUser());

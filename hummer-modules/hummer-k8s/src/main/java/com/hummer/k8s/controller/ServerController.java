@@ -112,21 +112,21 @@ public class ServerController {
     }
 
     @Operation(summary = "添加主机")
-    @PostMapping(value = "add/server", consumes = {"multipart/form/data"})
+    @PostMapping(value = "add/server", consumes = {"multipart/form-data"})
     public ServerValidateDTO addServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                        @RequestPart("request") Server request) throws Exception {
         return serverService.addServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "编辑主机")
-    @PostMapping(value = "edit/server", consumes = {"multipart/form/data"})
+    @PostMapping(value = "edit/server", consumes = {"multipart/form-data"})
     public ServerValidateDTO editServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                         @RequestPart("request") Server request) throws Exception {
         return serverService.editServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "复制主机")
-    @PostMapping(value = "copy/server", consumes = {"multipart/form/data"})
+    @PostMapping(value = "copy/server", consumes = {"multipart/form-data"})
     public ServerValidateDTO copyServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                         @RequestPart("request") Server request) throws Exception {
         return serverService.copyServer(keyFile, request, tokenService.getLoginUser());
@@ -248,14 +248,14 @@ public class ServerController {
     }
 
     @Operation(summary = "添加主机凭据")
-    @PostMapping(value = "add/certificate", consumes = {"multipart/form/data"})
+    @PostMapping(value = "add/certificate", consumes = {"multipart/form-data"})
     public int addCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                               @RequestPart("request") ServerCertificate request) throws Exception {
         return serverService.addCertificate(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "编辑主机凭据")
-    @PostMapping(value = "edit/certificate", consumes = {"multipart/form/data"})
+    @PostMapping(value = "edit/certificate", consumes = {"multipart/form-data"})
     public int editCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                @RequestPart("request") ServerCertificate request) throws Exception {
         return serverService.editCertificate(keyFile, request, tokenService.getLoginUser());
@@ -297,7 +297,7 @@ public class ServerController {
 
     @I18n
     @Operation(summary = "通过Excel导入专家数据")
-    @PostMapping(value = "excel/insert/experts", consumes = {"multipart/form/data"})
+    @PostMapping(value = "excel/insert/experts", consumes = {"multipart/form-data"})
     public void insertExperts(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("request") Server server) throws Exception {
         serverService.insertExperts(file, server, tokenService.getLoginUser());
     }

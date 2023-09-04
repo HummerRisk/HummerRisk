@@ -69,7 +69,7 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "添加文件系统")
-    @PostMapping(value = "add/fs", consumes = {"multipart/form/data"})
+    @PostMapping(value = "add/fs", consumes = {"multipart/form-data"})
     public FileSystem addFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
                             @RequestPart("request") FileSystem request) throws Exception {
         return fileSystemService.addFs(multipartFile, request, tokenService.getLoginUser());
@@ -77,7 +77,7 @@ public class FileSystemController {
 
     @I18n
     @Operation(summary = "修改文件系统")
-    @PostMapping(value = "update/fs", consumes = {"multipart/form/data"})
+    @PostMapping(value = "update/fs", consumes = {"multipart/form-data"})
     public FileSystem updateFs(@RequestPart(value = "tarFile", required = false) MultipartFile multipartFile,
                                @RequestPart("request") FileSystem request) throws Exception {
         return fileSystemService.updateFs(multipartFile, request, tokenService.getLoginUser());

@@ -80,7 +80,7 @@ public class ConfigController {
     }
 
     @Operation(summary = "上传YAML文件")
-    @PostMapping(value = "upload/yaml", consumes = {"multipart/form/data"})
+    @PostMapping(value = "upload/yaml", consumes = {"multipart/form-data"})
     public String uploadYaml(@RequestPart(value = "file", required = true) MultipartFile file) throws Exception {
         return configService.uploadYaml(file);
     }
