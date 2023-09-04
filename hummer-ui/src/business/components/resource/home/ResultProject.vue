@@ -13,7 +13,9 @@
         <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData" :key="index" class="el-col el-col-su">
             <el-card shadow="hover" :body-style="{ 'cursor': 'pointer', 'padding': '15px' }">
-              <div style="height: 130px;">
+              <div class="child2" @click="goResult(data.id)">{{ $t('commons.into_detail') }}</div>
+              <div class="child" @click="goResult(data.id)"></div>
+              <div class="el-card-top-de">
                 <el-row :gutter="20">
                   <el-col :span="24">
                     <el-row class="el-row-pdd">
@@ -27,22 +29,22 @@
                       </span>
                       <span class="plugin-type" v-if="checkedColumnNames.includes('status')">
                          <el-button plain size="mini" type="primary" v-if="data.status === 'UNCHECKED'" @click="goResult(data.id)">
-                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }} | {{ $t('commons.into_detail') }}
+                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                          </el-button>
                          <el-button plain size="mini" type="primary" v-else-if="data.status === 'APPROVED'" @click="goResult(data.id)">
-                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }} | {{ $t('commons.into_detail') }}
+                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                          </el-button>
                          <el-button plain size="mini" type="primary" v-else-if="data.status === 'PROCESSING'" @click="goResult(data.id)">
-                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }} | {{ $t('commons.into_detail') }}
+                            <i class="el-icon-loading"></i> {{ $t('resource.i18n_in_process') }}
                          </el-button>
                          <el-button plain size="mini" type="success" v-else-if="data.status === 'FINISHED'" @click="goResult(data.id)">
-                            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }} | {{ $t('commons.into_detail') }}
+                            <i class="el-icon-success"></i> {{ $t('resource.i18n_done') }}
                          </el-button>
                          <el-button plain size="mini" type="danger" v-else-if="data.status === 'ERROR'" @click="goResult(data.id)">
-                            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }} | {{ $t('commons.into_detail') }}
+                            <i class="el-icon-error"></i> {{ $t('resource.i18n_has_exception') }}
                          </el-button>
                          <el-button plain size="mini" type="warning" v-else-if="data.status === 'WARNING'" @click="goResult(data.id)">
-                            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }} | {{ $t('commons.into_detail') }}
+                            <i class="el-icon-warning"></i> {{ $t('resource.i18n_has_warn') }}
                          </el-button>
                       </span>
                     </el-row>
@@ -718,6 +720,33 @@ const columnOptions2 = [
   }
   .el-col-su >>> .el-card {
     margin: 10px 0;
+    position: relative;
+  }
+  .child {
+    position: absolute;
+    top: 0;
+    left: 21%;
+    width: 50%;
+    height: 0;
+    border-top: 30px solid #dfecfd; /* 上边长度和颜色 */
+    border-left: 20px solid transparent; /* 左斜边长度 */
+    border-right: 20px solid transparent; /* 右斜边长度 */
+    z-index: 1;
+  }
+  .child:hover {
+      border-top: 30px solid #3871e0;
+  }
+  .child2 {
+    position: absolute;
+    text-align: center;
+    top: 1%;
+    left: 25%;
+    width: 50%;
+    color: #FFFFFF;
+    z-index: 2;
+  }
+  .child2:hover ~ .child {/* 鼠标hover时兄弟元素改变 */
+    border-top: 30px solid #3871e0;
   }
   .vue-select-image >>> .vue-select-image__img {
     width: 120px;
@@ -904,6 +933,10 @@ const columnOptions2 = [
     text-align: center;
     position: fixed;
     top: 0;
+  }
+  .el-card-top-de {
+    height: 130px;
+    margin-top: 20px;
   }
   /deep/ :focus{outline:0;}
 </style>
