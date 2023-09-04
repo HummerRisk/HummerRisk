@@ -48,7 +48,7 @@ public class ResourceController {
 
     @I18n
     @Operation(summary = "云检测资源")
-    @GetMapping("source/by/projectid/{projectId}")
+    @GetMapping("source/by/project/{projectId}")
     public SourceDTO sourceByProjectId(@PathVariable String projectId) {
         return resourceService.sourceByProjectId(projectId);
     }
