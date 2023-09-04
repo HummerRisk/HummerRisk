@@ -30,7 +30,7 @@ public class LicenseController {
 
     @I18n
     @Operation(summary = "上传校验license")
-    @PostMapping(value = "update/license", consumes = {"multipart/form/data"})
+    @PostMapping(value = "update/license", consumes = {"multipart/form-data"})
     public void validateLicense(@RequestPart(value = "licenseFile", required = false) MultipartFile licenseFile) throws Exception {
         licenseService.validateLicense(licenseFile, tokenService.getLoginUser());
     }
