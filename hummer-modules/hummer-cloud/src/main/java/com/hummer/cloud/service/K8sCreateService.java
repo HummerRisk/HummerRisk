@@ -67,7 +67,6 @@ public class K8sCreateService {
     private IK8sProviderService k8sProviderService;
 
     @Autowired
-    @Qualifier("loadBalanced")
     private RestTemplate restTemplate;
 
     public void handleTask(CloudTask cloudTask) throws Exception {
@@ -253,7 +252,7 @@ public class K8sCreateService {
             LogUtil.info(cloudTask.getId() + " {k8s createScannerResource}[api body]: " + jsonObject.toJSONString());
 
             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-            String result = restTemplate.postForObject("http://hummer-scanner/run",httpEntity,String.class);
+            String result = restTemplate.postForObject("http://10.2.5.2:8011/run",httpEntity,String.class);
             LogUtil.info(cloudTask.getId() + " {scanner}[api result]: " + result);
             JSONObject resultJson = JSONObject.parseObject(result);
             String resultCode = resultJson != null ? resultJson.getString("code").toString(): "";

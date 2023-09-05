@@ -311,19 +311,28 @@ public class HistoryService {
             Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
 
-            HistoryCloudTaskExample example = new HistoryCloudTaskExample();
-            HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("CriticalRisk");
-            long critical = historyCloudTaskMapper.countByExample(example);
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
-            long high = historyCloudTaskMapper.countByExample(example);
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("MediumRisk");
-            long mediuml = historyCloudTaskMapper.countByExample(example);
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("LowRisk");
-            long low = historyCloudTaskMapper.countByExample(example);
+            HistoryCloudTaskExample example1 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria1 = example1.createCriteria();
+            criteria1.andAccountIdEqualTo(accountId).andSeverityEqualTo("CriticalRisk");
+            long critical = historyCloudTaskMapper.countByExample(example1);
 
-            long sum = 4 * critical + 3 * high + 2 * mediuml + 1 * low;
-            score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
+            HistoryCloudTaskExample example2 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria2 = example2.createCriteria();
+            criteria2.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
+            long high = historyCloudTaskMapper.countByExample(example2);
+
+            HistoryCloudTaskExample example3 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria3 = example3.createCriteria();
+            criteria3.andAccountIdEqualTo(accountId).andSeverityEqualTo("MediumRisk");
+            long medium = historyCloudTaskMapper.countByExample(example3);
+
+            HistoryCloudTaskExample example4 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria4 = example4.createCriteria();
+            criteria4.andAccountIdEqualTo(accountId).andSeverityEqualTo("LowRisk");
+            long low = historyCloudTaskMapper.countByExample(example4);
+
+            long sum = 4 * critical + 3 * high + 2 * medium + 1 * low;
+            score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * medium / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
 
         } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.k8sRuleAccount.getType())) {
 
@@ -333,19 +342,28 @@ public class HistoryService {
             Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "MediumRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
             Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) != null ? extResourceMapper.resultPercentByCloud(accountId, "LowRisk", cloudTask == null ? null : cloudTask.getId()) : "0.0");
 
-            HistoryCloudTaskExample example = new HistoryCloudTaskExample();
-            HistoryCloudTaskExample.Criteria criteria = example.createCriteria();
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("CriticalRisk");
-            long critical = historyCloudTaskMapper.countByExample(example);
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
-            long high = historyCloudTaskMapper.countByExample(example);
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("MediumRisk");
-            long mediuml = historyCloudTaskMapper.countByExample(example);
-            criteria.andAccountIdEqualTo(accountId).andSeverityEqualTo("LowRisk");
-            long low = historyCloudTaskMapper.countByExample(example);
+            HistoryCloudTaskExample example1 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria1 = example1.createCriteria();
+            criteria1.andAccountIdEqualTo(accountId).andSeverityEqualTo("CriticalRisk");
+            long critical = historyCloudTaskMapper.countByExample(example1);
 
-            long sum = 4 * critical + 3 * high + 2 * mediuml + 1 * low;
-            score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * mediuml / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
+            HistoryCloudTaskExample example2 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria2 = example2.createCriteria();
+            criteria2.andAccountIdEqualTo(accountId).andSeverityEqualTo("HighRisk");
+            long high = historyCloudTaskMapper.countByExample(example2);
+
+            HistoryCloudTaskExample example3 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria3 = example3.createCriteria();
+            criteria3.andAccountIdEqualTo(accountId).andSeverityEqualTo("MediumRisk");
+            long medium = historyCloudTaskMapper.countByExample(example3);
+
+            HistoryCloudTaskExample example4 = new HistoryCloudTaskExample();
+            HistoryCloudTaskExample.Criteria criteria4 = example4.createCriteria();
+            criteria4.andAccountIdEqualTo(accountId).andSeverityEqualTo("LowRisk");
+            long low = historyCloudTaskMapper.countByExample(example4);
+
+            long sum = 4 * critical + 3 * high + 2 * medium + 1 * low;
+            score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * medium / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
 
         } else if (StringUtils.equalsIgnoreCase(accountType, TaskEnum.serverAccount.getType())) {
             ServerResult serverResult = (ServerResult) task;
