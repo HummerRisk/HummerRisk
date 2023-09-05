@@ -870,7 +870,7 @@ const columnOptions = [
       },
       handleScaningLog(account) {
         this.$router.push({
-          name: 'account-scaning-log',
+          name: 'accountScaningLog',
           params: account,
         }).catch(error => error);
       },

@@ -147,7 +147,6 @@ public class ResourceCreateService {
                     try {
                         k8sCreateService.handleTask(cloudTaskToBeProceed2);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     } finally {
                         processingGroupIdMap.remove(cloudTaskToBeProceed2.getId());
@@ -274,7 +273,6 @@ public class ResourceCreateService {
     }
 
     private boolean handleGroup(CloudGroup cloudGroup, CloudProject cloudProject) throws Exception {
-        orderService.updateGroupStatus(cloudGroup.getId(), CloudTaskConstants.TASK_STATUS.PROCESSING.name());
         try {
             CloudTaskExample example = new CloudTaskExample();
             example.createCriteria().andProjectIdEqualTo(cloudProject.getId()).andGroupIdEqualTo(cloudGroup.getId());
