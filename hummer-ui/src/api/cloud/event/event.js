@@ -1,5 +1,5 @@
 
-export const cloudEventSeverityChartUrl = "/cloud/event/severity/Chart";
+export const cloudEventSeverityChartUrl = "/cloud/event/severity/chart";
 
 export const cloudEventIpAccessChartUrl = "/cloud/event/ip/access/chart/";
 
