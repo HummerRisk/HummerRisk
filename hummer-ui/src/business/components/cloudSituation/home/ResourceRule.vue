@@ -190,8 +190,8 @@ export default {
     showRegions() {
       this.initSelect();
       let params = {
-        regionId: this.details.regionId,
-        hummerId: this.details.id
+        regionId: this.regionId,
+        hummerId: this.hummerId
       };
       this.result = this.$post(resourceRiskListUrl, params, response => {
         this.string2PrettyFormat = response.data
