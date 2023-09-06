@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hummerrisk</groupId>
     <artifactId>hummerrisk</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <packaging>pom</packaging>
 
     <name>HummerRisk</name>
@@ -13,7 +13,7 @@
     <description>云原生安全平台</description>
 
     <properties>
-        <hummerrisk.version>1.4.0</hummerrisk.version>
+        <hummerrisk.version>1.4.1</hummerrisk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
