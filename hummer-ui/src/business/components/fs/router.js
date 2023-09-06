@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Fs",
   path: "/fs",
   redirect: "/fs/fs",
   components: {
@@ -14,22 +13,22 @@ export default {
     },
     {
       path: "result",
-      name: "FsResult",
+      name: "fsResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/fs/home/Result'),
     },
     {
-      path: "resultdetails/:id",
-      name: "FsResultDetails",
+      path: "result-details/:id",
+      name: "fsResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/fs/home/ResultDetails"),
     },
     {
       path: "overview",
-      name: "FsOverview",
+      name: "fsOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/fs/home/Overview"),
     },
     {
       path: "history",
-      name: "FsHistory",
+      name: "fsHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/fs/home/History"),
     },
   ]

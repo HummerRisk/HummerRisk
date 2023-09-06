@@ -57,7 +57,7 @@ public class OssController {
 
     @I18n
     @Operation(summary = "所有对象存储账号")
-    @GetMapping("allList")
+    @GetMapping("all/list")
     public List<OssWithBLOBs> allList() {
         return ossService.allList();
     }
@@ -89,7 +89,7 @@ public class OssController {
     }
 
     @Operation(summary = "云账号详情")
-    @GetMapping("changeAccount/{accountId}")
+    @GetMapping("change/account/{accountId}")
     public String getCredential(@PathVariable String accountId) {
         return ossService.getCredential(accountId);
     }
@@ -130,7 +130,7 @@ public class OssController {
 
     @I18n
     @Operation(summary = "对象存储桶列表")
-    @PostMapping("bucketList/{goPage}/{pageSize}")
+    @PostMapping("bucket/list/{goPage}/{pageSize}")
     public Pager<List<OssBucketDTO>> ossBucketList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody OssBucketRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -154,7 +154,7 @@ public class OssController {
 
     @I18n
     @Operation(summary = "下载文件")
-    @PostMapping("downloadObject/{bucketId}")
+    @PostMapping("download/object/{bucketId}")
     public void downloadObject(@PathVariable String bucketId, @RequestBody Map map, HttpServletResponse response) throws Exception {
         BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
         String objectId = map.get("objectId").toString();
@@ -179,42 +179,42 @@ public class OssController {
 
     @I18n
     @Operation(summary = "批量删除存储桶")
-    @PostMapping("deleteByBatch")
+    @PostMapping("delete/by/batch")
     public ResultHolder deleteByBatch(@RequestBody List<String> ids) {
         return ossService.delete(ids, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "删除存储桶")
-    @GetMapping("deleteBucket/{bucketId}")
+    @GetMapping("delete/bucket/{bucketId}")
     public ResultHolder deleteBucket(@PathVariable String bucketId) {
         return ossService.delete(Collections.singletonList(bucketId), tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "创建目录")
-    @PostMapping("createDir/{bucketId}")
+    @PostMapping("create/dir/{bucketId}")
     public void createDir(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
         ossService.createDir(bucketId, map.get("dir").toString());
     }
 
     @I18n
     @Operation(summary = "删除对象")
-    @PostMapping("deleteObject/{bucketId}")
+    @PostMapping("delete/object/{bucketId}")
     public void deleteObject(@PathVariable String bucketId, @RequestBody Map map) throws Exception{
         ossService.deleteObject(bucketId, map.get("objectId").toString());
     }
 
     @I18n
     @Operation(summary = "批量删除对象")
-    @PostMapping("deleteObjects/{bucketId}")
+    @PostMapping("delete/objects/{bucketId}")
     public void deleteObjects(@PathVariable String bucketId, @RequestBody List<String> objectIds) throws Exception{
         ossService.deleteObjects(bucketId, objectIds);
     }
 
     @I18n
     @Hidden
-    @GetMapping("support/bucketAddforOssId/{ossId}")
+    @GetMapping("support/bucket/add/oss/{ossId}")
     public BucketKeyValueItem bucketAddforOssId(@PathVariable String ossId) throws Exception {
         return ossService.bucketAddforOssId(ossId);
     }
@@ -242,14 +242,14 @@ public class OssController {
 
     @I18n
     @Operation(summary = "合规报告规则组列表")
-    @PostMapping(value = "ruleGroup/list/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/group/list/{goPage}/{pageSize}")
     public Pager<List<RuleGroupDTO>> ruleGroupList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody RuleGroupRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, ossService.ruleGroupList(request));
     }
 
     @Operation(summary = "导出规则组检测报告")
-    @PostMapping("groupExport")
+    @PostMapping("group/export")
     public ResponseEntity<byte[]> exportGroupReport(@RequestBody ExcelExportRequest request) throws Exception {
         byte[] bytes = ossService.exportGroupReport(request, tokenService.getLoginUser());
         HttpHeaders headers = new HttpHeaders();
@@ -280,7 +280,7 @@ public class OssController {
 
     @I18n
     @Operation(summary = "上传文件")
-    @PostMapping(value = "uploadFile/{bucketId}", consumes = {"multipart/form-data"})
+    @PostMapping(value = "upload/file/{bucketId}", consumes = {"multipart/form-data"})
     public void uploadFile(@PathVariable String bucketId, @RequestPart(value = "request") Path request, @RequestPart(value = "objectFile", required = false) MultipartFile objectFile) throws Exception {
         String path = request.getPath();
         String objectId;
@@ -294,33 +294,33 @@ public class OssController {
 
     @I18n
     @Operation(summary = "对象存储概览TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return ossService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "对象存储统计")
-    @GetMapping("ossChart")
+    @GetMapping("oss/chart")
     public List<Map<String, Object>> ossChart() {
         return ossService.ossChart();
     }
 
     @Operation(summary = "存储桶统计")
-    @GetMapping("bucketChart")
+    @GetMapping("bucket/chart")
     public List<Map<String, Object>> bucketChart() {
         return ossService.bucketChart();
     }
 
     @I18n
     @Operation(summary = "对象存储风险统计")
-    @GetMapping("severityChart")
+    @GetMapping("severity/chart")
     public List<Map<String, Object>> severityChart() {
         return ossService.severityChart();
     }
 
     @Operation(summary = "批量删除对象存储账号")
-    @PostMapping("deleteAccounts")
+    @PostMapping("delete/accounts")
     public void deleteAccounts(@RequestBody List<String> selectIds) throws Exception {
         ossService.deleteAccounts(selectIds);
     }

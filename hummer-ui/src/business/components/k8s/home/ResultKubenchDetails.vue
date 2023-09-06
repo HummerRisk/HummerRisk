@@ -205,7 +205,7 @@ const columnOptions = [
           }).catch(error => error);
         } else if (path.indexOf("/resource") >= 0) {
           this.$router.push({
-            path: '/resource/K8sResult',
+            path: '/resource/k8s-result',
           }).catch(error => error);
         }
       },

@@ -80,7 +80,7 @@ public class ConfigController {
     }
 
     @Operation(summary = "上传YAML文件")
-    @PostMapping(value = "uploadYaml", consumes = {"multipart/form-data"})
+    @PostMapping(value = "upload/yaml", consumes = {"multipart/form-data"})
     public String uploadYaml(@RequestPart(value = "file", required = true) MultipartFile file) throws Exception {
         return configService.uploadYaml(file);
     }
@@ -93,14 +93,14 @@ public class ConfigController {
     }
 
     @Operation(summary = "重新云原生部署配置检测")
-    @GetMapping("reScan/{id}")
+    @GetMapping("rescan/{id}")
     public void reScan(@PathVariable String id) throws Exception {
         configService.reScan(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "云原生部署配置检测结果列表")
-    @PostMapping(value = "resultList/{goPage}/{pageSize}")
+    @PostMapping(value = "result/list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, configService.resultList(request));
@@ -108,7 +108,7 @@ public class ConfigController {
 
     @I18n
     @Hidden
-    @PostMapping("resultItemList/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItem>> resultItemList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, configService.resultItemList(request));
@@ -116,7 +116,7 @@ public class ConfigController {
 
     @I18n
     @Operation(summary = "云原生部署配置检测结果详情列表")
-    @PostMapping("resultItemListBySearch/{goPage}/{pageSize}")
+    @PostMapping("result/item/list/by/search/{goPage}/{pageSize}")
     public Pager<List<CloudNativeConfigResultItemWithBLOBs>> resultItemListBySearch(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ConfigResultItemRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, configService.resultItemListBySearch(request));
@@ -124,7 +124,7 @@ public class ConfigController {
 
     @I18n
     @Operation(summary = "云原生部署配置检测结果详情")
-    @GetMapping(value = "getCloudNativeConfigResult/{resultId}")
+    @GetMapping(value = "get/cloudnative/config/result/{resultId}")
     public CloudNativeConfigResultDTO getCloudNativeConfigResult(@PathVariable String resultId) {
         return configService.getCloudNativeConfigResult(resultId);
     }
@@ -137,14 +137,14 @@ public class ConfigController {
     }
 
     @Operation(summary = "删除云原生部署配置检测记录")
-    @GetMapping("deleteCloudNativeConfigResult/{id}")
+    @GetMapping("delete/cloudnative/config/result/{id}")
     public void deleteCloudNativeConfigResult(@PathVariable String id) throws Exception {
         configService.deleteCloudNativeConfigResult(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "风险数据信息")
-    @GetMapping("metricChart/{resultId}")
+    @GetMapping("metric/chart/{resultId}")
     public MetricChartDTO metricChart(@PathVariable String resultId) {
         return configService.metricChart(resultId);
     }
@@ -157,43 +157,41 @@ public class ConfigController {
 
     @I18n
     @Operation(summary = "概览TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return configService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "config 统计")
-    @GetMapping("configChart")
+    @GetMapping("config/chart")
     public List<Map<String, Object>> configChart() {
         return configService.configChart();
     }
 
     @I18n
     @Operation(summary = "风险统计")
-    @GetMapping("severityChart")
+    @GetMapping("severity/chart")
     public List<Map<String, Object>> severityChart() {
         return configService.severityChart();
     }
 
     @I18n
     @Operation(summary = "所有部署配置")
-    @GetMapping("allList")
+    @GetMapping("all/list")
     public List<CloudNativeConfig> allList() {
         return configService.allList();
     }
 
-
-
     @I18n
     @Operation(summary = "检测结果历史详情")
-    @PostMapping("historyResultItemList")
+    @PostMapping("history/result/item/list")
     public List<CloudNativeConfigResultItemWithBLOBs> historyResultItemList(@RequestBody CloudNativeConfigResultItem request) {
         return configService.historyResultItemList(request);
     }
 
     @Operation(summary = "批量删除部署配置")
-    @PostMapping("deleteConfigs")
+    @PostMapping("delete/configs")
     public void deleteConfigs(@RequestBody List<String> selectIds) throws Exception {
         configService.deleteConfigs(selectIds, tokenService.getLoginUser());
     }

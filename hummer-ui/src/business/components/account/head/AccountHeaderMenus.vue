@@ -4,24 +4,8 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/account/clouddashboard'">
-            {{ $t("account.overview") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/account/cloudaccount'">
+          <el-menu-item :index="'/account/cloud-account'">
             {{ $t("account.cloud_account_setting") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/account/rulegroup'">
-            {{ $t("rule.rule_group") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/account/rule'">
-            {{ $t("rule.cloud_rule") }}
-          </el-menu-item>
-
-          <el-menu-item :index="'/account/result'">
-            {{ $t("resource.cloud_resource_result") }}
           </el-menu-item>
 
         </el-menu>

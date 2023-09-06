@@ -358,7 +358,7 @@
       },
       goRepo() {
         this.$router.push({
-          path: '/image/imageRepo'
+          path: '/image/image-repo'
         }).catch(error => error);
       },
     },

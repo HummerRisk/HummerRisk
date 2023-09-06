@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @Operation(summary = "更新用户状态")
-    @PostMapping("/special/update_status")
+    @PostMapping("/special/update/status")
     public void updateStatus(@RequestBody User user) {
         userService.updateUser(user);
     }

@@ -475,7 +475,7 @@ import {accountListUrl} from "@/api/cloud/account/account";
       },
       goResource (params) {
         this.$router.push({
-          path: '/account/resultdetails/' + params.id
+          path: '/resource/result-details/' + params.id
         }).catch(error => error);
       },
       tagLists() {

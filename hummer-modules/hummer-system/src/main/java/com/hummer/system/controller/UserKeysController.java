@@ -74,12 +74,12 @@ public class UserKeysController {
     }
 
     @Operation(summary = "批量删除API Keys")
-    @PostMapping("deleteApiKeys")
+    @PostMapping("delete/apiKeys")
     public void deleteApiKeys(@RequestBody List<String> selectIds) throws Exception {
         userKeyService.deleteApiKeys(selectIds);
     }
 
-    @PostMapping("createToken")
+    @PostMapping("create/token")
     public String createApiToken(@RequestBody UserKey userKey) throws Exception {
         String str = userKey.getAccessKey() + "|" + System.currentTimeMillis();
         String signature = CodingUtil.aesEncrypt(str, userKey.getSecretKey(), userKey.getAccessKey());

@@ -50,7 +50,7 @@ public class LoginController {
         }
     }
 
-    @GetMapping(value = "isLogin")
+    @GetMapping(value = "is/login")
     public ResultHolder isLogin() {
         String token = SecurityUtils.getToken();
         if (StringUtils.isNotEmpty(token) && !StringUtils.equalsIgnoreCase("undefined", token)) {

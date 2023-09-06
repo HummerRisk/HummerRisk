@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Config",
   path: "/config",
   redirect: "/config/config",
   components: {
@@ -14,22 +13,22 @@ export default {
     },
     {
       path: "result",
-      name: "ConfigResult",
+      name: "configResult",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/config/home/Result'),
     },
     {
-      path: "resultdetails/:id",
-      name: "ConfigResultDetails",
+      path: "result-details/:id",
+      name: "configResultDetails",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/ResultDetails"),
     },
     {
       path: "overview",
-      name: "ConfigOverview",
+      name: "configOverview",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/Overview"),
     },
     {
       path: "history",
-      name: "ConfigHistory",
+      name: "configHistory",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/config/home/History"),
     },
   ]

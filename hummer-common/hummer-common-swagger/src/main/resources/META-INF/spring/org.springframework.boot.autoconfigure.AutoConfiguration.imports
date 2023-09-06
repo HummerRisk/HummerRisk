@@ -1,3 +1,0 @@
-com.hummer.common.swagger.config.SwaggerAutoConfiguration
-com.hummer.common.swagger.config.SwaggerWebConfiguration
-com.hummer.common.swagger.config.SwaggerBeanPostProcessor

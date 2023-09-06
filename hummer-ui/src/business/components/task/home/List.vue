@@ -825,11 +825,11 @@ export default {
               }).catch(error => error);
             } else if(item.accountType === 'serverAccount') {
               this.$router.push({
-                path: '/resource/serverResult',
+                path: '/resource/server-result',
               }).catch(error => error);
             } else if(item.accountType === 'imageAccount') {
               this.$router.push({
-                path: '/resource/imageResult',
+                path: '/resource/image-result',
               }).catch(error => error);
             }
           }

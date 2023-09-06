@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.mapper.ext.ExtCloudTaskMapper;
+import com.hummer.cloud.mapper.ext.ExtResourceMapper;
 import com.hummer.common.core.constant.*;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.dto.CloudTaskCopyDTO;
@@ -69,6 +70,8 @@ public class OrderService {
     private CloudProjectMapper cloudProjectMapper;
     @Autowired @Lazy
     private CloudGroupMapper cloudGroupMapper;
+    @Autowired
+    private ExtResourceMapper extResourceMapper;
     @DubboReference
     private ISystemProviderService systemProviderService;
     @DubboReference
@@ -620,28 +623,46 @@ public class OrderService {
      * @return
      */
     public Integer calculateScore(String projectId) {
-
         Integer score = 100;
-        if (projectId == null) {
-            return score;
+        try {
+
+            if (projectId == null) {
+                return score;
+            }
+
+            Double criticalResultPercent = Double.valueOf(extResourceMapper.resultPercentByProject(projectId, "CriticalRisk"));
+            Double highResultPercent = Double.valueOf(extResourceMapper.resultPercentByProject(projectId, "HighRisk"));
+            Double mediumlResultPercent = Double.valueOf(extResourceMapper.resultPercentByProject(projectId, "MediumRisk"));
+            Double lowResultPercent = Double.valueOf(extResourceMapper.resultPercentByProject(projectId, "LowRisk"));
+
+            CloudTaskExample example1 = new CloudTaskExample();
+            CloudTaskExample.Criteria criteria1 = example1.createCriteria();
+            criteria1.andProjectIdEqualTo(projectId).andSeverityEqualTo("CriticalRisk");
+            long critical = cloudTaskMapper.countByExample(example1);
+
+            CloudTaskExample example2 = new CloudTaskExample();
+            CloudTaskExample.Criteria criteria2 = example2.createCriteria();
+            criteria2.andProjectIdEqualTo(projectId).andSeverityEqualTo("HighRisk");
+            long high = cloudTaskMapper.countByExample(example2);
+
+            CloudTaskExample example3 = new CloudTaskExample();
+            CloudTaskExample.Criteria criteria3 = example3.createCriteria();
+            criteria3.andProjectIdEqualTo(projectId).andSeverityEqualTo("MediumRisk");
+            long medium = cloudTaskMapper.countByExample(example3);
+
+            CloudTaskExample example4 = new CloudTaskExample();
+            CloudTaskExample.Criteria criteria4 = example4.createCriteria();
+            criteria4.andProjectIdEqualTo(projectId).andSeverityEqualTo("LowRisk");
+            long low = cloudTaskMapper.countByExample(example4);
+
+            long sum = 4 * critical + 3 * high + 2 * medium + 1 * low;
+            score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * medium / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
+
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage());
         }
-
-        CloudTaskExample example = new CloudTaskExample();
-        CloudTaskExample.Criteria criteria = example.createCriteria();
-        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("CriticalRisk");
-        long critical = cloudTaskMapper.countByExample(example);
-        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("HighRisk");
-        long high = cloudTaskMapper.countByExample(example);
-        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("MediumRisk");
-        long mediuml = cloudTaskMapper.countByExample(example);
-        criteria.andProjectIdEqualTo(projectId).andSeverityEqualTo("LowRisk");
-        long low = cloudTaskMapper.countByExample(example);
-
-        long sum = 4 * critical + 3 * high + 2 * mediuml + 1 * low;
-        score = 100 - (int) Math.ceil(10 * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + 10 * (3 * high / (sum == 0 ? 1 : sum)) * 100 + 10 * (2 * mediuml / (sum == 0 ? 1 : sum)) * 100 + 10 * (1 * low / (sum == 0 ? 1 : sum)) * 100);
-
-
         return score;
+
     }
 
     public void updateGroupStatus(String groupId, String status) {

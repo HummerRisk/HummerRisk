@@ -47,13 +47,13 @@ public class CloudTaskController {
         return "success";
     }
 
-    @GetMapping("sync/ossTasks")
+    @GetMapping("sync/oss/tasks")
     public String ossTasksJobHandler() throws Exception{
         resourceCreateService.ossTasksJobHandler();
         return "success";
     }
 
-    @GetMapping("sync/cloudTasks")
+    @GetMapping("sync/cloud/tasks")
     public String cloudTasksJobHandler() throws Exception{
         resourceCreateService.cloudTasksJobHandler();
         return "success";
@@ -78,13 +78,13 @@ public class CloudTaskController {
     }
 
     @I18n
-    @GetMapping(value = "log/taskId/{taskId}")
+    @GetMapping(value = "log/task/{taskId}")
     public List<CloudTaskItemLogDTO> getTaskItemLogByTask(@PathVariable String taskId) {
         return orderService.getTaskItemLogByTaskId(taskId);
     }
 
     @I18n
-    @GetMapping(value = "log/accountId/{accountId}")
+    @GetMapping(value = "log/account/{accountId}")
     public List<CloudTaskItemLogWithBLOBs> getTaskItemLogByAccountId(@PathVariable String accountId) {
         return orderService.getTaskItemLogByAccountId(accountId);
     }

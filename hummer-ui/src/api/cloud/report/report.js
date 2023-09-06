@@ -1,26 +1,26 @@
 
-export const reportListUrl = "/cloud/report/reportList/";
+export const reportListUrl = "/cloud/report/report/list/";
 
-export const getReportUrl = "/cloud/report/getReport/";
+export const getReportUrl = "/cloud/report/get/report/";
 
-export const deleteReportUrl = "/cloud/report/deleteReport/";
+export const deleteReportUrl = "/cloud/report/delete/report/";
 
-export const deleteReportsUrl = "/cloud/report/deleteReports";
+export const deleteReportsUrl = "/cloud/report/delete/reports";
 
-export const reportAccountListUrl = "/cloud/report/accountList";
+export const reportAccountListUrl = "/cloud/report/account/list";
 
-export const reportProjectListUrl = "/cloud/report/accountByProjectList";
+export const reportProjectListUrl = "/cloud/report/account/by/project/list";
 
-export const createReportUrl = "/cloud/report/createReport";
+export const createReportUrl = "/cloud/report/create/report";
 
-export const updateReportUrl = "/cloud/report/updateReport";
+export const updateReportUrl = "/cloud/report/update/report";
 
-export const generatorReportUrl = "/cloud/report/generatorReport/";
+export const generatorReportUrl = "/cloud/report/generator/report/";
 
-export const downloadReportUrl = "/cloud/report/downloadReport/";
+export const downloadReportUrl = "/cloud/report/download/report/";
 
-export const reportResultLogsUrl = "/cloud/report/reportResultLogs/";
+export const reportResultLogsUrl = "/cloud/report/report/result/logs/";
 
-export const downloadHistoryReportUrl = "/cloud/report/downloadHistoryReport/";
+export const downloadHistoryReportUrl = "/cloud/report/download/history/report/";
 
-export const deleteHistoryReportUrl = "/cloud/report/deleteHistoryReport/";
+export const deleteHistoryReportUrl = "/cloud/report/delete/history/report/";

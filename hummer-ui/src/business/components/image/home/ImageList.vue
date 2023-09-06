@@ -895,7 +895,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/image/resultdetails/' + params.resultId;
+      let p = '/image/result-details/' + params.resultId;
       this.$router.push({
         path: p
       }).catch(error => error);
@@ -982,6 +982,12 @@ export default {
         }
       });
     },
+    init () {
+      this.search();
+      this.initGroup();
+      this.activeProxy();
+      this.activeRepo();
+    },
   },
   computed: {
     codemirror() {
@@ -989,10 +995,7 @@ export default {
     }
   },
   activated() {
-    this.search();
-    this.initGroup();
-    this.activeProxy();
-    this.activeRepo();
+    this.init();
     this.timer = setInterval(this.getStatus, 10000);
   },
   beforeDestroy() {

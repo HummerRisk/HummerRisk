@@ -42,35 +42,35 @@ public class ServerController {
     private TokenService tokenService;
 
     @Operation(summary = "所有主机分组")
-    @GetMapping("serverGroupList")
+    @GetMapping("server/group/list")
     public List<ServerGroup> getServerGroupList() {
         return serverService.getServerGroupList();
     }
 
     @I18n
     @Operation(summary = "所有主机")
-    @GetMapping("allServerList")
+    @GetMapping("all/server/list")
     public List<Server> allServerList() {
         return serverService.allServerList(null);
     }
 
     @I18n
     @Operation(summary = "按类型查询所有主机")
-    @GetMapping("allServerListByType/{serverType}")
+    @GetMapping("all/server/list/by/type/{serverType}")
     public List<Server> allServerListByType(@PathVariable String serverType) {
         return serverService.allServerList(serverType);
     }
 
     @I18n
     @Operation(summary = "主机列表")
-    @PostMapping("serverList/{goPage}/{pageSize}")
+    @PostMapping("server/list/{goPage}/{pageSize}")
     public Pager<List<ServerDTO>> getServerList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest server) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.getServerList(server));
     }
 
     @Operation(summary = "查询主机")
-    @GetMapping("getServer/{id}")
+    @GetMapping("get/server/{id}")
     public Server getServer(@PathVariable String id) throws Exception {
         return serverService.getServer(id);
     }
@@ -94,86 +94,86 @@ public class ServerController {
     }
 
     @Operation(summary = "添加主机分组")
-    @PostMapping("addServerGroup")
+    @PostMapping("add/server/group")
     public int addServerGroup(@RequestBody ServerGroup serverGroup) {
         return serverService.addServerGroup(serverGroup, tokenService.getLoginUser());
     }
 
     @Operation(summary = "修改主机分组")
-    @PostMapping("editServerGroup")
+    @PostMapping("edit/server/group")
     public int editServerGroup(@RequestBody ServerGroup serverGroup) throws Exception {
         return serverService.editServerGroup(serverGroup, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除主机分组")
-    @PostMapping("deleteServerGroup")
+    @PostMapping("delete/server/group")
     public void deleteServerGroup(@RequestBody ServerGroup serverGroup) throws Exception {
         serverService.deleteServerGroup(serverGroup, tokenService.getLoginUser());
     }
 
     @Operation(summary = "添加主机")
-    @PostMapping(value = "addServer", consumes = {"multipart/form-data"})
+    @PostMapping(value = "add/server", consumes = {"multipart/form-data"})
     public ServerValidateDTO addServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                        @RequestPart("request") Server request) throws Exception {
         return serverService.addServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "编辑主机")
-    @PostMapping(value = "editServer", consumes = {"multipart/form-data"})
+    @PostMapping(value = "edit/server", consumes = {"multipart/form-data"})
     public ServerValidateDTO editServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                         @RequestPart("request") Server request) throws Exception {
         return serverService.editServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "复制主机")
-    @PostMapping(value = "copyServer", consumes = {"multipart/form-data"})
+    @PostMapping(value = "copy/server", consumes = {"multipart/form-data"})
     public ServerValidateDTO copyServer(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                         @RequestPart("request") Server request) throws Exception {
         return serverService.copyServer(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除主机")
-    @GetMapping("deleteServer/{id}")
+    @GetMapping("delete/server/{id}")
     public void deleteServer(@PathVariable String id) throws Exception {
         serverService.deleteServer(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "主机规则列表")
-    @PostMapping(value = "ruleList/{goPage}/{pageSize}")
+    @PostMapping(value = "rule/list/{goPage}/{pageSize}")
     public Pager<List<ServerRuleDTO>> ruleList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRuleRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.ruleList(request));
     }
 
     @Operation(summary = "添加主机规则")
-    @PostMapping(value = "addServerRule")
+    @PostMapping(value = "add/server/rule")
     public int addServerRule(@RequestBody ServerRuleRequest request) throws Exception {
         request.setId(null);
         return serverService.addServerRule(request);
     }
 
     @Operation(summary = "修改主机规则")
-    @PostMapping(value = "updateServerRule")
+    @PostMapping(value = "update/server/rule")
     public int updateServerRule(@RequestBody ServerRuleRequest request) throws Exception {
         return serverService.updateServerRule(request);
     }
 
     @Operation(summary = "删除主机规则")
-    @GetMapping(value = "deleteServerRule/{id}")
+    @GetMapping(value = "delete/server/rule/{id}")
     public void deleteServerRule(@PathVariable String id) throws Exception {
         serverService.deleteServerRule(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "主机规则启用")
-    @PostMapping(value = "changeStatus")
+    @PostMapping(value = "change/status")
     public int changeStatus(@RequestBody ServerRule rule) throws Exception {
         return serverService.changeStatus(rule);
     }
 
     @I18n
     @Operation(summary = "主机检测结果列表(规则视角)")
-    @PostMapping(value = "resultList/{goPage}/{pageSize}")
+    @PostMapping(value = "result/list/{goPage}/{pageSize}")
     public Pager<List<ServerResultDTO>> resultList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerResultRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.resultList(request));
@@ -181,7 +181,7 @@ public class ServerController {
 
     @I18n
     @Operation(summary = "主机检测结果列表(主机视角)")
-    @PostMapping(value = "resultServerList/{goPage}/{pageSize}")
+    @PostMapping(value = "result/server/list/{goPage}/{pageSize}")
     public Pager<List<ServerListDTO>> resultServerList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerRequest request) throws Exception {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, serverService.resultServerList(request));
@@ -189,14 +189,14 @@ public class ServerController {
 
     @I18n
     @Operation(summary = "主机检测结果详情(主机视角)")
-    @GetMapping(value = "resultServer/{serverId}")
+    @GetMapping(value = "result/server/{serverId}")
     public ServerListDTO resultServer(@PathVariable String serverId) {
         return serverService.resultServer(serverId);
     }
 
     @I18n
     @Operation(summary = "主机规则检测结果详情(规则视角)")
-    @GetMapping(value = "getServerResult/{resultId}")
+    @GetMapping(value = "get/server/result/{resultId}")
     public ServerResultDTO getServerResult(@PathVariable String resultId) {
         return serverService.getServerResult(resultId);
     }
@@ -215,32 +215,32 @@ public class ServerController {
     }
 
     @Operation(summary = "重新整体主机检测")
-    @GetMapping("rescanServer/{id}")
+    @GetMapping("rescan/server/{id}")
     public void rescanServer(@PathVariable String id) throws Exception {
         serverService.rescanServer(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除主机规则检测记录")
-    @GetMapping("deleteServerResult/{id}")
+    @GetMapping("delete/server/result/{id}")
     public void deleteServerResult(@PathVariable String id) throws Exception {
         serverService.deleteServerResult(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除主机整体检测记录")
-    @GetMapping("deleteServerResultById/{id}")
+    @GetMapping("delete/server/result/by/id/{id}")
     public void deleteServerResultById(@PathVariable String id) throws Exception {
         serverService.deleteServerResultByServerId(id, tokenService.getLoginUser());
     }
 
     @Operation(summary = "所有主机凭据")
-    @GetMapping("allCertificateList")
+    @GetMapping("all/certificate/list")
     public List<ServerCertificate> allCertificateList() {
         return serverService.allCertificateList();
     }
 
     @I18n
     @Operation(summary = "主机凭据列表")
-    @PostMapping("certificateList/{goPage}/{pageSize}")
+    @PostMapping("certificate/list/{goPage}/{pageSize}")
     public Pager<List<ServerCertificateDTO>> certificateList(
             @PathVariable int goPage, @PathVariable int pageSize, @RequestBody ServerCertificateRequest request) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
@@ -248,63 +248,63 @@ public class ServerController {
     }
 
     @Operation(summary = "添加主机凭据")
-    @PostMapping(value = "addCertificate", consumes = {"multipart/form-data"})
+    @PostMapping(value = "add/certificate", consumes = {"multipart/form-data"})
     public int addCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                               @RequestPart("request") ServerCertificate request) throws Exception {
         return serverService.addCertificate(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "编辑主机凭据")
-    @PostMapping(value = "editCertificate", consumes = {"multipart/form-data"})
+    @PostMapping(value = "edit/certificate", consumes = {"multipart/form-data"})
     public int editCertificate(@RequestPart(value = "keyFile", required = false) MultipartFile keyFile,
                                @RequestPart("request") ServerCertificate request) throws Exception {
         return serverService.editCertificate(keyFile, request, tokenService.getLoginUser());
     }
 
     @Operation(summary = "删除主机凭据")
-    @GetMapping("deleteCertificate/{id}")
+    @GetMapping("delete/certificate/{id}")
     public void deleteCertificate(@PathVariable String id) throws Exception {
         serverService.deleteCertificate(id, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "概览TOP统计")
-    @PostMapping("topInfo")
+    @PostMapping("top/info")
     public Map<String, Object> topInfo(@RequestBody Map<String, Object> params) {
         return serverService.topInfo(params);
     }
 
     @I18n
     @Operation(summary = "主机统计")
-    @GetMapping("serverChart")
+    @GetMapping("server/chart")
     public List<Map<String, Object>> serverChart() {
         return serverService.serverChart();
     }
 
     @I18n
     @Operation(summary = "主机风险统计")
-    @GetMapping("severityChart")
+    @GetMapping("severity/chart")
     public List<Map<String, Object>> severityChart() {
         return serverService.severityChart();
     }
 
     @I18n
     @Operation(summary = "检测统计")
-    @PostMapping("serverLineChart")
+    @PostMapping("server/line/chart")
     public ChartDTO serverLineChart(@RequestBody Map<String, Object> params) {
         return serverService.serverLineChart(params);
     }
 
     @I18n
     @Operation(summary = "通过Excel导入专家数据")
-    @PostMapping(value = "/ExcelInsertExperts", consumes = {"multipart/form-data"})
+    @PostMapping(value = "excel/insert/experts", consumes = {"multipart/form-data"})
     public void insertExperts(@RequestPart(value = "file", required = false) MultipartFile file, @RequestPart("request") Server server) throws Exception {
         serverService.insertExperts(file, server, tokenService.getLoginUser());
     }
 
     @I18n
     @Operation(summary = "下载Excel示例")
-    @GetMapping("/downloadExcel")
+    @GetMapping("download/excel")
     public void downloadExcel(HttpServletResponse response) {
         FileInputStream fis = null;
         ServletOutputStream sos = null;
@@ -313,7 +313,7 @@ public class ServerController {
             // resources下路径，比如文件位置在：resources/excel/template.xlsx
             String path = "excel/" + fileName;
             //设置响应头
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+            response.setHeader("Content/Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF/8"));
 
             ClassPathResource classPathResource = new ClassPathResource(path);
             InputStream inputStream = classPathResource.getInputStream();
@@ -338,66 +338,66 @@ public class ServerController {
 
     @I18n
     @Operation(summary = "所有已绑定规则组的规则")
-    @GetMapping("allBindList/{id}")
+    @GetMapping("all/bind/list/{id}")
     public List<ServerRule> allBindList(@PathVariable String id) {
         return serverService.allBindList(id);
     }
 
     @I18n
     @Operation(summary = "所有未绑定规则组的规则")
-    @GetMapping("unBindList/{id}")
+    @GetMapping("unbind/list/{id}")
     public List<ServerRule> unBindList(@PathVariable String id) {
         return serverService.unBindList(id);
     }
 
     @I18n
     @Operation(summary = "规则组绑定规则")
-    @PostMapping(value = "bindRule")
+    @PostMapping(value = "bind/rule")
     public void bindRule(@RequestBody BindRuleRequest request) throws Exception {
         serverService.bindRule(request);
     }
 
     @I18n
     @Operation(summary = "规则组")
-    @GetMapping(value = "ruleGroups")
+    @GetMapping(value = "rule/groups")
     public List<RuleGroup> getRuleGroups() {
         return serverService.getRuleGroups(null);
     }
 
     @I18n
     @Operation(summary = "按类型查询规则组")
-    @GetMapping(value = "ruleGroupsByType/{type}")
+    @GetMapping(value = "rule/groups/by/type/{type}")
     public List<RuleGroup> ruleGroupsByType(@PathVariable String type) {
         return serverService.getRuleGroups(type);
     }
 
     @I18n
     @Operation(summary = "按规则组检测主机规则")
-    @GetMapping("scanByGroup/{groupId}/{serverId}")
+    @GetMapping("scan/by/group/{groupId}/{serverId}")
     public void scanByGroup(@PathVariable String groupId, @PathVariable String serverId) throws Exception {
         serverService.scanByGroup(groupId, serverId, tokenService.getLoginUser());
     }
 
     @Operation(summary = "批量删除主机")
-    @PostMapping("deleteServers")
+    @PostMapping("delete/servers")
     public void deleteServers(@RequestBody List<String> selectIds) throws Exception {
         serverService.deleteServers(selectIds, tokenService.getLoginUser());
     }
 
     @Operation(summary = "批量删除主机规则")
-    @PostMapping("deleteServerRules")
+    @PostMapping("delete/server/rules")
     public void deleteServerRules(@RequestBody List<String> selectIds) throws Exception {
         serverService.deleteServerRules(selectIds, tokenService.getLoginUser());
     }
 
     @Operation(summary = "批量删除统一凭据")
-    @PostMapping("deleteCertificates")
+    @PostMapping("delete/certificates")
     public void deleteCertificates(@RequestBody List<String> selectIds) throws Exception {
         serverService.deleteCertificates(selectIds, tokenService.getLoginUser());
     }
 
     @Operation(summary = "批量删除主机检测结果")
-    @PostMapping("deleteResults")
+    @PostMapping("delete/results")
     public void deleteResults(@RequestBody List<String> selectIds) throws Exception {
         serverService.deleteResults(selectIds, tokenService.getLoginUser());
     }

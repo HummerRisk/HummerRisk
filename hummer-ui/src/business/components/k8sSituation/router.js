@@ -1,30 +1,29 @@
 /* eslint-disable */
 export default {
-  name: "K8sSituation",
-  path: "/k8sSituation",
-  redirect: "/k8sSituation/k8sSituation",
+  path: "/k8s-situation",
+  redirect: "/k8s-situation/k8s-situation",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/k8sSituation/base')
   },
   children: [
     {
-      path: "k8sSituation",
-      name: "K8sSituationList",
+      path: "k8s-situation",
+      name: "k8sSituationList",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sSituation"),
     },
     {
-      path: "k8sTopology",
-      name: "K8sTopology",
+      path: "k8s-topology",
+      name: "k8sTopology",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sTopology"),
     },
     {
-      path: "rbacTopology",
-      name: "RbacTopology",
+      path: "rbac-topology",
+      name: "rbacTopology",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/RbacTopology"),
     },
     {
-      path: "k8sSyncLog",
-      name: "K8sSyncLog",
+      path: "k8s-sync-log",
+      name: "k8sSyncLog",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/k8sSituation/home/K8sSyncLog"),
     },
   ]

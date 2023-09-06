@@ -1,5 +1,5 @@
 
-export const getAccountUrl = "/cloud/account/getAccount/";
+export const getAccountUrl = "/cloud/account/get/account/";
 
 export const cleanParameterUrl = "/cloud/account/clean/parameter";
 
@@ -35,15 +35,15 @@ export const addAccountUrl = "/cloud/account/add";
 
 export const updateAccountUrl = "/cloud/account/update";
 
-export const accountHistoryListUrl = "/cloud/account/historyList/";
+export const accountHistoryListUrl = "/cloud/account/history/list/";
 
-export const accountHistoryDiffListUrl = "/cloud/account/historyDiffList/";
+export const accountHistoryDiffListUrl = "/cloud/account/history/diff/list/";
 
-export const allListUrl = "/cloud/account/allList";
+export const allListUrl = "/cloud/account/all/list";
 
-export const cloudTaskLogByIdUrl = "/cloud/task/log/taskId/";
+export const cloudTaskLogByIdUrl = "/cloud/task/log/task/";
 
-export const cloudTaskLogByAccountIdUrl = "/cloud/task/log/accountId/";
+export const cloudTaskLogByAccountIdUrl = "/cloud/task/log/account/";
 
 export const cloudTaskDetailUrl = "/cloud/task/detail/";
 
@@ -57,7 +57,7 @@ export const cloudTagRuleSaveUrl = "/cloud/tag/rule/save";
 
 export const cloudTagRuleUpdateUrl = "/cloud/tag/rule/update";
 
-export const cloudListByGroupUrl = "/cloud/account/listByGroup/";
+export const cloudListByGroupUrl = "/cloud/account/list/by/plugin/";
 
 export const cloudResourceListUrl = "/cloud/resources/list/";
 

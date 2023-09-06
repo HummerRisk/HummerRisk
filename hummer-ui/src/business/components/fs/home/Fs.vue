@@ -674,7 +674,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/fs/resultdetails/' + params.resultId;
+      let p = '/fs/result-details/' + params.resultId;
       this.$router.push({
         path: p
       }).catch(error => error);

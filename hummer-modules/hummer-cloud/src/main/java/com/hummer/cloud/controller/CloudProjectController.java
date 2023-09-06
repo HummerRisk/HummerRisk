@@ -42,14 +42,14 @@ public class CloudProjectController {
 
     @Operation(summary = "所有项目")
     @I18n
-    @GetMapping("allProjectList")
+    @GetMapping("all/project/list")
     public List<CloudProject> getCloudProjects() {
         return cloudProjectService.getCloudProjects();
     }
 
     @Operation(summary = "项目详情")
     @I18n
-    @GetMapping("projectById/{projectId}")
+    @GetMapping("project/by/id/{projectId}")
     public CloudProjectDTO projectById(@PathVariable String projectId) {
         return cloudProjectService.projectById(projectId);
     }
@@ -68,7 +68,7 @@ public class CloudProjectController {
 
     @Operation(summary = "项目规则组列表")
     @I18n
-    @PostMapping("groupList/{goPage}/{pageSize}")
+    @PostMapping("group/list/{goPage}/{pageSize}")
     public Pager<List<CloudGroupDTO>> getCloudGroupDTOs(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody CloudGroupRequest cloudGroupRequest) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, cloudProjectService.getCloudGroupDTOs(cloudGroupRequest));
@@ -76,19 +76,19 @@ public class CloudProjectController {
 
     @Operation(summary = "项目规则组详情")
     @I18n
-    @GetMapping("groupById/{groupId}")
+    @GetMapping("group/by/id/{groupId}")
     public CloudGroupDTO groupById(@PathVariable String groupId) {
         return cloudProjectService.groupById(groupId);
     }
 
     @Operation(summary = "删除项目规则组")
-    @GetMapping("deleteGroup/{groupId}")
+    @GetMapping("delete/group/{groupId}")
     public void deleteGroup(@PathVariable String groupId) {
         cloudProjectService.deleteGroup(groupId, tokenService.getLoginUser());
     }
 
     @Operation(summary = "批量删除项目规则组")
-    @PostMapping("deleteGroups")
+    @PostMapping("delete/groups")
     public void deleteGroups(@RequestBody List<String> selectIds) throws Exception {
         cloudProjectService.deleteGroups(selectIds, tokenService.getLoginUser());
     }
@@ -102,14 +102,14 @@ public class CloudProjectController {
 
     @Operation(summary = "项目执行初始化列表")
     @I18n
-    @PostMapping("processList")
+    @PostMapping("process/list")
     public CloudProcessDTO getCloudProcessDTO(@RequestBody CloudProcess cloudProcess) {
         return cloudProjectService.getCloudProcessDTO(cloudProcess);
     }
 
     @Operation(summary = "项目执行初始化日志列表")
     @I18n
-    @PostMapping("processLogList")
+    @PostMapping("process/log/list")
     public List<CloudProcessLogWithBLOBs> getCloudProcessLogs(@RequestBody CloudProcess cloudProcess) {
         return cloudProjectService.getCloudProcessLogs(cloudProcess);
     }

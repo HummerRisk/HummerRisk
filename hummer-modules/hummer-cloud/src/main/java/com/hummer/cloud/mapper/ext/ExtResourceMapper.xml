@@ -347,9 +347,8 @@
     </select>
 
     <select id="resultPercentByCloud" resultType="java.lang.String">
-        select IFNULL(sum( t.return_sum ), 0)/IFNULL(sum( t.resources_sum ), 1)
+        select IFNULL(sum( t.return_sum ), 0) / IF(IFNULL(sum( t.resources_sum ), 0) = 0, 1, IFNULL(sum( t.resources_sum ), 0))
         from cloud_task t
-        join cloud_account t1 on t.account_id = t1.id
         <where>
             <if test="severity != null and severity != ''">
                 AND t.severity = #{severity}
@@ -359,6 +358,19 @@
             </if>
             <if test="taskId != null and taskId != ''">
                 AND t.id = #{taskId}
+            </if>
+        </where>
+    </select>
+
+    <select id="resultPercentByProject" resultType="java.lang.String">
+        select IFNULL(sum( t.return_sum ), 0) / IF(IFNULL(sum( t.resources_sum ), 0) = 0, 1, IFNULL(sum( t.resources_sum ), 0))
+        from cloud_task t
+        <where>
+            <if test="severity != null and severity != ''">
+                AND t.severity = #{severity}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND t.project_id = #{projectId}
             </if>
         </where>
     </select>

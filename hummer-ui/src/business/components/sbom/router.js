@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Sbom",
   path: "/sbom",
   redirect: "/sbom/project",
   components: {

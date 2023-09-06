@@ -38,7 +38,7 @@ public class CloudSyncController {
 
     @I18n
     @Operation(summary = "同步资源类型数量列表")
-    @GetMapping(value = "resourceType/list/{syncId}")
+    @GetMapping(value = "resource/type/list/{syncId}")
     public List<Map<String,Object>> listResourceType(@PathVariable String syncId) {
         return cloudSyncService.getResourceType(syncId);
     }
@@ -66,28 +66,28 @@ public class CloudSyncController {
     }
 
     @Operation(summary = "批量删除同步日志")
-    @PostMapping("deleteLogs")
+    @PostMapping("delete/logs")
     public void deleteLogs(@RequestBody List<String> selectIds) throws Exception {
         cloudSyncService.deleteLogs(selectIds);
     }
 
     @I18n
     @Operation(summary = "资源态势拓扑图")
-    @GetMapping(value = "cloudTopology")
+    @GetMapping(value = "cloud/topology")
     public CloudTopology cloudTopology() {
         return cloudSyncService.cloudTopology("all");
     }
 
     @I18n
     @Operation(summary = "根据云账号ID搜索资源拓扑图")
-    @GetMapping(value = "cloudTopologyByAccountId/{accountId}")
+    @GetMapping(value = "cloud/topology/by/account/{accountId}")
     public CloudTopology cloudTopologyByAccountId(@PathVariable String accountId) {
         return cloudSyncService.cloudTopology(accountId);
     }
 
     @I18n
     @Operation(summary = "资源关系图")
-    @GetMapping(value = "cloudTopologyRela/{resourceItemId}")
+    @GetMapping(value = "cloud/topology/rela/{resourceItemId}")
     public TopoChartDTO cloudTopologyRela(@PathVariable String resourceItemId) {
         return cloudSyncService.cloudTopologyRela(resourceItemId);
     }

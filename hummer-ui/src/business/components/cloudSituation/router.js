@@ -1,25 +1,24 @@
 /* eslint-disable */
 export default {
-  name: "CloudSituation",
-  path: "/cloudSituation",
-  redirect: "/cloudSituation/cloudSituation",
+  path: "/cloud-situation",
+  redirect: "/cloud-situation/cloud-situation",
   components: {
     content: () => import(/* webpackChunkName: "setting" */ '@/business/components/cloudSituation/base')
   },
   children: [
     {
-      path: "cloudSituation",
-      name: "CloudSituationList",
+      path: "cloud-situation",
+      name: "cloudSituationList",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/cloudSituation/home/CloudSituation"),
     },
     {
-      path: "cloudSyncLog",
-      name: "CloudSyncLog",
+      path: "cloud-sync-log",
+      name: "cloudSyncLog",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/cloudSituation/home/CloudSyncLog"),
     },
     {
-      path: "cloudTopology",
-      name: "CloudTopology",
+      path: "cloud-topology",
+      name: "cloudTopology",
       component: () => import(/* webpackChunkName: "api" */ "@/business/components/cloudSituation/home/CloudTopology"),
     },
   ]

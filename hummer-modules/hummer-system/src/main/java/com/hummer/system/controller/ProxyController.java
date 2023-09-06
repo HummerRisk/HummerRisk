@@ -61,7 +61,7 @@ public class ProxyController {
     }
 
     @Operation(summary = "批量删除代理")
-    @PostMapping("deleteProxys")
+    @PostMapping("delete/proxys")
     public void deleteProxys(@RequestBody List<Integer> selectIds) throws Exception {
         proxyService.deleteProxys(selectIds, tokenService.getLoginUser());
     }

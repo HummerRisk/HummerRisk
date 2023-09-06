@@ -45,7 +45,7 @@ public class PluginController {
 
     @I18n
     @Operation(summary = "K8s检测引擎类型过滤插件")
-    @GetMapping("k8sScan")
+    @GetMapping("k8s/scan")
     public List<Plugin> getK8sPlugin() {
         return pluginService.getNativePlugin();
     }

@@ -11,7 +11,6 @@
     <modules>
         <module>hummer-common-core</module>
         <module>hummer-common-redis</module>
-        <module>hummer-common-swagger</module>
         <module>hummer-common-security</module>
         <module>hummer-common-datascope</module>
     </modules>

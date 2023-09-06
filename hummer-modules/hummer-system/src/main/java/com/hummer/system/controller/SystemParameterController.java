@@ -46,13 +46,13 @@ public class SystemParameterController {
     }
 
     @Operation(summary = "编辑检测参数设置")
-    @PostMapping("/edit/scanSetting")
+    @PostMapping("/edit/scan/setting")
     public void editScanSetting(@RequestBody List<SystemParameter> systemParameter) {
         systemParameterService.edit(systemParameter);
     }
 
     @Operation(summary = "测试连接")
-    @PostMapping("/testConnection/{type}")
+    @PostMapping("/test/connection/{type}")
     public void testConnection(@PathVariable String type, @RequestBody Map<String, String> hashMap) throws Exception {
         switch (type) {
             case "email":
@@ -91,7 +91,7 @@ public class SystemParameterController {
 
     @I18n
     @Operation(summary = "检测参数设置")
-    @GetMapping("/scanSetting/info")
+    @GetMapping("/scan/setting/info")
     public List<SystemParameter> scanSettingInfo() {
         return systemParameterService.scanSettingInfo(ParamConstants.Classify.SCAN.getValue());
     }
@@ -110,21 +110,21 @@ public class SystemParameterController {
     }
 
     @Operation(summary = "刷新系统参数信息")
-    @GetMapping("/updateSystem")
+    @GetMapping("/update/system")
     public void updateSystem() throws Exception {
         systemParameterService.updateSystem();
     }
 
     @I18n
     @Operation(summary = "查询系统参数信息")
-    @GetMapping("/searchSystem")
+    @GetMapping("/search/system")
     public List<SystemParameter> searchSystem() throws Exception {
         return systemParameterService.info(ParamConstants.Classify.SYSTEM.getValue());
     }
 
     @I18n
     @Operation(summary = "webhook列表")
-    @PostMapping("webhookList/{goPage}/{pageSize}")
+    @PostMapping("webhook/list/{goPage}/{pageSize}")
     public Pager<List<Webhook>> getWebhookList(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody Webhook webhook) {
         Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, systemParameterService.getWebhookList(webhook));
@@ -149,7 +149,7 @@ public class SystemParameterController {
     }
 
     @Operation(summary = "启用webhook")
-    @PostMapping(value = "changeStatus")
+    @PostMapping(value = "change/status")
     public int changeStatus(@RequestBody Webhook webhook) {
         return systemParameterService.changeStatus(webhook);
     }

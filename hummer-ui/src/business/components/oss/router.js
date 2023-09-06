@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-  name: "Oss",
   path: "/oss",
   redirect: "/oss/account",
   components: {
@@ -23,13 +22,13 @@ export default {
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Bucket'),
     },
     {
-      path: "ossRisk",
-      name: "OssRisk",
+      path: "oss-risk",
+      name: "ossRisk",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Risk'),
     },
     {
-      path: "ossReport",
-      name: "OssReport",
+      path: "oss-report",
+      name: "ossReport",
       component: () => import(/* webpackChunkName: "api" */ '@/business/components/oss/home/Report'),
     },
   ]

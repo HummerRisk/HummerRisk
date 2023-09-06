@@ -839,7 +839,7 @@ export default {
         this.$warning(this.$t('resource.no_resources_allowed'));
         return;
       }
-      let p = '/code/resultdetails/' + params.resultId;
+      let p = '/code/result-details/' + params.resultId;
       this.$router.push({
         path: p
       }).catch(error => error);

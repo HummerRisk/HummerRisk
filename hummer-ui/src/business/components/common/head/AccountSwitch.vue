@@ -12,11 +12,11 @@
 
       <el-divider/>
 
-      <el-menu-item :index="'/account/cloudaccount'">
+      <el-menu-item :index="'/account/cloud-account'">
         <font-awesome-icon :icon="['fa', 'plus']"/>
         <span style="padding-left: 7px;">{{ $t("account.create") }}</span>
       </el-menu-item>
-      <el-menu-item :index="'/account/cloudaccount'">
+      <el-menu-item :index="'/account/cloud-account'">
         <font-awesome-icon :icon="['fa', 'list-ul']"/>
         <span style="padding-left: 7px;">{{ $t('commons.show_all') }}</span>
       </el-menu-item>

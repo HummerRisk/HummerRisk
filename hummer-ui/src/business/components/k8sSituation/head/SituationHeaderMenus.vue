@@ -4,19 +4,19 @@
       <el-col :span="24">
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
-          <el-menu-item :index="'/k8sSituation/k8sSituation'">
+          <el-menu-item :index="'/k8s-situation/k8s-situation'">
             {{ $t("k8s.resource_situation") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/k8sSituation/k8sTopology'">
+          <el-menu-item :index="'/k8s-situation/k8s-topology'">
             {{ $t("k8s.cloud_topology") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/k8sSituation/rbacTopology'">
+          <el-menu-item :index="'/k8s-situation/rbac-topology'">
             {{ $t("k8s.rbac_topology") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/k8sSituation/k8sSyncLog'">
+          <el-menu-item :index="'/k8s-situation/k8s-sync-log'">
             {{ $t("k8s.sync_log") }}
           </el-menu-item>
 

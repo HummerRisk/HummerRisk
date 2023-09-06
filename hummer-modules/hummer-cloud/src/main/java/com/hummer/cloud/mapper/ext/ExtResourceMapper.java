@@ -31,6 +31,8 @@ public interface ExtResourceMapper {
 
     String resultPercentByCloud(@Param("accountId") String accountId, @Param("severity") String severity, @Param("taskId") String taskId);
 
+    String resultPercentByProject(@Param("projectId") String projectId, @Param("severity") String severity);
+
     Integer sumReturnSum(@Param("id") Integer id);
 
     Integer sumResourcesSum(@Param("id") Integer id);
