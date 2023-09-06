@@ -452,7 +452,7 @@ public class HistoryService {
                 score = 100 - 41;
             }
         }
-
+        if(score < 35) score = 35;
         return score;
     }
 

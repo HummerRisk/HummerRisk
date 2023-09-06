@@ -657,7 +657,7 @@ public class OrderService {
 
             long sum = 4 * critical + 3 * high + 2 * medium + 1 * low;
             score = 100 - (int) Math.ceil(criticalResultPercent * (4 * critical / (sum == 0 ? 1 : sum)) * 100 + highResultPercent * (3 * high / (sum == 0 ? 1 : sum)) * 100 + mediumlResultPercent * (2 * medium / (sum == 0 ? 1 : sum)) * 100 + lowResultPercent * (1 * low / (sum == 0 ? 1 : sum)) * 100);
-
+            if(score < 35) score = 35;
         } catch (Exception e) {
             LogUtil.error(e.getMessage());
         }
