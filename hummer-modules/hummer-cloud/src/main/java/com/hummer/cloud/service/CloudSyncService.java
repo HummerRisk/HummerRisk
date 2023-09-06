@@ -81,6 +81,7 @@ public class CloudSyncService {
     @DubboReference
     private ISystemProviderService systemProviderService;
     @Autowired
+    @Qualifier("loadBalanced")
     private RestTemplate restTemplate;
 
     /**
@@ -197,7 +198,7 @@ public class CloudSyncService {
                             LogUtil.info("sync all resource {scanner}[api body]: " + jsonObject.toJSONString());
 
                             HttpEntity<?> httpEntity = new HttpEntity<>(jsonObject, headers);
-                            String result = restTemplate.postForObject("http://10.2.5.2:8011/run", httpEntity, String.class);
+                            String result = restTemplate.postForObject(CloudTaskConstants.HUMMER_SCANNER, httpEntity, String.class);
                             JSONObject resultJson = JSONObject.parseObject(result);
                             String resultCode = resultJson != null ? resultJson.getString("code") : "";
                             String resultMsg = resultJson != null ? resultJson.getString("msg") : "";

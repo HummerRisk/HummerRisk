@@ -96,6 +96,8 @@ public class CloudTaskConstants {
     public final static String PROWLER_RESULT_FILE_PATH = "/prowler";//本地启动用 /tmp
     public final static String PROWLER_CONFIG_FILE_PATH = "/root/.aws";//本地启动用 ~/.aws
 
+    public final static String HUMMER_SCANNER = "http://hummer-scanner/run";
+
     public final static String[] SERVER_TYPE = {"aliyun.ecs", "huawei.ecs", "tencent.cvm", "aws.ec2", "azure.vm", "qingcloud.ecs", "ucloud.uhost", "jdcloud.vm", "ksyun.kec", "volc.ecs", "vsphere.vm", "openstack.server", "baidu.bbc"};
     public final static String[] DB_TYPE = {"aliyun.polardb", "aliyun.rds", "huawei.dds", "huawei.gaussdb", "huawei.gaussdbfornosql", "huawei.gaussdbforopengauss", "huawei.rds", "tencent.cdb", "aws.rds", "azure.cosmosdb", "azure.sqldatabase", "azure.sqlserver", "gcp.sql-backup-run", "qingcloud.mysql"};
     public final static String[] OSS_TYPE = {"aliyun.oss", "huawei.obs", "tencent.cos", "aws.s3", "qiniu.kodo", "jdcloud.oss"};
