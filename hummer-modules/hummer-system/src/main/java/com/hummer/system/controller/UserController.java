@@ -127,7 +127,7 @@ public class UserController {
     }
 
     @Operation(summary = "批量删除用户")
-    @PostMapping("deleteUsers")
+    @PostMapping("delete/users")
     public void deleteUsers(@RequestBody List<String> selectIds) throws Exception {
         userService.deleteUsers(selectIds, tokenService.getLoginUser());
     }
