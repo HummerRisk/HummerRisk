@@ -49,7 +49,7 @@ export const noticeSaveMessageTaskUrl = "/system/notice/save/message/task";
 
 export const noticeDeleteMessageUrl = "/system/notice/delete/message/";
 
-export const scanSettingInfoUrl = "/system/system/scanSetting/info";
+export const scanSettingInfoUrl = "/system/system/scan/setting/info";
 
 export const scanSettingEditUrl = "/system/system/edit/scan/setting";
 
