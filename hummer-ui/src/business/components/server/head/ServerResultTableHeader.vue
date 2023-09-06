@@ -37,7 +37,7 @@
         <el-tag v-show="normals.length > 0" v-for="(normal, index) in normals" :key="index" closable type="success" size="mini" class="el-tag-con" @close="handleClose2(normal)">
           {{ $t(normal.i18nKey) }} : {{ normal.searchValue }}
         </el-tag>
-        <el-tag v-show="tags && Object.keys(tags).length > 0 && !tags.ruleTag" v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
+        <el-tag v-show="tags && Object.keys(tags).length > 0" v-for="(value, key) in tags" :key="key" closable type="info" size="mini" class="el-tag-con" @close="handleClose(key)">
           {{ $t(value.label) }} : {{ value.valueArray }}
         </el-tag>
       </span>

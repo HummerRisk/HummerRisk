@@ -504,10 +504,10 @@ export default {
           key = 'all';
         }
       }
-      if (this.condition.combine) {
-        this.condition.combine.ruleTag = {operator: 'in', value: key};
+      if(key !== 'all') {
+        this.condition.tagKey = key;
       } else {
-        this.condition.combine = {ruleTag: {operator: 'in', value: key }};
+        this.condition.tagKey = null;
       }
       this.search();
     },

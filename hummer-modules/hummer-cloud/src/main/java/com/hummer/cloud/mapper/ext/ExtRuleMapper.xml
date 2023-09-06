@@ -156,9 +156,10 @@
             resultMap="BaseResultMap2">
         SELECT
         t.*,
-        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey
+        r.tag_key as tagKey
         FROM rule t
         LEFT JOIN plugin p on t.plugin_id = p.id
+        LEFT JOIN rule_tag_mapping r on r.rule_id = t.id
         <where>
             <if test="combine != null">
                 <include refid="combine">
@@ -179,6 +180,9 @@
             </if>
             <if test="description != null">
                 AND LOWER(t.description) like CONCAT('%',LOWER(#{description}),'%')
+            </if>
+            <if test="tagKey != null">
+                AND LOWER(r.tag_key) like CONCAT('%',LOWER(#{tagKey}),'%')
             </if>
             AND p.type in ('cloud')
         </where>
@@ -189,9 +193,10 @@
             resultMap="BaseResultMap2">
         SELECT
         t.*,
-        (select tag_key from rule_tag_mapping where rule_id = t.id limit 1) as tagKey
+        r.tag_key as tagKey
         FROM rule t
         LEFT JOIN plugin p on t.plugin_id = p.id
+        LEFT JOIN rule_tag_mapping r on r.rule_id = t.id
         <where>
             <if test="combine != null">
                 <include refid="combine">
@@ -212,6 +217,9 @@
             </if>
             <if test="description != null">
                 AND LOWER(t.description) like CONCAT('%',LOWER(#{description}),'%')
+            </if>
+            <if test="tagKey != null">
+                AND LOWER(r.tag_key) like CONCAT('%',LOWER(#{tagKey}),'%')
             </if>
             AND p.type in ('native')
         </where>

@@ -131,6 +131,9 @@
             <if test="request.description != null and request.description != ''">
                 and LOWER(t.description) like CONCAT('%',LOWER(#{request.description}),'%')
             </if>
+            <if test="request.tagKey != null">
+                AND LOWER(t1.tag_key) like CONCAT('%',LOWER(#{request.tagKey}),'%')
+            </if>
             <if test="request.ruleGroupId != null and request.ruleGroupId != ''">
                 and #{request.ruleGroupId} in (select t3.group_id from rule_group_mapping t3 where t3.rule_id = t.id)
             </if>
