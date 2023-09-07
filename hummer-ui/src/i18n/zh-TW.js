@@ -1962,6 +1962,7 @@ export default {
     all_account: '所有賬號信息',
     select_account: '請選中需要生成報告的賬號信息',
     report_pdf_path: '報告路徑',
+    resource_analysis: '資源分析',
   },
   STATUS_ACTIVE: '激活',
   STATUS_CHECK_NEEDED: '檢查需要',

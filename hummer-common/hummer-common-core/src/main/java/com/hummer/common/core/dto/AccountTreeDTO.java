@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AccountTreeDTO {
 
-    private List<AccountVo> cloudAccount;
+    private List<ProjectVo> projectVoList;
 
     private List<ServerVo> serverAccount;
 
@@ -21,12 +21,12 @@ public class AccountTreeDTO {
 
     private List<FileSystemVo> fsAccount;
 
-    public List<AccountVo> getCloudAccount() {
-        return cloudAccount;
+    public List<ProjectVo> getProjectVoList() {
+        return projectVoList;
     }
 
-    public void setCloudAccount(List<AccountVo> cloudAccount) {
-        this.cloudAccount = cloudAccount;
+    public void setProjectVoList(List<ProjectVo> projectVoList) {
+        this.projectVoList = projectVoList;
     }
 
     public List<ServerVo> getServerAccount() {

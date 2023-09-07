@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hummer.system.mapper.ext.ExtAccountMapper">
+
+    <resultMap id="AccountBaseResultMap" type="com.hummer.common.core.domain.Account">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="proxy_id" jdbcType="INTEGER" property="proxyId" />
+    </resultMap>
+
+    <select id="account" parameterType="java.lang.String" resultMap="AccountBaseResultMap">
+        select t.*
+        from cloud_account t
+        where t.id = #{id}
+    </select>
+
+    <resultMap id="CloudBaseResultMap" type="com.hummer.common.core.domain.CloudTask">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_tags" jdbcType="VARCHAR" property="ruleTags" />
+        <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+        <result column="plugin_id" jdbcType="VARCHAR" property="pluginId" />
+        <result column="plugin_name" jdbcType="VARCHAR" property="pluginName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="resource_types" jdbcType="VARCHAR" property="resourceTypes" />
+        <result column="resources_sum" jdbcType="BIGINT" property="resourcesSum" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="scan_type" jdbcType="VARCHAR" property="scanType" />
+        <result column="suggestion" jdbcType="VARCHAR" property="suggestion" />
+    </resultMap>
+
+    <select id="cloudTaskList" parameterType="java.lang.String" resultMap="CloudBaseResultMap">
+        select t.*
+        from cloud_task t
+        where t.account_id = #{id}
+        and t.status in ('FINISHED', 'WARNING')
+    </select>
+
+    <select id="cloudNativeResult" parameterType="java.lang.String" resultType="com.hummer.common.core.domain.CloudNativeResult">
+        select t.*
+        from cloud_native_result t
+        where t.cloud_native_id = #{id}
+        and t.result_status in ('FINISHED')
+        limit 1
+    </select>
+
+    <resultMap id="CloudNativeItemBaseResultMap" type="com.hummer.common.core.domain.CloudNativeResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="score" jdbcType="VARCHAR" property="score" />
+        <result column="target" jdbcType="VARCHAR" property="target" />
+        <result column="primary_link" jdbcType="VARCHAR" property="primaryLink" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="resource" jdbcType="VARCHAR" property="resource" />
+        <result column="image" jdbcType="VARCHAR" property="image" />
+        <result column="links" jdbcType="LONGVARCHAR" property="links" />
+    </resultMap>
+
+    <select id="cloudNativeResultItemList" parameterType="java.lang.String" resultMap="CloudNativeItemBaseResultMap">
+        select t.*
+        from cloud_native_result_item t
+        where t.result_id = #{id}
+    </select>
+
+    <resultMap id="CloudNativeConfigItemBaseResultMap" type="com.hummer.common.core.domain.CloudNativeResultConfigItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="category" jdbcType="VARCHAR" property="category" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="check_id" jdbcType="VARCHAR" property="checkId" />
+        <result column="success" jdbcType="VARCHAR" property="success" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    </resultMap>
+
+    <select id="cloudNativeResultConfigItemList" parameterType="java.lang.String" resultMap="CloudNativeConfigItemBaseResultMap">
+        select t.*
+        from cloud_native_result_config_item t
+        where t.result_id = #{id}
+    </select>
+
+    <resultMap id="CloudNativeKubenchBaseResultMap" type="com.hummer.common.core.domain.CloudNativeResultKubenchWithBLOBs">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="number" jdbcType="VARCHAR" property="number" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="title" jdbcType="LONGVARCHAR" property="title" />
+        <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    </resultMap>
+
+    <select id="cloudNativeResultKubenchList" parameterType="java.lang.String" resultMap="CloudNativeKubenchBaseResultMap">
+        select t.*
+        from cloud_native_result_kubench t
+        where t.result_id = #{id}
+    </select>
+
+    <select id="server" parameterType="java.lang.String" resultType="com.hummer.common.core.domain.Server">
+        select t.*
+        from server t
+        where t.id = #{id}
+        and t.status in ('VALID')
+        and t.id in (select server_id from server_result)
+    </select>
+
+    <select id="serverLynisResult" parameterType="java.lang.String" resultType="com.hummer.common.core.domain.ServerLynisResult">
+        select t.*
+        from server_lynis_result t
+        where t.server_id = #{id}
+        limit 1
+    </select>
+
+    <resultMap id="ServerLynisResultDetailBaseResultMap" type="com.hummer.common.core.domain.ServerLynisResult">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="server_id" jdbcType="VARCHAR" property="serverId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="hardening_index" jdbcType="BIGINT" property="hardeningIndex" />
+        <result column="tests_performed" jdbcType="BIGINT" property="testsPerformed" />
+        <result column="plugins_enabled" jdbcType="BIGINT" property="pluginsEnabled" />
+    </resultMap>
+
+    <select id="serverLynisResultDetailList" parameterType="java.lang.String" resultMap="ServerLynisResultDetailBaseResultMap">
+        select t.*
+        from server_lynis_result_detail t
+        where t.lynis_id = #{id}
+    </select>
+
+    <resultMap id="ServerResultBaseResultMap" type="com.hummer.common.core.domain.ServerResult">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="server_id" jdbcType="VARCHAR" property="serverId" />
+        <result column="server_name" jdbcType="VARCHAR" property="serverName" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="server_group_id" jdbcType="VARCHAR" property="serverGroupId" />
+        <result column="server_group_name" jdbcType="VARCHAR" property="serverGroupName" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="port" jdbcType="VARCHAR" property="port" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="is_severity" jdbcType="VARCHAR" property="isSeverity" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+    </resultMap>
+
+    <select id="serverResultList" parameterType="java.lang.String" resultMap="ServerResultBaseResultMap">
+        select t.*
+        from server_result t
+        where t.server_id = #{id}
+        and t.result_status in ('FINISHED')
+    </select>
+
+    <resultMap id="ImageResultBaseResultMap" type="com.hummer.common.core.dto.ImageResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="image_id" jdbcType="VARCHAR" property="imageId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="size" jdbcType="VARCHAR" property="size" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="unfixed" jdbcType="BIT" property="unfixed" />
+        <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
+        <result column="image_tag" jdbcType="VARCHAR" property="imageTag" />
+    </resultMap>
+
+    <select id="imageResult" parameterType="java.lang.String" resultMap="ImageResultBaseResultMap">
+        select t.*,
+               t1.image_url,
+               t1.image_tag
+        from image_result t
+        left join image t1 on t.image_id = t1.id
+        where t.image_id = #{id}
+        and t.result_status in ('FINISHED')
+        limit 1
+    </select>
+
+    <resultMap id="ImageResultItemBaseResultMap" type="com.hummer.common.core.domain.ImageResultItem">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="pkg_name" jdbcType="VARCHAR" property="pkgName" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="severity_source" jdbcType="VARCHAR" property="severitySource" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="published_date" jdbcType="VARCHAR" property="publishedDate" />
+        <result column="last_modified_date" jdbcType="VARCHAR" property="lastModifiedDate" />
+    </resultMap>
+
+    <select id="imageResultItemList" parameterType="java.lang.String" resultMap="ImageResultItemBaseResultMap">
+        select t.*
+        from image_result_item t
+        where t.result_id = #{id}
+    </select>
+
+    <resultMap id="CloudNativeConfigResultBaseResultMap" type="com.hummer.common.core.domain.CloudNativeConfigResult">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="config_id" jdbcType="VARCHAR" property="configId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+    </resultMap>
+
+    <select id="cloudNativeConfigResult" parameterType="java.lang.String" resultMap="CloudNativeConfigResultBaseResultMap">
+        select t.*
+        from cloud_native_config_result t
+        where t.config_id = #{id}
+        and t.result_status in ('FINISHED')
+        limit 1
+    </select>
+
+    <resultMap id="CloudNativeConfigResultItemBaseResultMap" type="com.hummer.common.core.domain.CloudNativeConfigResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="item_id" jdbcType="VARCHAR" property="itemId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="message" jdbcType="VARCHAR" property="message" />
+        <result column="namespace" jdbcType="VARCHAR" property="namespace" />
+        <result column="query" jdbcType="VARCHAR" property="query" />
+        <result column="resolution" jdbcType="VARCHAR" property="resolution" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+    </resultMap>
+
+    <select id="cloudNativeConfigResultItemList" parameterType="java.lang.String" resultMap="CloudNativeConfigResultItemBaseResultMap">
+        select t.*
+        from cloud_native_config_result_item t
+        where t.result_id = #{id}
+    </select>
+
+    <resultMap id="CodeResultBaseResultMap" type="com.hummer.common.core.dto.CodeResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="code_id" jdbcType="VARCHAR" property="codeId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="serverty" jdbcType="VARCHAR" property="serverty" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="code_url" jdbcType="VARCHAR" property="codeUrl" />
+    </resultMap>
+
+    <select id="codeResult" parameterType="java.lang.String" resultMap="CodeResultBaseResultMap">
+        select t.*,
+               t1.credential as code_url
+        from code_result t
+        left join code t1 on t.code_id = t1.id
+        where t.code_id = #{id}
+        and t.result_status in ('FINISHED')
+        limit 1
+    </select>
+
+    <resultMap id="CodeResultItemBaseResultMap" type="com.hummer.common.core.domain.CodeResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="pkg_name" jdbcType="VARCHAR" property="pkgName" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="severity_source" jdbcType="VARCHAR" property="severitySource" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="published_date" jdbcType="VARCHAR" property="publishedDate" />
+        <result column="last_modified_date" jdbcType="VARCHAR" property="lastModifiedDate" />
+    </resultMap>
+
+    <select id="codeResultItemList" parameterType="java.lang.String" resultMap="CodeResultItemBaseResultMap">
+        select t.*
+        from code_result_item t
+        where t.result_id = #{id}
+    </select>
+
+    <resultMap id="FileSystemResultBaseResultMap" type="com.hummer.common.core.dto.FsResultDTO">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="fs_id" jdbcType="VARCHAR" property="fsId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="plugin_icon" jdbcType="VARCHAR" property="pluginIcon" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+        <result column="rule_desc" jdbcType="VARCHAR" property="ruleDesc" />
+        <result column="result_status" jdbcType="VARCHAR" property="resultStatus" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+        <result column="apply_user" jdbcType="VARCHAR" property="applyUser" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="return_sum" jdbcType="BIGINT" property="returnSum" />
+        <result column="sbom_id" jdbcType="VARCHAR" property="sbomId" />
+        <result column="sbom_version_id" jdbcType="VARCHAR" property="sbomVersionId" />
+        <result column="command" jdbcType="VARCHAR" property="command" />
+        <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    </resultMap>
+
+    <select id="fileSystemResult" parameterType="java.lang.String" resultMap="FileSystemResultBaseResultMap">
+        select t.*,
+               t1.file_name
+        from file_system_result t
+        left join file_system t1 on t.fs_id = t1.id
+        where t.fs_id = #{id}
+        and t.result_status in ('FINISHED')
+        limit 1
+    </select>
+
+    <resultMap id="FileSystemResultItemBaseResultMap" type="com.hummer.common.core.domain.FileSystemResultItem">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="result_id" jdbcType="VARCHAR" property="resultId" />
+        <result column="create_time" jdbcType="BIGINT" property="createTime" />
+        <result column="vulnerability_id" jdbcType="VARCHAR" property="vulnerabilityId" />
+        <result column="pkg_name" jdbcType="VARCHAR" property="pkgName" />
+        <result column="installed_version" jdbcType="VARCHAR" property="installedVersion" />
+        <result column="fixed_version" jdbcType="VARCHAR" property="fixedVersion" />
+        <result column="severity_source" jdbcType="VARCHAR" property="severitySource" />
+        <result column="primary_url" jdbcType="VARCHAR" property="primaryUrl" />
+        <result column="severity" jdbcType="VARCHAR" property="severity" />
+        <result column="published_date" jdbcType="VARCHAR" property="publishedDate" />
+        <result column="last_modified_date" jdbcType="VARCHAR" property="lastModifiedDate" />
+    </resultMap>
+
+    <select id="fileSystemResultItemList" parameterType="java.lang.String" resultMap="FileSystemResultItemBaseResultMap">
+        select t.*
+        from file_system_result_item t
+        where t.result_id = #{id}
+    </select>
+
+</mapper>

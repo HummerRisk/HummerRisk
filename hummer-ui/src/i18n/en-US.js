@@ -1962,6 +1962,7 @@ export default {
     all_account: 'All account information',
     select_account: 'Please select the account information that needs to generate a report',
     report_pdf_path: 'Report path',
+    resource_analysis: 'Resource analysis',
   },
   STATUS_ACTIVE: 'ACTIVE',
   STATUS_CHECK_NEEDED: 'CHECK NEEDED',

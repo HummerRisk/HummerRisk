@@ -178,5 +178,8 @@
 <!--        <table tableName="cloud_group_log" domainObjectName="CloudGroupLog"/>-->
 <!--        <table tableName="cloud_process" domainObjectName="CloudProcess"/>-->
 <!--        <table tableName="cloud_process_log" domainObjectName="CloudProcessLog"/>-->
+<!--        <table tableName="report_result" domainObjectName="ReportResult"/>-->
+<!--        <table tableName="report_result_log" domainObjectName="ReportResultLog"/>-->
+<!--        <table tableName="report_result_detail" domainObjectName="ReportResultDetail"/>-->
     </context>
 </generatorConfiguration>

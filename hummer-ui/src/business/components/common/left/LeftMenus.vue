@@ -37,7 +37,7 @@
           </el-menu-item>
           <el-menu-item index="/report" onselectstart="return false">
             <i class="iconfont icon-shujujianguan"></i>
-            <span slot="title">{{ $t('reportcenter.reportcenter') }}</span>
+            <span slot="title">{{ $t('reportcenter.resource_analysis') }}</span>
           </el-menu-item>
           <el-menu-item index="/event" onselectstart="return false">
             <i class="iconfont icon-anquanhegui"></i>
@@ -86,6 +86,10 @@
             <span slot="title">{{ $t('commons.sbom_dependency') }}</span>
           </el-menu-item>
         </el-submenu>
+        <el-menu-item index="/report-center" onselectstart="return false">
+          <i class="iconfont icon-shujujianguan"></i>
+          <span slot="title">{{ $t('reportcenter.reportcenter') }}</span>
+        </el-menu-item>
         <el-menu-item index="/setting" onselectstart="return false">
           <i class="iconfont icon-guanli"></i>
           <span slot="title">{{ $t('commons.system_setting') }}</span>

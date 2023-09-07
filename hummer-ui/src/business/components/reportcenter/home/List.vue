@@ -187,15 +187,18 @@ import {REPORT_RESULT_CONFIGS} from "@/business/components/common/components/sea
 import DialogFooter from "@/business/components/common/components/DialogFooter";
 import HideTable from "@/business/components/common/hideTable/HideTable";
 import {
-  createReportUrl, deleteHistoryReportUrl,
+  createReportUrl,
+  deleteHistoryReportUrl,
   deleteReportsUrl,
-  deleteReportUrl, downloadHistoryReportUrl,
+  deleteReportUrl,
+  downloadHistoryReportUrl,
   downloadReportUrl,
   generatorReportUrl,
   getReportUrl,
-  reportListUrl, reportResultLogsUrl,
+  reportListUrl,
+  reportResultLogsUrl,
   updateReportUrl
-} from "@/api/xpack/report";
+} from "@/api/system/report";
 import Account from "@/business/components/reportcenter/home/Account";
 import {saveAs} from "@/common/js/FileSaver";
 
