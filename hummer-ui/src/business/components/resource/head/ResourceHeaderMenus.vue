@@ -12,10 +12,6 @@
             {{ $t("resource.cloud_resource_result") }}
           </el-menu-item>
 
-          <el-menu-item :index="'/resource/account-Overview'">
-            {{ $t("account.statistical_analysis") }}
-          </el-menu-item>
-
           <el-menu-item :index="'/resource/cloud-history'">
             {{ $t("account.history") }}
           </el-menu-item>
