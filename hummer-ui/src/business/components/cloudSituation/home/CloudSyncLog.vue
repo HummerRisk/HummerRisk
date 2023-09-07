@@ -20,7 +20,7 @@
         <el-table-column type="selection" id="selection"  prop="selection" min-width="50">
         </el-table-column>
         <el-table-column type="index" min-width="50"/>
-        <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" width="200">
+        <el-table-column prop="accountName" v-if="checkedColumnNames.includes('accountName')" :label="$t('event.cloud_account_name')" min-width="200">
           <template v-slot:default="scope">
               <span><img :src="require(`@/assets/img/platform/${ scope.row.pluginIcon}`)" style="width: 16px; height: 16px; vertical-align:middle" alt=""/>
                 {{ getAccountName(scope.row.accountId) }}</span>

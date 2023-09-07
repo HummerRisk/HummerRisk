@@ -265,6 +265,7 @@ export default {
     sum: '共',
     finish: '結束',
     scan_time: '检测时间',
+    linked_menu: '關聯菜單',
   },
   workspace: {
     create: '創建工作空間',

@@ -265,6 +265,7 @@ export default {
     sum: 'Total',
     finish: 'End',
     scan_time: 'Scan time',
+    linked_menu: 'linked menu',
   },
   workspace: {
     create:'Create a workspace',

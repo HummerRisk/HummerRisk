@@ -32,12 +32,9 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('account.status')"
-                           column-key="status"
-                           :filters="statusFilters"
-                           :filter-method="filterStatus">
-            <template v-slot:default="{row}">
-              <account-status @search="search" :row="row"/>
+          <el-table-column prop="linked" v-if="checkedColumnNames.includes('linked')" :label="$t('commons.linked_menu')" min-width="100">
+            <template v-slot:default="scope">
+              <links :row="scope.row"/>
             </template>
           </el-table-column>
           <el-table-column prop="regions" v-if="checkedColumnNames.includes('regions')" :label="$t('account.regions')" min-width="100">
@@ -45,9 +42,12 @@
               <regions :row="scope.row"/>
             </template>
           </el-table-column>
-          <el-table-column prop="linked" v-if="checkedColumnNames.includes('linked')" :label="$t('vis.linked') + $t('dashboard.accounts')" min-width="100">
-            <template v-slot:default="scope">
-              <links :row="scope.row"/>
+          <el-table-column prop="status" v-if="checkedColumnNames.includes('status')" min-width="100" :label="$t('account.status')"
+                           column-key="status"
+                           :filters="statusFilters"
+                           :filter-method="filterStatus">
+            <template v-slot:default="{row}">
+              <account-status @search="search" :row="row"/>
             </template>
           </el-table-column>
           <el-table-column min-width="200" v-if="checkedColumnNames.includes('createTime')" :label="$t('account.create_time')" sortable prop="createTime">

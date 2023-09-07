@@ -2,7 +2,7 @@
   <div>
     <el-popover
       ref="popover"
-      placement="left"
+      placement="right"
       width="700"
       trigger="hover">
       <el-table :border="true" :stripe="true" :data="regions" class="adjust-table table-content">

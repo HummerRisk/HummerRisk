@@ -4,6 +4,7 @@ import com.hummer.common.core.domain.AccountWithBLOBs;
 import com.hummer.common.core.domain.ImageRepo;
 import com.hummer.common.core.domain.Oss;
 import com.hummer.common.core.domain.request.event.CloudEventSyncLogVo;
+import com.hummer.common.core.domain.CloudResourceSync;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class AccountDTO extends AccountWithBLOBs {
     private List<CloudEventSyncLogVo> cloudEventSyncLogList;
 
     private List<ImageRepo> imageRepoList;
+
+    private List<CloudResourceSync> cloudResourceSyncList;
 
     public String getUserName() {
         return userName;
@@ -105,5 +108,13 @@ public class AccountDTO extends AccountWithBLOBs {
 
     public void setImageRepoList(List<ImageRepo> imageRepoList) {
         this.imageRepoList = imageRepoList;
+    }
+
+    public List<CloudResourceSync> getCloudResourceSyncList() {
+        return cloudResourceSyncList;
+    }
+
+    public void setCloudResourceSyncList(List<CloudResourceSync> cloudResourceSyncList) {
+        this.cloudResourceSyncList = cloudResourceSyncList;
     }
 }

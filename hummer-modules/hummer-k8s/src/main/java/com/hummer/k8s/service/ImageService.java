@@ -141,7 +141,7 @@ public class ImageService {
         imageRepo.setCreator(loginUser.getUserId());
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
-        if(imageRepo.getIsBindAccount()){
+        if (imageRepo.getIsBindAccount()) {
             String accountId = imageRepo.getAccountId();
             AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
             imageRepo.setCredential(accountWithBLOBs.getCredential());
@@ -165,7 +165,7 @@ public class ImageService {
         imageRepo.setCreator(loginUser.getUserId());
         imageRepo.setCreateTime(System.currentTimeMillis());
         imageRepo.setUpdateTime(System.currentTimeMillis());
-        if(imageRepo.getIsBindAccount()){
+        if (imageRepo.getIsBindAccount()) {
             imageRepo.setCredential(accountWithBLOBs.getCredential());
         }
         boolean result = syncImages(imageRepo, loginUser);
@@ -286,34 +286,34 @@ public class ImageService {
                     if (url.endsWith("/")) {
                         url = url.substring(0, url.length() - 1);
                     }
-                    Pattern p=Pattern.compile("(?<=registry.).*?(?=.aliyuncs)");
-                    Matcher m=p.matcher( url);
+                    Pattern p = Pattern.compile("(?<=registry.).*?(?=.aliyuncs)");
+                    Matcher m = p.matcher(url);
                     String region = "";
-                    if(m.find()){
-                        region =  m.group();
-                    }else{
-                        p=Pattern.compile("(?<=registry.).*?(?=.cr.aliyuncs)");
-                        m=p.matcher( url);
-                        if(m.find()){
-                            region =  m.group();
-                        }else{
+                    if (m.find()) {
+                        region = m.group();
+                    } else {
+                        p = Pattern.compile("(?<=registry.).*?(?=.cr.aliyuncs)");
+                        m = p.matcher(url);
+                        if (m.find()) {
+                            region = m.group();
+                        } else {
                             throw new RuntimeException("wrong repository address");
                         }
                     }
-                    AliyunCredential aliyunCredential ;
-                    if(imageRepo.getIsBindAccount()){
+                    AliyunCredential aliyunCredential;
+                    if (imageRepo.getIsBindAccount()) {
                         String accountId = imageRepo.getAccountId();
                         AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                        if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())){
-                            aliyunCredential = JSON.parseObject(imageRepo.getCredential(),AliyunCredential.class);
-                        }else {
-                            aliyunCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AliyunCredential.class);
+                        if (accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())) {
+                            aliyunCredential = JSON.parseObject(imageRepo.getCredential(), AliyunCredential.class);
+                        } else {
+                            aliyunCredential = JSON.parseObject(accountWithBLOBs.getCredential(), AliyunCredential.class);
                         }
-                    }else{
-                        aliyunCredential = JSON.parseObject(imageRepo.getCredential(),AliyunCredential.class);
+                    } else {
+                        aliyunCredential = JSON.parseObject(imageRepo.getCredential(), AliyunCredential.class);
                     }
                     // 设置Client
-                    DefaultProfile.addEndpoint(region, region, "cr", "cr."+region+".aliyuncs.com");
+                    DefaultProfile.addEndpoint(region, region, "cr", "cr." + region + ".aliyuncs.com");
                     IClientProfile profile = DefaultProfile.getProfile(region, aliyunCredential.getAccessKey(), aliyunCredential.getSecretKey());
                     DefaultAcsClient client = new DefaultAcsClient(profile);
                     // 构造请求
@@ -324,7 +324,7 @@ public class ImageService {
                     String repoStr = new String(repoResponse.getHttpContent());
                     JSONObject repoObj = JSONObject.parseObject(repoStr);
                     JSONArray repoArr = repoObj.getJSONObject("data").getJSONArray("repos");
-                    for(int j = 0;j<repoArr.size();j++){
+                    for (int j = 0; j < repoArr.size(); j++) {
                         JSONObject repo = repoArr.getJSONObject(j);
                         String repoNameSpace = repo.getString("repoNamespace");
                         String repoName = repo.getString("repoName");
@@ -334,10 +334,10 @@ public class ImageService {
                         HttpResponse tagResponse = client.doAction(tagRequest);
                         JSONObject tagResultObj = JSONObject.parseObject(new String(tagResponse.getHttpContent()));
                         JSONArray tagArr = tagResultObj.getJSONObject("data").getJSONArray("tags");
-                        for(int k = 0;k < tagArr.size();k++){
+                        for (int k = 0; k < tagArr.size(); k++) {
                             JSONObject tag = tagArr.getJSONObject(k);
                             String path = url.replaceAll("https://", "").replaceAll("http://", "")
-                                    +"/"+repoNameSpace+"/"+repoName+":"+tag.getString("tag");
+                                    + "/" + repoNameSpace + "/" + repoName + ":" + tag.getString("tag");
                             ImageRepoItem imageRepoItem = new ImageRepoItem();
                             imageRepoItem.setId(UUIDUtil.newUUID());
                             imageRepoItem.setRepository(repoName);
@@ -353,23 +353,23 @@ public class ImageService {
                     System.out.println("code: " + e.getErrCode());
                     System.out.println("message: " + e.getErrMsg());
                 }
-            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "qcloud.png")){
+            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "qcloud.png")) {
                 //腾讯云同步
                 String url = imageRepo.getRepo();
                 if (url.endsWith("/")) {
                     url = url.substring(0, url.length() - 1);
                 }
                 QCloudCredential qCloudCredential;
-                if(imageRepo.getIsBindAccount()){
+                if (imageRepo.getIsBindAccount()) {
                     String accountId = imageRepo.getAccountId();
                     AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                    if(accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())) {
-                        qCloudCredential = JSON.parseObject(imageRepo.getCredential(),QCloudCredential.class);
-                    }else{
-                        qCloudCredential = JSON.parseObject(accountWithBLOBs.getCredential(),QCloudCredential.class);
+                    if (accountWithBLOBs == null && StringUtils.isNotBlank(imageRepo.getCredential())) {
+                        qCloudCredential = JSON.parseObject(imageRepo.getCredential(), QCloudCredential.class);
+                    } else {
+                        qCloudCredential = JSON.parseObject(accountWithBLOBs.getCredential(), QCloudCredential.class);
                     }
-                }else{
-                    qCloudCredential = JSON.parseObject(imageRepo.getCredential(),QCloudCredential.class);
+                } else {
+                    qCloudCredential = JSON.parseObject(imageRepo.getCredential(), QCloudCredential.class);
                 }
                 Credential cred = new Credential(qCloudCredential.getSecretId(), qCloudCredential.getSecretKey());
                 // 实例化一个http选项，可选的，没有特殊需求可以跳过
@@ -383,20 +383,20 @@ public class ImageService {
                         , "na-ashburn", "na-siliconvalley", "sa-saopaulo"};
                 for (String supportRegion : supportRegions) {
                     // 实例化要请求产品的client对象,clientProfile是可选的
-                    TcrClient client = new TcrClient(cred, supportRegion , clientProfile);
+                    TcrClient client = new TcrClient(cred, supportRegion, clientProfile);
                     // 实例化一个请求对象,每个接口都会对应一个request对象
                     DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest();
                     describeInstancesRequest.setLimit(1000L);
                     DescribeInstancesResponse describeInstancesResponse = client.DescribeInstances(describeInstancesRequest);
                     Registry[] registries = describeInstancesResponse.getRegistries();
-                    for(Registry registry:registries){
+                    for (Registry registry : registries) {
                         DescribeRepositoriesRequest req = new DescribeRepositoriesRequest();
                         // 返回的resp是一个DescribeEventsResponse的实例，与请求对象对应
                         req.setLimit(1000L);
                         req.setRegistryId(registry.getRegistryId());
                         DescribeRepositoriesResponse describeRepositoriesResponse = client.DescribeRepositories(req);
                         TcrRepositoryInfo[] repositoryList = describeRepositoriesResponse.getRepositoryList();
-                        for(TcrRepositoryInfo tcrRepositoryInfo:repositoryList){
+                        for (TcrRepositoryInfo tcrRepositoryInfo : repositoryList) {
                             DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest();
                             describeImagesRequest.setLimit(1000L);
                             describeImagesRequest.setRegistryId(registry.getRegistryId());
@@ -404,7 +404,7 @@ public class ImageService {
                             describeImagesRequest.setRepositoryName(tcrRepositoryInfo.getName());
                             DescribeImagesResponse describeImagesResponse = client.DescribeImages(describeImagesRequest);
                             TcrImageInfo[] imageInfoList = describeImagesResponse.getImageInfoList();
-                            for(TcrImageInfo tcrImageInfo:imageInfoList){
+                            for (TcrImageInfo tcrImageInfo : imageInfoList) {
                                 String path = url.replaceAll("https://", "").replaceAll("http://", "") + "/" + tcrRepositoryInfo.getName() + ":" + tcrImageInfo.getImageVersion();
                                 ImageRepoItem imageRepoItem = new ImageRepoItem();
                                 imageRepoItem.setId(UUIDUtil.newUUID());
@@ -420,40 +420,40 @@ public class ImageService {
                         }
                     }
                 }
-            }else if(StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "aws.png")){
+            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "aws.png")) {
                 AWSCredential awsCredential = null;
-                if(imageRepo.getIsBindAccount()){
+                if (imageRepo.getIsBindAccount()) {
                     String accountId = imageRepo.getAccountId();
                     AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
-                    if(accountWithBLOBs != null && StringUtils.isBlank(imageRepo.getCredential())){
-                        awsCredential = JSON.parseObject(accountWithBLOBs.getCredential(),AWSCredential.class);
+                    if (accountWithBLOBs != null && StringUtils.isBlank(imageRepo.getCredential())) {
+                        awsCredential = JSON.parseObject(accountWithBLOBs.getCredential(), AWSCredential.class);
                     }
-                }else{
-                    awsCredential = JSON.parseObject(imageRepo.getCredential(),AWSCredential.class);
+                } else {
+                    awsCredential = JSON.parseObject(imageRepo.getCredential(), AWSCredential.class);
                 }
 
                 AWSCredentials awsCredentials = new BasicAWSCredentials(awsCredential.getAccessKey(), awsCredential.getSecretKey());
                 AWSCredentialsProvider awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
                 AmazonEC2Client client = new AmazonEC2Client(awsCredentials);
-                try{
-                    syncAwsPublic(imageRepo,awsCredentialsProvider,"us-east-1");
+                try {
+                    syncAwsPublic(imageRepo, awsCredentialsProvider, "us-east-1");
                     client.setRegion(RegionUtils.getRegion("us-east-1"));
                     DescribeRegionsResult regionsResult = client.describeRegions();
                     List<Region> regions = regionsResult.getRegions();
-                    regions.forEach(item->{
-                        syncAwsPrivate(imageRepo,awsCredentialsProvider,item.getRegionName());
+                    regions.forEach(item -> {
+                        syncAwsPrivate(imageRepo, awsCredentialsProvider, item.getRegionName());
                     });
-                }catch (SdkClientException e){
+                } catch (SdkClientException e) {
                     //syncAwsPublic(imageRepo,awsCredentialsProvider,"cn-north-1");
                     client.setRegion(RegionUtils.getRegion("cn-north-1"));
                     DescribeRegionsResult regionsResult = client.describeRegions();
                     List<Region> regions = regionsResult.getRegions();
-                    regions.forEach(item->{
-                        syncAwsPrivate(imageRepo,awsCredentialsProvider,item.getRegionName());
+                    regions.forEach(item -> {
+                        syncAwsPrivate(imageRepo, awsCredentialsProvider, item.getRegionName());
                     });
                 }
 
-            }else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
+            } else if (StringUtils.equalsIgnoreCase(imageRepo.getPluginIcon(), "other.png")) {
                 return true;
             }
             imageRepoSyncLog.setRepoId(imageRepo.getId());
@@ -466,7 +466,7 @@ public class ImageService {
             imageRepoSyncLogMapper.insertSelective(imageRepoSyncLog);
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtil.error("镜像同步失败",e);
+            LogUtil.error("镜像同步失败", e);
             imageRepoSyncLog.setRepoId(imageRepo.getId());
             imageRepoSyncLog.setCreateTime(System.currentTimeMillis());
             imageRepoSyncLog.setOperator(loginUser.getUserName());
@@ -481,7 +481,7 @@ public class ImageService {
         return true;
     }
 
-    private void syncAwsPrivate(ImageRepo imageRepo,AWSCredentialsProvider awsCredentialsProvider,String region){
+    private void syncAwsPrivate(ImageRepo imageRepo, AWSCredentialsProvider awsCredentialsProvider, String region) {
         AmazonECR ecr = AmazonECRClient.builder().withRegion(region).withCredentials(awsCredentialsProvider).build();
         com.amazonaws.services.ecr.model.DescribeRepositoriesRequest describeRepositoriesRequest = new com.amazonaws.services.ecr.model.DescribeRepositoriesRequest();
         com.amazonaws.services.ecr.model.DescribeRepositoriesResult describeRepositoriesResult = ecr.describeRepositories(describeRepositoriesRequest);
@@ -491,7 +491,7 @@ public class ImageService {
             String repName = repository.getRepositoryName();
             String registryId = repository.getRegistryId();
             String repUri = repository.getRepositoryUri();
-            if(repo.get() == null && repUri.contains("/"))
+            if (repo.get() == null && repUri.contains("/"))
                 repo.set(repUri.substring(0, repUri.indexOf("/")));
             com.amazonaws.services.ecr.model.DescribeImagesRequest describeImagesRequest = new com.amazonaws.services.ecr.model.DescribeImagesRequest();
             describeImagesRequest.setRegistryId(registryId);
@@ -502,21 +502,21 @@ public class ImageService {
                 ImageRepoItem imageRepoItem = new ImageRepoItem();
                 imageRepoItem.setId(UUIDUtil.newUUID());
                 imageRepoItem.setRepository(repName);
-                imageRepoItem.setTag(imageTagDetail.getImageTags().size()>0?imageTagDetail.getImageTags().get(0):"");
+                imageRepoItem.setTag(imageTagDetail.getImageTags().size() > 0 ? imageTagDetail.getImageTags().get(0) : "");
                 imageRepoItem.setRepoId(imageRepo.getId());
                 imageRepoItem.setDigest(imageTagDetail.getImageDigest());
-                imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:repName);
+                imageRepoItem.setProject(repName.contains("/") ? repName.split("/")[0] : repName);
                 imageRepoItem.setSize(changeFlowFormat(imageTagDetail.getImageSizeInBytes()));
-                imageRepoItem.setPath(repUri+":"+(imageTagDetail.getImageTags().size()>0?imageTagDetail.getImageTags().get(0):""));
-                imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,imageTagDetail.getImagePushedAt()));
+                imageRepoItem.setPath(repUri + ":" + (imageTagDetail.getImageTags().size() > 0 ? imageTagDetail.getImageTags().get(0) : ""));
+                imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, imageTagDetail.getImagePushedAt()));
                 imageRepoItemMapper.insertSelective(imageRepoItem);
             });
         });
-        if(com.hummer.common.core.utils.StringUtils.isNotEmpty(repo.get()))
-          imageRepo.setRepo(repo.get());
+        if (com.hummer.common.core.utils.StringUtils.isNotEmpty(repo.get()))
+            imageRepo.setRepo(repo.get());
     }
 
-    private void syncAwsPublic(ImageRepo imageRepo,AWSCredentialsProvider awsCredentialsProvider,String region){
+    private void syncAwsPublic(ImageRepo imageRepo, AWSCredentialsProvider awsCredentialsProvider, String region) {
         AmazonECRPublic ecrPublic = AmazonECRPublicClient.builder().withRegion(region).withCredentials(awsCredentialsProvider).build();
         com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest describeRepositoriesRequest = new com.amazonaws.services.ecrpublic.model.DescribeRepositoriesRequest();
         com.amazonaws.services.ecrpublic.model.DescribeRepositoriesResult describeRepositoriesResult = ecrPublic.describeRepositories(describeRepositoriesRequest);
@@ -526,7 +526,7 @@ public class ImageService {
             String repName = repository.getRepositoryName();
             String registryId = repository.getRegistryId();
             String repUri = repository.getRepositoryUri();
-            if(repo.get() == null && repUri.contains("/"))
+            if (repo.get() == null && repUri.contains("/"))
                 repo.set(repUri.substring(0, repUri.indexOf("/")));
             DescribeImageTagsRequest describeImageTagsRequest = new DescribeImageTagsRequest();
             describeImageTagsRequest.setRegistryId(registryId);
@@ -540,14 +540,14 @@ public class ImageService {
                 imageRepoItem.setTag(imageTagDetail.getImageTag());
                 imageRepoItem.setRepoId(imageRepo.getId());
                 imageRepoItem.setDigest(imageTagDetail.getImageDetail().getImageDigest());
-                imageRepoItem.setProject(repName.contains("/")?repName.split("/")[0]:repName);
+                imageRepoItem.setProject(repName.contains("/") ? repName.split("/")[0] : repName);
                 imageRepoItem.setSize(changeFlowFormat(imageTagDetail.getImageDetail().getImageSizeInBytes()));
-                imageRepoItem.setPath(repUri+":"+imageTagDetail.getImageTag());
-                imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,imageTagDetail.getImageDetail().getImagePushedAt()));
+                imageRepoItem.setPath(repUri + ":" + imageTagDetail.getImageTag());
+                imageRepoItem.setPushTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, imageTagDetail.getImageDetail().getImagePushedAt()));
                 imageRepoItemMapper.insertSelective(imageRepoItem);
             });
         });
-        if(com.hummer.common.core.utils.StringUtils.isNotEmpty(repo.get()))
+        if (com.hummer.common.core.utils.StringUtils.isNotEmpty(repo.get()))
             imageRepo.setRepo(repo.get());
     }
 
@@ -637,7 +637,7 @@ public class ImageService {
 
     public ImageRepo editImageRepo(ImageRepo imageRepo, LoginUser loginUser) throws Exception {
         imageRepo.setUpdateTime(System.currentTimeMillis());
-        if(imageRepo.getIsBindAccount()){
+        if (imageRepo.getIsBindAccount()) {
             String accountId = imageRepo.getAccountId();
             AccountWithBLOBs accountWithBLOBs = cloudProviderService.selectAccountWithBLOBs(accountId);
             imageRepo.setCredential(accountWithBLOBs.getCredential());
@@ -1072,18 +1072,18 @@ public class ImageService {
             }
             ScanSetting scanSetting = (ScanSetting) obj[3];
             String str = "";
-            if(scanSetting.getSkipDbUpdate() != null && StringUtils.equalsIgnoreCase(scanSetting.getSkipDbUpdate(), "true")) {
+            if (scanSetting.getSkipDbUpdate() != null && StringUtils.equalsIgnoreCase(scanSetting.getSkipDbUpdate(), "true")) {
                 str = str + TrivyConstants.SKIP_DB_UPDATE + TrivyConstants.SKIP_JAVA_DB_UPDATE;
             }
-            if(scanSetting.getIgnoreUnfixed() != null && StringUtils.equalsIgnoreCase(scanSetting.getIgnoreUnfixed(), "true")) {
+            if (scanSetting.getIgnoreUnfixed() != null && StringUtils.equalsIgnoreCase(scanSetting.getIgnoreUnfixed(), "true")) {
                 str = str + TrivyConstants.UNFIXED;
             }
-            if(scanSetting.getSecurityChecks() != null) {
+            if (scanSetting.getSecurityChecks() != null) {
                 str = str + TrivyConstants.SECURITY_CHECKS + scanSetting.getSecurityChecks();
             } else {
                 str = str + TrivyConstants.SECURITY_CHECKS_DEFAULT;
             }
-            if(scanSetting.getOfflineScan() != null && StringUtils.equalsIgnoreCase(scanSetting.getOfflineScan(), "true")) {
+            if (scanSetting.getOfflineScan() != null && StringUtils.equalsIgnoreCase(scanSetting.getOfflineScan(), "true")) {
                 str = str + TrivyConstants.OFFLINE_SCAN;
             }
             CommandUtils.commonExecCmdWithResult(TrivyConstants.TRIVY_RM + TrivyConstants.TRIVY_JSON, TrivyConstants.DEFAULT_BASE_DIR);
@@ -1302,11 +1302,11 @@ public class ImageService {
                     long size = arti.getLong("size");
                     JSONObject extra_attrs = arti.getJSONObject("extra_attrs");
                     String architecture = "";
-                    if(extra_attrs != null){
-                        architecture= extra_attrs.getString("architecture");
+                    if (extra_attrs != null) {
+                        architecture = extra_attrs.getString("architecture");
                     }
                     JSONArray tags = arti.getJSONArray("tags");
-                    if(tags != null){
+                    if (tags != null) {
                         List<JSONObject> tagList = tags.toJavaList(JSONObject.class);
                         for (JSONObject tag : tagList) {
                             String tagStr = tag.getString("name");
@@ -1456,7 +1456,7 @@ public class ImageService {
         ImageRepoSettingExample example = new ImageRepoSettingExample();
         example.createCriteria().andRepoIdEqualTo(repoId);
         List<ImageRepoSetting> list = imageRepoSettingMapper.selectByExample(example);
-        if(list.size() > 0) {
+        if (list.size() > 0) {
             return list.get(0);
         } else {
             return null;
