@@ -418,7 +418,7 @@
     <select id="cloudTaskList" parameterType="java.lang.String" resultMap="CloudBaseResultMap">
         select t.*
         from cloud_task t
-        where t.account_id = #{id}
+        where t.project_id = #{id}
           and t.status in ('FINISHED', 'WARNING')
     </select>
 

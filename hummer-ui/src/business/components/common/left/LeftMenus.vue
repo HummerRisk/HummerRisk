@@ -87,7 +87,7 @@
           </el-menu-item>
         </el-submenu>
         <el-menu-item index="/report-center" onselectstart="return false">
-          <i class="iconfont icon-shujujianguan"></i>
+          <i class="iconfont icon-zhinengheyue"></i>
           <span slot="title">{{ $t('reportcenter.reportcenter') }}</span>
         </el-menu-item>
         <el-menu-item index="/setting" onselectstart="return false">

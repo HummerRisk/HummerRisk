@@ -224,7 +224,7 @@ public class ReportService {
             example.createCriteria().andResultIdEqualTo(id);
             List<ReportResultDetail> reportResultDetailList = reportResultDetailMapper.selectByExample(example);
 
-            List<AccountDTO> accountDTOList = new LinkedList<>();
+            List<ProjectDTO> projectDTOList = new LinkedList<>();
             List<K8sDTO> k8sDTOList = new LinkedList<>();
             List<ServerDTO> serverDTOList = new LinkedList<>();
             List<ImageDTO> imageDTOList = new LinkedList<>();
@@ -233,12 +233,12 @@ public class ReportService {
             List<FileSystemDTO> fileSystemDTOList = new LinkedList<>();
 
             for (ReportResultDetail reportResultDetail : reportResultDetailList) {
-                if (StringUtils.equals(reportResultDetail.getType(), "cloudAccount")) {
-                    AccountDTO accountDTO = new AccountDTO();
-                    String accountId = reportResultDetail.getAccountId();
-                    accountDTO.setAccount(extAccountMapper.account(accountId));
-                    accountDTO.setCloudTaskList(extAccountMapper.cloudTaskList(accountId));
-                    accountDTOList.add(accountDTO);
+                if (StringUtils.equals(reportResultDetail.getType(), "cloudProject")) {
+                    ProjectDTO projectDTO = new ProjectDTO();
+                    String projectId = reportResultDetail.getAccountId();
+                    projectDTO.setCloudProject(extReportResultMapper.getCloudProject(projectId));
+                    projectDTO.setCloudTaskList(extReportResultMapper.cloudTaskList(projectId));
+                    projectDTOList.add(projectDTO);
                 } else if (StringUtils.equals(reportResultDetail.getType(), "serverAccount")) {
                     ServerDTO serverDTO = new ServerDTO();
                     String accountId = reportResultDetail.getAccountId();
@@ -289,7 +289,7 @@ public class ReportService {
                 }
             }
 
-            PdfReport.accountDTOList = accountDTOList;
+            PdfReport.projectDTOList = projectDTOList;
             PdfReport.k8sDTOList = k8sDTOList;
             PdfReport.configDTOList = configDTOList;
             PdfReport.serverDTOList = serverDTOList;

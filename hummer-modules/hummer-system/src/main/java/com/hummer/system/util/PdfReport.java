@@ -22,7 +22,7 @@ import java.util.List;
 
 public class PdfReport {
 
-    public static List<AccountDTO> accountDTOList = new LinkedList<>();
+    public static List<ProjectDTO> projectDTOList = new LinkedList<>();
     public static List<K8sDTO> k8sDTOList = new LinkedList<>();
     public static List<ServerDTO> serverDTOList = new LinkedList<>();
     public static List<ImageDTO> imageDTOList = new LinkedList<>();
@@ -160,13 +160,13 @@ public class PdfReport {
         document.add(paragraph);//第一页 Title
 
         //多云检测
-        if (accountDTOList.size() > 0) {
-            for (AccountDTO accountDTO : accountDTOList) {
+        if (!projectDTOList.isEmpty()) {
+            for (ProjectDTO projectDTO : projectDTOList) {
                 document.add(cloudImage);//云检测项
-                Account account = accountDTO.getAccount();
-                String name = "云账号: " + account.getName() + "    云平台: " + account.getPluginName();
+                CloudProject cloudProject = projectDTO.getCloudProject();
+                String name = "云账号: " + cloudProject.getAccountName() + "    云平台: " + cloudProject.getPluginName() + "    风险资源/资源总数: " + cloudProject.getReturnSum() + "/" + cloudProject.getResourcesSum();
 
-                List<CloudTask> cloudTaskList = accountDTO.getCloudTaskList();
+                List<CloudTask> cloudTaskList = projectDTO.getCloudTaskList();
                 // 表格
                 PdfPTable table = createTable(new float[] { 210, 80, 80, 110, 80 });
                 table.addCell(createCell(name, headfont, Element.ALIGN_LEFT, 6, false));
