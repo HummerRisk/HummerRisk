@@ -1132,7 +1132,6 @@ export default {
       let target = e.target;
       let thisClassName = target.className;
       if (thisClassName.baseVal === 'clicked-box') {
-        console.log(target)
         this.details = {
           id: target.getAttribute("id"),
           name: target.getAttribute("name"),

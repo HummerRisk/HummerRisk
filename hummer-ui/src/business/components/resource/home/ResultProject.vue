@@ -12,8 +12,11 @@
 
         <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(data, index) in ftableData" :key="index" class="el-col el-col-su">
-            <el-card shadow="hover" :body-style="{ 'cursor': 'pointer', 'padding': '15px' }">
+            <el-card shadow="hover" class="el-card-tran" :body-style="{ 'cursor': 'pointer', 'padding': '15px' }">
               <div class="child2" @click="goResult(data.id)">{{ $t('commons.into_detail') }}</div>
+              <el-tooltip class="item" v-if="data.latest" effect="dark" :content="$t('resource.latest_tooltip')" placement="top">
+                <div class="child3"></div>
+              </el-tooltip>
               <div class="child" @click="goResult(data.id)"></div>
               <div class="el-card-top-de">
                 <el-row :gutter="20">
@@ -121,20 +124,28 @@
                         </el-row>
                         <el-row style="margin-top: 15px;">
                           <el-col :span="6">
-                            <span class="label"> {{ $t('commons.critical') }} :</span>
-                            <span class="value critical"> {{ item.critical }}</span>
+                            <div class="c-car-ou-div">
+                              <span class="label"> {{ $t('commons.critical') }} :</span>
+                              <span class="value critical"> {{ item.critical }}</span>
+                            </div>
                           </el-col>
                           <el-col :span="6">
-                            <span class="label"> {{ $t('commons.high') }} :</span>
-                            <span class="value high"> {{ item.high }}</span>
+                            <div class="h-car-ou-div">
+                              <span class="label"> {{ $t('commons.high') }} :</span>
+                              <span class="value high"> {{ item.high }}</span>
+                            </div>
                           </el-col>
                           <el-col :span="6">
-                            <span class="label"> {{ $t('commons.medium') }} :</span>
-                            <span class="value middle"> {{ item.medium }}</span>
+                            <div class="m-car-ou-div">
+                              <span class="label"> {{ $t('commons.medium') }} :</span>
+                              <span class="value medium"> {{ item.medium }}</span>
+                            </div>
                           </el-col>
                           <el-col :span="6">
-                            <span class="label"> {{ $t('commons.low') }} :</span>
-                            <span class="value low"> {{ item.low }}</span>
+                            <div class="l-car-ou-div">
+                              <span class="label"> {{ $t('commons.low') }} :</span>
+                              <span class="value low"> {{ item.low }}</span>
+                            </div>
                           </el-col>
                         </el-row>
                       </div>
@@ -728,7 +739,7 @@ const columnOptions2 = [
     left: 21%;
     width: 50%;
     height: 0;
-    border-top: 30px solid #dfecfd; /* 上边长度和颜色 */
+    border-top: 30px solid #9fbdea; /* 上边长度和颜色 */
     border-left: 20px solid transparent; /* 左斜边长度 */
     border-right: 20px solid transparent; /* 右斜边长度 */
     z-index: 1;
@@ -877,7 +888,7 @@ const columnOptions2 = [
     font-size: 14px;
     color: #646a73;
     font-weight: 400;
-    display: inline-block;
+    vertical-align: middle;
   }
 
   .value {
@@ -885,6 +896,7 @@ const columnOptions2 = [
     font-size: 14px;
     line-height: 22px;
     height: 22px;
+    vertical-align: middle;
   }
 
   .critical {
@@ -937,6 +949,50 @@ const columnOptions2 = [
   .el-card-top-de {
     height: 130px;
     margin-top: 20px;
+  }
+  .el-card-tran {
+    position: relative;
+  }
+  .child3 {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 32px;
+    height: 32px;
+    background-image: url("../../../../assets/img/resource/tag.svg");
+    z-index: 3;
+  }
+  .c-car-ou-div {
+    height: 24px;
+    border: 1px #646a73 solid;
+    margin: 1px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .h-car-ou-div {
+    height: 24px;
+    border: 1px #646a73 solid;
+    margin: 1px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .m-car-ou-div {
+    height: 24px;
+    border: 1px #646a73 solid;
+    margin: 1px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .l-car-ou-div {
+    height: 24px;
+    border: 1px #646a73 solid;
+    margin: 1px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .car-ou-span {
+    vertical-align: middle;
   }
   /deep/ :focus{outline:0;}
 </style>

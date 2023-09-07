@@ -20,6 +20,7 @@
         <result column="rules" jdbcType="INTEGER" property="rules" />
         <result column="riskGroups" jdbcType="INTEGER" property="riskGroups" />
         <result column="riskRules" jdbcType="INTEGER" property="riskRules" />
+        <result column="isLatest" jdbcType="BOOLEAN" property="isLatest" />
         <collection property="cloudProjectLogList" ofType="com.hummer.common.core.domain.CloudProjectLog" javaType="list"
                     select="selectCloudProjectLogList" column="{id=id}">
         </collection>
@@ -221,10 +222,25 @@
     <select id="getCloudProjectDTOs" resultMap="BaseResultMap">
         select
         t.*,
+        CASE
+        WHEN t.id in (
+            SELECT t2.id FROM cloud_project t2
+            JOIN (
+                SELECT account_id, MAX(create_time) as max_time
+                FROM cloud_project
+                GROUP BY account_id
+            ) t3 on t2.account_id = t3.account_id and t2.create_time = t3.max_time
+        ) THEN true
+        ELSE false
+        END AS `isLatest`,
         (select count(cg.id) from cloud_group cg where cg.project_id = t.id) as 'groups',
-        (select count(cg.id) from cloud_group cg where cg.project_id = t.id and cg.id in (select ct.group_id from cloud_task ct where ct.project_id = t.id and ct.return_sum &gt; 0)) as 'riskGroups',
-        (select count(r.id) from rule r where r.id in (select g.rule_id from rule_group_mapping g left join cloud_group cg on g.group_id = cg.group_id where cg.project_id = t.id)) as 'rules',
-        (select count(r.id) from cloud_task r where r.project_id = t.id and r.return_sum &gt; 0 and r.rule_id in (select g.rule_id from rule_group_mapping g left join cloud_group cg on g.group_id = cg.group_id where cg.project_id = t.id)) as 'riskRules'
+        (select count(cg.id) from cloud_group cg where cg.project_id = t.id and cg.id in (select ct.group_id from
+        cloud_task ct where ct.project_id = t.id and ct.return_sum &gt; 0)) as 'riskGroups',
+        (select count(r.id) from rule r where r.id in (select g.rule_id from rule_group_mapping g left join cloud_group
+        cg on g.group_id = cg.group_id where cg.project_id = t.id)) as 'rules',
+        (select count(r.id) from cloud_task r where r.project_id = t.id and r.return_sum &gt; 0 and r.rule_id in (select
+        g.rule_id from rule_group_mapping g left join cloud_group cg on g.group_id = cg.group_id where cg.project_id =
+        t.id)) as 'riskRules'
         from cloud_project as t
         <where>
             <if test="request.combine != null">

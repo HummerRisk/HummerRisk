@@ -835,6 +835,7 @@ export default {
     cloud_resource_detail: 'Resource Details',
     cloud_resource_statistics: 'Cloud resource compliance analysis',
     cloud_report_statistics: 'Cloud resource integration report',
+    latest_tooltip: 'Latest: The latest detection result of this cloud account',
   },
   account: {
     cloud_account_setting:'Cloud account settings',

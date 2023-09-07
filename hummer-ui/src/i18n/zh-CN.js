@@ -835,6 +835,7 @@ export default {
     cloud_resource_detail: '资源详情',
     cloud_resource_statistics: '云资源合规分析',
     cloud_report_statistics: '云资源整合报告',
+    latest_tooltip: '最新：此云账号最近的一次检测结果',
   },
   account: {
     cloud_account_setting: '云账号设置',

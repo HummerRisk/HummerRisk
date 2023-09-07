@@ -19,6 +19,8 @@ public class CloudProjectDTO extends CloudProject {
 
     private Integer riskRules;
 
+    private Boolean isLatest;
+
     public List<CloudProjectLog> getCloudProjectLogList() {
         return cloudProjectLogList;
     }
@@ -65,5 +67,13 @@ public class CloudProjectDTO extends CloudProject {
 
     public void setRiskRules(Integer riskRules) {
         this.riskRules = riskRules;
+    }
+
+    public Boolean getLatest() {
+        return isLatest;
+    }
+
+    public void setLatest(Boolean latest) {
+        isLatest = latest;
     }
 }

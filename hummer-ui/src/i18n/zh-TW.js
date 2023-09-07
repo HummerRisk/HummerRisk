@@ -835,6 +835,7 @@ export default {
     cloud_resource_detail: '資源詳情',
     cloud_resource_statistics: '雲資源合規分析',
     cloud_report_statistics: '雲資源整合報告',
+    latest_tooltip: '最新：此云賬號最近的一次檢測結果',
   },
   account: {
     cloud_account_setting: '雲賬號設置',
