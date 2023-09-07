@@ -34,7 +34,7 @@ export default {
 
         this.options = {
           title: {
-            text: this.$t('cloud_topo.resource_relation')
+            text: ''
           },
           xAxis: {
             type: 'category',
