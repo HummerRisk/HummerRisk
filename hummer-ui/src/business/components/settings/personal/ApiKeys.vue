@@ -88,7 +88,8 @@ import {USER_KEY_CONFIGS} from "../../common/components/search/search-components
 import TableHeader from "@/business/components/common/components/TableHeader";
 import {
   deleteApiKeysUrl,
-  userKeyActiveUrl, userKeyCreateTokenUrl,
+  userKeyActiveUrl,
+  userKeyCreateTokenUrl,
   userKeyDeleteUrl,
   userKeyDisableUrl,
   userKeyGenerateUrl,

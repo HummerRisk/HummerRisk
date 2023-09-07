@@ -74,7 +74,7 @@ public class UserKeysController {
     }
 
     @Operation(summary = "批量删除API Keys")
-    @PostMapping("delete/apiKeys")
+    @PostMapping("delete/apikeys")
     public void deleteApiKeys(@RequestBody List<String> selectIds) throws Exception {
         userKeyService.deleteApiKeys(selectIds);
     }

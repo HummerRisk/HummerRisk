@@ -9,7 +9,7 @@ export const addProxyUrl = "/system/proxy/add";
 
 export const proxyListUrl = "/system/proxy/list";
 
-export const deleteProxyUrl = "/system/proxy/delete";
+export const deleteProxyUrl = "/system/proxy/delete/";
 
 export const updateProxyUrl = "/system/proxy/update";
 
