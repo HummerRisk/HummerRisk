@@ -902,7 +902,7 @@ const columnOptions2 = [
   line-height: 13px;
 }
 .button {
-  padding: 7px 15px;
+  padding: 7px 10px;
   white-space:nowrap;
   text-overflow:ellipsis;
   -o-text-overflow:ellipsis;
