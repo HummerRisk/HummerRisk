@@ -12,78 +12,61 @@
         </template>
 
         <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="(data, index) in ftableData"
+          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '15px' }">
-              <div style="height: 130px;">
-                <el-row :gutter="20">
-                  <el-col :span="3">
-                    <el-image style="border-radius: 50%;width: 24px; height: 24px; vertical-align:middle;" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+            <el-card :body-style="{ padding: '0' }" class="el-card-tran" >
+              <div v-if="data.flag === true" class="child3"></div>
+              <div v-if="data.flag === false" class="child4"></div>
+              <div>
+                <el-row class="" v-if="checkedColumnNames.includes('description')">
+                  <el-tooltip class="item" effect="light" :content="data.description" placement="bottom">
+                    <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${data.imageUrl}`)">
                       <div slot="error" class="image-slot">
                         <i class="el-icon-picture-outline"></i>
                       </div>
                     </el-image>
-                    <div v-if="data.xpackTag" style="writing-mode: tb-rl;margin-top: 5px;font-size: 12px;color: green;">
-                      {{ 'XPACK' }}
-                    </div>
-                  </el-col>
-                  <el-col :span="21">
-                    <el-row class="plugin" v-if="checkedColumnNames.includes('pluginName')">
-                      <span class="plugin-name">{{ data.pluginName }}</span>
-                      <span class="plugin-type">
-                        <el-tag type="success" size="mini">{{ data.type }}</el-tag>
-                      </span>
-                    </el-row>
-                    <el-row class="desc" v-if="checkedColumnNames.includes('description')">
-                      <el-tooltip class="item" effect="light" :content="data.description" placement="bottom">
-                        <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${data.imageUrl}`)">
-                          <div slot="error" class="image-slot">
-                            <i class="el-icon-picture-outline"></i>
-                          </div>
-                        </el-image>
-                      </el-tooltip>
-                    </el-row>
-                  </el-col>
+                  </el-tooltip>
                 </el-row>
               </div>
-              <div style="padding: 0 14px 14px 14px;margin-top: 5px;">
+              <div class="group-desc">
                 <el-row>
-                  <el-col :span="19">
+                  <el-col :span="14">
                     <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.name }}</span>
                   </el-col>
-                  <el-col :span="5" v-if="checkedColumnNames.includes('flag')">
-                    <el-button size="mini" type="danger" class="round" round v-if="data.flag === true">
-                      {{ $t('rule.tag_flag_true') }}
-                    </el-button>
-                    <el-button size="mini" type="success" class="round" round v-else-if="data.flag === false">
-                      {{ $t('rule.tag_flag_false') }}
-                    </el-button>
+                  <el-col :span="10" v-if="checkedColumnNames.includes('pluginName')">
+                    <el-image class="plugin-img" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
+                      <div slot="error" class="image-slot">
+                        <i class="el-icon-picture-outline"></i>
+                      </div>
+                    </el-image>
+                    <div class="plugin-name">{{ data.pluginName }}</div>
                   </el-col>
                 </el-row>
-                <span class="button time pa-na">
-              </span>
-                <div class="bottom clearfix">
-                  <div class="time time2">
-                    <span class="pa-time">{{ data.level }}&nbsp;<span class="pa-time2">{{ $t('rule.rule_sum', [data.ruleSum]) }}</span></span>
-                  </div>
-                  <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
-                    <span class="el-dropdown-link">
-                      {{ $t('package.operate') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
-                      <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                    <el-dropdown-menu slot="dropdown" v-if="!data.flag">
-                      <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
-                      <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </div>
+                <el-row class="desc" v-if="checkedColumnNames.includes('description')">{{ data.description }}</el-row>
+                <el-row>
+                  <el-col :span="24">
+                    <el-checkbox size="mini" v-model="data.checked" @change="selectByIds(data)" class="el-checkbox-select"></el-checkbox>
+                    <el-button size="mini" type="primary" class="el-checkbox-btn">{{ data.level }}</el-button>
+                    <el-button size="mini" type="success" class="el-checkbox-btn">{{ $t('rule.rule_sum', [data.ruleSum]) }}</el-button>
+                    <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
+                <span class="el-dropdown-link">
+                  {{ $t('package.operate') }}
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                      <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
+                        <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
+                        <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
+                        <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
+                      </el-dropdown-menu>
+                      <el-dropdown-menu slot="dropdown" v-if="!data.flag">
+                        <el-dropdown-item command="handleEdit">{{ $t('commons.edit') }}</el-dropdown-item>
+                        <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
+                        <el-dropdown-item command="handleList">{{ $t('dashboard.rules') }}</el-dropdown-item>
+                        <el-dropdown-item command="handleDelete">{{ $t('commons.delete') }}</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </el-col>
+                </el-row>
               </div>
             </el-card>
           </el-col>
@@ -661,6 +644,13 @@ const columnOptions2 = [
           this.selectIds.add(s.id)
         })
       },
+      selectByIds(selection) {
+        if (this.selectIds.has(selection.id)) {
+          this.selectIds.delete(selection.id);
+        } else {
+          this.selectIds.add(selection.id);
+        }
+      },
       getPlugins () {
         this.result = this.$get(cloudPluginUrl, response => {
           this.plugins = response.data;
@@ -854,12 +844,13 @@ const columnOptions2 = [
     line-height: 13px;
   }
   .button {
-    padding: 0;
-    float: right;
+    padding: 7px 15px;
     white-space:nowrap;
     text-overflow:ellipsis;
     -o-text-overflow:ellipsis;
     overflow:hidden;
+    height: 28px;
+    vertical-align: middle;
   }
   .da-na {
     width: 100%;
@@ -877,13 +868,27 @@ const columnOptions2 = [
   }
   .pa-time {
     color: #1e6427;
+    border: 1px #646a73 solid;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .pa-time2 {
-    color: red;
+    color: #F56C6C;
+    border: 1px #646a73 solid;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .pa-time3 {
+    color: #67C23A;
+    border: 1px #646a73 solid;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .button-drop {
     float: right;
-    width: 28%;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -938,12 +943,23 @@ const columnOptions2 = [
     color: #215d9a;
     font-size: 16px;
   }
-  .plugin-name {
+  .plugin-img {
     float: left;
-    width: 75%;
+    margin-right: 3px;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    vertical-align:middle;
+  }
+  .plugin-name {
+    color: #215d9a;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+  }
+  .group-desc {
+    padding: 0 14px 14px 14px;
+    margin-top: 5px;
   }
   .plugin-type {
     float: right;
@@ -953,7 +969,6 @@ const columnOptions2 = [
     white-space:nowrap;
   }
   .desc {
-    color: #888888;
     font-size: 13px;
     margin: 10px 0;
     line-height: 20px;
@@ -961,7 +976,7 @@ const columnOptions2 = [
     text-overflow: ellipsis;
     display:-webkit-box;
     -webkit-box-orient:vertical;
-    -webkit-line-clamp:6;
+    -webkit-line-clamp:2;
   }
   .edit_dev >>> .el-transfer-panel {
     width: 40%;
@@ -981,6 +996,32 @@ const columnOptions2 = [
     width: 100%;
     text-align: center;
     display: inline-block;
+  }
+  .el-card-tran {
+    position: relative;
+  }
+  .child3 {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 64px;
+    height: 32px;
+    background-image: url("../../../../assets/img/resource/flag2.svg");
+    z-index: 3;
+  }
+  .child4 {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 64px;
+    height: 32px;
+    background-image: url("../../../../assets/img/resource/flag1.svg");
+    z-index: 3;
+  }
+  .el-checkbox-select {
+    margin-right: 10px;
   }
   /deep/ :focus{outline:0;}
 </style>
