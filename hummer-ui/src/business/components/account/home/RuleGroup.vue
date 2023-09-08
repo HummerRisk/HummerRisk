@@ -14,32 +14,30 @@
         <el-row :gutter="20" class="el-row-body pdfDom" v-show="listStatus === 2">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" v-for="(data, index) in ftableData"
                   :key="index" class="el-col el-col-su">
-            <el-card :body-style="{ padding: '0' }" class="el-card-tran" >
+            <el-card :body-style="{ padding: '0' }" class="el-card-tran">
               <div v-if="data.flag === true" class="child3"></div>
               <div v-if="data.flag === false" class="child4"></div>
-              <div>
-                <el-row class="" v-if="checkedColumnNames.includes('description')">
-                  <el-tooltip class="item" effect="light" :content="data.description" placement="bottom">
-                    <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${data.imageUrl}`)">
-                      <div slot="error" class="image-slot">
-                        <i class="el-icon-picture-outline"></i>
-                      </div>
-                    </el-image>
-                  </el-tooltip>
-                </el-row>
-              </div>
+              <el-row class="" v-if="checkedColumnNames.includes('description')">
+                <el-tooltip class="item" effect="light" :content="data.description" placement="bottom">
+                  <el-image style="vertical-align:middle;" :src="require(`@/assets/img/mod/${data.imageUrl}`)">
+                    <div slot="error" class="image-slot">
+                      <i class="el-icon-picture-outline"></i>
+                    </div>
+                  </el-image>
+                </el-tooltip>
+              </el-row>
               <div class="group-desc">
                 <el-row>
                   <el-col :span="14">
                     <span class="da-na" v-if="checkedColumnNames.includes('name')">{{ data.name }}</span>
                   </el-col>
                   <el-col :span="10" v-if="checkedColumnNames.includes('pluginName')">
+                    <div class="plugin-name">{{ data.pluginName }}</div>
                     <el-image class="plugin-img" :src="require(`@/assets/img/platform/${data.pluginIcon}`)">
                       <div slot="error" class="image-slot">
                         <i class="el-icon-picture-outline"></i>
                       </div>
                     </el-image>
-                    <div class="plugin-name">{{ data.pluginName }}</div>
                   </el-col>
                 </el-row>
                 <el-row class="desc" v-if="checkedColumnNames.includes('description')">{{ data.description }}</el-row>
@@ -944,7 +942,7 @@ const columnOptions2 = [
     font-size: 16px;
   }
   .plugin-img {
-    float: left;
+    float: right;
     margin-right: 3px;
     border-radius: 50%;
     width: 16px;
@@ -952,6 +950,7 @@ const columnOptions2 = [
     vertical-align:middle;
   }
   .plugin-name {
+    float: right;
     color: #215d9a;
     overflow:hidden;
     text-overflow:ellipsis;

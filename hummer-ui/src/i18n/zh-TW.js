@@ -713,7 +713,7 @@ export default {
     target_rule: '已綁定規則',
     rule_group: '雲檢測規則組',
     suggestion: '優化建議',
-    rule_sum: '(共 {0} 規則)',
+    rule_sum: '共 {0} 規則',
     rule_sum_project: '共 {0} 規則',
     group_sum_project: '共 {0} 規則組',
     risk_rule_sum_project: '(有風險規則數為 {0})',

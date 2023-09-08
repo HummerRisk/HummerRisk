@@ -713,7 +713,7 @@ export default {
     target_rule: 'Bound rules',
     rule_group: 'Cloud detection rule group',
     suggestion: 'Optimization suggestion',
-    rule_sum: '(Total {0} rules)',
+    rule_sum: 'Total {0} rules',
     rule_sum_project: 'Total {0} rules',
     group_sum_project: 'Total {0} rule groups',
     risk_rule_sum_project: '(The number of risky rules is {0})',
