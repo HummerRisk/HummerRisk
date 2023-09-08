@@ -1014,6 +1014,7 @@ const columnOptions2 = [
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
+  max-width: 100px;
 }
 .group-desc {
   padding: 0 14px 14px 14px;

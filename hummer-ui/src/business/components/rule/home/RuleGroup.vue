@@ -1301,6 +1301,7 @@ const columnOptions2 = [
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+    max-width: 100px;
   }
   .plugin-type {
     float: right;

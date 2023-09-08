@@ -47,10 +47,10 @@
                     <el-button size="mini" type="primary" class="el-checkbox-btn">{{ data.level }}</el-button>
                     <el-button size="mini" type="success" class="el-checkbox-btn">{{ $t('rule.rule_sum', [data.ruleSum]) }}</el-button>
                     <el-dropdown class="button button-drop" @command="(command)=>{handleCommand(command, data)}">
-                <span class="el-dropdown-link">
-                  {{ $t('package.operate') }}
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
+                      <span class="el-dropdown-link">
+                        {{ $t('package.operate') }}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
                       <el-dropdown-menu slot="dropdown" v-if="!!data.flag">
                         <el-dropdown-item command="handleInfo">{{ $t('commons.detail') }}</el-dropdown-item>
                         <el-dropdown-item command="handleBind">{{ $t('rule.bind') }}</el-dropdown-item>
@@ -955,6 +955,7 @@ const columnOptions2 = [
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+    max-width: 100px;
   }
   .group-desc {
     padding: 0 14px 14px 14px;
