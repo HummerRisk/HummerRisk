@@ -3,34 +3,32 @@
     <el-card class="about-card">
 
       <el-row>
-        <img :src="require(`@/assets/img/logo/license.png`)" class="image"/>
+        <img :src="require(`@/assets/img/logo/HummerRisk.png`)" class="image"/>
       </el-row>
 
       <div style="padding: 14px;text-align: center;">
         <el-row>
           <el-col :span="12" class="col-na">
-            <span>{{ $t('system.authorized_to') }}</span>
+            <span>{{ $t('system.copyright') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span v-if="license.company">{{ license.company }}</span>
-            <span v-else>{{ '--' }}</span>
+            <span>{{ 'HummerRisk' }}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12" class="col-na">
-            <span>{{ $t('system.expiration') }}</span>
+            <span>{{ $t('system.authorization_date') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span v-if="license.expireTime">{{ license.expireTime  | timestampFormatDayDate }}</span>
-            <span v-else>{{ '--' }}</span>
+            <span>{{ $t('system.forever') }}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12" class="col-na">
-            <span>{{ $t('system.version') }}</span>
+            <span>{{ $t('system.version_from') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ license.edition === 'Enterprise'?$t('system.enterprise'):$t('system.community') }}</span>
+            <span>{{ $t('system.open_edition') }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -38,10 +36,7 @@
               <span>{{ $t('commons.status') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span v-if="license.status === 'valid'" style="color: #8dd998">{{ $t('account.VALID') }}</span>
-            <span v-else-if="license.status === 'invalid'" style="color: red">{{ $t('account.INVALID') }}</span>
-            <span v-else-if="license.status === 'expired'" style="color: red">{{ $t('commons.expired') }}</span>
-            <span v-else>{{ '--' }}</span>
+            <span style="color: #8dd998">{{ $t('account.VALID') }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -58,7 +53,7 @@
       <div style="padding: 14px;">
         <el-row>
           <el-col :span="24" class="license-le">
-            <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>
+<!--            <el-button plain size="medium" type="primary" @click="updateLicense">{{ $t('system.update_license') }}</el-button>-->
             <el-button plain size="medium" @click="others">{{ $t('dashboard.i18n_other') }}</el-button>
           </el-col>
         </el-row>
@@ -123,7 +118,6 @@ import {getLicenseUrl, isLicenseUrl, updateLicenseUrl} from "@/api/system/system
         items: [
           {img: require(`@/assets/img/about/docs.png`), url: 'https://hummerrisk.com'},
           {img: require(`@/assets/img/about/github.png`), url: 'https://github.com/HummerRisk/HummerRisk'},
-          {img: require(`@/assets/img/about/gitee.png`), url: 'https://gitee.com/hummercloud/HummerRisk'},
         ],
       }
     },
