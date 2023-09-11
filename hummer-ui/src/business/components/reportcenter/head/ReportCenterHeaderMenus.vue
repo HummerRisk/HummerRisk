@@ -5,7 +5,7 @@
         <el-menu class="header-menu" :unique-opened="true" mode="horizontal" router :default-active='$route.path'>
 
           <el-menu-item :index="'/report-center/report-center'">
-            {{ $t("resource.cloud_resource_statistics") }}
+            {{ $t("reportcenter.reportcenter") }}
           </el-menu-item>
 
         </el-menu>
