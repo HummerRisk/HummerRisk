@@ -1,32 +1,33 @@
-name: auto merge dev
-on:
-  schedule:
-    - cron: '0 0 * * WED'
-
-jobs:
-  merge_schedule:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-#      - name: Commit
-#        id: create_release_file
-#        env:
-#          RELEASE_VERSION: ${{github.ref}}
-#        run: |
-#          git config --global user.email guodongxiaren@163.com
-#          git config --global user.name guodongxiaren
-#          git merge dev
-#          git commit -m"action:`merge dev`"
-#          git pull --rebase
-#      - name: Push changes
-#        uses: ad-m/github-push-action@master
+#自动merge分支，dev -> master
+#name: auto merge dev
+#on:
+#  schedule:
+#    - cron: '0 0 * * WED'
+#
+#jobs:
+#  merge_schedule:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v2
+##      - name: Commit
+##        id: create_release_file
+##        env:
+##          RELEASE_VERSION: ${{github.ref}}
+##        run: |
+##          git config --global user.email guodongxiaren@163.com
+##          git config --global user.name guodongxiaren
+##          git merge dev
+##          git commit -m"action:`merge dev`"
+##          git pull --rebase
+##      - name: Push changes
+##        uses: ad-m/github-push-action@master
+##        with:
+##          github_token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: merge
+#        uses: mtanzi/action-automerge@v1
+#        id: merge
 #        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: merge
-        uses: mtanzi/action-automerge@v1
-        id: merge
-        with:
-          github_token: ${{ github.token }}
-          source: 'dev'
-          target: 'master'
+#          github_token: ${{ github.token }}
+#          source: 'dev'
+#          target: 'master'
