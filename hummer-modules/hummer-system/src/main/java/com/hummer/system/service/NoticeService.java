@@ -156,6 +156,19 @@ public class NoticeService {
         return uuid;
     }
 
+    public String createCloudMessageOrder(Account account, String projectId) {
+        MessageOrder messageOrder = new MessageOrder();
+        String uuid = UUIDUtil.newUUID();
+        messageOrder.setId(uuid);
+        messageOrder.setAccountId(projectId);
+        messageOrder.setAccountName(account.getName());
+        messageOrder.setCreateTime(System.currentTimeMillis());
+        messageOrder.setStatus(NoticeConstants.MessageOrderStatus.PROCESSING);
+        messageOrder.setScanType(ScanConstants.SCAN_TYPE.CLOUD.name());
+        messageOrderMapper.insertSelective(messageOrder);
+        return uuid;
+    }
+
     public String createK8sMessageOrder(CloudNative cloudNative) {
         MessageOrder messageOrder = new MessageOrder();
         String uuid = UUIDUtil.newUUID();

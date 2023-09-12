@@ -560,16 +560,20 @@ public class RuleService {
     public void scan(ScanGroupRequest request, LoginUser loginUser) throws Exception {
         AccountWithBLOBs account = accountMapper.selectByPrimaryKey(request.getAccountId());
         Integer scanId = systemProviderService.insertScanHistory(account, loginUser);
+        String messageOrderId = systemProviderService.createMessageOrder(account);
         for (Integer groupId : request.getGroups()) {
-            this.scanGroups(request.getAccountId(), scanId, groupId.toString(), loginUser);
+            this.scanGroups(messageOrderId, request.getAccountId(), scanId, groupId.toString(), loginUser);
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, rollbackFor = {RuntimeException.class, Exception.class})
     public void scanK8s(ScanGroupRequest request, CloudNative cloudNative, LoginUser loginUser) throws Exception {
         Integer scanId = systemProviderService.insertScanHistory(cloudNative, loginUser);
+
+        String messageOrderId = systemProviderService.createK8sMessageOrder(cloudNative);
+
         for (Integer groupId : request.getGroups()) {
-            this.scanK8sGroups(cloudNative, scanId, groupId.toString(), loginUser);
+            this.scanK8sGroups(messageOrderId, cloudNative, scanId, groupId.toString(), loginUser);
         }
     }
 
@@ -621,10 +625,9 @@ public class RuleService {
         return this.dealK8sTask(rule, cloudNative, scanId, null, loginUser);
     }
 
-    private void scanGroups(String accountId, Integer scanId, String groupId, LoginUser loginUser) {
+    private void scanGroups(String messageOrderId, String accountId, Integer scanId, String groupId, LoginUser loginUser) {
         try {
             AccountWithBLOBs account = accountMapper.selectByPrimaryKey(accountId);
-            String messageOrderId = systemProviderService.createMessageOrder(account);
 
             List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(accountId, groupId);
             for (RuleDTO rule : ruleDTOS) {
@@ -635,9 +638,8 @@ public class RuleService {
         }
     }
 
-    private void scanK8sGroups(CloudNative cloudNative, Integer scanId, String groupId, LoginUser loginUser) {
+    private void scanK8sGroups(String messageOrderId, CloudNative cloudNative, Integer scanId, String groupId, LoginUser loginUser) {
         try {
-            String messageOrderId = systemProviderService.createK8sMessageOrder(cloudNative);
 
             List<RuleDTO> ruleDTOS = extRuleGroupMapper.getRules(cloudNative.getId(), groupId);
             for (RuleDTO rule : ruleDTOS) {
@@ -833,7 +835,4 @@ public class RuleService {
         }
     }
 
-    public void scanByGroup(String groupId, String accountId, LoginUser loginUser) {
-        scanGroups(accountId, null, groupId, loginUser);
-    }
 }

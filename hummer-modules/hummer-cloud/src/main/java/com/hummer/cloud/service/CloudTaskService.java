@@ -61,21 +61,6 @@ public class CloudTaskService {
     @DubboReference
     private IOperationLogService operationLogService;
 
-    public CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, LoginUser loginUser) {
-        try {
-            if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.custodian.name())) {
-                this.validateYaml(quartzTaskDTO);
-                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), loginUser);
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.prowler.name())) {
-                return prowlerService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), loginUser);
-            } else {
-                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), loginUser);
-            }
-        } catch (Exception e) {
-            throw new HRException(e.getMessage());
-        }
-    }
-
     public CloudTask saveManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId, LoginUser loginUser) {
         try {
             if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.custodian.name())) {
@@ -93,14 +78,8 @@ public class CloudTaskService {
 
     public CloudTask saveK8sManualTask(QuartzTaskDTO quartzTaskDTO, String messageOrderId, LoginUser loginUser) {
         try {
-            if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.custodian.name())) {
-                this.validateYaml(quartzTaskDTO);
-                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), loginUser);
-            } else if (StringUtils.equalsIgnoreCase(quartzTaskDTO.getScanType(), ScanTypeConstants.prowler.name())) {
-                return prowlerService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), loginUser);
-            } else {
-                return orderService.createTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), loginUser);
-            }
+            this.validateYaml(quartzTaskDTO);
+            return orderService.createK8sTask(quartzTaskDTO, CloudTaskConstants.TASK_STATUS.APPROVED.name(), messageOrderId, loginUser);
         } catch (Exception e) {
             throw new HRException(e.getMessage());
         }

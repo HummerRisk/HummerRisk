@@ -297,10 +297,4 @@ public class RuleController {
         ruleService.bindRule(request);
     }
 
-    @I18n
-    @Operation(summary = "规则组检测云账号")
-    @GetMapping("scan/by/group/{groupId}/{accountId}")
-    public void scanByGroup(@PathVariable String groupId, @PathVariable String accountId) {
-        ruleService.scanByGroup(groupId, accountId, tokenService.getLoginUser());
-    }
 }

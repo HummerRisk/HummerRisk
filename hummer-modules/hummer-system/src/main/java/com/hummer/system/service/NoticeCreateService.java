@@ -283,7 +283,7 @@ public class NoticeCreateService {
         }
     }
 
-    private void sendTask(MessageOrder messageOrder) throws Exception {
+    public void sendTask(MessageOrder messageOrder) throws Exception {
         try {
             SystemParameterService systemParameterService = CommonBeanFactory.getBean(SystemParameterService.class);
             NoticeSendService noticeSendService = CommonBeanFactory.getBean(NoticeSendService.class);

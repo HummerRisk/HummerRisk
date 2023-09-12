@@ -6,6 +6,7 @@ import com.hummer.cloud.mapper.*;
 import com.hummer.cloud.oss.constants.OSSConstants;
 import com.hummer.common.core.constant.CloudTaskConstants;
 import com.hummer.common.core.constant.CommandEnum;
+import com.hummer.common.core.constant.NoticeConstants;
 import com.hummer.common.core.domain.*;
 import com.hummer.common.core.domain.request.resource.ResourceRequest;
 import com.hummer.common.core.dto.ResourceDTO;
@@ -266,8 +267,27 @@ public class ResourceCreateService {
             }
             orderService.updateProjectStatus(projectId, null, status);
 
+            //发送消息
+            MessageOrder messageOrder = new MessageOrder();
+            messageOrder.setAccountId(projectId);
+            MessageOrder messageOrderListGet0 = systemProviderService.messageOrderList(messageOrder).isEmpty()?new MessageOrder():systemProviderService.messageOrderList(messageOrder).get(0);
+            messageOrderListGet0.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+            messageOrderListGet0.setSendTime(System.currentTimeMillis());
+            systemProviderService.updateMessageOrder(messageOrderListGet0);
+            systemProviderService.sendTask(messageOrder);
+
         } catch (Exception e) {
             orderService.updateProjectStatus(projectId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
+
+            //发送消息
+            MessageOrder messageOrder = new MessageOrder();
+            messageOrder.setAccountId(projectId);
+            MessageOrder messageOrderListGet0 = systemProviderService.messageOrderList(messageOrder).isEmpty()?new MessageOrder():systemProviderService.messageOrderList(messageOrder).get(0);
+            messageOrderListGet0.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+            messageOrderListGet0.setSendTime(System.currentTimeMillis());
+            systemProviderService.updateMessageOrder(messageOrderListGet0);
+            systemProviderService.sendTask(messageOrder);
+
             LogUtil.error("handleProject, projectId: " + projectId, e);
         }
     }
@@ -328,6 +348,15 @@ public class ResourceCreateService {
             historyCloudTask.setStatus(taskStatus);
             systemProviderService.updateHistoryCloudTask(historyCloudTask);
 
+            //更新消息子表
+            MessageOrderItem messageOrderItem = new MessageOrderItem();
+            messageOrderItem.setTaskId(cloudTask.getId());
+            messageOrderItem.setMessageOrderId(cloudTask.getProjectId());
+            MessageOrderItem messageOrderItemListGet0 = systemProviderService.messageOrderItemList(messageOrderItem).isEmpty()?new MessageOrderItem():systemProviderService.messageOrderItemList(messageOrderItem).get(0);
+            messageOrderItemListGet0.setStatus(NoticeConstants.MessageOrderStatus.FINISHED);
+            messageOrderItemListGet0.setSendTime(System.currentTimeMillis());
+            systemProviderService.updateMessageOrderItem(messageOrderItemListGet0);
+
             return true;
         } catch (Exception e) {
             orderService.updateTaskStatus(taskId, null, CloudTaskConstants.TASK_STATUS.ERROR.name());
@@ -336,6 +365,15 @@ public class ResourceCreateService {
             HistoryCloudTask historyCloudTask = BeanUtils.copyBean(new HistoryCloudTask(), cloudTask);
             historyCloudTask.setStatus(CloudTaskConstants.TASK_STATUS.ERROR.name());
             systemProviderService.updateHistoryCloudTask(historyCloudTask);
+
+            //更新消息子表
+            MessageOrderItem messageOrderItem = new MessageOrderItem();
+            messageOrderItem.setTaskId(cloudTask.getId());
+            messageOrderItem.setMessageOrderId(cloudTask.getProjectId());
+            MessageOrderItem messageOrderItemListGet0 = systemProviderService.messageOrderItemList(messageOrderItem).isEmpty()?new MessageOrderItem():systemProviderService.messageOrderItemList(messageOrderItem).get(0);
+            messageOrderItemListGet0.setStatus(NoticeConstants.MessageOrderStatus.ERROR);
+            messageOrderItemListGet0.setSendTime(System.currentTimeMillis());
+            systemProviderService.updateMessageOrderItem(messageOrderItemListGet0);
 
             LogUtil.error("handleTask, taskId: " + taskId, e);
             return false;

@@ -19,6 +19,8 @@ public interface ISystemProviderService {
 
     String createMessageOrder(AccountWithBLOBs account) throws Exception;
 
+    String createCloudMessageOrder(AccountWithBLOBs account, String projectId) throws Exception;
+
     String createK8sMessageOrder(CloudNative cloudNative) throws Exception;
 
     void createMessageOrderItem(String messageOrderId, CloudTask cloudTask) throws Exception;
@@ -146,5 +148,15 @@ public interface ISystemProviderService {
     String getCodeCredential();
 
     boolean license();
+
+    void sendTask(MessageOrder messageOrder) throws Exception;
+
+    void updateMessageOrderItem(MessageOrderItem messageOrderItem) throws Exception;
+
+    void updateMessageOrder(MessageOrder messageOrder) throws Exception;
+
+    List<MessageOrderItem> messageOrderItemList(MessageOrderItem messageOrderItem) throws Exception;
+
+    List<MessageOrder> messageOrderList(MessageOrder messageOrder) throws Exception;
 
 }

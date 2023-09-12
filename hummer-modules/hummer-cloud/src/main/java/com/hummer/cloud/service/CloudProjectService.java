@@ -264,10 +264,12 @@ public class CloudProjectService {
 
                 saveCloudProcessLog(projectId, "", "i18n_operation_init" + " : " + "i18n_init_task", StringUtils.EMPTY, true, loginUser);
 
+                String messageOrderId = systemProviderService.createCloudMessageOrder(account, projectId);
+
                 for (Integer groupId : request.getGroups()) {
                     //计算规则组执行初始化日志（每个规则组时间）
                     RuleGroup ruleGroup = ruleGroupMapper.selectByPrimaryKey(groupId);
-                    dealGroup(projectId, ruleGroup, account, loginUser, scanId);
+                    dealGroup(messageOrderId, projectId, ruleGroup, account, loginUser, scanId);
                 }
 
                 saveCloudProcessLog(projectId, "", "i18n_operation_end" + " : " + "start_init_finish", StringUtils.EMPTY, true, loginUser);
@@ -286,7 +288,7 @@ public class CloudProjectService {
         return projectId;
     }
 
-    private void dealGroup(String projectId, RuleGroup ruleGroup, AccountWithBLOBs account, LoginUser loginUser, Integer scanId) throws Exception {
+    private void dealGroup(String messageOrderId, String projectId, RuleGroup ruleGroup, AccountWithBLOBs account, LoginUser loginUser, Integer scanId) throws Exception {
         String operationGroup = "i18n_create_cloud_group";
         String cloudGroupId = UUIDUtil.newUUID();
         try {
@@ -320,7 +322,7 @@ public class CloudProjectService {
             dto.setStatus(true);
             List<RuleDTO> ruleDTOS = accountService.getRules(dto);
             for (RuleDTO rule : ruleDTOS) {
-                this.dealTask(rule, scanId, projectId, cloudGroupId, account, loginUser);
+                this.dealTask(messageOrderId, rule, scanId, projectId, cloudGroupId, account, loginUser);
             }
 
             saveCloudGroupLog(projectId, cloudGroupId, "i18n_operation_end" + " : " + operationGroup + "[" + ruleGroup.getName() + "]", StringUtils.EMPTY, true, loginUser);
@@ -332,7 +334,7 @@ public class CloudProjectService {
 
     }
 
-    private void dealTask(RuleDTO rule, Integer scanId, String projectId, String cloudGroupId, AccountWithBLOBs account, LoginUser loginUser) {
+    private void dealTask(String messageOrderId, RuleDTO rule, Integer scanId, String projectId, String cloudGroupId, AccountWithBLOBs account, LoginUser loginUser) {
         try {
             QuartzTaskDTO quartzTaskDTO = new QuartzTaskDTO();
             BeanUtils.copyBean(quartzTaskDTO, rule);
@@ -362,7 +364,7 @@ public class CloudProjectService {
             quartzTaskDTO.setTaskName(rule.getName());
             saveCloudProcessLog(projectId, "", "i18n_operation_process" + " : " + "i18n_init_task" + "[" + rule.getName() + "]", StringUtils.EMPTY, true, loginUser);
 
-            CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, loginUser);
+            CloudTask cloudTask = cloudTaskService.saveManualTask(quartzTaskDTO, messageOrderId, loginUser);
             if (PlatformUtils.isSupportCloudAccount(cloudTask.getPluginId())) {
                 try {
                     systemProviderService.insertScanTaskHistory(cloudTask, scanId, cloudTask.getAccountId(), TaskEnum.cloudAccount.getType());

@@ -33,6 +33,8 @@ public class SystemProviderService implements ISystemProviderService {
     @Autowired
     private NoticeService noticeService;
     @Autowired
+    private NoticeCreateService noticeCreateService;
+    @Autowired
     private HistoryService historyService;
     @Autowired
     private ExtVulnMapper extVulnMapper;
@@ -60,6 +62,10 @@ public class SystemProviderService implements ISystemProviderService {
     private ExtHistoryScanMapper extHistoryScanMapper;
     @Autowired
     private LicenseService licenseService;
+    @Autowired
+    private MessageOrderMapper messageOrderMapper;
+    @Autowired
+    private MessageOrderItemMapper messageOrderItemMapper;
 
 
     @Override
@@ -70,6 +76,11 @@ public class SystemProviderService implements ISystemProviderService {
     @Override
     public String createMessageOrder(AccountWithBLOBs account) throws Exception {
         return noticeService.createMessageOrder(account);
+    }
+
+    @Override
+    public String createCloudMessageOrder(AccountWithBLOBs account, String projectId) throws Exception {
+        return noticeService.createCloudMessageOrder(account, projectId);
     }
 
     @Override
@@ -406,6 +417,37 @@ public class SystemProviderService implements ISystemProviderService {
     @Override
     public boolean license() {
         return licenseService.license();
+    }
+
+    @Override
+    public void sendTask(MessageOrder messageOrder) throws Exception {
+        noticeCreateService.sendTask(messageOrder);
+    }
+
+    @Override
+    public void updateMessageOrderItem(MessageOrderItem messageOrderItem) throws Exception {
+        messageOrderItemMapper.updateByPrimaryKeySelective(messageOrderItem);
+    }
+
+    @Override
+    public void updateMessageOrder(MessageOrder messageOrder) throws Exception {
+        messageOrderMapper.updateByPrimaryKeySelective(messageOrder);
+    }
+
+    @Override
+    public List<MessageOrderItem> messageOrderItemList(MessageOrderItem messageOrderItem) throws Exception {
+        MessageOrderItemExample messageOrderItemExample = new MessageOrderItemExample();
+        messageOrderItemExample.createCriteria().andMessageOrderIdEqualTo(messageOrderItem.getMessageOrderId()).andTaskIdEqualTo(messageOrderItem.getTaskId());
+        List<MessageOrderItem> messageOrderItemList = messageOrderItemMapper.selectByExample(messageOrderItemExample);
+        return messageOrderItemList;
+    }
+
+    @Override
+    public List<MessageOrder> messageOrderList(MessageOrder messageOrder) throws Exception {
+        MessageOrderExample messageOrderExample = new MessageOrderExample();
+        messageOrderExample.createCriteria().andAccountIdEqualTo(messageOrder.getAccountId());
+        List<MessageOrder> messageOrderList = messageOrderMapper.selectByExample(messageOrderExample);
+        return messageOrderList;
     }
 
 
