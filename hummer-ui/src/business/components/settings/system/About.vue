@@ -44,7 +44,7 @@
             <span>{{ $t('system.version_number') }}</span>
           </el-col>
           <el-col :span="10" class="col-te">
-            <span>{{ 'v1.4.1' }}</span>
+            <span>{{ 'v1.5.0' }}</span>
           </el-col>
         </el-row>
         <span v-if="license.message" style="color: red;font-style:italic;">{{ license.message }}</span>
