@@ -430,6 +430,7 @@ import {
   ruleAddUrl,
   ruleChangeStatusUrl,
   ruleCopyUrl,
+  ruleDeleteUrl,
   ruleDryRunUrl,
   ruleGroupsUrl,
   ruleInspectionReport,
