@@ -13,7 +13,7 @@ export const resourceReportIsoListUrl = "/cloud/resource/report/iso/list/";
 
 export const resourceReportListUrl = "/cloud/resource/report/list/";
 
-export const resourcerReportByProjectListUrl = "/cloud/resource/report/By/project/list/";
+export const resourcerReportByProjectListUrl = "/cloud/resource/report/by/project/list/";
 
 export const resourceListUrl = "/cloud/resource/resource/list/";
 
