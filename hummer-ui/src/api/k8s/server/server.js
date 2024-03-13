@@ -3,7 +3,7 @@ export const serverChartUrl = "/k8s/server/server/chart";
 
 export const serverSeverityChartUrl = "/k8s/server/severity/chart";
 
-export const serverLineChartUrl = "/k8s/server/server/Line/chart";
+export const serverLineChartUrl = "/k8s/server/server/line/chart";
 
 export const deleteCertificateUrl = "/k8s/server/delete/certificate/";
 
