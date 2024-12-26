@@ -103,13 +103,6 @@ curl -sSL https://download.hummerrisk.com/hummerrisk/hummerrisk/releases/downloa
 - [x] 规则丰富：大量内置检测规则，如 CIS 规则，等保2.0 规则等，同时支持自定义规则;
 - [x] 支持信创：支持在信创环境中部署。
 
-## 微信群
-
-![微信群](./hummer-ui/src/assets/img/readme/contact_me_qr.png)
-
-## 公众号
-
-![公众号](./hummer-ui/src/assets/img/readme/qrcode_gongzhonghao.jpeg)
 
 ## 安全说明
 
