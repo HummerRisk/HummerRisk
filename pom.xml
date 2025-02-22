@@ -20,6 +20,8 @@
         <spring-boot.version>3.0.0</spring-boot.version>
         <spring-cloud.version>2022.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2022.0.0.0-RC1</spring-cloud-alibaba.version>
+
+
         <spring-boot-admin.version>3.0.0</spring-boot-admin.version>
         <tobato.version>1.27.2</tobato.version>
         <pagehelper.version>5.3.0</pagehelper.version>
@@ -93,7 +95,7 @@
                 <artifactId>jdk.tools</artifactId>
                 <version>17</version>
                 <scope>system</scope>
-                <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+                <systemPath>/Users/chenchangdong/Library/Java/JavaVirtualMachines/azul-1.8.0_442/Contents/Home/lib/tools.jar</systemPath>
             </dependency>
             <!-- 本地启动可注释 -->
 
@@ -128,17 +130,6 @@
 
     <repositories>
         <repository>
-            <id>hummer</id>
-            <name>Hummer</name>
-            <url>https://registry.hummercloud.com/repository/maven-public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>sonatype-nexus-staging</id>
             <name>Sonatype Nexus Staging</name>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
@@ -169,7 +160,7 @@
         <pluginRepository>
             <id>hummer</id>
             <name>hummer</name>
-            <url>https://registry.hummercloud.com/repository/hummer-public/</url>
+            <url>https://maven.aliyun.com/repository/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -182,7 +173,7 @@
         <repository>
             <id>hummer</id>
             <name>hummer</name>
-            <url>https://registry.hummercloud.com/repository/hummer-public/</url>
+            <url>https://maven.aliyun.com/repository/public/</url>
         </repository>
     </distributionManagement>
 </project>
